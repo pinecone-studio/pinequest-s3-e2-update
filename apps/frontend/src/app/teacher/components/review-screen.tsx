@@ -1,16 +1,25 @@
 import { ArrowLeft } from "lucide-react";
+import { STUDENTS_BY_CODE } from "../data/students";
 
 type ReviewScreenProps = {
   onBack: () => void;
+  studentCode?: string | null;
 };
 
-export default function ReviewScreen({ onBack }: ReviewScreenProps) {
+const DEFAULT_STUDENT = { name: "Батбаяр Доржсүрэн", email: "batbayar@school.mn", initial: "Б" };
+
+export default function ReviewScreen({ onBack, studentCode }: ReviewScreenProps) {
+  const student = studentCode ? STUDENTS_BY_CODE[studentCode] : null;
+  const { name, email, initial } = student
+    ? { ...student, initial: student.name.charAt(0) }
+    : DEFAULT_STUDENT;
+
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
       <button
         type="button"
         onClick={onBack}
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+        className="inline-flex items-center gap-2 text-[#4ca3f0] hover:underline transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Буцах</span>
@@ -18,10 +27,10 @@ export default function ReviewScreen({ onBack }: ReviewScreenProps) {
 
       <section className="rounded-2xl border border-[#d9dee8] bg-white p-10 text-center">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#5eaef4] text-4 font-semibold text-white">
-          Б
+          {initial}
         </div>
-        <p className="mt-5 text-4 font-extrabold">Батбаяр Доржсүрэн</p>
-        <p className="mt-1 text-4 text-[#7384a5]">batbayar@school.mn</p>
+        <p className="mt-5 text-4 font-extrabold">{name}</p>
+        <p className="mt-1 text-4 text-[#7384a5]">{email}</p>
       </section>
 
       <section className="rounded-2xl border border-[#cde4d8] bg-[#d9ece2] p-8 text-center">

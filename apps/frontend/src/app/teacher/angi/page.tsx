@@ -1,22 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "../components/header";
-import OverviewScreen from "../components/overview-screen";
-import ReviewScreen from "../components/review-screen";
-import StatsScreen from "../components/stats-screen";
+import ClassDetailScreen from "../components/class-detail-screen";
+import ClassListScreen from "../components/class-list-screen";
 
-type TeacherView = "overview" | "review" | "stats";
+function AngiContent() {
+  const searchParams = useSearchParams();
+  const classId = searchParams.get("class");
+
+  return classId ? (
+    <ClassDetailScreen classId={classId} />
+  ) : (
+    <ClassListScreen />
+  );
+}
 
 export default function TeacherAngiPage() {
-  const [activeView, setActiveView] = useState<TeacherView>("review");
-
   return (
     <div className="min-h-screen bg-[#edf2f8] text-[#1f2a44]">
-      <Header activeView={activeView} onChangeView={setActiveView} />
-      {activeView === "overview" && <OverviewScreen onOpenReview={() => setActiveView("review")} />}
-      {activeView === "review" && <ReviewScreen onBack={() => setActiveView("overview")} />}
-      {activeView === "stats" && <StatsScreen />}
+      <Header variant="tabs" activeView="review" />
+      <Suspense fallback={<div className="mx-auto max-w-4xl px-4 py-8 text-4 text-[#64748b]">Ачааллаж байна...</div>}>
+        <AngiContent />
+      </Suspense>
     </div>
   );
 }
