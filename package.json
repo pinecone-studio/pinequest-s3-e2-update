@@ -11,6 +11,7 @@
     "dev:web": "pnpm --filter frontend dev",
     "dev:worker": "pnpm --filter backend dev",
     "build:web": "pnpm --filter frontend build",
+    "build:worker": "pnpm --filter backend build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
