@@ -45,7 +45,7 @@ export default function StatsScreen() {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
       <section className="rounded-xl border border-[#d9dee8] bg-white p-6">
-        <h1 className="text-8 font-extrabold">Ангийн Тоон Үзүүлэлт</h1>
+        <h1 className="text-4 font-extrabold">Ангийн Тоон Үзүүлэлт</h1>
         <p className="mt-2 text-4 text-[#66789f]">10-А анги · Нийгмийн Ухаан · Шалгалт #1 · 2026/03/20</p>
       </section>
 
@@ -53,10 +53,10 @@ export default function StatsScreen() {
         {stats.map((item) => (
           <article key={item.title} className="rounded-xl border border-[#d9dee8] bg-white p-4">
             <div className="flex items-start justify-between">
-              <span className="text-8 text-[#68b4f5]">◉</span>
+              <span className="text-4 text-[#68b4f5]">◉</span>
               <span className={`text-4 font-semibold ${toneClasses(item.tone)}`}>{item.trend}</span>
             </div>
-            <p className="mt-3 text-8 font-bold">{item.value}</p>
+            <p className="mt-3 text-4 font-bold">{item.value}</p>
             <p className="mt-1 text-4 font-semibold">{item.title}</p>
             <p className="mt-1 text-4 text-[#66789f]">{item.note}</p>
           </article>
@@ -64,7 +64,7 @@ export default function StatsScreen() {
       </section>
 
       <section className="rounded-xl border border-[#d9dee8] bg-white p-5">
-        <p className="mb-5 text-8 font-bold">Оноо Хуваарилалт</p>
+        <p className="mb-5 text-4 font-bold">Оноо Хуваарилалт</p>
         <div className="grid h-64 grid-cols-4 items-end gap-4 border-b border-l border-[#bcc7da] px-3 pb-0 pt-2">
           {scoreDistribution.map((bar) => (
             <div key={bar.range} className="flex flex-col items-center justify-end gap-2">
@@ -76,7 +76,7 @@ export default function StatsScreen() {
       </section>
 
       <section className="rounded-xl border border-[#d9dee8] bg-white p-5">
-        <p className="mb-5 text-8 font-bold">Түгээмэл Алдаа</p>
+        <p className="mb-5 text-4 font-bold">Түгээмэл Алдаа</p>
         <div className="space-y-4">
           {commonErrors.map((error) => (
             <div key={error.label}>
@@ -93,7 +93,7 @@ export default function StatsScreen() {
       </section>
 
       <section className="rounded-xl border border-[#d9dee8] bg-white p-5">
-        <p className="mb-4 text-8 font-bold">Сурагчийн Жагсаалт</p>
+        <p className="mb-4 text-4 font-bold">Сурагчийн Жагсаалт</p>
         <div className="space-y-3">
           {students.map((student) => (
             <div key={student.email} className="flex items-center justify-between gap-4 rounded-lg px-3 py-2 hover:bg-[#f6f9fc]">
@@ -102,12 +102,12 @@ export default function StatsScreen() {
                   {student.initial}
                 </div>
                 <div>
-                  <p className="text-8 font-semibold">{student.name}</p>
+                  <p className="text-4 font-semibold">{student.name}</p>
                   <p className="text-4 text-[#6d7fa3]">{student.email}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-8 font-bold text-[#15b24f]">{student.score}</p>
+                <p className="text-4 font-bold text-[#15b24f]">{student.score}</p>
                 <p className="text-4 text-[#556788]">{student.status}</p>
               </div>
             </div>
