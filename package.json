@@ -1,0 +1,28 @@
+{
+  "name": "pinequest-s3-e2-update",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter frontend dev",
+    "dev:worker": "pnpm --filter backend dev",
+    "build:web": "pnpm --filter frontend build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pinecone-studio/pinequest-s3-e2-update.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pinecone-studio/pinequest-s3-e2-update/issues"
+  },
+  "homepage": "https://github.com/pinecone-studio/pinequest-s3-e2-update#readme"
+}
