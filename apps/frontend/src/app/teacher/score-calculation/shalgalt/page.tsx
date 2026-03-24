@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import Header from "../components/header";
-import OverviewScreen from "../components/overview-screen";
-import ReviewScreen from "../components/review-screen";
-import StatsScreen from "../components/stats-screen";
+import OverviewScreen from "../../components/overview-screen";
+import ReviewScreen from "../../components/review-screen";
+import StatsScreen from "../../components/stats-screen";
+import Header from "../../components/header";
 
 type TeacherView = "overview" | "review" | "stats";
 
@@ -26,7 +26,9 @@ function ShalgaltContent({
 
   return (
     <>
-      {activeView === "overview" && <OverviewScreen onOpenReview={() => setActiveView("review")} />}
+      {activeView === "overview" && (
+        <OverviewScreen onOpenReview={() => setActiveView("review")} />
+      )}
       {activeView === "review" && (
         <ReviewScreen onBack={handleBack} studentCode={studentCode} />
       )}
@@ -40,21 +42,34 @@ function ShalgaltInner() {
   const studentCode = searchParams.get("student");
   const [activeView, setActiveView] = useState<TeacherView>("overview");
 
-  useEffect(() => {
-    if (studentCode) setActiveView("review");
-  }, [studentCode]);
+  useEffect(() => {}, [studentCode]);
 
   return (
     <div className="min-h-screen bg-[#edf2f8] text-[#1f2a44]">
-      <Header variant="tabs" activeView={activeView === "stats" ? "stats" : "overview"} hiddenTabs={["review"]} onChangeView={setActiveView} />
-      <ShalgaltContent activeView={activeView} setActiveView={setActiveView} studentCode={studentCode} />
+      <Header
+        variant="tabs"
+        activeView={activeView === "stats" ? "stats" : "overview"}
+        hiddenTabs={["review"]}
+        onChangeView={setActiveView}
+      />
+      <ShalgaltContent
+        activeView={activeView}
+        setActiveView={setActiveView}
+        studentCode={studentCode}
+      />
     </div>
   );
 }
 
 export default function TeacherShalgaltPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#edf2f8] flex items-center justify-center text-4 text-[#64748b]">Ачааллаж байна...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#edf2f8] flex items-center justify-center text-4 text-[#64748b]">
+          Ачааллаж байна...
+        </div>
+      }
+    >
       <ShalgaltInner />
     </Suspense>
   );

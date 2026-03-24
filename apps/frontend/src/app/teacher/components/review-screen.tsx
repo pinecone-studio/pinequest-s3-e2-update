@@ -1,14 +1,21 @@
 import { ArrowLeft } from "lucide-react";
-import { STUDENTS_BY_CODE } from "../data/students";
+import { STUDENTS_BY_CODE } from "../score-calculation/data/students";
 
 type ReviewScreenProps = {
   onBack: () => void;
   studentCode?: string | null;
 };
 
-const DEFAULT_STUDENT = { name: "Батбаяр Доржсүрэн", email: "batbayar@school.mn", initial: "Б" };
+const DEFAULT_STUDENT = {
+  name: "Батбаяр Доржсүрэн",
+  email: "batbayar@school.mn",
+  initial: "Б",
+};
 
-export default function ReviewScreen({ onBack, studentCode }: ReviewScreenProps) {
+export default function ReviewScreen({
+  onBack,
+  studentCode,
+}: ReviewScreenProps) {
   const student = studentCode ? STUDENTS_BY_CODE[studentCode] : null;
   const { name, email, initial } = student
     ? { ...student, initial: student.name.charAt(0) }

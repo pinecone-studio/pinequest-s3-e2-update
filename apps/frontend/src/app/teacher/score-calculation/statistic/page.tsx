@@ -1,5 +1,5 @@
-import Header from "../components/header";
-import StatsScreen from "../components/stats-screen";
+import Header from "../../components/header";
+import StatsScreen from "../../components/stats-screen";
 
 export default function TeacherStatisticPage() {
   return (
