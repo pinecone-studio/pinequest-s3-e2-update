@@ -2,7 +2,7 @@ import type { GraphQLSchema } from "graphql";
 import { createYoga } from "graphql-yoga";
 import { Hono } from "hono";
 import { getDb } from "./db/drizzle";
-import { schema } from "./graphql/schema";
+import { schema } from "./graphql";
 import type { Env } from "./types";
 
 const yoga = createYoga({
