@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { store } from "@/app/lib/store";
+import { teacherExamScheduleStore } from "@/app/lib/teacher_exam_schedule_store";
+import { TeacherScheduleForm } from "./schedule-form";
+import { TeacherScheduleList } from "./schedule-list";
+
 export default async function AdminTeacherDetailPage({
   params,
 }: {
@@ -11,6 +15,7 @@ export default async function AdminTeacherDetailPage({
   if (!user || user.role !== "teacher") notFound();
 
   const classes = store.getClassesForTeacher(id);
+  const schedules = teacherExamScheduleStore.listByTeacher(id);
 
   return (
     <div className="space-y-8">
@@ -23,18 +28,17 @@ export default async function AdminTeacherDetailPage({
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">
-          {user.name}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          {user.email}
-        </p>
+        <h1 className="text-2xl font-semibold text-zinc-900">{user.name}</h1>
+        <p className="mt-1 text-sm text-zinc-600">{user.email}</p>
         {user.specialty?.trim() ? (
           <p className="mt-2 text-sm font-medium text-teal-700">
             Мэргэжил / хичээл: {user.specialty}
           </p>
         ) : null}
       </div>
+
+      <TeacherScheduleForm teacherId={id} />
+      <TeacherScheduleList schedules={schedules} />
 
       <section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
         <div className="border-b border-zinc-100 px-6 py-4">
