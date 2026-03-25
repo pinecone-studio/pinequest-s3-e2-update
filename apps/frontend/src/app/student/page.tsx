@@ -22,10 +22,32 @@ export default function StudentPage() {
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const isFormValid = fullName.trim() && grade.trim() && school.trim() && isEmailValid;
   useEffect(() => {
-    if (step !== "exam") return;
-    const timer = setInterval(() => setRemainingSeconds((p) => (p > 0 ? p - 1 : 0)), 1000);
-    return () => clearInterval(timer);
-  }, [step]);
+  if (step !== "exam") return;
+
+  const preventCopy = (e: ClipboardEvent) => e.preventDefault();
+
+  const preventKeys = (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && ["c", "x", "v", "a"].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  };
+
+  const disableRightClick = (e: MouseEvent) => e.preventDefault();
+
+  document.addEventListener("copy", preventCopy);
+  document.addEventListener("cut", preventCopy);
+  document.addEventListener("paste", preventCopy);
+  document.addEventListener("keydown", preventKeys);
+  document.addEventListener("contextmenu", disableRightClick);
+
+  return () => {
+    document.removeEventListener("copy", preventCopy);
+    document.removeEventListener("cut", preventCopy);
+    document.removeEventListener("paste", preventCopy);
+    document.removeEventListener("keydown", preventKeys);
+    document.removeEventListener("contextmenu", disableRightClick);
+  };
+}, [step]);
   const minutes = String(Math.floor(remainingSeconds / 60)).padStart(2, "0"), seconds = String(remainingSeconds % 60).padStart(2, "0");
   const markTouched = (key: keyof typeof touched) => setTouched((p) => ({ ...p, [key]: true }));
   const inputClass = (invalid: boolean) => `mt-2 w-full rounded-xl border bg-[#f8fafc] px-4 py-3 text-sm font-medium text-[#1f2a44] outline-none transition ${invalid ? "border-[#ef4444] focus:border-[#ef4444]" : "border-[#d5dbe7] focus:border-[#4ca3f0]"}`;
