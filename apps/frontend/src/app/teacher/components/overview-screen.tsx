@@ -157,7 +157,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <button
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d7ebff] text-4 text-[#4ea4f1] disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-4 text-teal-600 disabled:opacity-40"
                 disabled={currentStudentIndex === 0}
                 onClick={() =>
                   currentStudentIndex > 0 &&
@@ -167,7 +167,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
               >
                 ‹
               </button>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5eaef4] text-4 font-bold text-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-500 text-4 font-bold text-white">
                 {currentStudent.initial}
               </div>
               <div>
@@ -181,7 +181,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                 {currentStudentIndex + 1} / {students.length}
               </span>
               <button
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d7ebff] text-4 text-[#4ea4f1] disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-4 text-teal-600 disabled:opacity-40"
                 disabled={currentStudentIndex === students.length - 1}
                 onClick={() =>
                   currentStudentIndex < students.length - 1 &&
@@ -199,7 +199,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
           <div className="space-y-6">
             <section className="rounded-2xl border border-[#d9dee8] bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eaf1fb] text-4 font-semibold text-[#5d95e8]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-4 font-semibold text-teal-600">
                   1
                 </div>
                 <p className="text-4 font-semibold text-[#6b7289]">Асуулт</p>
@@ -212,7 +212,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                   src={questionImage}
                 />
               ) : (
-                <label className="flex h-10 w-full cursor-pointer items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-[#f5f8fd] text-4 text-[#6b7289]">
+                <label className="flex h-10 w-full cursor-pointer items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-teal-50 text-4 text-[#6b7289]">
                   File upload
                   <input
                     accept="image/*"
@@ -224,7 +224,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
               )}
 
               {questionImage && (
-                <label className="mt-3 inline-flex cursor-pointer rounded-xl border border-[#d9dee8] px-3 py-2 text-4 text-[#4c94ec]">
+                <label className="mt-3 inline-flex cursor-pointer rounded-xl border border-[#d9dee8] px-3 py-2 text-4 text-teal-600">
                   Зураг солих
                   <input
                     accept="image/*"
@@ -255,7 +255,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                   src={studentAnswerImages[currentStudentIndex] || ""}
                 />
               ) : (
-                <label className="flex h-10 w-full cursor-pointer items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-[#edf2f8] text-4 text-[#6b7289]">
+                <label className="flex h-10 w-full cursor-pointer items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-teal-50 text-4 text-[#6b7289]">
                   File upload
                   <input
                     accept="image/*"
@@ -267,7 +267,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
               )}
 
               {studentAnswerImages[currentStudentIndex] && (
-                <label className="mt-3 inline-flex cursor-pointer rounded-xl border border-[#d9dee8] px-3 py-2 text-4 text-[#4c94ec]">
+                <label className="mt-3 inline-flex cursor-pointer rounded-xl border border-[#d9dee8] px-3 py-2 text-4 text-teal-600">
                   Зураг солих
                   <input
                     accept="image/*"
@@ -279,7 +279,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
               )}
 
               {!studentAnswerImages[currentStudentIndex] && (
-                <div className="mt-4 rounded-2xl bg-[#edf2f8] p-5 text-4 leading-relaxed text-[#2d3a56]">
+                <div className="mt-4 rounded-2xl bg-teal-50 p-5 text-4 leading-relaxed text-[#2d3a56]">
                   {currentAnswer.text}
                 </div>
               )}
@@ -290,11 +290,11 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
             </section>
 
             <button
-              className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-[#d9dee8] bg-white py-5 text-4 font-medium text-[#2f3c59] transition-all duration-200 hover:border-[#5ea1f2] hover:text-[#4a92ea]"
+              className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-[#d9dee8] bg-white py-5 text-4 font-medium text-[#2f3c59] transition-all duration-200 hover:border-teal-500 hover:text-teal-600"
               onClick={onOpenReview}
               type="button"
             >
-              <Eye className="h-5 w-5 text-[#2f3c59] transition-colors duration-200 group-hover:text-[#4a92ea]" />
+              <Eye className="h-5 w-5 text-[#2f3c59] transition-colors duration-200 group-hover:text-teal-600" />
               <span>Сурагчийн харагдац</span>
             </button>
           </div>
@@ -302,7 +302,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
           <div className="space-y-4">
             {!aiGenerated && !isApproved && (
               <button
-                className="w-full rounded-2xl bg-[#5ea1f2] px-2 py-4 text-4 font-bold text-white transition hover:bg-[#4c94ec] disabled:opacity-60"
+                className="w-full rounded-2xl bg-teal-600 px-2 py-4 text-4 font-bold text-white transition hover:bg-teal-700 disabled:opacity-60"
                 disabled={isGenerating}
                 onClick={handleGenerateAI}
                 type="button"
@@ -337,7 +337,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                 <section className="rounded-2xl border border-[#d9dee8] bg-white p-6 shadow-sm">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <h3 className="flex items-center gap-2 text-4 font-bold text-[#24314c]">
-                      <Sparkles className="h-5 w-5 text-[#4ca3f0]" />
+                      <Sparkles className="h-5 w-5 text-teal-600" />
                       AI Үнэлгээ
                     </h3>
                     <div
@@ -357,16 +357,16 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-[#edf2f8] p-4">
+                  <div className="rounded-2xl bg-teal-50 p-4">
                     <div className="mb-2 flex items-center justify-between">
                       <p className="text-4 text-[#56627d]">AI оноо</p>
-                      <p className="text-4 font-bold text-[#3b8bf2]">
+                      <p className="text-4 font-bold text-teal-600">
                         {currentAnswer.aiScore} / 20
                       </p>
                     </div>
                     <div className="h-3 rounded-full bg-[#d6deea]">
                       <div
-                        className="h-3 rounded-full bg-[#3b8bf2]"
+                        className="h-3 rounded-full bg-teal-600"
                         style={{
                           width: `${(currentAnswer.aiScore / 20) * 100}%`,
                         }}
@@ -377,7 +377,7 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                   <p className="mt-4 text-4 font-semibold text-[#56627d]">
                     AI санал хүсэлт
                   </p>
-                  <div className="mt-3 rounded-2xl bg-[#edf2f8] p-4 text-4 leading-relaxed text-[#2d3a56]">
+                  <div className="mt-3 rounded-2xl bg-teal-50 p-4 text-4 leading-relaxed text-[#2d3a56]">
                     {currentAnswer.aiFeedback}
                   </div>
                 </section>
@@ -421,13 +421,13 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="rounded-xl bg-white p-4 text-center">
                       <p className="text-4 text-[#6a738b]">AI оноо</p>
-                      <p className="text-4 font-bold text-[#3b8bf2]">
+                      <p className="text-4 font-bold text-teal-600">
                         {currentAnswer.aiScore}
                       </p>
                     </div>
                     <div className="rounded-xl bg-white p-4 text-center">
                       <p className="text-4 text-[#6a738b]">Багшийн оноо</p>
-                      <p className="text-4 font-bold text-[#3b8bf2]">
+                      <p className="text-4 font-bold text-teal-600">
                         {teacherScore}
                       </p>
                     </div>

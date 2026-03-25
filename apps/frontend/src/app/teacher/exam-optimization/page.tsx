@@ -105,7 +105,7 @@ export default function ExamOptimizationPage() {
           onClick={() => fileInputRef.current?.click()}
           className={`cursor-pointer rounded-2xl border-2 border-dashed bg-white p-10 text-center shadow-sm transition ${
             isDragging
-              ? "border-[#4f95ea] bg-[#f0f6ff]"
+              ? "border-teal-600 bg-teal-50"
               : "border-[#c8d4e6] hover:border-[#9eb8e0]"
           }`}
         >
@@ -118,7 +118,7 @@ export default function ExamOptimizationPage() {
             onChange={onFileChange}
           />
           <div className="mx-auto flex max-w-md flex-col items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eef4fc] text-[#4f95ea]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-100 text-teal-600">
               <FileText className="h-9 w-9" strokeWidth={1.75} />
             </div>
             <div>
@@ -135,13 +135,13 @@ export default function ExamOptimizationPage() {
                 e.stopPropagation();
                 fileInputRef.current?.click();
               }}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#4f95ea] px-6 py-3 text-4 font-semibold text-white transition hover:bg-[#2d3d5c]"
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-6 py-3 text-4 font-semibold text-white transition hover:bg-teal-800"
             >
               <Upload className="h-4 w-4" />
               Файл сонгох
             </button>
             {pdfFile ? (
-              <p className="text-3 font-medium text-[#4f95ea]">
+              <p className="text-3 font-medium text-teal-600">
                 Сонгогдсон: {pdfFile.name}
               </p>
             ) : null}
@@ -192,7 +192,7 @@ export default function ExamOptimizationPage() {
               onChange={(e) =>
                 setVariantCount(clampInt(Number(e.target.value), 1, 20))
               }
-              className="w-full max-w-[120px] rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-5 font-bold text-[#1f2a44] outline-none transition focus:border-[#4f95ea] focus:ring-2 focus:ring-[#4f95ea]/25"
+              className="w-full max-w-[120px] rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-5 font-bold text-[#1f2a44] outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/25"
             />
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function ExamOptimizationPage() {
           <button
             type="button"
             disabled={!pdfFile || totalQuestions < 1}
-            className="inline-flex items-center gap-3 rounded-2xl bg-[#4f95ea] px-10 py-4 text-5 font-bold text-white shadow-md transition hover:bg-[#2d3d5c] disabled:cursor-not-allowed disabled:opacity-45"
+            className="inline-flex items-center gap-3 rounded-2xl bg-teal-600 px-10 py-4 text-5 font-bold text-white shadow-md transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Sparkles className="h-6 w-6" />
             Вариант үүсгэх
@@ -276,7 +276,7 @@ function DifficultyCard({
           max={200}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="mt-2 w-full rounded-xl border border-[#d9dee8] bg-[#fafbfc] px-4 py-3 text-5 font-semibold text-[#1f2a44] outline-none transition focus:border-[#4f95ea] focus:bg-white focus:ring-2 focus:ring-[#4f95ea]/25"
+          className="mt-2 w-full rounded-xl border border-[#d9dee8] bg-[#fafbfc] px-4 py-3 text-5 font-semibold text-[#1f2a44] outline-none transition focus:border-teal-600 focus:bg-white focus:ring-2 focus:ring-teal-600/25"
         />
       </label>
     </div>
@@ -312,7 +312,7 @@ function Field({
         min={min}
         max={max}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full rounded-xl border border-[#d9dee8] bg-white px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#a0aec8] focus:border-[#4f95ea] focus:ring-2 focus:ring-[#4f95ea]/25"
+        className="mt-2 w-full rounded-xl border border-[#d9dee8] bg-white px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#a0aec8] focus:border-teal-600 focus:ring-2 focus:ring-teal-600/25"
       />
     </label>
   );

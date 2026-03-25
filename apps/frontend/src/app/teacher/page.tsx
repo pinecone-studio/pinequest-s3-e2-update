@@ -6,7 +6,7 @@ export default function TeacherPage() {
       title: "Олон төрлийн асуулт",
       desc: "Томьёо, зураг, видео болон холимог контент бүхий асуултууд",
       icon: Sparkles,
-      iconClass: "bg-[#0ea5e9]",
+      iconClass: "bg-teal-600",
     },
     {
       title: "Автомат дүн тооцоолох",
@@ -33,14 +33,14 @@ export default function TeacherPage() {
       <div className="mx-auto max-w-7xl space-y-10">
         <div className="grid grid-cols-1 items-center gap-10 xl:grid-cols-2">
           <div>
-            <span className="inline-flex items-center rounded-full border border-[#d9dee8] bg-[#f9fbff] px-3 py-2 text-[#5e6a85]">
+            <span className="inline-flex items-center rounded-full border border-[#d9dee8] bg-teal-50 px-3 py-2 text-[#5e6a85]">
               <span className="mr-2 text-[#22c55e]">●</span> Монголын
               боловсролын шинэ түвшин
             </span>
             <h1 className="mt-6 text-[32px] font-extrabold leading-[1.05] text-[#1f2a44]">
               UPDATE
               <br />
-              <span className="text-[#4f95ea]">боловсролын</span>
+              <span className="text-teal-600">боловсролын</span>
               <br />
               нэгдсэн платформ
             </h1>
@@ -53,7 +53,7 @@ export default function TeacherPage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#4f95ea] px-5 py-2 text-5 font-semibold text-white shadow-md transition hover:bg-[#3f89e4]"
+                className="inline-flex items-center gap-2 rounded-2xl bg-teal-600 px-5 py-2 text-5 font-semibold text-white shadow-md transition hover:bg-teal-700"
               >
                 Платформтой танилцах
                 <ArrowRight className="h-5 w-5" />
@@ -68,19 +68,19 @@ export default function TeacherPage() {
 
             <div className="mt-10 grid max-w-xl grid-cols-3 gap-6">
               <div>
-                <p className="text-[26px] font-extrabold leading-none text-[#4f95ea]">
+                <p className="text-[26px] font-extrabold leading-none text-teal-600">
                   500+
                 </p>
                 <p className="mt-2 text-3 text-[#5b6883]">Сургууль</p>
               </div>
               <div>
-                <p className="text-[26px] font-extrabold leading-none text-[#4f95ea]">
+                <p className="text-[26px] font-extrabold leading-none text-teal-600">
                   50K+
                 </p>
                 <p className="mt-2 text-3 text-[#5b6883]">Сурагч</p>
               </div>
               <div>
-                <p className="text-[26px] font-extrabold leading-none text-[#4f95ea]">
+                <p className="text-[26px] font-extrabold leading-none text-teal-600">
                   99.9%
                 </p>
                 <p className="mt-2 text-3 text-[#5b6883]">Uptime</p>
@@ -134,7 +134,7 @@ export default function TeacherPage() {
           <div className="space-y-3">
             <article className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#d9dee8]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e8f1ff] text-[32px] font-extrabold text-[#4f95ea]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100 text-[32px] font-extrabold text-teal-600">
                   1
                 </div>
                 <div>

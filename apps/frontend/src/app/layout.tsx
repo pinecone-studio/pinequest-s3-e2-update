@@ -25,7 +25,7 @@ export default function RootLayout({
         } as CSSProperties
       }
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-screen flex-col">{children}</body>
     </html>
   );
 }

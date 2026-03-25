@@ -37,7 +37,7 @@ export default function ClassListScreen() {
         </div>
         <button
           onClick={() => setAddClassOpen(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-[#4ca3f0] px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-[#3996ea]"
+          className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-teal-700"
           type="button"
         >
           <Plus className="h-5 w-5" />
@@ -51,10 +51,10 @@ export default function ClassListScreen() {
             <article
               key={cls.id}
               onClick={() => router.push(`/teacher/angi?class=${cls.id}`)}
-              className="flex cursor-pointer flex-col gap-3 rounded-xl border border-[#e2e8f0] p-4 transition hover:border-[#4ca3f0]/40 hover:bg-[#f8fafc]"
+              className="flex cursor-pointer flex-col gap-3 rounded-xl border border-[#e2e8f0] p-4 transition hover:border-teal-600/40 hover:bg-[#f8fafc]"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#e0f2fe] text-[#4ca3f0]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
                   <Users className="h-6 w-6" />
                 </div>
                 <div>

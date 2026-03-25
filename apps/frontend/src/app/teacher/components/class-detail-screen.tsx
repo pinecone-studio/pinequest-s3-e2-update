@@ -47,7 +47,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
         <p className="text-4 text-[#64748b]">Анги олдсонгүй.</p>
         <button
           onClick={() => router.push("/teacher/angi")}
-          className="mt-4 text-4 font-semibold text-[#4ca3f0] hover:underline"
+          className="mt-4 text-4 font-semibold text-teal-600 hover:underline"
         >
           Буцах
         </button>
@@ -59,7 +59,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
     <main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-8">
       <button
         onClick={() => router.push("/teacher/angi")}
-        className="inline-flex items-center gap-2 text-4 font-semibold text-[#4ca3f0] hover:underline"
+        className="inline-flex items-center gap-2 text-4 font-semibold text-teal-600 hover:underline"
         type="button"
       >
         <ArrowLeft className="h-5 w-5" />
@@ -71,7 +71,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
           <p className="text-4 text-[#64748b]">Үүсгэсэн ангиуд, сурагчдын жагсаалт</p>
         </div>
         {/* <button
-          className="inline-flex items-center gap-2 rounded-xl bg-[#4ca3f0] px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-[#3996ea]"
+          className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-teal-700"
           type="button"
         >
           <Plus className="h-5 w-5" />
@@ -82,7 +82,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
       <section className="rounded-xl border border-[#d9dee8] bg-white p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#e0f2fe] text-[#4ca3f0]">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
               <Users className="h-7 w-7" />
             </div>
             <div>
@@ -94,13 +94,13 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
           </div>
           <div className="flex flex-wrap gap-2">
             <button
-              className="rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-4 font-semibold text-[#4ca3f0] transition hover:bg-[#f8fafc]"
+              className="rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-4 font-semibold text-teal-600 transition hover:bg-[#f8fafc]"
               type="button"
             >
               Шалгалт үүсгэх
             </button>
             <button
-              className="rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-4 font-semibold text-[#4ca3f0] transition hover:bg-[#f8fafc]"
+              className="rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-4 font-semibold text-teal-600 transition hover:bg-[#f8fafc]"
               type="button"
             >
               Сурагч нэмэх
@@ -125,7 +125,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
                   <td className="py-3">
                     <button
                       onClick={() => router.push(`/teacher/shalgalt?student=${student.code}`)}
-                      className="text-4 font-semibold text-[#4ca3f0] hover:underline"
+                      className="text-4 font-semibold text-teal-600 hover:underline"
                       type="button"
                     >
                       Үр дүн харах
@@ -143,7 +143,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
             className="inline-flex items-center gap-2 rounded-xl border border-[#d9dee8] bg-white px-4 py-3 text-4 font-medium text-[#334261] transition hover:bg-[#f8fafc]"
             type="button"
           >
-            <FileText className="h-5 w-5 text-[#4ca3f0]" />
+            <FileText className="h-5 w-5 text-teal-600" />
             Нийгэм — 3-р сар
           </button>
         </div>
