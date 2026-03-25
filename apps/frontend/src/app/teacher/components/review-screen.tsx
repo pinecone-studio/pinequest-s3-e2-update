@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { STUDENTS_BY_CODE } from "../score-calculation/data/students";
+import { store } from "@/app/lib/store";
 
 type ReviewScreenProps = {
   onBack: () => void;
@@ -16,9 +17,26 @@ export default function ReviewScreen({
   onBack,
   studentCode,
 }: ReviewScreenProps) {
-  const student = studentCode ? STUDENTS_BY_CODE[studentCode] : null;
-  const { name, email, initial } = student
-    ? { ...student, initial: student.name.charAt(0) }
+  const resolvedStudent =
+    studentCode && store.getStudentByNumber(studentCode)
+      ? (() => {
+          const s = store.getStudentByNumber(studentCode);
+          if (!s) return null;
+          return {
+            name: `${s.firstName} ${s.lastName}`,
+            email: `${s.studentNumber}@school.mn`,
+            initial: s.firstName.charAt(0),
+          };
+        })()
+      : studentCode && STUDENTS_BY_CODE[studentCode]
+        ? (() => {
+            const s = STUDENTS_BY_CODE[studentCode];
+            return { name: s.name, email: s.email, initial: s.name.charAt(0) };
+          })()
+        : null;
+
+  const { name, email, initial } = resolvedStudent
+    ? resolvedStudent
     : DEFAULT_STUDENT;
 
   return (

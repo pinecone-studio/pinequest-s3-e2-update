@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import OverviewScreen from "../../components/overview-screen";
 import ReviewScreen from "../../components/review-screen";
 import StatsScreen from "../../components/stats-screen";
-import Header from "../../components/header";
 
 type TeacherView = "overview" | "review" | "stats";
 
@@ -46,12 +45,6 @@ function ShalgaltInner() {
 
   return (
     <div className="min-h-screen bg-teal-50 text-[#1f2a44]">
-      <Header
-        variant="tabs"
-        activeView={activeView === "stats" ? "stats" : "overview"}
-        hiddenTabs={["review"]}
-        onChangeView={setActiveView}
-      />
       <ShalgaltContent
         activeView={activeView}
         setActiveView={setActiveView}
