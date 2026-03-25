@@ -92,22 +92,28 @@ export function EditExamModal({
         </div>
 
         <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2">
-          <input
-            className="h-10 rounded-lg border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
-            onChange={(e) => setDraft((prev) => (prev ? { ...prev, title: e.target.value } : prev))}
-            value={draft.title}
-          />
-          <input
-            className="h-10 rounded-lg border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
-            min={10}
-            onChange={(e) =>
-              setDraft((prev) =>
-                prev ? { ...prev, duration: Number(e.target.value) || 10 } : prev,
-              )
-            }
-            type="number"
-            value={draft.duration}
-          />
+          <div>
+            <p className="mb-1 text-2 text-[#5c6f91]">Шалгалтын нэр: сурагчид харагдах нэр</p>
+            <input
+              className="h-10 w-full rounded-lg border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+              onChange={(e) => setDraft((prev) => (prev ? { ...prev, title: e.target.value } : prev))}
+              value={draft.title}
+            />
+          </div>
+          <div>
+            <p className="mb-1 text-2 text-[#5c6f91]">Хугацаа: сурагчийн шалгалт өгөх нийт минут</p>
+            <input
+              className="h-10 w-full rounded-lg border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+              min={10}
+              onChange={(e) =>
+                setDraft((prev) =>
+                  prev ? { ...prev, duration: Number(e.target.value) || 10 } : prev,
+                )
+              }
+              type="number"
+              value={draft.duration}
+            />
+          </div>
         </div>
 
         <div className="mt-3 space-y-2">

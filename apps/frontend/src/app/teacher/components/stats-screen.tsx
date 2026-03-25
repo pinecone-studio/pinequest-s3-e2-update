@@ -31,18 +31,27 @@ const stats = [
   },
 ] as const;
 
-const scoreDistribution = [
-  { range: "0-5", count: 1 },
-  { range: "6-10", count: 2 },
-  { range: "11-15", count: 4 },
-  { range: "16-20", count: 5 },
-] as const;
-
-const commonErrors = [
-  { label: "Жишээ дутмаг, тодорхой бус байх", count: 8, percent: 67 },
-  { label: "Үндсэн ойлголтуудыг зөв тайлбарлаагүй", count: 5, percent: 42 },
-  { label: "Бүтэц, зохион байгуулалт муу", count: 4, percent: 33 },
-  { label: "Критик сэтгэлгээ дутмаг", count: 3, percent: 25 },
+const mostMissedQuestions = [
+  {
+    label: "Асуулт 4: Үндсэн хуулийн эрх мэдлийн хуваарилалт",
+    wrongStudents: 5,
+    percent: 83,
+  },
+  {
+    label: "Асуулт 7: Иргэний эрх, үүргийн ялгаа",
+    wrongStudents: 4,
+    percent: 67,
+  },
+  {
+    label: "Асуулт 2: Ардчиллын зарчим бодит жишээтэй тайлбарлах",
+    wrongStudents: 4,
+    percent: 67,
+  },
+  {
+    label: "Асуулт 9: Төрийн байгууллагын чиг үүрэг",
+    wrongStudents: 3,
+    percent: 50,
+  },
 ] as const;
 
 const students = [
@@ -97,6 +106,21 @@ const recommendations = [
   "Шилжин ирсэн сурагчид онцгой анхаарал хандуулж, түвшинг тэгшлэх хэрэгтэй",
 ] as const;
 
+const gradeOrder = ["A", "B", "C", "D", "F"] as const;
+
+function toScoreNumber(score: string) {
+  const raw = Number(score.split("/")[0]);
+  return Number.isFinite(raw) ? raw : 0;
+}
+
+function toLetterGrade(score: number) {
+  if (score >= 18) return "A";
+  if (score >= 16) return "B";
+  if (score >= 13) return "C";
+  if (score >= 10) return "D";
+  return "F";
+}
+
 function toneClasses(tone: "blue" | "green" | "red") {
   if (tone === "green") return "text-[#12b650]";
   if (tone === "red") return "text-[#f15f6a]";
@@ -104,6 +128,16 @@ function toneClasses(tone: "blue" | "green" | "red") {
 }
 
 export default function StatsScreen() {
+  const gradeDistribution = gradeOrder.map((grade) => {
+    const count = students.filter(
+      (student) => toLetterGrade(toScoreNumber(student.score)) === grade,
+    ).length;
+    const percent = students.length
+      ? Math.round((count / students.length) * 100)
+      : 0;
+    return { grade, count, percent };
+  });
+
   const downloadExcel = () => {
     const html = `
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
@@ -126,16 +160,19 @@ export default function StatsScreen() {
               )
               .join("")}
 
-            <tr><th colspan="2">Оноо Хуваарилалт</th></tr>
-            ${scoreDistribution
-              .map((item) => `<tr><td>${item.range}</td><td>${item.count}</td></tr>`)
-              .join("")}
-
-            <tr><th colspan="2">Түгээмэл Алдаа</th></tr>
-            ${commonErrors
+            <tr><th colspan="2">Үнэлгээ Хуваарилалт (A/B/C/D/F)</th></tr>
+            ${gradeDistribution
               .map(
                 (item) =>
-                  `<tr><td>${item.label}</td><td>${item.count} сурагч (${item.percent}%)</td></tr>`,
+                  `<tr><td>${item.grade}</td><td>${item.count} сурагч (${item.percent}%)</td></tr>`,
+              )
+              .join("")}
+
+            <tr><th colspan="2">Хамгийн Их Алдсан Асуулт</th></tr>
+            ${mostMissedQuestions
+              .map(
+                (item) =>
+                  `<tr><td>${item.label}</td><td>${item.wrongStudents} сурагч (${item.percent}%)</td></tr>`,
               )
               .join("")}
 
@@ -210,40 +247,42 @@ export default function StatsScreen() {
       </section>
 
       <section className="rounded-xl border border-[#d9dee8] bg-white p-5">
-        <p className="mb-5 text-4 font-bold">Оноо Хуваарилалт</p>
-        <div className="grid h-64 grid-cols-4 items-end gap-4 border-b border-l border-[#bcc7da] px-3 pb-0 pt-2">
-          {scoreDistribution.map((bar) => (
-            <div
-              key={bar.range}
-              className="flex flex-col items-center justify-end gap-2"
-            >
-              <div
-                className="w-full rounded-t-2xl bg-teal-600"
-                style={{ height: `${bar.count * 22}px` }}
-              />
-              <p className="pb-2 text-4 font-semibold text-[#334261]">
-                {bar.range}
-              </p>
+        <p className="mb-5 text-4 font-bold">Дүнгийн Үсгэн Үнэлгээний Хуваарилалт</p>
+        <div className="space-y-4">
+          {gradeDistribution.map((item) => (
+            <div key={item.grade}>
+              <div className="mb-1 flex items-center justify-between gap-3 text-4">
+                <p className="font-bold text-[#34425f]">{item.grade}</p>
+                <p className="font-semibold text-[#4a5875]">
+                  {item.count} сурагч ({item.percent}%)
+                </p>
+              </div>
+              <div className="h-3 rounded-full bg-[#e6ebf3]">
+                <div
+                  className="h-3 rounded-full bg-teal-600"
+                  style={{ width: `${item.percent}%` }}
+                />
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       <section className="rounded-xl border border-[#d9dee8] bg-white p-5">
-        <p className="mb-5 text-4 font-bold">Түгээмэл Алдаа</p>
+        <p className="mb-5 text-4 font-bold">Хүүхдүүдийн Хамгийн Их Алдсан Асуулт</p>
         <div className="space-y-4">
-          {commonErrors.map((error) => (
-            <div key={error.label}>
+          {mostMissedQuestions.map((question) => (
+            <div key={question.label}>
               <div className="mb-1 flex items-center justify-between gap-3 text-4">
-                <p className="text-[#34425f]">{error.label}</p>
+                <p className="text-[#34425f]">{question.label}</p>
                 <p className="font-semibold text-[#4a5875]">
-                  {error.count} сурагч ({error.percent}%)
+                  {question.wrongStudents} сурагч ({question.percent}%)
                 </p>
               </div>
               <div className="h-2 rounded-full bg-[#e6ebf3]">
                 <div
                   className="h-2 rounded-full bg-teal-600"
-                  style={{ width: `${error.percent}%` }}
+                  style={{ width: `${question.percent}%` }}
                 />
               </div>
             </div>
