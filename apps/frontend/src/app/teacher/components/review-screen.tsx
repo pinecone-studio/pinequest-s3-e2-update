@@ -26,14 +26,14 @@ export default function ReviewScreen({
       <button
         type="button"
         onClick={onBack}
-        className="inline-flex items-center gap-2 text-[#4ca3f0] hover:underline transition-colors"
+        className="inline-flex items-center gap-2 text-teal-600 hover:underline transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Буцах</span>
       </button>
 
       <section className="rounded-2xl border border-[#d9dee8] bg-white p-10 text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#5eaef4] text-4 font-semibold text-white">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-teal-500 text-4 font-semibold text-white">
           {initial}
         </div>
         <p className="mt-5 text-4 font-extrabold">{name}</p>
@@ -60,13 +60,13 @@ export default function ReviewScreen({
 
       <section className="rounded-2xl border border-[#d9dee8] bg-white p-5">
         <p className="mb-3 text-4 font-semibold">Асуулт</p>
-        <div className="rounded-2xl bg-[#edf2f8] p-4 text-4 leading-relaxed">
+        <div className="rounded-2xl bg-teal-50 p-4 text-4 leading-relaxed">
           Монгол Улсын Үндсэн хуулийн гол зарчмуудыг тайлбарлаж, өнөөгийн
           нийгэмд хэрхэн хэрэгжиж байгааг жишээ дээр тодруулна уу?
         </div>
 
         <p className="mb-3 mt-5 text-4 font-semibold">Таны хариулт</p>
-        <div className="rounded-2xl bg-[#edf2f8] p-4 text-4 leading-relaxed">
+        <div className="rounded-2xl bg-teal-50 p-4 text-4 leading-relaxed">
           Монгол Улсын Үндсэн хууль нь 1992 онд батлагдсан бөгөөд манай улсын
           хамгийн дээд хууль юм. Үндсэн хуулийн гол зарчмуудад ардчилал, хүний
           эрх, үндэсний тогтвортой байдал, хууль дээдлэх ёс зэрэг багтдаг.
@@ -78,7 +78,7 @@ export default function ReviewScreen({
 
       <section className="rounded-2xl border border-[#d9dee8] bg-white p-5">
         <p className="mb-3 text-4 font-semibold">Санал хүсэлт</p>
-        <div className="rounded-2xl bg-[#edf2f8] p-4 text-4 leading-relaxed">
+        <div className="rounded-2xl bg-teal-50 p-4 text-4 leading-relaxed">
           Хариулт нь үндсэн зарчмуудыг сайн тодорхойлсон боловч зарим жишээ нь
           илүү тодорхой байх шаардлагатай. Авлига, ядуурал зэрэг асуудлуудыг
           дурдсан нь сайн, гэхдээ эдгээр нь Үндсэн хуулийн хэрэгжилттэй яаж
@@ -99,7 +99,7 @@ export default function ReviewScreen({
       <section className="rounded-2xl border border-[#d9dee8] bg-white p-5">
         <p className="mb-3 text-4 font-semibold">Дараагийн алхам</p>
         <div className="space-y-3">
-          <div className="rounded-2xl bg-[#edf2f8] p-4">
+          <div className="rounded-2xl bg-teal-50 p-4">
             <p className="text-4 font-bold">
               Санал хүсэлтийг анхааралтай уншаарай
             </p>
@@ -108,7 +108,7 @@ export default function ReviewScreen({
             </p>
           </div>
 
-          <div className="rounded-2xl bg-[#edf2f8] p-4">
+          <div className="rounded-2xl bg-teal-50 p-4">
             <p className="text-4 font-bold">
               Үндсэн материалыг давтан судлаарай
             </p>
@@ -117,7 +117,7 @@ export default function ReviewScreen({
             </p>
           </div>
 
-          <div className="rounded-2xl bg-[#edf2f8] p-4">
+          <div className="rounded-2xl bg-teal-50 p-4">
             <p className="text-4 font-bold">
               Асуулт байвал багштайгаа ярилцаарай
             </p>

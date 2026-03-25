@@ -45,7 +45,7 @@ function ShalgaltInner() {
   useEffect(() => {}, [studentCode]);
 
   return (
-    <div className="min-h-screen bg-[#edf2f8] text-[#1f2a44]">
+    <div className="min-h-screen bg-teal-50 text-[#1f2a44]">
       <Header
         variant="tabs"
         activeView={activeView === "stats" ? "stats" : "overview"}
@@ -65,7 +65,7 @@ export default function TeacherShalgaltPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#edf2f8] flex items-center justify-center text-4 text-[#64748b]">
+        <div className="min-h-screen bg-teal-50 flex items-center justify-center text-4 text-[#64748b]">
           Ачааллаж байна...
         </div>
       }

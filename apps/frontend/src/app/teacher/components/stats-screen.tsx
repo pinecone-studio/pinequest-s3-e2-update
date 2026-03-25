@@ -100,7 +100,7 @@ const recommendations = [
 function toneClasses(tone: "blue" | "green" | "red") {
   if (tone === "green") return "text-[#12b650]";
   if (tone === "red") return "text-[#f15f6a]";
-  return "text-[#4ca3f0]";
+  return "text-teal-600";
 }
 
 export default function StatsScreen() {
@@ -179,7 +179,7 @@ export default function StatsScreen() {
             </p>
           </div>
           <button
-            className="rounded-lg bg-[#4ca3f0] px-4 py-2 text-4 font-semibold text-white hover:bg-[#3d94e0]"
+            className="rounded-lg bg-teal-600 px-4 py-2 text-4 font-semibold text-white hover:bg-teal-700"
             onClick={downloadExcel}
             type="button"
           >
@@ -195,7 +195,7 @@ export default function StatsScreen() {
             className="rounded-xl border border-[#d9dee8] bg-white p-4"
           >
             <div className="flex items-start justify-between">
-              <span className="text-4 text-[#68b4f5]">◉</span>
+              <span className="text-4 text-teal-500">◉</span>
               <span
                 className={`text-4 font-semibold ${toneClasses(item.tone)}`}
               >
@@ -218,7 +218,7 @@ export default function StatsScreen() {
               className="flex flex-col items-center justify-end gap-2"
             >
               <div
-                className="w-full rounded-t-2xl bg-[#3498e8]"
+                className="w-full rounded-t-2xl bg-teal-600"
                 style={{ height: `${bar.count * 22}px` }}
               />
               <p className="pb-2 text-4 font-semibold text-[#334261]">
@@ -242,7 +242,7 @@ export default function StatsScreen() {
               </div>
               <div className="h-2 rounded-full bg-[#e6ebf3]">
                 <div
-                  className="h-2 rounded-full bg-[#3498e8]"
+                  className="h-2 rounded-full bg-teal-600"
                   style={{ width: `${error.percent}%` }}
                 />
               </div>

@@ -19,7 +19,7 @@ function AngiContent() {
 
 export default function TeacherAngiPage() {
   return (
-    <div className="min-h-screen bg-[#edf2f8] text-[#1f2a44]">
+    <div className="min-h-screen bg-teal-50 text-[#1f2a44]">
       <Header variant="tabs" activeView="review" />
       <Suspense
         fallback={

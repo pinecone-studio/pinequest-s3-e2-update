@@ -41,7 +41,7 @@ export default function Header({ variant = "dashboard", activeView, onChangeView
           onClick={() => router.push("/")}
           type="button"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#4ca3f0] to-[#3b8bd9] text-white shadow-sm">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-sm">
             <span className="text-lg">🎓</span>
           </div>
           <div className="min-w-0">
