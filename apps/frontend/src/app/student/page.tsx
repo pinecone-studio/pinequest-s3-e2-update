@@ -22,6 +22,7 @@ export default function StudentPage() {
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const isFormValid = fullName.trim() && grade.trim() && school.trim() && isEmailValid;
   useEffect(() => {
+// timer section
   if (step !== "exam") return;
 
   const timer = setInterval(() => {
