@@ -1,21 +1,14 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getSessionUser, clearSession } from "@/app/lib/session";
+import { authSignInHref } from "@/app/lib/auth-redirect";
 import { store } from "@/app/lib/store";
 
-const DEFAULT_ADMIN_ID = "user-admin";
-
 async function requireAdmin() {
-  const sessionUser = await getSessionUser();
-  if (sessionUser?.role === "school_admin") return sessionUser;
-  return store.getUser(DEFAULT_ADMIN_ID)!;
-}
-
-export async function logout(): Promise<void> {
-  await clearSession();
-  redirect("/");
+  const { userId } = await auth();
+  if (!userId) redirect(authSignInHref("/admin"));
 }
 
 export async function createTeacher(formData: FormData): Promise<void> {

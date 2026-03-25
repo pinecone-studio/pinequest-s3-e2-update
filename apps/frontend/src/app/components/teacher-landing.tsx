@@ -1,4 +1,5 @@
 import { ArrowRight, Shield, Sparkles, Users, Zap } from "lucide-react";
+import Image from "next/image";
 import { TeacherLoginCard } from "./teacher-login-card";
 const SECOND_IMG =
   "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=80";
@@ -97,11 +98,15 @@ export function TeacherLanding({ loginError }: Props) {
 
           <div className="space-y-5">
             <div className="rounded-3xl border-4 border-white bg-white p-2 shadow-lg">
-            <img
-              alt="Багийн хамтын ажиллагаа"
-              className="h-[420px] w-full rounded-2xl object-cover"
-              src={SECOND_IMG}
-            />
+              <div className="relative h-[420px] w-full overflow-hidden rounded-2xl">
+                <Image
+                  alt="Багийн хамтын ажиллагаа"
+                  className="object-cover"
+                  fill
+                  sizes="(max-width: 1280px) 100vw, 640px"
+                  src={SECOND_IMG}
+                />
+              </div>
             </div>
             <TeacherLoginCard error={loginError} />
           </div>
@@ -195,11 +200,15 @@ export function TeacherLanding({ loginError }: Props) {
           </div>
 
           <div className="rounded-3xl border-4 border-white bg-white p-2 shadow-lg">
-            <img
-              alt="Багийн хамтын ажиллагаа"
-              className="h-[420px] w-full rounded-2xl object-cover"
-              src={SECOND_IMG}
-            />
+            <div className="relative h-[420px] w-full overflow-hidden rounded-2xl">
+              <Image
+                alt="Багийн хамтын ажиллагаа"
+                className="object-cover"
+                fill
+                sizes="(max-width: 1280px) 100vw, 640px"
+                src={SECOND_IMG}
+              />
+            </div>
           </div>
         </div>
 

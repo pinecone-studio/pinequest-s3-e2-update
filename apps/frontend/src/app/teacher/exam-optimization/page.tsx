@@ -31,7 +31,6 @@ export default function ExamOptimizationPage() {
   const [hardCount, setHardCount] = useState(3);
   const [variantCount, setVariantCount] = useState(2);
 
-  const [schoolName, setSchoolName] = useState("");
   const [subjectName, setSubjectName] = useState("");
   const [classGroup, setClassGroup] = useState("");
   const [durationMinutes, setDurationMinutes] = useState(60);

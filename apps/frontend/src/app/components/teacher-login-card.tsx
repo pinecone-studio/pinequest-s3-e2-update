@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { loginTeacherInstant } from "@/app/auth/actions";
+import { authSignInHref, authSignUpHref } from "@/app/lib/auth-redirect";
 
 type Props = {
   error?: string;
@@ -28,25 +28,37 @@ export function TeacherLoginCard({ error }: Props) {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
         <Link
-          href="/admin"
+          href={authSignInHref("/admin")}
           className="flex min-h-[3.25rem] flex-1 items-center justify-center rounded-2xl border border-[#d9dee8] bg-[#f8fafc] px-4 py-3 text-center text-4 font-semibold text-[#2f3c59] shadow-sm transition hover:border-teal-300 hover:bg-teal-50 sm:min-h-[3.5rem] sm:text-5"
         >
           Захиргааны хэсэг
         </Link>
-        <form
-          action={loginTeacherInstant}
-          className="flex min-h-[3.25rem] flex-1 flex-col sm:min-h-[3.5rem]"
+        <Link
+          href={authSignInHref("/teacher")}
+          className="flex min-h-[3.25rem] flex-1 items-center justify-center rounded-2xl bg-teal-600 px-4 py-3 text-center text-4 font-semibold text-white shadow-md transition hover:bg-teal-700 sm:min-h-[3.5rem] sm:text-5"
         >
-          <button
-            type="submit"
-            className="h-full min-h-[3.25rem] w-full flex-1 rounded-2xl bg-teal-600 px-4 py-3 text-4 font-semibold text-white shadow-md transition hover:bg-teal-700 sm:min-h-[3.5rem] sm:text-5"
-          >
-            Багшийн хэсэгт нэвтрэх
-          </button>
-        </form>
+          Багшийн хэсэгт нэвтрэх
+        </Link>
       </div>
 
-      <p className="mt-4 text-center text-3 text-[#6b7894]">
+      <p className="mt-3 text-center text-3 text-[#6b7894]">
+        Шинэ хэрэглэгч?{" "}
+        <Link
+          href={authSignUpHref("/teacher")}
+          className="font-semibold text-teal-700 underline-offset-2 hover:underline"
+        >
+          Бүртгүүлэх (багш)
+        </Link>
+        {" · "}
+        <Link
+          href={authSignUpHref("/admin")}
+          className="font-semibold text-[#5b6883] underline-offset-2 hover:underline"
+        >
+          захиргаа
+        </Link>
+      </p>
+
+      <p className="mt-2 text-center text-3 text-[#6b7894]">
         Student орчин удахгүй нээгдэнэ.
       </p>
     </div>

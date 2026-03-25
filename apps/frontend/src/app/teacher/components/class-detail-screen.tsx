@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Users, Plus, FileText, ArrowLeft } from "lucide-react";
+import { Users, FileText, ArrowLeft } from "lucide-react";
 
 const CLASSES_DATA: Record<
   string,
@@ -58,7 +58,7 @@ export default function ClassDetailScreen({ classId, onBack }: ClassDetailScreen
   return (
     <main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-8">
       <button
-        onClick={() => router.push("/teacher/angi")}
+        onClick={() => (onBack ? onBack() : router.push("/teacher/angi"))}
         className="inline-flex items-center gap-2 text-4 font-semibold text-teal-600 hover:underline"
         type="button"
       >

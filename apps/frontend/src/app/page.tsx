@@ -1,6 +1,6 @@
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { TeacherLanding } from "@/app/components/teacher-landing";
-import { getSessionUser } from "@/app/lib/session";
 
 type SearchParams = { error?: string | string[] };
 
@@ -9,9 +9,12 @@ export default async function Home({
 }: {
   searchParams?: Promise<SearchParams>;
 }) {
-  const user = await getSessionUser();
-  if (user?.role === "teacher") {
-    redirect("/teacher");
+  const { userId } = await auth();
+  if (userId) {
+    const clerkUser = await currentUser();
+    const role = clerkUser?.publicMetadata?.role;
+    if (role === "teacher") redirect("/teacher");
+    if (role === "school_admin" || role === "admin") redirect("/admin");
   }
 
   const sp = searchParams ? await searchParams : {};
