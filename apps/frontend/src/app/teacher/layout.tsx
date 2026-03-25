@@ -1,17 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import {
-  BookText,
-  Calculator,
-  Cog,
-  Database,
-  Home,
-  MonitorCheck,
-  Users,
-} from "lucide-react";
+import { BookText, Calculator, Cog, Database, Home } from "lucide-react";
 
 const menuItems = [
   { href: "/teacher", label: "Нүүр хуудас", icon: Home },
@@ -35,16 +28,6 @@ const menuItems = [
     label: "Асуултын сан ба контентийн менежмент",
     icon: Database,
   },
-  {
-    href: "/teacher/multi-user",
-    label: "Олон хэрэглэгчтэй орчны шийдэл",
-    icon: Users,
-  },
-  {
-    href: "/teacher/progress-monitor",
-    label: "Шалгалтын явцын хяналт",
-    icon: MonitorCheck,
-  },
 ];
 
 export default function TeacherLayout({ children }: { children: ReactNode }) {
@@ -56,12 +39,18 @@ export default function TeacherLayout({ children }: { children: ReactNode }) {
         <aside className="flex w-[320px] shrink-0 flex-col border-r border-[#d9dee8] bg-white">
           <div className="border-b border-[#e5eaf2] p-6">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-md">
-                <BookText className="h-8 w-8" />
+              <div className="h-12 w-16 overflow-hidden rounded-lg shadow-md">
+                <Image
+                  alt="UPDATE лого"
+                  className="h-full w-full object-cover"
+                  height={50}
+                  src="/logo.png"
+                  width={70}
+                />
               </div>
               <div>
                 <p className="text-6 font-extrabold leading-tight">UPDATE</p>
-                <p className="text-3 text-[#6b7289]">Боловсролын платформ</p>
+                <p className="text-1 text-[#6b7289]">Боловсролын платформ</p>
               </div>
             </div>
           </div>
@@ -76,7 +65,7 @@ export default function TeacherLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-full px-4 py-3 transition ${
+                  className={`flex items-center gap-3 rounded-lg px-1 py-1 transition ${
                     isActive
                       ? "bg-teal-600 text-white shadow-sm"
                       : "text-[#2f3c59] hover:bg-[#f1f5fb]"
