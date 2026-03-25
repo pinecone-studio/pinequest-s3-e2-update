@@ -24,6 +24,10 @@ export default function StudentPage() {
   useEffect(() => {
   if (step !== "exam") return;
 
+  const timer = setInterval(() => {
+    setRemainingSeconds((p) => (p > 0 ? p - 1 : 0));
+  }, 1000);
+
   const preventCopy = (e: ClipboardEvent) => e.preventDefault();
 
   const preventKeys = (e: KeyboardEvent) => {
@@ -41,6 +45,8 @@ export default function StudentPage() {
   document.addEventListener("contextmenu", disableRightClick);
 
   return () => {
+    clearInterval(timer);
+
     document.removeEventListener("copy", preventCopy);
     document.removeEventListener("cut", preventCopy);
     document.removeEventListener("paste", preventCopy);
