@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { initialExams, teacherClasses } from "./mock-data";
+import { useEffect, useMemo, useState } from "react";
+import {
+  createExamOnApi,
+  fetchExamByIdFromApi,
+  fetchExamsFromApi,
+} from "./exam-api";
+import { getGraphqlEndpoint } from "./graphql-client";
+import { teacherClasses } from "./mock-data";
 import type { Exam, ExamVariant, Question, SentExam, TabKey } from "./types";
 import {
-  createExamFromForm,
   createSentExam,
   duplicateExam,
   generateVariantQuestions,
@@ -21,7 +26,8 @@ import { TabSwitcher } from "./components/tab-switcher";
 
 export default function ContentManagementPage() {
   const [tab, setTab] = useState<TabKey>("saved");
-  const [exams, setExams] = useState<Exam[]>(initialExams);
+  const [exams, setExams] = useState<Exam[]>([]);
+  const [examsLoading, setExamsLoading] = useState(false);
   const [sentExams, setSentExams] = useState<SentExam[]>([]);
   const [viewExam, setViewExam] = useState<Exam | null>(null);
   const [editExam, setEditExam] = useState<Exam | null>(null);
@@ -56,17 +62,62 @@ export default function ContentManagementPage() {
     setTimeout(() => setToast(""), 2200);
   };
 
-  const saveNewExam = (payload: {
+  useEffect(() => {
+    if (!getGraphqlEndpoint()) {
+      const warnTimer = setTimeout(() => {
+        showToast("NEXT_PUBLIC_BACKEND_URL тохируулна уу — жагсаалт серверээс ирнэ.");
+      }, 0);
+      return () => clearTimeout(warnTimer);
+    }
+    let cancelled = false;
+    void (async () => {
+      setExamsLoading(true);
+      const result = await fetchExamsFromApi();
+      if (cancelled) return;
+      setExamsLoading(false);
+      if (result.ok) setExams(result.exams);
+      else showToast(`Шалгалт ачаалах: ${result.error}`);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const saveNewExam = async (payload: {
     title: string;
     subject: string;
+    subjectId: string;
     grade: string;
     duration: number;
     questions: Question[];
   }) => {
-    const nextExam = createExamFromForm(payload);
-    setExams((prev) => [nextExam, ...prev]);
-    setTab("saved");
-    showToast("Шинэ шалгалт амжилттай хадгалагдлаа.");
+    if (!getGraphqlEndpoint()) {
+      const msg = "NEXT_PUBLIC_BACKEND_URL тохируулна уу.";
+      showToast(msg);
+      throw new Error(msg);
+    }
+    const res = await createExamOnApi(payload);
+    if (res.ok) {
+      setExams((prev) => [res.exam, ...prev]);
+      setTab("saved");
+      showToast("Шалгалт серверт хадгалагдлаа.");
+      return;
+    }
+    showToast(res.error);
+    throw new Error(res.error);
+  };
+
+  const handleViewExam = async (exam: Exam) => {
+    if (!getGraphqlEndpoint()) {
+      setViewExam(exam);
+      return;
+    }
+    const result = await fetchExamByIdFromApi(exam.id);
+    if (result.ok) {
+      setViewExam(result.exam);
+      return;
+    }
+    showToast(result.error);
   };
 
   const removeExam = (exam: Exam) => {
@@ -135,18 +186,24 @@ export default function ContentManagementPage() {
           <div className="rounded-2xl border border-[#d9e6fb] bg-white p-4 shadow-sm">
             <h2 className="text-4 font-bold text-[#1f2a44]">Өмнө үүсгэсэн шалгалтууд</h2>
             <p className="text-2 text-[#5c6f91]">
-              Харах, засах, устгах, хуулбарлах, анги руу илгээх үйлдлүүд бүгд local state дээр.
+              Жагсаалт GraphQL `exams` query-оор; «Харах» нь `exam(id)`-аар сүүлийн өгөгдлийг татна.
             </p>
           </div>
 
-          <SavedExamsList
-            exams={exams}
-            onDelete={removeExam}
-            onDuplicate={duplicateOneExam}
-            onEdit={setEditExam}
-            onSend={setSendExam}
-            onView={setViewExam}
-          />
+          {examsLoading ? (
+            <div className="rounded-xl border border-dashed border-[#d9e6fb] bg-[#f7fbff] p-10 text-center text-2 text-[#5c6f91]">
+              Шалгалтын жагсаалт ачаалж байна…
+            </div>
+          ) : (
+            <SavedExamsList
+              exams={exams}
+              onDelete={removeExam}
+              onDuplicate={duplicateOneExam}
+              onEdit={setEditExam}
+              onSend={setSendExam}
+              onView={handleViewExam}
+            />
+          )}
 
           <section className="rounded-2xl border border-[#d9e6fb] bg-white p-4 shadow-sm">
             <h3 className="text-4 font-bold text-[#1f2a44]">Сурагчийн шалгалт нээх (линкээр)</h3>
@@ -157,7 +214,7 @@ export default function ContentManagementPage() {
               <input
                 className="h-10 w-full rounded-lg border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
                 onChange={(e) => setStudentLinkInput(e.target.value)}
-                placeholder="/teacher/content-management?exam=exam-101&class=c-8a"
+                placeholder="/teacher/content-management?exam=<uuid>&class=c-8a"
                 value={studentLinkInput}
               />
               <button
