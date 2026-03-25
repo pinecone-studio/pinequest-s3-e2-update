@@ -1,6 +1,11 @@
-import { FileSpreadsheet, FileText, Plus } from "lucide-react";
-import { useState } from "react";
-import { grades, subjects } from "../mock-data";
+import { FileSpreadsheet, FileText, BookmarkPlus, Plus } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  createSubjectOnApi,
+  fetchSubjectsFromApi,
+  type ApiSubject,
+} from "../exam-api";
+import { grades } from "../mock-data";
 import type { Question } from "../types";
 import { createEmptyQuestion, mockParsedQuestions, normalizeQuestionForType } from "../utils";
 import { QuestionFormItem } from "./question-form-item";
@@ -8,10 +13,22 @@ import { QuestionFormItem } from "./question-form-item";
 export function CreateExamForm({
   onSave,
 }: {
-  onSave: (payload: { title: string; subject: string; grade: string; duration: number; questions: Question[] }) => void;
+  onSave: (payload: {
+    title: string;
+    subject: string;
+    subjectId: string;
+    grade: string;
+    duration: number;
+    questions: Question[];
+  }) => void | Promise<void>;
 }) {
   const [title, setTitle] = useState("");
-  const [subject, setSubject] = useState(subjects[0]);
+  const [subjects, setSubjects] = useState<ApiSubject[]>([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(true);
+  const [subjectsError, setSubjectsError] = useState("");
+  const [subjectId, setSubjectId] = useState("");
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [creatingSubject, setCreatingSubject] = useState(false);
   const [grade, setGrade] = useState(grades[0]);
   const [duration, setDuration] = useState(40);
   const [questions, setQuestions] = useState<Question[]>([createEmptyQuestion()]);
@@ -21,6 +38,41 @@ export function CreateExamForm({
   const [parsedQuestions, setParsedQuestions] = useState<Question[]>([]);
   const [builderMode, setBuilderMode] = useState<"import" | "manual">("import");
   const [importNote, setImportNote] = useState("");
+
+  const subjectLabel = useMemo(
+    () => subjects.find((s) => s.id === subjectId)?.name ?? "",
+    [subjects, subjectId],
+  );
+
+  const subjectsRef = useRef<ApiSubject[]>([]);
+  useEffect(() => {
+    subjectsRef.current = subjects;
+  }, [subjects]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setSubjectsLoading(true);
+      setSubjectsError("");
+      const result = await fetchSubjectsFromApi();
+      if (cancelled) return;
+      setSubjectsLoading(false);
+      if (!result.ok) {
+        setSubjectsError(result.error);
+        setSubjects([]);
+        setSubjectId("");
+        return;
+      }
+      setSubjects(result.subjects);
+      setSubjectId((prev) => {
+        if (prev && result.subjects.some((s) => s.id === prev)) return prev;
+        return result.subjects[0]?.id ?? "";
+      });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const addQuestion = () => {
     setQuestions((prev) => (prev.length >= 20 ? prev : [...prev, createEmptyQuestion()]));
@@ -49,7 +101,7 @@ export function CreateExamForm({
 
   const resetForm = () => {
     setTitle("");
-    setSubject(subjects[0]);
+    setSubjectId(subjectsRef.current[0]?.id ?? "");
     setGrade(grades[0]);
     setDuration(40);
     setQuestions([createEmptyQuestion()]);
@@ -59,7 +111,7 @@ export function CreateExamForm({
     setBuilderMode("import");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const cleanQuestions = questions
       .map((q) => ({
         ...q,
@@ -73,16 +125,24 @@ export function CreateExamForm({
     if (!title.trim() || cleanQuestions.length === 0) {
       return;
     }
+    if (!subjectId.trim()) {
+      setSubjectsError("Сэдэв сонгоно уу эсвэл шинээр үүсгэнэ үү.");
+      return;
+    }
 
-    onSave({
-      title: title.trim(),
-      subject,
-      grade,
-      duration,
-      questions: cleanQuestions,
-    });
-
-    resetForm();
+    try {
+      await onSave({
+        title: title.trim(),
+        subject: subjectLabel || "—",
+        subjectId,
+        grade,
+        duration,
+        questions: cleanQuestions,
+      });
+      resetForm();
+    } catch {
+      /* алдааны мэдэгдэлгүйгээр form хадгална — эх сурвалж нь toast эсвэл консоль */
+    }
   };
 
   return (
@@ -202,7 +262,7 @@ export function CreateExamForm({
                 setParsedQuestions(
                   mockParsedQuestions({
                     importType,
-                    subject,
+                    subject: subjectLabel || "Сэдэв",
                     grade,
                   }),
                 );
@@ -275,43 +335,93 @@ export function CreateExamForm({
 
       {builderMode === "manual" ? (
         <>
+          <div className="rounded-xl border border-[#d9e6fb] bg-[#f7fbff] p-3 text-2 text-[#1f2a44]">
+            <p className="font-semibold">Сэдэв (GraphQL: subjects / createSubject)</p>
+            {subjectsLoading ? (
+              <p className="mt-1 text-[#5c6f91]">Сэдвүүдийг ачаалж байна…</p>
+            ) : subjectsError ? (
+              <p className="mt-1 text-[#b64747]">{subjectsError}</p>
+            ) : null}
+            <div className="mt-2 flex flex-col gap-2 md:flex-row md:flex-wrap md:items-end">
+              <label className="flex min-w-[200px] flex-1 flex-col gap-1">
+                <span className="text-2 text-[#5c6f91]">Сонгох</span>
+                <select
+                  className="h-10 rounded-xl border border-[#d9e6fb] bg-white px-3 text-2 text-[#1f2a44] disabled:opacity-60"
+                  disabled={subjectsLoading || subjects.length === 0}
+                  onChange={(e) => {
+                    setSubjectId(e.target.value);
+                    setSubjectsError("");
+                  }}
+                  value={subjectId}
+                >
+                  {subjects.length === 0 ? (
+                    <option value="">— Сэдэв алга —</option>
+                  ) : (
+                    subjects.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </label>
+              <div className="flex min-w-[200px] flex-1 flex-wrap items-end gap-2">
+                <label className="flex min-w-[140px] flex-1 flex-col gap-1">
+                  <span className="text-2 text-[#5c6f91]">Шинэ сэдэв</span>
+                  <input
+                    className="h-10 rounded-xl border border-[#d9e6fb] bg-white px-3 text-2 text-[#1f2a44]"
+                    onChange={(e) => setNewSubjectName(e.target.value)}
+                    placeholder="Жишээ: Математик"
+                    value={newSubjectName}
+                  />
+                </label>
+                <button
+                  className="inline-flex h-10 items-center gap-1 rounded-xl border border-[#4f9dff] bg-[#eef6ff] px-3 text-2 font-semibold text-[#2f73c4] disabled:opacity-50"
+                  disabled={creatingSubject || subjectsLoading || !newSubjectName.trim()}
+                  onClick={async () => {
+                    setCreatingSubject(true);
+                    setSubjectsError("");
+                    const res = await createSubjectOnApi(newSubjectName);
+                    setCreatingSubject(false);
+                    if (!res.ok) {
+                      setSubjectsError(res.error);
+                      return;
+                    }
+                    setSubjects((prev) =>
+                      [...prev, res.subject].sort((a, b) => a.name.localeCompare(b.name, "mn")),
+                    );
+                    setSubjectId(res.subject.id);
+                    setNewSubjectName("");
+                  }}
+                  type="button"
+                >
+                  <BookmarkPlus className="h-4 w-4" />
+                  Бүртгэх
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div>
-              <p className="mb-1 text-2 text-[#5c6f91]">Шалгалтын нэр: сурагчид харагдах нэр</p>
-              <input
-                className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Шалгалтын нэр"
-                value={title}
-              />
-            </div>
-            <div>
-              <p className="mb-1 text-2 text-[#5c6f91]">Хугацаа: сурагчийн шалгалт өгөх нийт минут</p>
-              <input
-                className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
-                min={10}
-                onChange={(e) => setDuration(Number(e.target.value) || 10)}
-                placeholder="Хугацаа (минут)"
-                type="number"
-                value={duration}
-              />
-            </div>
-            <div>
-              <p className="mb-1 text-2 text-[#5c6f91]">Хичээл: шалгалтын үндсэн сэдэв</p>
-              <select className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setSubject(e.target.value)} value={subject}>
-                {subjects.map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <p className="mb-1 text-2 text-[#5c6f91]">Анги: энэ шалгалт өгөх ангийн түвшин</p>
-              <select className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setGrade(e.target.value)} value={grade}>
-                {grades.map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </div>
+            <input
+              className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Шалгалтын нэр"
+              value={title}
+            />
+            <input
+              className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+              min={10}
+              onChange={(e) => setDuration(Number(e.target.value) || 10)}
+              placeholder="Хугацаа (минут)"
+              type="number"
+              value={duration}
+            />
+            <select className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setGrade(e.target.value)} value={grade}>
+              {grades.map((item) => (
+                <option key={item}>{item}</option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-2">

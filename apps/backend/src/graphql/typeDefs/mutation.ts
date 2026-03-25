@@ -1,6 +1,7 @@
 export const mutationTypeDefs = /* GraphQL */ `
   type Mutation {
     addTeacher(schoolId: String!, name: String!): Teacher!
+    createSubject(name: String!): Subject!
     createExam(
       subjectId: String!
       duration: String!
