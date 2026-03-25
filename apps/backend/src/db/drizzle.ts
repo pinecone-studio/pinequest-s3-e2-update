@@ -3,4 +3,5 @@ import * as schema from './schema';
 import type { Env } from "../types";
 
 export const getDb = (env: Env) => drizzle(env.exam_grade_db, { schema });
+
 export type Db = ReturnType<typeof getDb>;
