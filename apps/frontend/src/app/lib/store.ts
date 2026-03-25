@@ -156,6 +156,13 @@ export const store = {
     return u ? { ...u } : undefined;
   },
 
+  getUserByEmail(email: string): User | undefined {
+    const normalized = email.trim().toLowerCase();
+    if (!normalized) return undefined;
+    const u = users.find((x) => x.email.toLowerCase() === normalized);
+    return u ? { ...u } : undefined;
+  },
+
   createTeacher(name: string, email?: string, specialty?: string) {
     const id = `user-teacher-${crypto.randomUUID().slice(0, 8)}`;
     const e = email?.trim() || slugEmail(name);
