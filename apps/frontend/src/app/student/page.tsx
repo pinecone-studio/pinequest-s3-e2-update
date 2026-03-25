@@ -1,5 +1,41 @@
 "use client";
 import { useEffect, useState } from "react";
+
+const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
+
+type ActiveStudentEntry = {
+  id: string;
+  fullName: string;
+  email: string;
+  grade: string;
+  school: string;
+  startedAt: number;
+};
+
+function upsertActiveStudent(entry: ActiveStudentEntry) {
+  try {
+    const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
+    const parsed: ActiveStudentEntry[] = raw ? JSON.parse(raw) : [];
+    const next = Array.isArray(parsed) ? parsed : [];
+    const idx = next.findIndex((x) => x.id === entry.id);
+    if (idx >= 0) next[idx] = entry;
+    else next.push(entry);
+    window.localStorage.setItem(ACTIVE_STUDENTS_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore storage errors in demo
+  }
+}
+
+function removeActiveStudent(id: string) {
+  try {
+    const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
+    const parsed: ActiveStudentEntry[] = raw ? JSON.parse(raw) : [];
+    const next = Array.isArray(parsed) ? parsed.filter((x) => x?.id !== id) : [];
+    window.localStorage.setItem(ACTIVE_STUDENTS_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore storage errors in demo
+  }
+}
 export default function StudentPage() {
   const choices = [
     { id: "A", label: "x = 3" },
@@ -117,6 +153,14 @@ export default function StudentPage() {
                 onClick={() => {
                   if (!isFormValid) return setTouched({ fullName: true, email: true, grade: true, school: true });
                   setRemainingSeconds(38 * 60);
+                  upsertActiveStudent({
+                    id: email.trim().toLowerCase(),
+                    fullName: fullName.trim(),
+                    email: email.trim(),
+                    grade: grade.trim(),
+                    school: school.trim(),
+                    startedAt: Date.now(),
+                  });
                   setStep("exam");
                 }}
               >
