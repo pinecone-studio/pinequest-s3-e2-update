@@ -22,6 +22,7 @@ export default function StudentPage() {
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const isFormValid = fullName.trim() && grade.trim() && school.trim() && isEmailValid;
   useEffect(() => {
+// timer section
   if (step !== "exam") return;
 
   const timer = setInterval(() => {
@@ -38,11 +39,24 @@ export default function StudentPage() {
 
   const disableRightClick = (e: MouseEvent) => e.preventDefault();
 
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      alert("Tab switch detected!");
+    }
+  };
+
+  const handleBlur = () => {
+    alert("You left the exam window!");
+  };
+
   document.addEventListener("copy", preventCopy);
   document.addEventListener("cut", preventCopy);
   document.addEventListener("paste", preventCopy);
   document.addEventListener("keydown", preventKeys);
   document.addEventListener("contextmenu", disableRightClick);
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  window.addEventListener("blur", handleBlur);
 
   return () => {
     clearInterval(timer);
@@ -52,6 +66,9 @@ export default function StudentPage() {
     document.removeEventListener("paste", preventCopy);
     document.removeEventListener("keydown", preventKeys);
     document.removeEventListener("contextmenu", disableRightClick);
+
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    window.removeEventListener("blur", handleBlur);
   };
 }, [step]);
   const minutes = String(Math.floor(remainingSeconds / 60)).padStart(2, "0"), seconds = String(remainingSeconds % 60).padStart(2, "0");
