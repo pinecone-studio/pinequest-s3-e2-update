@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
 
