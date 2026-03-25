@@ -1,169 +1,181 @@
-import type {
-  DashboardStats,
-  Question,
-  QuestionFilters,
-  QuestionQuality,
-  SortOption,
-} from "./types";
+import type { Exam, ExamStatus, ExamVariant, Question, QuestionType, SentExam } from "./types";
 
-export const subjectLabel = {
-  Math: "Математик",
-  Physics: "Физик",
-  Chemistry: "Хими",
-  English: "Англи хэл",
-} as const;
-
-export const typeLabel = {
-  multiple_choice: "Сонголттой",
-  short_answer: "Богино хариулт",
-  essay: "Эсээ",
-} as const;
-
-export const difficultyLabel = {
-  Easy: "Хялбар",
-  Medium: "Дунд",
-  Hard: "Хэцүү",
-} as const;
-
-export const statusLabel = {
-  Active: "Идэвхтэй",
-  Draft: "Ноорог",
-  Archived: "Архивласан",
-} as const;
-
-export function getInitialFilters(): QuestionFilters {
+export function createEmptyQuestion(type: QuestionType = "multiple_choice"): Question {
   return {
-    subject: "all",
-    type: "all",
-    difficulty: "all",
-    gradeLevel: "all",
-    status: "all",
-    skillTag: "all",
+    id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    text: "",
+    type,
+    options: type === "multiple_choice" ? ["", "", "", ""] : [],
+    correctAnswer: "",
+    score: 1,
   };
 }
 
-export function needsReview(question: Question): boolean {
-  return (
-    question.correctRate < 40 ||
-    (question.usageCount > 20 && question.correctRate < 50) ||
-    (question.status === "Archived" && question.usageCount > 20)
-  );
+export function normalizeQuestionForType(question: Question): Question {
+  if (question.type === "multiple_choice") {
+    const options = question.options.length === 4 ? question.options : ["", "", "", ""];
+    return { ...question, options };
+  }
+  return { ...question, options: [] };
 }
 
-export function detectQuestionQuality(question: Question): QuestionQuality {
-  if (question.usageCount > 20 && question.correctRate < 50) {
-    return {
-      tone: "danger",
-      label: "Сайжруулах шаардлагатай",
-      recommendation:
-        "Олон давтагдсан боловч амжилтын хувь сул байна. Асуулгын бүтэц, хувилбараа шинэчлэх шаардлагатай.",
-    };
-  }
-
-  if (question.correctRate < 40) {
-    return {
-      tone: "danger",
-      label: "Сайжруулах шаардлагатай",
-      recommendation:
-        "Энэ асуулт сурагчдад хэт хүндрэлтэй байж магадгүй. Үг хэллэгээ энгийн болгож, чиглүүлэх өгүүлбэр нэмээрэй.",
-    };
-  }
-
-  if (question.correctRate > 90 || question.usageCount > 20) {
-    return {
-      tone: "warning",
-      label: "Хэт амархан эсвэл олон давтагдсан",
-      recommendation:
-        "Асуулт хэт амархан эсвэл давтамж өндөр байна. Шинэ хувилбар нэмж шалгалтын чанарыг тэнцвэржүүлээрэй.",
-    };
-  }
-
+export function createExamFromForm(params: {
+  title: string;
+  subject: string;
+  grade: string;
+  duration: number;
+  questions: Question[];
+}): Exam {
   return {
-    tone: "good",
-    label: "Сайн тэнцвэр",
-    recommendation:
-      "Үзүүлэлт тогтвортой байна. Одоогийн байдлаар дахин ашиглахад тохиромжтой асуулт.",
+    id: `exam-${Date.now()}`,
+    title: params.title,
+    subject: params.subject,
+    grade: params.grade,
+    duration: params.duration,
+    questions: params.questions,
+    createdAt: new Date().toISOString().slice(0, 10),
+    status: "saved",
   };
 }
 
-export function calculateStats(questions: Question[]): DashboardStats {
-  const totalQuestions = questions.length;
-  const activeQuestions = questions.filter((item) => item.status === "Active").length;
-  const averageCorrectRate =
-    totalQuestions === 0
-      ? 0
-      : Math.round(
-          questions.reduce((sum, item) => sum + item.correctRate, 0) / totalQuestions,
-        );
-  const questionsNeedingReview = questions.filter((item) => needsReview(item)).length;
-
+export function duplicateExam(exam: Exam): Exam {
   return {
-    totalQuestions,
-    activeQuestions,
-    averageCorrectRate,
-    questionsNeedingReview,
+    ...exam,
+    id: `exam-${Date.now()}`,
+    title: `${exam.title} (Хуулбар)`,
+    createdAt: new Date().toISOString().slice(0, 10),
+    status: "draft",
+    questions: exam.questions.map((q) => ({
+      ...q,
+      id: `q-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    })),
   };
 }
 
-export function filterQuestions(
-  questions: Question[],
-  keyword: string,
-  filters: QuestionFilters,
-): Question[] {
-  const normalized = keyword.trim().toLowerCase();
-
-  return questions.filter((item) => {
-    const keywordMatch =
-      normalized.length === 0 ||
-      item.title.toLowerCase().includes(normalized) ||
-      item.content.toLowerCase().includes(normalized) ||
-      item.topic.toLowerCase().includes(normalized);
-
-    return (
-      keywordMatch &&
-      (filters.subject === "all" || item.subject === filters.subject) &&
-      (filters.type === "all" || item.type === filters.type) &&
-      (filters.difficulty === "all" || item.difficulty === filters.difficulty) &&
-      (filters.gradeLevel === "all" || item.gradeLevel === filters.gradeLevel) &&
-      (filters.status === "all" || item.status === filters.status) &&
-      (filters.skillTag === "all" || item.skillTag === filters.skillTag)
-    );
-  });
+export function statusLabel(status: ExamStatus) {
+  if (status === "draft") return "Ноорог";
+  if (status === "saved") return "Хадгалсан";
+  return "Илгээсэн";
 }
 
-export function sortQuestions(questions: Question[], sortBy: SortOption): Question[] {
-  const sorted = [...questions];
-
-  sorted.sort((a, b) => {
-    if (sortBy === "most_used") return b.usageCount - a.usageCount;
-    if (sortBy === "least_used") return a.usageCount - b.usageCount;
-    if (sortBy === "highest_correct_rate") return b.correctRate - a.correctRate;
-    if (sortBy === "lowest_correct_rate") return a.correctRate - b.correctRate;
-    if (sortBy === "newest") {
-      return new Date(b.lastUsedAt).getTime() - new Date(a.lastUsedAt).getTime();
-    }
-
-    return new Date(a.lastUsedAt).getTime() - new Date(b.lastUsedAt).getTime();
-  });
-
-  return sorted;
+export function statusTone(status: ExamStatus) {
+  if (status === "sent") return "bg-[#34c759]/15 text-[#198a41]";
+  if (status === "saved") return "bg-[#4f9dff]/15 text-[#275f9f]";
+  return "bg-[#ffd65a]/30 text-[#8b6800]";
 }
 
-export function findDuplicateCandidates(
-  questions: Question[],
+export function questionTypeLabel(type: QuestionType) {
+  if (type === "multiple_choice") return "Сонголттой";
+  if (type === "short_answer") return "Богино хариулт";
+  return "Эсээ";
+}
+
+export function generateExamLink(examId: string, classId: string, variant: ExamVariant): string {
+  return `/teacher/content-management?exam=${examId}&class=${classId}&variant=${variant}`;
+}
+
+export function createSentExam(
+  examId: string,
+  classId: string,
+  variant: ExamVariant,
+  link: string,
+): SentExam {
+  return {
+    id: `sent-${Date.now()}`,
+    examId,
+    classId,
+    variant,
+    link,
+    sentAt: new Date().toISOString().slice(0, 16).replace("T", " "),
+  };
+}
+
+export function parseExamLink(
   input: string,
-): Question[] {
-  const cleaned = input.trim().toLowerCase();
-  if (cleaned.length < 5) return [];
+): { examId: string; classId: string; variant: ExamVariant } | null {
+  try {
+    const url = input.startsWith("http") ? new URL(input) : new URL(input, "https://demo.local");
+    const examId = url.searchParams.get("exam") ?? "";
+    const classId = url.searchParams.get("class") ?? "";
+    const rawVariant = url.searchParams.get("variant") ?? "A";
+    const variant: ExamVariant =
+      rawVariant === "B" || rawVariant === "C" || rawVariant === "D" ? rawVariant : "A";
+    if (!examId || !classId) return null;
+    return { examId, classId, variant };
+  } catch {
+    return null;
+  }
+}
 
-  const keywords = cleaned.split(/\s+/).filter((word) => word.length >= 3);
-  if (keywords.length === 0) return [];
+export function generateVariantQuestions(questions: Question[], variant: ExamVariant): Question[] {
+  if (variant === "A") return questions;
 
-  return questions
-    .filter((item) => {
-      const target = `${item.title} ${item.content} ${item.topic}`.toLowerCase();
-      const matchedCount = keywords.filter((word) => target.includes(word)).length;
-      return matchedCount >= 2;
-    })
-    .slice(0, 3);
+  if (variant === "B") {
+    const next = [...questions];
+    for (let i = 0; i < next.length - 1; i += 2) {
+      const temp = next[i];
+      next[i] = next[i + 1];
+      next[i + 1] = temp;
+    }
+    return next;
+  }
+
+  if (variant === "C") {
+    return [...questions].reverse();
+  }
+
+  const source = [...questions];
+  const even = source.filter((_, idx) => idx % 2 === 0);
+  const odd = source.filter((_, idx) => idx % 2 !== 0);
+  return [...odd, ...even];
+}
+
+export function mockParsedQuestions(params: {
+  importType: "pdf" | "excel";
+  subject: string;
+  grade: string;
+}): Question[] {
+  const tag = params.importType === "pdf" ? "PDF" : "Excel";
+  return [
+    {
+      id: `imp-${Date.now()}-1`,
+      text: `${tag}: ${params.grade} ${params.subject} сэдвийн тодорхойлолтыг зөв сонго.`,
+      type: "multiple_choice",
+      options: ["Хувилбар A", "Хувилбар B", "Хувилбар C", "Хувилбар D"],
+      correctAnswer: "Хувилбар A",
+      score: 1,
+    },
+    {
+      id: `imp-${Date.now()}-2`,
+      text: `${tag}: Гол ойлголтын томьёог бич.`,
+      type: "short_answer",
+      options: [],
+      correctAnswer: "",
+      score: 1,
+    },
+    {
+      id: `imp-${Date.now()}-3`,
+      text: `${tag}: Дараах бодлогын зөв хариуг ол.`,
+      type: "multiple_choice",
+      options: ["8", "10", "12", "14"],
+      correctAnswer: "12",
+      score: 1,
+    },
+    {
+      id: `imp-${Date.now()}-4`,
+      text: `${tag}: Сэдвийн хэрэглээг жишээгээр тайлбарла.`,
+      type: "essay",
+      options: [],
+      correctAnswer: "",
+      score: 2,
+    },
+    {
+      id: `imp-${Date.now()}-5`,
+      text: `${tag}: Хос ойлголтыг зөв тааруул.`,
+      type: "multiple_choice",
+      options: ["I-1, II-2", "I-2, II-1", "I-1, II-3", "I-3, II-2"],
+      correctAnswer: "I-1, II-2",
+      score: 1,
+    },
+  ];
 }
