@@ -276,30 +276,42 @@ export function CreateExamForm({
       {builderMode === "manual" ? (
         <>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <input
-              className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Шалгалтын нэр"
-              value={title}
-            />
-            <input
-              className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
-              min={10}
-              onChange={(e) => setDuration(Number(e.target.value) || 10)}
-              placeholder="Хугацаа (минут)"
-              type="number"
-              value={duration}
-            />
-            <select className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setSubject(e.target.value)} value={subject}>
-              {subjects.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
-            <select className="h-10 rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setGrade(e.target.value)} value={grade}>
-              {grades.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
+            <div>
+              <p className="mb-1 text-2 text-[#5c6f91]">Шалгалтын нэр: сурагчид харагдах нэр</p>
+              <input
+                className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Шалгалтын нэр"
+                value={title}
+              />
+            </div>
+            <div>
+              <p className="mb-1 text-2 text-[#5c6f91]">Хугацаа: сурагчийн шалгалт өгөх нийт минут</p>
+              <input
+                className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+                min={10}
+                onChange={(e) => setDuration(Number(e.target.value) || 10)}
+                placeholder="Хугацаа (минут)"
+                type="number"
+                value={duration}
+              />
+            </div>
+            <div>
+              <p className="mb-1 text-2 text-[#5c6f91]">Хичээл: шалгалтын үндсэн сэдэв</p>
+              <select className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setSubject(e.target.value)} value={subject}>
+                {subjects.map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <p className="mb-1 text-2 text-[#5c6f91]">Анги: энэ шалгалт өгөх ангийн түвшин</p>
+              <select className="h-10 w-full rounded-xl border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]" onChange={(e) => setGrade(e.target.value)} value={grade}>
+                {grades.map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">
