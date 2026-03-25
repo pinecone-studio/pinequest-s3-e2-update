@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSessionUser, clearSession } from "@/app/lib/session";
 import { store } from "@/app/lib/store";
-import { teacherExamScheduleStore } from "@/app/lib/teacher_exam_schedule_store";
 
 const DEFAULT_ADMIN_ID = "user-admin";
 
@@ -50,39 +49,6 @@ export async function removeTeacher(formData: FormData): Promise<void> {
   revalidatePath("/admin");
   revalidatePath("/admin/teachers");
   revalidatePath("/admin/classes");
-}
-
-export async function createTeacherExamSchedule(
-  formData: FormData,
-): Promise<void> {
-  await requireAdmin();
-  const teacherId = String(formData.get("teacherId") ?? "");
-  const subject = String(formData.get("subject") ?? "");
-  const examDate = String(formData.get("examDate") ?? "");
-  const startTime = String(formData.get("startTime") ?? "");
-  if (!teacherId || !subject.trim() || !examDate || !startTime) return;
-  teacherExamScheduleStore.create({
-    teacherId,
-    subject,
-    examDate,
-    startTime,
-  });
-  revalidatePath("/admin");
-  revalidatePath("/admin/teachers");
-  revalidatePath(`/admin/teachers/${teacherId}`);
-}
-
-export async function removeTeacherExamSchedule(
-  formData: FormData,
-): Promise<void> {
-  await requireAdmin();
-  const id = String(formData.get("id") ?? "");
-  const teacherId = String(formData.get("teacherId") ?? "");
-  if (!id) return;
-  teacherExamScheduleStore.remove(id);
-  revalidatePath("/admin");
-  revalidatePath("/admin/teachers");
-  if (teacherId) revalidatePath(`/admin/teachers/${teacherId}`);
 }
 
 export async function createClass(formData: FormData): Promise<void> {
