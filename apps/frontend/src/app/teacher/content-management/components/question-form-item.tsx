@@ -35,40 +35,52 @@ export function QuestionFormItem({
       </div>
 
       <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-        <select
-          className="h-10 rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
-          onChange={(e) => updateType(e.target.value as QuestionType)}
-          value={question.type}
-        >
-          <option value="multiple_choice">{questionTypeLabel("multiple_choice")}</option>
-          <option value="short_answer">{questionTypeLabel("short_answer")}</option>
-          <option value="essay">{questionTypeLabel("essay")}</option>
-        </select>
-        <input
-          className="h-10 rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
-          min={1}
-          onChange={(e) => onChange({ ...question, score: Number(e.target.value) || 1 })}
-          placeholder="Оноо"
-          type="number"
-          value={question.score}
-        />
-        <input
-          className="h-10 rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
-          onChange={(e) => onChange({ ...question, correctAnswer: e.target.value })}
-          placeholder="Зөв хариулт"
-          value={question.correctAnswer}
-        />
+        <div>
+          <p className="mb-1 text-2 text-[#5c6f91]">Төрөл: асуултын хариултын формат</p>
+          <select
+            className="h-10 w-full rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
+            onChange={(e) => updateType(e.target.value as QuestionType)}
+            value={question.type}
+          >
+            <option value="multiple_choice">{questionTypeLabel("multiple_choice")}</option>
+            <option value="short_answer">{questionTypeLabel("short_answer")}</option>
+            <option value="essay">{questionTypeLabel("essay")}</option>
+          </select>
+        </div>
+        <div>
+          <p className="mb-1 text-2 text-[#5c6f91]">Оноо: энэ асуултын авах дээд оноо</p>
+          <input
+            className="h-10 w-full rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
+            min={1}
+            onChange={(e) => onChange({ ...question, score: Number(e.target.value) || 1 })}
+            placeholder="Оноо"
+            type="number"
+            value={question.score}
+          />
+        </div>
+        <div>
+          <p className="mb-1 text-2 text-[#5c6f91]">Зөв хариулт: шалгахад ашиглах жишиг хариу</p>
+          <input
+            className="h-10 w-full rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
+            onChange={(e) => onChange({ ...question, correctAnswer: e.target.value })}
+            placeholder="Зөв хариулт"
+            value={question.correctAnswer}
+          />
+        </div>
       </div>
 
+      <p className="mb-1 mt-2 text-2 text-[#5c6f91]">Асуултын текст: сурагчид харагдах үндсэн асуулт</p>
       <textarea
-        className="mt-2 min-h-20 w-full rounded-lg border border-[#d9e6fb] bg-white px-2 py-2 text-2 text-[#1f2a44]"
+        className="min-h-20 w-full rounded-lg border border-[#d9e6fb] bg-white px-2 py-2 text-2 text-[#1f2a44]"
         onChange={(e) => onChange({ ...question, text: e.target.value })}
         placeholder="Асуултын текст"
         value={question.text}
       />
 
       {question.type === "multiple_choice" && (
-        <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
+        <div className="mt-2">
+          <p className="mb-1 text-2 text-[#5c6f91]">Сонголтууд: A, B, C, D хувилбарууд</p>
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {[0, 1, 2, 3].map((idx) => (
             <input
               className="h-10 rounded-lg border border-[#d9e6fb] bg-white px-2 text-2 text-[#1f2a44]"
@@ -82,6 +94,7 @@ export function QuestionFormItem({
               value={question.options[idx] ?? ""}
             />
           ))}
+          </div>
         </div>
       )}
     </div>
