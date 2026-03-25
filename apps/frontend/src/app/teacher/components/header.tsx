@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Plus, FileText, Monitor } from "lucide-react";
 
 type TeacherView = "overview" | "review" | "stats";
 
@@ -28,9 +27,15 @@ export default function Header({ variant = "dashboard", activeView, onChangeView
       onChangeView(view);
       return;
     }
-    if (view === "overview") router.push("/teacher/shalgalt");
-    else if (view === "review") router.push("/teacher/angi");
-    else router.push("/teacher/statistic");
+    if (view === "overview") {
+      router.push("/teacher/shalgalt");
+      return;
+    }
+    if (view === "review") {
+      router.push("/teacher/score-calculation/angi");
+      return;
+    }
+    router.push("/teacher/statistic");
   };
 
   return (

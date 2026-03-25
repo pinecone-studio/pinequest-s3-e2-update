@@ -325,4 +325,10 @@ export const store = {
     const c = classes.find((x) => x.id === classId);
     return !!c?.teacherIds.includes(teacherId);
   },
+
+  getStudentByNumber(studentNumber: string) {
+    const n = studentNumber.trim();
+    const s = students.find((x) => x.studentNumber === n);
+    return s ? { ...s } : undefined;
+  },
 };
