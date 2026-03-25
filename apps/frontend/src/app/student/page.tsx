@@ -1,5 +1,41 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+
+const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
+
+type ActiveStudentEntry = {
+  id: string;
+  fullName: string;
+  email: string;
+  grade: string;
+  school: string;
+  startedAt: number;
+};
+
+function upsertActiveStudent(entry: ActiveStudentEntry) {
+  try {
+    const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
+    const parsed: ActiveStudentEntry[] = raw ? JSON.parse(raw) : [];
+    const next = Array.isArray(parsed) ? parsed : [];
+    const idx = next.findIndex((x) => x.id === entry.id);
+    if (idx >= 0) next[idx] = entry;
+    else next.push(entry);
+    window.localStorage.setItem(ACTIVE_STUDENTS_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore storage errors in demo
+  }
+}
+
+function removeActiveStudent(id: string) {
+  try {
+    const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
+    const parsed: ActiveStudentEntry[] = raw ? JSON.parse(raw) : [];
+    const next = Array.isArray(parsed) ? parsed.filter((x) => x?.id !== id) : [];
+    window.localStorage.setItem(ACTIVE_STUDENTS_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore storage errors in demo
+  }
+}
 export default function StudentPage() {
   const base = [{ text: "3x + 7 = 22. X-ийн утга аль нь вэ?", choices: ["x = 3", "x = 5", "x = 7", "x = 9"] }, { text: "0.25-ийн тэнцүү бутархай аль нь вэ?", choices: ["1/2", "1/4", "1/5", "2/5"] }, { text: "2^5 = ?", choices: ["10", "16", "32", "64"] }, { text: "Тойргийн талбайн томьёо аль нь вэ?", choices: ["πr", "2πr", "πr²", "2πr²"] }, { text: "√144 = ?", choices: ["11", "12", "13", "14"] }];
   const total = 20;
@@ -91,7 +127,24 @@ export default function StudentPage() {
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-[#6a7390]">Мэдээллээ зөв бөглөсний дараа шалгалтаа эхлүүлнэ.</p>
-              <button className={`rounded-lg px-5 py-2 text-sm font-semibold text-white transition ${isFormValid ? "bg-[#1f4ed8] hover:bg-[#1a42b6]" : "cursor-not-allowed bg-[#9fb4e8]"}`} type="button" disabled={!isFormValid} onClick={() => { if (!isFormValid) return setTouched({ fullName: true, email: true, grade: true, school: true }); setRemainingSeconds(38 * 60); setStep("exam"); }}>
+              <button
+                className={`rounded-lg px-5 py-2 text-sm font-semibold text-white transition ${isFormValid ? "bg-[#1f4ed8] hover:bg-[#1a42b6]" : "cursor-not-allowed bg-[#9fb4e8]"}`}
+                type="button"
+                disabled={!isFormValid}
+                onClick={() => {
+                  if (!isFormValid) return setTouched({ fullName: true, email: true, grade: true, school: true });
+                  setRemainingSeconds(38 * 60);
+                  upsertActiveStudent({
+                    id: email.trim().toLowerCase(),
+                    fullName: fullName.trim(),
+                    email: email.trim(),
+                    grade: grade.trim(),
+                    school: school.trim(),
+                    startedAt: Date.now(),
+                  });
+                  setStep("exam");
+                }}
+              >
                 Дараагийн алхам →
               </button>
             </div>

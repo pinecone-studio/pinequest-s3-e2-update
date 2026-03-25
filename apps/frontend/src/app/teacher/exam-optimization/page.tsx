@@ -1,319 +1,276 @@
 "use client";
 
-import {
-  ChangeEvent,
-  DragEvent,
-  useCallback,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { FileText, Sparkles, Upload } from "lucide-react";
-
-const EASY_POINTS = 1;
-const MEDIUM_POINTS = 2;
-const HARD_POINTS = 3;
-
-function clampInt(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, Math.floor(Number.isFinite(value) ? value : min)));
-}
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { AlertTriangle, Camera, Users } from "lucide-react";
 
 export default function ExamOptimizationPage() {
-  const fileInputId = useId();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
+  type ActiveStudentEntry = {
+    id: string;
+    fullName: string;
+    email: string;
+    grade: string;
+    school: string;
+    startedAt: number;
+  };
 
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const MONITOR_TOTAL_STUDENTS = 245;
+  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [activeStudents, setActiveStudents] = useState<ActiveStudentEntry[]>([]);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
 
-  const [easyCount, setEasyCount] = useState(10);
-  const [mediumCount, setMediumCount] = useState(8);
-  const [hardCount, setHardCount] = useState(3);
-  const [variantCount, setVariantCount] = useState(2);
+  const currentClassName = useMemo(() => {
+    const grades = activeStudents
+      .map((s) => s.grade?.trim())
+      .filter((g): g is string => Boolean(g));
 
-  const [schoolName, setSchoolName] = useState("");
-  const [subjectName, setSubjectName] = useState("");
-  const [classGroup, setClassGroup] = useState("");
-  const [durationMinutes, setDurationMinutes] = useState(60);
+    if (!grades.length) return "—";
 
-  const totalQuestions = easyCount + mediumCount + hardCount;
-  const totalPoints =
-    easyCount * EASY_POINTS +
-    mediumCount * MEDIUM_POINTS +
-    hardCount * HARD_POINTS;
+    const freq = new Map<string, number>();
+    for (const g of grades) freq.set(g, (freq.get(g) ?? 0) + 1);
 
-  const assignPdf = useCallback((file: File | undefined) => {
-    if (!file) return;
-    if (file.type !== "application/pdf") return;
-    setPdfFile(file);
+    let bestGrade = grades[0];
+    let bestCount = 0;
+    for (const [g, c] of freq.entries()) {
+      if (c > bestCount) {
+        bestCount = c;
+        bestGrade = g;
+      }
+    }
+
+    // If multiple grades are tied, show "олон анги" but keep best as hint.
+    const uniqueCount = freq.size;
+    if (uniqueCount > 1) {
+      return `Олон анги (${bestGrade})`;
+    }
+
+    return bestGrade;
+  }, [activeStudents]);
+
+  const readActiveStudents = useCallback((): ActiveStudentEntry[] => {
+    try {
+      const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((x) => x && typeof x === "object")
+        .map((x) => x as ActiveStudentEntry)
+        .filter(
+          (x) =>
+            typeof x.id === "string" &&
+            typeof x.fullName === "string" &&
+            typeof x.email === "string" &&
+            typeof x.startedAt === "number",
+        );
+    } catch {
+      return [];
+    }
   }, []);
 
-  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    assignPdf(e.target.files?.[0]);
-  };
+  const startMonitoring = useCallback(() => {
+    setIsMonitoring(true);
+    setLastUpdatedAt(Date.now());
+  }, []);
 
-  const onDragOver = (e: DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  };
+  const stopMonitoring = useCallback(() => {
+    setIsMonitoring(false);
+    setLastUpdatedAt(Date.now());
+  }, []);
 
-  const onDragLeave = (e: DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  };
+  useEffect(() => {
+    const sync = () => {
+      const next = readActiveStudents();
+      setActiveStudents(next);
+      setLastUpdatedAt(Date.now());
+    };
 
-  const onDrop = (e: DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    assignPdf(e.dataTransfer.files?.[0]);
-  };
+    sync();
 
-  const variantLabel = useMemo(() => {
-    const n = variantCount;
-    if (n === 1) return "1 вариант";
-    return `${n} вариант`;
-  }, [variantCount]);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== ACTIVE_STUDENTS_STORAGE_KEY) return;
+      sync();
+    };
+    window.addEventListener("storage", onStorage);
+
+    // Same-tab updates won't fire "storage", so poll lightly.
+    const interval = window.setInterval(sync, 1000);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.clearInterval(interval);
+    };
+  }, [readActiveStudents]);
 
   return (
     <section className="px-6 py-8 sm:px-10 sm:py-10">
       <div className="mx-auto max-w-6xl space-y-10">
-        <header className="text-center sm:text-left">
-          <h1 className="text-5 font-extrabold text-[#1f2a44] sm:text-8">
-            Шалгалтын вариант үүсгэгч
-          </h1>
-          <p className="mt-3 text-3 leading-relaxed text-[#66789f]">
-            PDF агуулгаас {variantLabel} үүсгэнэ. Асуултын тоо, түвшин, оноог
-            доор тохируулна уу.
-          </p>
-        </header>
-
-        <div
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              fileInputRef.current?.click();
-            }
-          }}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          onDrop={onDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`cursor-pointer rounded-2xl border-2 border-dashed bg-white p-10 text-center shadow-sm transition ${
-            isDragging
-              ? "border-teal-600 bg-teal-50"
-              : "border-[#c8d4e6] hover:border-[#9eb8e0]"
-          }`}
-        >
-          <input
-            ref={fileInputRef}
-            id={fileInputId}
-            type="file"
-            accept="application/pdf"
-            className="sr-only"
-            onChange={onFileChange}
-          />
-          <div className="mx-auto flex max-w-md flex-col items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-100 text-teal-600">
-              <FileText className="h-9 w-9" strokeWidth={1.75} />
-            </div>
+        <section className="rounded-2xl border border-[#d9dee8] bg-white px-6 py-6 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-5 font-bold text-[#1f2a44]">
-                PDF файлаа энд оруулна уу
+              <h2 className="text-5 font-extrabold text-[#1f2a44]">Бодит цагийн жагсаалт</h2>
+              <p className="mt-2 text-3 text-[#66789f]">
+                {isMonitoring
+                  ? "Шалгалт/хариултын статусыг бодит цагаар шинэчилж байна."
+                  : "Хяналтыг эхлүүлэхийн тулд дээрх товчийг дарна уу."}
               </p>
               <p className="mt-2 text-3 text-[#66789f]">
-                Хичээлийн агуулга, сурах бичиг, лекцийн материал
+                Одоо явагдаж буй анги:{" "}
+                <span className="font-bold text-[#1f2a44]">{currentClassName}</span>
               </p>
             </div>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                fileInputRef.current?.click();
-              }}
-              className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-6 py-3 text-4 font-semibold text-white transition hover:bg-teal-800"
-            >
-              <Upload className="h-4 w-4" />
-              Файл сонгох
-            </button>
-            {pdfFile ? (
-              <p className="text-3 font-medium text-teal-600">
-                Сонгогдсон: {pdfFile.name}
-              </p>
-            ) : null}
-          </div>
-        </div>
 
-        <section>
-          <h2 className="mb-5 text-5 font-extrabold text-[#1f2a44]">
-            Асуултын тохиргоо
-          </h2>
-          <div className="grid gap-5 md:grid-cols-3">
-            <DifficultyCard
-              title="Хялбар"
-              dotClass="bg-emerald-500"
-              points={EASY_POINTS}
-              value={easyCount}
-              onChange={(v) => setEasyCount(clampInt(v, 0, 200))}
+            <div className="flex flex-wrap items-center gap-3">
+              {!isMonitoring ? (
+                <button
+                  type="button"
+                  onClick={startMonitoring}
+                  className="rounded-xl bg-teal-600 px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  Хяналт эхлүүлэх
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={stopMonitoring}
+                  className="rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-4 font-semibold text-[#2f3c59] transition hover:bg-[#f8fafc]"
+                >
+                  Зогсоох
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <StatCard
+              tone="blue"
+              title="Нийт сурагч"
+              value={String(MONITOR_TOTAL_STUDENTS)}
+              icon={<Users className="h-5 w-5" />}
             />
-            <DifficultyCard
-              title="Дунд"
-              dotClass="bg-amber-400"
-              points={MEDIUM_POINTS}
-              value={mediumCount}
-              onChange={(v) => setMediumCount(clampInt(v, 0, 200))}
+            <StatCard
+              tone="green"
+              title="Идэвхтэй"
+              value={String(activeStudents.length)}
+              icon={<span className="text-teal-700">●</span>}
             />
-            <DifficultyCard
-              title="Хэцүү"
-              dotClass="bg-red-500"
-              points={HARD_POINTS}
-              value={hardCount}
-              onChange={(v) => setHardCount(clampInt(v, 0, 200))}
+            <StatCard
+              tone="amber"
+              title="Анхааруулах"
+              value={"0"}
+              icon={<AlertTriangle className="h-5 w-5" />}
             />
+            <StatCard
+              tone="red"
+              title="Салсан"
+              value={"0"}
+              icon={<Camera className="h-5 w-5" />}
+            />
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-4 font-extrabold text-[#1f2a44]">Сурагчдын жагсаалт</h3>
+
+            <div className="mt-4 space-y-4">
+              {activeStudents.length ? (
+                [...activeStudents]
+                  .sort((a, b) => b.startedAt - a.startedAt)
+                  .slice(0, 10)
+                  .map((s) => <ActiveStudentRow key={s.id} student={s} />)
+              ) : (
+                <div className="rounded-2xl border border-[#d9dee8] bg-[#f8fafc] px-5 py-4 text-4 text-[#66789f]">
+                  Одоогоор линкээр орсон сурагч алга байна.
+                </div>
+              )}
+            </div>
+
+            <p className="mt-4 text-3 text-[#66789f]">
+              {lastUpdatedAt
+                ? `Сүүлд шинэчлэгдсэн: ${new Date(lastUpdatedAt).toLocaleTimeString(undefined, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}`
+                : " "}
+            </p>
           </div>
         </section>
-
-        <div className="flex flex-wrap items-stretch justify-between gap-4 rounded-2xl border border-[#d9dee8] bg-[#f8fafc] px-6 py-5 shadow-sm">
-          <SummaryItem label="Асуулт" value={String(totalQuestions)} />
-          <SummaryItem label="Нийт оноо" value={String(totalPoints)} />
-          <div className="flex min-w-[140px] flex-1 flex-col justify-center gap-2 sm:flex-none">
-            <span className="text-3 font-semibold uppercase tracking-wide text-[#66789f]">
-              Вариант
-            </span>
-            <input
-              type="number"
-              min={1}
-              max={20}
-              value={variantCount}
-              onChange={(e) =>
-                setVariantCount(clampInt(Number(e.target.value), 1, 20))
-              }
-              className="w-full max-w-[120px] rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-5 font-bold text-[#1f2a44] outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/25"
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2">
-          <Field
-            label="Хичээлийн нэр"
-            placeholder="Жишээ: Математик"
-            value={subjectName}
-            onChange={setSubjectName}
-          />
-          <Field
-            label="Анги / бүлэг"
-            placeholder="Жишээ: 10А анги"
-            value={classGroup}
-            onChange={setClassGroup}
-          />
-          <Field
-            label="Хугацаа (минут)"
-            type="number"
-            min={1}
-            max={300}
-            value={String(durationMinutes)}
-            onChange={(v) => setDurationMinutes(clampInt(Number(v), 1, 300))}
-          />
-        </div>
-
-        <div className="flex justify-center pb-4">
-          <button
-            type="button"
-            disabled={!pdfFile || totalQuestions < 1}
-            className="inline-flex items-center gap-3 rounded-2xl bg-teal-600 px-10 py-4 text-5 font-bold text-white shadow-md transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            <Sparkles className="h-6 w-6" />
-            Вариант үүсгэх
-          </button>
-        </div>
       </div>
     </section>
   );
 }
-
-function SummaryItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex min-w-[120px] flex-1 flex-col justify-center gap-1">
-      <span className="text-3 font-semibold uppercase tracking-wide text-[#66789f]">
-        {label}
-      </span>
-      <span className="text-5 font-extrabold text-[#1f2a44]">{value}</span>
-    </div>
-  );
-}
-
-function DifficultyCard({
+function StatCard({
+  tone,
   title,
-  dotClass,
-  points,
   value,
-  onChange,
+  icon,
 }: {
+  tone: "blue" | "green" | "amber" | "red";
   title: string;
-  dotClass: string;
-  points: number;
-  value: number;
-  onChange: (n: number) => void;
+  value: string;
+  icon: ReactNode;
 }) {
+  const cfg = {
+    blue: {
+      bg: "bg-[#e6f2ff]",
+      value: "text-[#0b78d1]",
+      border: "border-[#cfe6ff]",
+      iconWrap: "text-[#0b78d1]",
+    },
+    green: {
+      bg: "bg-[#e8f5ee]",
+      value: "text-[#12b650]",
+      border: "border-[#cdecd7]",
+      iconWrap: "text-[#11a44c]",
+    },
+    amber: {
+      bg: "bg-[#fff4e5]",
+      value: "text-[#f59e0b]",
+      border: "border-[#ffe5b8]",
+      iconWrap: "text-[#a16207]",
+    },
+    red: {
+      bg: "bg-[#ffe9ec]",
+      value: "text-[#f15f6a]",
+      border: "border-[#ffd3d9]",
+      iconWrap: "text-[#d61f3f]",
+    },
+  }[tone];
+
   return (
-    <div className="rounded-2xl border border-[#d9dee8] bg-white p-6 shadow-sm">
-      <div className="flex items-center gap-2">
-        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}`} />
-        <h3 className="text-5 font-bold text-[#1f2a44]">{title}</h3>
+    <div className={`rounded-2xl border ${cfg.border} ${cfg.bg} p-5`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-3 font-semibold text-[#66789f]">{title}</p>
+          <p className={`mt-2 text-6 font-extrabold ${cfg.value}`}>{value}</p>
+        </div>
+        <div className={`mt-1 ${cfg.iconWrap}`}>{icon}</div>
       </div>
-      <p className="mt-2 text-3 font-medium text-[#66789f]">{points} оноо</p>
-      <label className="mt-5 block">
-        <span className="text-3 font-semibold text-[#50607f]">
-          Асуултын тоо
-        </span>
-        <input
-          type="number"
-          min={0}
-          max={200}
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="mt-2 w-full rounded-xl border border-[#d9dee8] bg-[#fafbfc] px-4 py-3 text-5 font-semibold text-[#1f2a44] outline-none transition focus:border-teal-600 focus:bg-white focus:ring-2 focus:ring-teal-600/25"
-        />
-      </label>
     </div>
   );
 }
 
-function Field({
-  label,
-  placeholder,
-  value,
-  onChange,
-  type = "text",
-  min,
-  max,
-}: {
-  label: string;
-  placeholder?: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-  min?: number;
-  max?: number;
-}) {
+function ActiveStudentRow({ student }: { student: { fullName: string; email: string; grade: string; school: string; startedAt: number } }) {
+  const initial = (student.fullName?.trim()?.charAt(0) || "?").toUpperCase();
   return (
-    <label className="block">
-      <span className="text-3 font-semibold uppercase tracking-wide text-[#66789f]">
-        {label}
-      </span>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        min={min}
-        max={max}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full rounded-xl border border-[#d9dee8] bg-white px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#a0aec8] focus:border-teal-600 focus:ring-2 focus:ring-teal-600/25"
-      />
-    </label>
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#35c354] bg-[#e8f5ee] px-5 py-4">
+      <div className="flex min-w-0 items-center gap-4">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#11a44c] text-white">
+          <span className="text-4 font-extrabold">{initial}</span>
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-4 font-extrabold text-[#1f2a44]">{student.fullName}</p>
+          <p className="truncate text-3 text-[#66789f]">
+            {student.grade} · {student.school}
+          </p>
+          <p className="truncate text-3 text-[#66789f]">{student.email}</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span className="rounded-full bg-[#12b650] px-4 py-1.5 text-3 font-semibold text-white">
+          Идэвхтэй
+        </span>
+      </div>
+    </div>
   );
 }
+
