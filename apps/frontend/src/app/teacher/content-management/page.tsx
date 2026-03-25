@@ -1,304 +1,275 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, Plus, Sparkles, X } from "lucide-react";
-import { StatsCards } from "./stats-cards";
-import { FilterBar } from "./filter-bar";
-import { QuestionList } from "./question-list";
-import { QuestionPreviewDrawer } from "./preview-drawer";
-import { AddQuestionModal } from "./add-question-modal";
-import { SortDropdown } from "./sort-dropdown";
-import { SearchBar } from "./search-bar";
-import { mockQuestions } from "./mock-questions";
-import type {
-  NewQuestionInput,
-  Question,
-  QuestionFilters,
-  SortOption,
-  ToastState,
-} from "./types";
+import { initialExams, teacherClasses } from "./mock-data";
+import type { Exam, ExamVariant, Question, SentExam, TabKey } from "./types";
 import {
-  calculateStats,
-  detectQuestionQuality,
-  filterQuestions,
-  findDuplicateCandidates,
-  getInitialFilters,
-  sortQuestions,
+  createExamFromForm,
+  createSentExam,
+  duplicateExam,
+  generateVariantQuestions,
+  parseExamLink,
+  questionTypeLabel,
 } from "./utils";
+import { CreateExamForm } from "./components/create-exam-form";
+import { EditExamModal } from "./components/edit-exam-modal";
+import { ModuleHeader } from "./components/module-header";
+import { SavedExamsList } from "./components/saved-exams-list";
+import { SendExamModal } from "./components/send-exam-modal";
+import { StudentExamPage } from "./components/student-exam-page";
+import { TabSwitcher } from "./components/tab-switcher";
 
-export default function ExamOptimizationPage() {
-  const [questions, setQuestions] = useState<Question[]>(mockQuestions);
-  const [keyword, setKeyword] = useState("");
-  const [filters, setFilters] = useState<QuestionFilters>(getInitialFilters());
-  const [sortBy, setSortBy] = useState<SortOption>("most_used");
-  const [previewQuestion, setPreviewQuestion] = useState<Question | null>(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [toast, setToast] = useState<ToastState | null>(null);
+export default function ContentManagementPage() {
+  const [tab, setTab] = useState<TabKey>("saved");
+  const [exams, setExams] = useState<Exam[]>(initialExams);
+  const [sentExams, setSentExams] = useState<SentExam[]>([]);
+  const [viewExam, setViewExam] = useState<Exam | null>(null);
+  const [editExam, setEditExam] = useState<Exam | null>(null);
+  const [sendExam, setSendExam] = useState<Exam | null>(null);
+  const [studentLinkInput, setStudentLinkInput] = useState("");
+  const [studentExamId, setStudentExamId] = useState<string | null>(null);
+  const [studentClassId, setStudentClassId] = useState<string | null>(null);
+  const [studentVariant, setStudentVariant] = useState<ExamVariant>("A");
+  const [toast, setToast] = useState("");
 
-  const gradeLevels = useMemo(
-    () => [...new Set(questions.map((q) => q.gradeLevel))].sort(),
-    [questions],
+  const activeStudentExam = useMemo(
+    () => exams.find((item) => item.id === studentExamId) ?? null,
+    [exams, studentExamId],
   );
 
-  const filteredQuestions = useMemo(
-    () => filterQuestions(questions, keyword, filters),
-    [questions, keyword, filters],
+  const activeStudentClass = useMemo(
+    () => teacherClasses.find((item) => item.id === studentClassId) ?? null,
+    [studentClassId],
   );
 
-  const sortedQuestions = useMemo(
-    () => sortQuestions(filteredQuestions, sortBy),
-    [filteredQuestions, sortBy],
-  );
-
-  const stats = useMemo(() => calculateStats(questions), [questions]);
-  const allSelected =
-    sortedQuestions.length > 0 &&
-    sortedQuestions.every((item) => selectedIds.includes(item.id));
-
-  const showToast = (payload: ToastState) => {
-    setToast(payload);
-    setTimeout(() => setToast(null), 2200);
-  };
-
-  const onFilterChange = <K extends keyof QuestionFilters>(
-    key: K,
-    value: QuestionFilters[K],
-  ) => setFilters((prev) => ({ ...prev, [key]: value }));
-
-  const onResetFilters = () => {
-    setFilters(getInitialFilters());
-    setKeyword("");
-  };
-
-  const onArchive = (id: string) => {
-    setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === id
-          ? { ...q, status: "Archived", lastUsedAt: "2026-03-25" }
-          : q,
-      ),
-    );
-    showToast({ tone: "info", message: "Асуултыг архивт шилжүүллээ." });
-  };
-
-  const onAddQuestion = (payload: NewQuestionInput) => {
-    const created: Question = {
-      id: `q-${Date.now()}`,
-      ...payload,
-      gradeLevel: payload.gradeLevel.trim() || "10-р анги",
-      usageCount: 0,
-      correctRate: 0,
-      createdBy: "Одоогийн багш",
-      lastUsedAt: "2026-03-25",
+  const activeStudentExamWithVariant = useMemo(() => {
+    if (!activeStudentExam) return null;
+    return {
+      ...activeStudentExam,
+      questions: generateVariantQuestions(activeStudentExam.questions, studentVariant),
+      title: `${activeStudentExam.title} (Хувилбар ${studentVariant})`,
     };
+  }, [activeStudentExam, studentVariant]);
 
-    setQuestions((prev) => [created, ...prev]);
-    setIsAddModalOpen(false);
-    showToast({ tone: "success", message: "Шинэ асуулт амжилттай нэмэгдлээ." });
+  const showToast = (message: string) => {
+    setToast(message);
+    setTimeout(() => setToast(""), 2200);
   };
 
-  const exportFilteredQuestionsToWord = () => {
-    if (sortedQuestions.length === 0) {
-      showToast({
-        tone: "info",
-        message: "Татах асуулт алга. Эхлээд шүүлтүүрээ өөрчилнө үү.",
-      });
+  const saveNewExam = (payload: {
+    title: string;
+    subject: string;
+    grade: string;
+    duration: number;
+    questions: Question[];
+  }) => {
+    const nextExam = createExamFromForm(payload);
+    setExams((prev) => [nextExam, ...prev]);
+    setTab("saved");
+    showToast("Шинэ шалгалт амжилттай хадгалагдлаа.");
+  };
+
+  const removeExam = (exam: Exam) => {
+    setExams((prev) => prev.filter((item) => item.id !== exam.id));
+    showToast("Шалгалт устгагдлаа.");
+  };
+
+  const duplicateOneExam = (exam: Exam) => {
+    const next = duplicateExam(exam);
+    setExams((prev) => [next, ...prev]);
+    showToast("Шалгалтын хуулбар үүсгэлээ.");
+  };
+
+  const saveEditedExam = (nextExam: Exam) => {
+    setExams((prev) => prev.map((item) => (item.id === nextExam.id ? nextExam : item)));
+    setEditExam(null);
+    showToast("Шалгалтын мэдээлэл шинэчлэгдлээ.");
+  };
+
+  const sendToClass = (classId: string, variant: ExamVariant, link: string) => {
+    if (!sendExam) return;
+    const sent = createSentExam(sendExam.id, classId, variant, link);
+    setSentExams((prev) => [sent, ...prev]);
+    setExams((prev) =>
+      prev.map((item) => (item.id === sendExam.id ? { ...item, status: "sent" } : item)),
+    );
+    setSendExam(null);
+    showToast("Шалгалтыг анги руу илгээлээ.");
+  };
+
+  const openStudentViewByLink = (link: string) => {
+    const parsed = parseExamLink(link || studentLinkInput);
+    if (!parsed) {
+      showToast("Линк буруу байна. exam болон class параметр шаардлагатай.");
       return;
     }
 
-    const rows = sortedQuestions
-      .map(
-        (q, index) => `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${escapeHtml(q.title)}</td>
-            <td>${escapeHtml(q.content)}</td>
-            <td>${escapeHtml(q.topic)}</td>
-            <td>${escapeHtml(q.gradeLevel)}</td>
-            <td>${q.usageCount}</td>
-            <td>${q.correctRate}%</td>
-          </tr>
-        `,
-      )
-      .join("");
+    const targetExam = exams.find((item) => item.id === parsed.examId);
+    const targetClass = teacherClasses.find((item) => item.id === parsed.classId);
 
-    const html = `
-      <html xmlns:o="urn:schemas-microsoft-com:office:office"
-            xmlns:w="urn:schemas-microsoft-com:office:word"
-            xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-          <meta charset="utf-8" />
-          <title>Шүүгдсэн асуултын тайлан</title>
-          <style>
-            body { font-family: Arial, sans-serif; color: #1F2A44; }
-            h1 { font-size: 20px; margin-bottom: 8px; }
-            p { font-size: 12px; color: #52607a; }
-            table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-            th, td { border: 1px solid #d6e7ff; padding: 8px; font-size: 12px; vertical-align: top; }
-            th { background: #f6faff; text-align: left; }
-          </style>
-        </head>
-        <body>
-          <h1>Шүүгдсэн асуултын жагсаалт</h1>
-          <p>Нийт: ${sortedQuestions.length} асуулт</p>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Гарчиг</th>
-                <th>Агуулга</th>
-                <th>Сэдэв</th>
-                <th>Анги</th>
-                <th>Ашигласан</th>
-                <th>Зөв хувь</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows}
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `;
+    if (!targetExam || !targetClass) {
+      showToast("Линк доторх шалгалт эсвэл анги олдсонгүй.");
+      return;
+    }
 
-    const blob = new Blob(["\ufeff", html], {
-      type: "application/msword;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `asuult-shuultuur-${new Date()
-      .toISOString()
-      .slice(0, 10)}.doc`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    URL.revokeObjectURL(url);
-
-    showToast({
-      tone: "success",
-      message: `Шүүгдсэн ${sortedQuestions.length} асуултыг Word файл болгож татлаа.`,
-    });
+    setStudentExamId(parsed.examId);
+    setStudentClassId(parsed.classId);
+    setStudentVariant(parsed.variant);
+    setStudentLinkInput(link || studentLinkInput);
+    showToast("Сурагчийн шалгалтын харагдац нээгдлээ.");
   };
 
   return (
-    <section className="min-h-screen bg-[#F6FAFF] px-4 py-6 text-3 md:px-7 lg:px-10 [&_*]:!text-3">
-      <div className="mx-auto max-w-[1500px] space-y-6">
-        <header className="rounded-3xl border border-[#d6e7ff] bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-extrabold text-[#1F2A44] md:text-3xl">
-                Ухаалаг Асуултын Сан
-              </h1>
-              <p className=" max-w-3xl text-base text-[#5d6e8c] md:text-sm">
-                Асуултыг хадгалах, зохион байгуулах, хайх, дахин ашиглах ажлыг
-                илүү ухаалгаар удирдана.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <button
-                className="inline-flex items-center gap-2 rounded-xl border border-[#d6e7ff] bg-white px-4 py-2 text-sm font-semibold text-[#1F2A44] transition hover:bg-[#F6FAFF]"
-                onClick={exportFilteredQuestionsToWord}
-                type="button"
-              >
-                <Download className="h-4 w-4" />
-                Шүүгдсэн асуулт Word татах
-              </button>
-              <button
-                className="inline-flex items-center gap-2 rounded-xl bg-[#4F9DFF] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#328af8]"
-                onClick={() => setIsAddModalOpen(true)}
-                type="button"
-              >
-                <Plus className="h-4 w-4" />
-                Асуулт нэмэх
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <StatsCards stats={stats} />
-
-        <div className="rounded-3xl border border-[#d6e7ff] bg-white p-4 shadow-sm md:p-5">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-            <div className="w-full xl:max-w-[560px]">
-              <SearchBar onChange={setKeyword} value={keyword} />
-            </div>
-            <SortDropdown onChange={setSortBy} value={sortBy} />
-          </div>
-          <div className="mt-3">
-            <FilterBar
-              filters={filters}
-              gradeLevels={gradeLevels}
-              onChange={onFilterChange}
-              onReset={onResetFilters}
-            />
-          </div>
-        </div>
-
-        <QuestionList
-          onArchive={onArchive}
-          onSelectAll={(checked) =>
-            setSelectedIds(checked ? sortedQuestions.map((q) => q.id) : [])
-          }
-          onToggleSelect={(id, checked) =>
-            setSelectedIds((prev) =>
-              checked ? [...prev, id] : prev.filter((item) => item !== id),
-            )
-          }
-          onTryBulkAdd={() =>
-            showToast({
-              tone: "info",
-              message:
-                "Олон асуултыг шалгалтад нэмэх боломж удахгүй нэмэгдэнэ.",
-            })
-          }
-          questions={sortedQuestions}
-          totalCount={questions.length}
-          selectedIds={selectedIds}
-          showActionToast={showToast}
-          qualityFn={detectQuestionQuality}
-          allSelected={allSelected}
-          onPreview={setPreviewQuestion}
-        />
-      </div>
-
-      <QuestionPreviewDrawer
-        onClose={() => setPreviewQuestion(null)}
-        open={Boolean(previewQuestion)}
-        question={previewQuestion}
-      />
-
-      <AddQuestionModal
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={onAddQuestion}
-        findSimilar={(text) => findDuplicateCandidates(questions, text)}
-      />
+    <main className="mx-auto h-screen w-[1512px] max-w-full space-y-4 overflow-y-auto p-3">
+      <ModuleHeader />
+      <TabSwitcher onChange={setTab} value={tab} />
 
       {toast ? (
-        <div
-          className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-xl px-4 py-3 text-sm text-white shadow-xl ${
-            toast.tone === "success" ? "bg-[#34C759]" : "bg-[#1F2A44]"
-          }`}
-        >
-          <Sparkles className="h-4 w-4" />
-          <span>{toast.message}</span>
-          <button onClick={() => setToast(null)} type="button">
-            <X className="h-4 w-4" />
-          </button>
+        <div className="rounded-xl border border-[#4f9dff]/40 bg-[#eef6ff] px-3 py-2 text-2 text-[#2f73c4]">
+          {toast}
         </div>
       ) : null}
-    </section>
-  );
-}
 
-function escapeHtml(text: string) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+      {tab === "saved" ? (
+        <section className="space-y-3">
+          <div className="rounded-2xl border border-[#d9e6fb] bg-white p-4 shadow-sm">
+            <h2 className="text-4 font-bold text-[#1f2a44]">Өмнө үүсгэсэн шалгалтууд</h2>
+            <p className="text-2 text-[#5c6f91]">
+              Харах, засах, устгах, хуулбарлах, анги руу илгээх үйлдлүүд бүгд local state дээр.
+            </p>
+          </div>
+
+          <SavedExamsList
+            exams={exams}
+            onDelete={removeExam}
+            onDuplicate={duplicateOneExam}
+            onEdit={setEditExam}
+            onSend={setSendExam}
+            onView={setViewExam}
+          />
+
+          <section className="rounded-2xl border border-[#d9e6fb] bg-white p-4 shadow-sm">
+            <h3 className="text-4 font-bold text-[#1f2a44]">Сурагчийн шалгалт нээх (линкээр)</h3>
+            <p className="text-2 text-[#5c6f91]">
+              Илгээсэн шалгалтын линкийг оруулаад сурагчийн талын дэлгэцийг нээнэ.
+            </p>
+            <div className="mt-2 flex flex-col gap-2 md:flex-row">
+              <input
+                className="h-10 w-full rounded-lg border border-[#d9e6fb] px-3 text-2 text-[#1f2a44]"
+                onChange={(e) => setStudentLinkInput(e.target.value)}
+                placeholder="/teacher/content-management?exam=exam-101&class=c-8a"
+                value={studentLinkInput}
+              />
+              <button
+                className="rounded-lg bg-[#4f9dff] px-4 py-2 text-2 font-semibold text-white"
+                onClick={() => openStudentViewByLink("")}
+                type="button"
+              >
+                Шалгалт нээх
+              </button>
+            </div>
+          </section>
+
+          {sentExams.length > 0 ? (
+            <section className="rounded-2xl border border-[#d9e6fb] bg-white p-4 shadow-sm">
+              <h3 className="text-4 font-bold text-[#1f2a44]">Илгээсэн түүх</h3>
+              <div className="mt-2 space-y-2">
+                {sentExams.map((item) => {
+                  const targetExam = exams.find((exam) => exam.id === item.examId);
+                  const targetClass = teacherClasses.find((klass) => klass.id === item.classId);
+                  return (
+                    <div
+                      className="rounded-lg border border-[#d9e6fb] bg-[#f7fbff] p-2"
+                      key={item.id}
+                    >
+                      <p className="text-2 text-[#1f2a44]">
+                        {targetExam?.title ?? "Тодорхойгүй шалгалт"} →{" "}
+                        {targetClass?.name ?? "Тодорхойгүй анги"}
+                      </p>
+                      <p className="text-2 text-[#5c6f91]">
+                        {item.sentAt} · Хувилбар {item.variant} · {item.link}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
+        </section>
+      ) : (
+        <CreateExamForm onSave={saveNewExam} />
+      )}
+
+      {viewExam ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-3">
+          <section className="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-2xl border border-[#d9e6fb] bg-white p-4 shadow-xl">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="text-4 font-bold text-[#1f2a44]">{viewExam.title}</h3>
+                <p className="text-2 text-[#5c6f91]">
+                  {viewExam.subject} · {viewExam.grade} · {viewExam.duration} минут
+                </p>
+              </div>
+              <button
+                className="rounded-lg border border-[#d9e6fb] px-2 py-1 text-2 text-[#5c6f91]"
+                onClick={() => setViewExam(null)}
+                type="button"
+              >
+                Хаах
+              </button>
+            </div>
+
+            <div className="mt-3 space-y-2">
+              {viewExam.questions.map((q, index) => (
+                <div className="rounded-lg border border-[#d9e6fb] bg-[#f7fbff] p-3" key={q.id}>
+                  <p className="text-4 font-bold text-[#1f2a44]">
+                    {index + 1}. {q.text}
+                  </p>
+                  <p className="text-2 text-[#5c6f91]">
+                    {questionTypeLabel(q.type)} · Оноо: {q.score}
+                  </p>
+                  {q.type === "multiple_choice" ? (
+                    <ul className="mt-1 list-inside list-disc text-2 text-[#1f2a44]">
+                      {q.options.map((opt) => (
+                        <li key={opt}>{opt}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      <EditExamModal exam={editExam} onClose={() => setEditExam(null)} onSave={saveEditedExam} open={Boolean(editExam)} />
+
+      <SendExamModal
+        classes={teacherClasses}
+        exam={sendExam}
+        onClose={() => setSendExam(null)}
+        onOpenStudentView={openStudentViewByLink}
+        onSend={sendToClass}
+        open={Boolean(sendExam)}
+      />
+
+      {activeStudentExamWithVariant ? (
+        <StudentExamPage
+          exam={activeStudentExamWithVariant}
+          key={
+            activeStudentExamWithVariant.id +
+            "-" +
+            (studentClassId ?? "none") +
+            "-" +
+            studentVariant
+          }
+          onClose={() => {
+            setStudentExamId(null);
+            setStudentClassId(null);
+          }}
+          studentClass={activeStudentClass}
+        />
+      ) : null}
+    </main>
+  );
 }
