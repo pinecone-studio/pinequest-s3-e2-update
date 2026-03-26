@@ -242,9 +242,26 @@ export function mapQuestionToBuilderValues(question: Question): QuestionBuilderV
 }
 
 export function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat("mn-MN", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(dateString));
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString;
+  }
+
+  const months = [
+    "1-р сар",
+    "2-р сар",
+    "3-р сар",
+    "4-р сар",
+    "5-р сар",
+    "6-р сар",
+    "7-р сар",
+    "8-р сар",
+    "9-р сар",
+    "10-р сар",
+    "11-р сар",
+    "12-р сар",
+  ];
+
+  return `${date.getUTCFullYear()} оны ${months[date.getUTCMonth()]} ${date.getUTCDate()}`;
 }
