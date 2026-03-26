@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { teacherClasses } from "../../content-management/mock-data";
+import { teacherClasses } from "../_lib/class-data";
 import { MOCK_QUESTIONS } from "../../question-bank/_lib/mock-data";
 import type { Question } from "../../question-bank/_lib/types";
 import { QUESTION_TYPE_LABELS } from "../../question-bank/_lib/utils";

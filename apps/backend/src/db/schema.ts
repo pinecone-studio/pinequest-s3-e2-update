@@ -10,10 +10,16 @@ export const schoolTable = sqliteTable("school", {
   updatedAt: text("updatedAt").notNull(),
 });
 
-export const classTable = sqliteTable("class", {
+export const subjectTable = sqliteTable("subject", {
   id: text("id").primaryKey(),
-  schoolId: text("schoolId").references(() => schoolTable.id).notNull(),
-  studentIds: text("studentIds").notNull(),
+  name: text("name").notNull(),
+  createdAt: text("createdAt").notNull(),
+  updatedAt: text("updatedAt").notNull(),
+});
+
+export const gradeTable = sqliteTable("grade", {
+  id: text("id").primaryKey(),
+  grade: integer("grade"),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
@@ -34,19 +40,28 @@ export const teacherTable = sqliteTable("teacher", {
   name: text("name").notNull(),
 });
 
-export const subjectTable = sqliteTable("subject", {
+export const classTable = sqliteTable("class", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
+  schoolId: text("schoolId").references(() => schoolTable.id).notNull(),
+  studentIds: text("studentIds").notNull(),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
 
-export const gradeTable = sqliteTable("grade", {
+export const testTable = sqliteTable("test", {
   id: text("id").primaryKey(),
-  teacherId: text("teacherId").references(() => teacherTable.id),
+  gradeId: text("gradeId").references(() => gradeTable.id).notNull(),
   subjectId: text("subjectId").references(() => subjectTable.id).notNull(),
-  studentIds: text("studentIds"),
-  grade: integer("grade"),
+  topic: text("topic").notNull(),
+  title: text("title"),
+  question: text("question").notNull(),
+  answers: text("answers").notNull(),
+  rightAnswer: text("rightAnswer").notNull(),
+  notes: text("notes"),
+  questionNote: text("questionNote"),
+  difficulty: text("difficulty"),
+  score: integer("score").notNull(),
+  isActive: integer("isActive").notNull().default(1),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
@@ -54,14 +69,12 @@ export const gradeTable = sqliteTable("grade", {
 export const examTable = sqliteTable("exam", {
   id: text("id").primaryKey(),
   notes: text("notes"),
+  title: text("title"),
   duration: text("duration").notNull(),
   isActive: integer("isActive").notNull().default(1),
-  variation: text("variation").notNull(),
-  tests: text("tests"),
+  variation: text("variation"),
+  testIds: text("testIds"),
   openExercises: text("openExercises"),
-  gradeId: text("gradeId").references(() => gradeTable.id),
-  date: text("date"),
-  location: text("location"),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
@@ -87,3 +100,4 @@ export const studentExamResultTable = sqliteTable("studentExamResult", {
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
+

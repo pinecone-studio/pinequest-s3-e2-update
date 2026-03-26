@@ -65,7 +65,7 @@ export function createQuestionBuilderValues(
     formulaRaw: "",
     imageUrl: "",
     fileUploadConfig: DEFAULT_FILE_UPLOAD_CONFIG,
-    grade: "Grade 4",
+    grade: "6-р анги",
     subject: "Математик",
     subtopic: "",
     topic: "",

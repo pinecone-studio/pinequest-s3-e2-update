@@ -8,8 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { teacherClasses } from "../../content-management/mock-data";
-import type { TeacherClass } from "../../content-management/types";
+import { teacherClasses, type TeacherClass } from "../_lib/class-data";
 import { formatSavedDate } from "../_lib/utils";
 import type { SavedExamRecord } from "../_lib/types";
 
