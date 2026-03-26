@@ -131,25 +131,27 @@ export default function TeacherShell({
 									<UserIcon className="h-6 w-6" />
 								</button>
 
-								{isMenuOpen ? (
-									<div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-[#d9dee8] bg-white shadow-lg">
-										<div className="border-b border-[#e6edf8] p-4">
-											<div className="flex items-center gap-3">
-												<div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#c8d6ea] bg-[#f6faff] text-[#9aa7bd]">
-													<UserIcon className="h-7 w-7" />
-												</div>
-												<div className="min-w-0">
-													<p className="truncate text-4 font-bold text-[#1f2a44]">
-														{user.name}
-													</p>
-													<p className="mt-1 inline-flex items-center gap-1 truncate text-2 text-[#6b7891]">
-														<Mail className="h-4 w-4" />
-														{user.email || "И-мэйл бүртгэгдээгүй"}
-													</p>
-													<p className="mt-1 text-2 text-[#8b97ad]">Багш</p>
-												</div>
-											</div>
-										</div>
+                {isMenuOpen ? (
+                  <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-[#d9dee8] bg-white shadow-lg">
+                    <div className="border-b border-[#e6edf8] p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#c8d6ea] bg-[#f6faff] text-[#9aa7bd]">
+                          <UserIcon className="h-7 w-7" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-4 font-bold text-[#1f2a44]">
+                            {user.name}
+                          </p>
+                          <p className="mt-1 flex min-w-0 items-center gap-1 text-2 text-[#6b7891]">
+                            <Mail className="h-4 w-4 flex-shrink-0" />
+                            <span className="block min-w-0 flex-1 truncate">
+                              {user.email || "И-мэйл бүртгэгдээгүй"}
+                            </span>
+                          </p>
+                          <p className="mt-1 text-2 text-[#8b97ad]">Багш</p>
+                        </div>
+                      </div>
+                    </div>
 
 										<div className="p-3">
 											<button
