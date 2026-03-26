@@ -4,40 +4,7 @@
 
 import { useRouter } from "next/navigation";
 import { Users, FileText, ArrowLeft } from "lucide-react";
-
-const CLASSES_DATA: Record<
-	string,
-	{
-		name: string;
-		subject: string;
-		studentCount: number;
-		students: { code: string; name: string }[];
-	}
-> = {
-	"10A": {
-		name: "10А",
-		subject: "Нийгэм",
-		studentCount: 5,
-		students: [
-			{ code: "10A-001", name: "Бат-Эрдэнэ" },
-			{ code: "10A-002", name: "Сарнай" },
-			{ code: "10A-003", name: "Ганболд" },
-			{ code: "10A-004", name: "Нандин-Эрдэнэ" },
-			{ code: "10A-005", name: "Эрдэнэбат" },
-		],
-	},
-	"9B": {
-		name: "9Б",
-		subject: "Нийгэм",
-		studentCount: 4,
-		students: [
-			{ code: "9B-001", name: "Болд" },
-			{ code: "9B-002", name: "Сарнай" },
-			{ code: "9B-003", name: "Даваа" },
-			{ code: "9B-004", name: "Оюун" },
-		],
-	},
-};
+import { store } from "@/app/lib/store";
 
 type ClassDetailScreenProps = {
 	classId: string;

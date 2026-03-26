@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { authSignInHref } from "@/app/lib/auth-redirect";
 import {
+  fallbackAppUser,
   getAppUserFromClerk,
   getAppUserFromUserId,
 } from "@/app/lib/clerk-app-user";
@@ -22,7 +23,7 @@ export default async function TeacherLayout({
     user = await getAppUserFromUserId(userId, "teacher");
   }
   if (!user) {
-    redirect(signInTeacher);
+    user = fallbackAppUser(userId, "teacher");
   }
 
   return <TeacherShell user={user}>{children}</TeacherShell>;

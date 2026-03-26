@@ -34,9 +34,7 @@ export default function ExamOptimizationPage() {
 			.map((s) => s.grade?.trim())
 			.filter((g): g is string => Boolean(g));
 
-		const [subjectName, setSubjectName] = useState("");
-		const [classGroup, setClassGroup] = useState("");
-		const [durationMinutes, setDurationMinutes] = useState(60);
+		if (!grades.length) return "—";
 
 		const freq = new Map<string, number>();
 		for (const g of grades) freq.set(g, (freq.get(g) ?? 0) + 1);

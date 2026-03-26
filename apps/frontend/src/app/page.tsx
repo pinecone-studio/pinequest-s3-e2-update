@@ -12,9 +12,16 @@ export default async function Home({
   const { userId } = await auth();
   if (userId) {
     const clerkUser = await currentUser();
-    const role = clerkUser?.publicMetadata?.role;
+    const readRole = (meta: unknown): string | undefined => {
+      if (!meta || typeof meta !== "object") return undefined;
+      const r = (meta as Record<string, unknown>).role;
+      return typeof r === "string" ? r : undefined;
+    };
+    const role =
+      readRole(clerkUser?.publicMetadata) ?? readRole(clerkUser?.unsafeMetadata);
     if (role === "teacher") redirect("/teacher");
     if (role === "school_admin" || role === "admin") redirect("/admin");
+    redirect("/teacher");
   }
 
   const sp = searchParams ? await searchParams : {};

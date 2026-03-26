@@ -97,3 +97,16 @@ export async function getAppUserFromUserId(
     return null;
   }
 }
+
+/**
+ * Clerk-ийн profile түр ачаалагдахгүй үед (session бэлэн, гэхдээ currentUser/backend хоосон)
+ * /sign-in ⇄ /teacher гогцоонд оруулахгүйн тулд хамгийн багц User.
+ */
+export function fallbackAppUser(userId: string, role: UserRole): User {
+  return {
+    id: userId,
+    email: "",
+    name: "Хэрэглэгч",
+    role,
+  };
+}
