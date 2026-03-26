@@ -31,9 +31,15 @@ export default function Header({
       onChangeView(view);
       return;
     }
-    if (view === "overview") router.push("/teacher/shalgalt");
-    else if (view === "review") router.push("/teacher/angi");
-    else router.push("/teacher/statistic");
+    if (view === "overview") {
+      router.push("/teacher/shalgalt");
+      return;
+    }
+    if (view === "review") {
+      router.push("/teacher/score-calculation/angi");
+      return;
+    }
+    router.push("/teacher/statistic");
   };
 
   return (

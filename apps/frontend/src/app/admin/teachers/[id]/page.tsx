@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { store } from "@/app/lib/store";
+import { TeacherExamScheduleSection } from "./_components/TeacherExamScheduleSection";
+import { examSchedulesMock } from "./_mock/exam-schedules";
+
 export default async function AdminTeacherDetailPage({
   params,
 }: {
@@ -11,6 +14,8 @@ export default async function AdminTeacherDetailPage({
   if (!user || user.role !== "teacher") notFound();
 
   const classes = store.getClassesForTeacher(id);
+  const schedules = examSchedulesMock.listByTeacher(id);
+  const classOptions = classes.map((item) => item.name);
 
   return (
     <div className="space-y-8">
@@ -23,18 +28,20 @@ export default async function AdminTeacherDetailPage({
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">
-          {user.name}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          {user.email}
-        </p>
+        <h1 className="text-2xl font-semibold text-zinc-900">{user.name}</h1>
+        <p className="mt-1 text-sm text-zinc-600">{user.email}</p>
         {user.specialty?.trim() ? (
           <p className="mt-2 text-sm font-medium text-teal-700">
             Мэргэжил / хичээл: {user.specialty}
           </p>
         ) : null}
       </div>
+
+      <TeacherExamScheduleSection
+        teacherId={id}
+        schedules={schedules}
+        classOptions={classOptions}
+      />
 
       <section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
         <div className="border-b border-zinc-100 px-6 py-4">
