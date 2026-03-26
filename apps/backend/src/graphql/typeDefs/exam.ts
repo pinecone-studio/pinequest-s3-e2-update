@@ -16,15 +16,15 @@ export const examTypeDefs = /* GraphQL */ `
 
   type Exam {
     id: String!
-    subjectId: String!
-    gradeId: String
-    teacherId: String
+    notes: String!
+    duration: String!
+    isActive: Int!
+    variation: String!
     tests: String!
     openExercises: String!
+    gradeId: String
     date: String
-    duration: String!
     location: String!
-    notes: String!
     createdAt: String!
     updatedAt: String!
   }
