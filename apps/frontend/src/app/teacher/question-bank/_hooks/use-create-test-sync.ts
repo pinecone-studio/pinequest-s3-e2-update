@@ -10,10 +10,26 @@ import { buildCreateTestInput, buildUpdateTestInput } from "../_lib/backend-ques
 import { GET_ALL_TESTS_QUERY } from "../_lib/get-tests";
 import type { Question, QuestionBuilderValues } from "../_lib/types";
 
+type CreateTestMutationData = {
+  createTest: {
+    id: string;
+  };
+};
+
+type UpdateTestMutationData = {
+  updateTest: {
+    id: string;
+  };
+};
+
+type IncrementTestUsageMutationData = {
+  incrementTestUsage: number;
+};
+
 export function useCreateTestSync() {
-  const [createTest] = useMutation(CREATE_TEST_MUTATION);
-  const [updateTest] = useMutation(UPDATE_TEST_MUTATION);
-  const [incrementTestUsage] = useMutation(INCREMENT_TEST_USAGE_MUTATION);
+  const [createTest] = useMutation<CreateTestMutationData>(CREATE_TEST_MUTATION);
+  const [updateTest] = useMutation<UpdateTestMutationData>(UPDATE_TEST_MUTATION);
+  const [incrementTestUsage] = useMutation<IncrementTestUsageMutationData>(INCREMENT_TEST_USAGE_MUTATION);
 
   const refetchQueries = [{ query: GET_ALL_TESTS_QUERY }];
 
