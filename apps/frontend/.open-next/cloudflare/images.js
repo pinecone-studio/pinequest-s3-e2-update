@@ -14,7 +14,7 @@ var define_IMAGES_LOCAL_PATTERNS_default = [{ pathname: "^(?:(?!(?:^|\\/)\\.{1,2
 var define_IMAGES_QUALITIES_default = [75];
 
 // <define:__IMAGES_REMOTE_PATTERNS__>
-var define_IMAGES_REMOTE_PATTERNS_default = [];
+var define_IMAGES_REMOTE_PATTERNS_default = [{ protocol: "https", hostname: "^(?:^(?:images\\.unsplash\\.com)$)$", pathname: "^(?:\\/(?!\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?))$" }];
 
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/utils/error.js
 function isOpenNextError(e) {

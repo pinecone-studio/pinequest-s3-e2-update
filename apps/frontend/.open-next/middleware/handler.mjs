@@ -41,6 +41,7 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
+var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget && __copyProps(secondTarget, mod, "default"));
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
@@ -49,6 +50,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/utils/error.js
 function isOpenNextError(e) {
@@ -628,9 +630,9 @@ var init_dummy = __esm({
 });
 
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/utils/stream.js
-import { ReadableStream } from "node:stream/web";
+import { ReadableStream as ReadableStream2 } from "node:stream/web";
 function toReadableStream(value, isBase64) {
-  return new ReadableStream({
+  return new ReadableStream2({
     pull(controller) {
       controller.enqueue(Buffer.from(value, isBase64 ? "base64" : "utf8"));
       controller.close();
@@ -639,7 +641,7 @@ function toReadableStream(value, isBase64) {
 }
 function emptyReadableStream() {
   if (process.env.OPEN_NEXT_FORCE_NON_EMPTY_RESPONSE === "true") {
-    return new ReadableStream({
+    return new ReadableStream2({
       pull(controller) {
         maybeSomethingBuffer ??= Buffer.from("SOMETHING");
         controller.enqueue(maybeSomethingBuffer);
@@ -647,7 +649,7 @@ function emptyReadableStream() {
       }
     }, { highWaterMark: 0 });
   }
-  return new ReadableStream({
+  return new ReadableStream2({
     start(controller) {
       controller.close();
     }
@@ -696,6 +698,7912 @@ var init_fetch = __esm({
   }
 });
 
+// .next/server/edge-runtime-webpack.js
+var require_edge_runtime_webpack = __commonJS({
+  ".next/server/edge-runtime-webpack.js"() {
+    "use strict";
+    (() => {
+      "use strict";
+      var a, b, c, d, e = {}, f = {};
+      function g(a2) {
+        var b2 = f[a2];
+        if (void 0 !== b2) return b2.exports;
+        var c2 = f[a2] = { exports: {} }, d2 = true;
+        try {
+          e[a2](c2, c2.exports, g), d2 = false;
+        } finally {
+          d2 && delete f[a2];
+        }
+        return c2.exports;
+      }
+      g.m = e, g.amdO = {}, a = [], g.O = (b2, c2, d2, e2) => {
+        if (c2) {
+          e2 = e2 || 0;
+          for (var f2 = a.length; f2 > 0 && a[f2 - 1][2] > e2; f2--) a[f2] = a[f2 - 1];
+          a[f2] = [c2, d2, e2];
+          return;
+        }
+        for (var h = 1 / 0, f2 = 0; f2 < a.length; f2++) {
+          for (var [c2, d2, e2] = a[f2], i = true, j = 0; j < c2.length; j++) (false & e2 || h >= e2) && Object.keys(g.O).every((a2) => g.O[a2](c2[j])) ? c2.splice(j--, 1) : (i = false, e2 < h && (h = e2));
+          if (i) {
+            a.splice(f2--, 1);
+            var k = d2();
+            void 0 !== k && (b2 = k);
+          }
+        }
+        return b2;
+      }, g.n = (a2) => {
+        var b2 = a2 && a2.__esModule ? () => a2.default : () => a2;
+        return g.d(b2, { a: b2 }), b2;
+      }, g.d = (a2, b2) => {
+        for (var c2 in b2) g.o(b2, c2) && !g.o(a2, c2) && Object.defineProperty(a2, c2, { enumerable: true, get: b2[c2] });
+      }, g.g = function() {
+        if ("object" == typeof globalThis) return globalThis;
+        try {
+          return this || Function("return this")();
+        } catch (a2) {
+          if ("object" == typeof window) return window;
+        }
+      }(), g.o = (a2, b2) => Object.prototype.hasOwnProperty.call(a2, b2), g.r = (a2) => {
+        "u" > typeof Symbol && Symbol.toStringTag && Object.defineProperty(a2, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(a2, "__esModule", { value: true });
+      }, b = { 149: 0 }, g.O.j = (a2) => 0 === b[a2], c = (a2, c2) => {
+        var d2, e2, [f2, h, i] = c2, j = 0;
+        if (f2.some((a3) => 0 !== b[a3])) {
+          for (d2 in h) g.o(h, d2) && (g.m[d2] = h[d2]);
+          if (i) var k = i(g);
+        }
+        for (a2 && a2(c2); j < f2.length; j++) e2 = f2[j], g.o(b, e2) && b[e2] && b[e2][0](), b[e2] = 0;
+        return g.O(k);
+      }, (d = self.webpackChunk_N_E = self.webpackChunk_N_E || []).forEach(c.bind(null, 0)), d.push = c.bind(null, d.push.bind(d));
+    })();
+  }
+});
+
+// node-built-in-modules:node:buffer
+var node_buffer_exports = {};
+import * as node_buffer_star from "node:buffer";
+var init_node_buffer = __esm({
+  "node-built-in-modules:node:buffer"() {
+    __reExport(node_buffer_exports, node_buffer_star);
+  }
+});
+
+// node-built-in-modules:node:async_hooks
+var node_async_hooks_exports = {};
+import * as node_async_hooks_star from "node:async_hooks";
+var init_node_async_hooks = __esm({
+  "node-built-in-modules:node:async_hooks"() {
+    __reExport(node_async_hooks_exports, node_async_hooks_star);
+  }
+});
+
+// .next/server/src/middleware.js
+var require_middleware = __commonJS({
+  ".next/server/src/middleware.js"() {
+    "use strict";
+    (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([[550], { 54: (a, b, c) => {
+      "use strict";
+      c.d(b, { K8: () => j, Ck: () => h, EJ: () => k });
+      var d = c(161), e = c(408), f = c(701);
+      class g extends Error {
+        constructor() {
+          super("Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options");
+        }
+        static callable() {
+          throw new g();
+        }
+      }
+      class h {
+        static seal(a2) {
+          return new Proxy(a2, { get(a3, b2, c2) {
+            switch (b2) {
+              case "clear":
+              case "delete":
+              case "set":
+                return g.callable;
+              default:
+                return e.l.get(a3, b2, c2);
+            }
+          } });
+        }
+      }
+      let i = Symbol.for("next.mutated.cookies");
+      class j {
+        static wrap(a2, b2) {
+          let c2 = new d.VO(new Headers());
+          for (let b3 of a2.getAll()) c2.set(b3);
+          let g2 = [], h2 = /* @__PURE__ */ new Set(), j2 = () => {
+            let a3 = f.J.getStore();
+            if (a3 && (a3.pathWasRevalidated = 1), g2 = c2.getAll().filter((a4) => h2.has(a4.name)), b2) {
+              let a4 = [];
+              for (let b3 of g2) {
+                let c3 = new d.VO(new Headers());
+                c3.set(b3), a4.push(c3.toString());
+              }
+              b2(a4);
+            }
+          }, k2 = new Proxy(c2, { get(a3, b3, c3) {
+            switch (b3) {
+              case i:
+                return g2;
+              case "delete":
+                return function(...b4) {
+                  h2.add("string" == typeof b4[0] ? b4[0] : b4[0].name);
+                  try {
+                    return a3.delete(...b4), k2;
+                  } finally {
+                    j2();
+                  }
+                };
+              case "set":
+                return function(...b4) {
+                  h2.add("string" == typeof b4[0] ? b4[0] : b4[0].name);
+                  try {
+                    return a3.set(...b4), k2;
+                  } finally {
+                    j2();
+                  }
+                };
+              default:
+                return e.l.get(a3, b3, c3);
+            }
+          } });
+          return k2;
+        }
+      }
+      function k(a2) {
+        let b2 = new Proxy(a2.mutableCookies, { get(c2, d2, f2) {
+          switch (d2) {
+            case "delete":
+              return function(...d3) {
+                return l(a2, "cookies().delete"), c2.delete(...d3), b2;
+              };
+            case "set":
+              return function(...d3) {
+                return l(a2, "cookies().set"), c2.set(...d3), b2;
+              };
+            default:
+              return e.l.get(c2, d2, f2);
+          }
+        } });
+        return b2;
+      }
+      function l(a2, b2) {
+        if ("action" !== a2.phase) throw new g();
+      }
+    }, 134: (a) => {
+      (() => {
+        "use strict";
+        var b = { 993: (a2) => {
+          var b2 = Object.prototype.hasOwnProperty, c2 = "~";
+          function d2() {
+          }
+          function e2(a3, b3, c3) {
+            this.fn = a3, this.context = b3, this.once = c3 || false;
+          }
+          function f(a3, b3, d3, f2, g2) {
+            if ("function" != typeof d3) throw TypeError("The listener must be a function");
+            var h2 = new e2(d3, f2 || a3, g2), i = c2 ? c2 + b3 : b3;
+            return a3._events[i] ? a3._events[i].fn ? a3._events[i] = [a3._events[i], h2] : a3._events[i].push(h2) : (a3._events[i] = h2, a3._eventsCount++), a3;
+          }
+          function g(a3, b3) {
+            0 == --a3._eventsCount ? a3._events = new d2() : delete a3._events[b3];
+          }
+          function h() {
+            this._events = new d2(), this._eventsCount = 0;
+          }
+          Object.create && (d2.prototype = /* @__PURE__ */ Object.create(null), new d2().__proto__ || (c2 = false)), h.prototype.eventNames = function() {
+            var a3, d3, e3 = [];
+            if (0 === this._eventsCount) return e3;
+            for (d3 in a3 = this._events) b2.call(a3, d3) && e3.push(c2 ? d3.slice(1) : d3);
+            return Object.getOwnPropertySymbols ? e3.concat(Object.getOwnPropertySymbols(a3)) : e3;
+          }, h.prototype.listeners = function(a3) {
+            var b3 = c2 ? c2 + a3 : a3, d3 = this._events[b3];
+            if (!d3) return [];
+            if (d3.fn) return [d3.fn];
+            for (var e3 = 0, f2 = d3.length, g2 = Array(f2); e3 < f2; e3++) g2[e3] = d3[e3].fn;
+            return g2;
+          }, h.prototype.listenerCount = function(a3) {
+            var b3 = c2 ? c2 + a3 : a3, d3 = this._events[b3];
+            return d3 ? d3.fn ? 1 : d3.length : 0;
+          }, h.prototype.emit = function(a3, b3, d3, e3, f2, g2) {
+            var h2 = c2 ? c2 + a3 : a3;
+            if (!this._events[h2]) return false;
+            var i, j, k = this._events[h2], l = arguments.length;
+            if (k.fn) {
+              switch (k.once && this.removeListener(a3, k.fn, void 0, true), l) {
+                case 1:
+                  return k.fn.call(k.context), true;
+                case 2:
+                  return k.fn.call(k.context, b3), true;
+                case 3:
+                  return k.fn.call(k.context, b3, d3), true;
+                case 4:
+                  return k.fn.call(k.context, b3, d3, e3), true;
+                case 5:
+                  return k.fn.call(k.context, b3, d3, e3, f2), true;
+                case 6:
+                  return k.fn.call(k.context, b3, d3, e3, f2, g2), true;
+              }
+              for (j = 1, i = Array(l - 1); j < l; j++) i[j - 1] = arguments[j];
+              k.fn.apply(k.context, i);
+            } else {
+              var m, n = k.length;
+              for (j = 0; j < n; j++) switch (k[j].once && this.removeListener(a3, k[j].fn, void 0, true), l) {
+                case 1:
+                  k[j].fn.call(k[j].context);
+                  break;
+                case 2:
+                  k[j].fn.call(k[j].context, b3);
+                  break;
+                case 3:
+                  k[j].fn.call(k[j].context, b3, d3);
+                  break;
+                case 4:
+                  k[j].fn.call(k[j].context, b3, d3, e3);
+                  break;
+                default:
+                  if (!i) for (m = 1, i = Array(l - 1); m < l; m++) i[m - 1] = arguments[m];
+                  k[j].fn.apply(k[j].context, i);
+              }
+            }
+            return true;
+          }, h.prototype.on = function(a3, b3, c3) {
+            return f(this, a3, b3, c3, false);
+          }, h.prototype.once = function(a3, b3, c3) {
+            return f(this, a3, b3, c3, true);
+          }, h.prototype.removeListener = function(a3, b3, d3, e3) {
+            var f2 = c2 ? c2 + a3 : a3;
+            if (!this._events[f2]) return this;
+            if (!b3) return g(this, f2), this;
+            var h2 = this._events[f2];
+            if (h2.fn) h2.fn !== b3 || e3 && !h2.once || d3 && h2.context !== d3 || g(this, f2);
+            else {
+              for (var i = 0, j = [], k = h2.length; i < k; i++) (h2[i].fn !== b3 || e3 && !h2[i].once || d3 && h2[i].context !== d3) && j.push(h2[i]);
+              j.length ? this._events[f2] = 1 === j.length ? j[0] : j : g(this, f2);
+            }
+            return this;
+          }, h.prototype.removeAllListeners = function(a3) {
+            var b3;
+            return a3 ? (b3 = c2 ? c2 + a3 : a3, this._events[b3] && g(this, b3)) : (this._events = new d2(), this._eventsCount = 0), this;
+          }, h.prototype.off = h.prototype.removeListener, h.prototype.addListener = h.prototype.on, h.prefixed = c2, h.EventEmitter = h, a2.exports = h;
+        }, 213: (a2) => {
+          a2.exports = (a3, b2) => (b2 = b2 || (() => {
+          }), a3.then((a4) => new Promise((a5) => {
+            a5(b2());
+          }).then(() => a4), (a4) => new Promise((a5) => {
+            a5(b2());
+          }).then(() => {
+            throw a4;
+          })));
+        }, 574: (a2, b2) => {
+          Object.defineProperty(b2, "__esModule", { value: true }), b2.default = function(a3, b3, c2) {
+            let d2 = 0, e2 = a3.length;
+            for (; e2 > 0; ) {
+              let f = e2 / 2 | 0, g = d2 + f;
+              0 >= c2(a3[g], b3) ? (d2 = ++g, e2 -= f + 1) : e2 = f;
+            }
+            return d2;
+          };
+        }, 821: (a2, b2, c2) => {
+          Object.defineProperty(b2, "__esModule", { value: true });
+          let d2 = c2(574);
+          class e2 {
+            constructor() {
+              this._queue = [];
+            }
+            enqueue(a3, b3) {
+              let c3 = { priority: (b3 = Object.assign({ priority: 0 }, b3)).priority, run: a3 };
+              if (this.size && this._queue[this.size - 1].priority >= b3.priority) return void this._queue.push(c3);
+              let e3 = d2.default(this._queue, c3, (a4, b4) => b4.priority - a4.priority);
+              this._queue.splice(e3, 0, c3);
+            }
+            dequeue() {
+              let a3 = this._queue.shift();
+              return null == a3 ? void 0 : a3.run;
+            }
+            filter(a3) {
+              return this._queue.filter((b3) => b3.priority === a3.priority).map((a4) => a4.run);
+            }
+            get size() {
+              return this._queue.length;
+            }
+          }
+          b2.default = e2;
+        }, 816: (a2, b2, c2) => {
+          let d2 = c2(213);
+          class e2 extends Error {
+            constructor(a3) {
+              super(a3), this.name = "TimeoutError";
+            }
+          }
+          let f = (a3, b3, c3) => new Promise((f2, g) => {
+            if ("number" != typeof b3 || b3 < 0) throw TypeError("Expected `milliseconds` to be a positive number");
+            if (b3 === 1 / 0) return void f2(a3);
+            let h = setTimeout(() => {
+              if ("function" == typeof c3) {
+                try {
+                  f2(c3());
+                } catch (a4) {
+                  g(a4);
+                }
+                return;
+              }
+              let d3 = "string" == typeof c3 ? c3 : `Promise timed out after ${b3} milliseconds`, h2 = c3 instanceof Error ? c3 : new e2(d3);
+              "function" == typeof a3.cancel && a3.cancel(), g(h2);
+            }, b3);
+            d2(a3.then(f2, g), () => {
+              clearTimeout(h);
+            });
+          });
+          a2.exports = f, a2.exports.default = f, a2.exports.TimeoutError = e2;
+        } }, c = {};
+        function d(a2) {
+          var e2 = c[a2];
+          if (void 0 !== e2) return e2.exports;
+          var f = c[a2] = { exports: {} }, g = true;
+          try {
+            b[a2](f, f.exports, d), g = false;
+          } finally {
+            g && delete c[a2];
+          }
+          return f.exports;
+        }
+        d.ab = "//";
+        var e = {};
+        (() => {
+          Object.defineProperty(e, "__esModule", { value: true });
+          let a2 = d(993), b2 = d(816), c2 = d(821), f = () => {
+          }, g = new b2.TimeoutError();
+          class h extends a2 {
+            constructor(a3) {
+              var b3, d2, e2, g2;
+              if (super(), this._intervalCount = 0, this._intervalEnd = 0, this._pendingCount = 0, this._resolveEmpty = f, this._resolveIdle = f, !("number" == typeof (a3 = Object.assign({ carryoverConcurrencyCount: false, intervalCap: 1 / 0, interval: 0, concurrency: 1 / 0, autoStart: true, queueClass: c2.default }, a3)).intervalCap && a3.intervalCap >= 1)) throw TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${null != (d2 = null == (b3 = a3.intervalCap) ? void 0 : b3.toString()) ? d2 : ""}\` (${typeof a3.intervalCap})`);
+              if (void 0 === a3.interval || !(Number.isFinite(a3.interval) && a3.interval >= 0)) throw TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${null != (g2 = null == (e2 = a3.interval) ? void 0 : e2.toString()) ? g2 : ""}\` (${typeof a3.interval})`);
+              this._carryoverConcurrencyCount = a3.carryoverConcurrencyCount, this._isIntervalIgnored = a3.intervalCap === 1 / 0 || 0 === a3.interval, this._intervalCap = a3.intervalCap, this._interval = a3.interval, this._queue = new a3.queueClass(), this._queueClass = a3.queueClass, this.concurrency = a3.concurrency, this._timeout = a3.timeout, this._throwOnTimeout = true === a3.throwOnTimeout, this._isPaused = false === a3.autoStart;
+            }
+            get _doesIntervalAllowAnother() {
+              return this._isIntervalIgnored || this._intervalCount < this._intervalCap;
+            }
+            get _doesConcurrentAllowAnother() {
+              return this._pendingCount < this._concurrency;
+            }
+            _next() {
+              this._pendingCount--, this._tryToStartAnother(), this.emit("next");
+            }
+            _resolvePromises() {
+              this._resolveEmpty(), this._resolveEmpty = f, 0 === this._pendingCount && (this._resolveIdle(), this._resolveIdle = f, this.emit("idle"));
+            }
+            _onResumeInterval() {
+              this._onInterval(), this._initializeIntervalIfNeeded(), this._timeoutId = void 0;
+            }
+            _isIntervalPaused() {
+              let a3 = Date.now();
+              if (void 0 === this._intervalId) {
+                let b3 = this._intervalEnd - a3;
+                if (!(b3 < 0)) return void 0 === this._timeoutId && (this._timeoutId = setTimeout(() => {
+                  this._onResumeInterval();
+                }, b3)), true;
+                this._intervalCount = this._carryoverConcurrencyCount ? this._pendingCount : 0;
+              }
+              return false;
+            }
+            _tryToStartAnother() {
+              if (0 === this._queue.size) return this._intervalId && clearInterval(this._intervalId), this._intervalId = void 0, this._resolvePromises(), false;
+              if (!this._isPaused) {
+                let a3 = !this._isIntervalPaused();
+                if (this._doesIntervalAllowAnother && this._doesConcurrentAllowAnother) {
+                  let b3 = this._queue.dequeue();
+                  return !!b3 && (this.emit("active"), b3(), a3 && this._initializeIntervalIfNeeded(), true);
+                }
+              }
+              return false;
+            }
+            _initializeIntervalIfNeeded() {
+              this._isIntervalIgnored || void 0 !== this._intervalId || (this._intervalId = setInterval(() => {
+                this._onInterval();
+              }, this._interval), this._intervalEnd = Date.now() + this._interval);
+            }
+            _onInterval() {
+              0 === this._intervalCount && 0 === this._pendingCount && this._intervalId && (clearInterval(this._intervalId), this._intervalId = void 0), this._intervalCount = this._carryoverConcurrencyCount ? this._pendingCount : 0, this._processQueue();
+            }
+            _processQueue() {
+              for (; this._tryToStartAnother(); ) ;
+            }
+            get concurrency() {
+              return this._concurrency;
+            }
+            set concurrency(a3) {
+              if (!("number" == typeof a3 && a3 >= 1)) throw TypeError(`Expected \`concurrency\` to be a number from 1 and up, got \`${a3}\` (${typeof a3})`);
+              this._concurrency = a3, this._processQueue();
+            }
+            async add(a3, c3 = {}) {
+              return new Promise((d2, e2) => {
+                let f2 = async () => {
+                  this._pendingCount++, this._intervalCount++;
+                  try {
+                    let f3 = void 0 === this._timeout && void 0 === c3.timeout ? a3() : b2.default(Promise.resolve(a3()), void 0 === c3.timeout ? this._timeout : c3.timeout, () => {
+                      (void 0 === c3.throwOnTimeout ? this._throwOnTimeout : c3.throwOnTimeout) && e2(g);
+                    });
+                    d2(await f3);
+                  } catch (a4) {
+                    e2(a4);
+                  }
+                  this._next();
+                };
+                this._queue.enqueue(f2, c3), this._tryToStartAnother(), this.emit("add");
+              });
+            }
+            async addAll(a3, b3) {
+              return Promise.all(a3.map(async (a4) => this.add(a4, b3)));
+            }
+            start() {
+              return this._isPaused && (this._isPaused = false, this._processQueue()), this;
+            }
+            pause() {
+              this._isPaused = true;
+            }
+            clear() {
+              this._queue = new this._queueClass();
+            }
+            async onEmpty() {
+              if (0 !== this._queue.size) return new Promise((a3) => {
+                let b3 = this._resolveEmpty;
+                this._resolveEmpty = () => {
+                  b3(), a3();
+                };
+              });
+            }
+            async onIdle() {
+              if (0 !== this._pendingCount || 0 !== this._queue.size) return new Promise((a3) => {
+                let b3 = this._resolveIdle;
+                this._resolveIdle = () => {
+                  b3(), a3();
+                };
+              });
+            }
+            get size() {
+              return this._queue.size;
+            }
+            sizeBy(a3) {
+              return this._queue.filter(a3).length;
+            }
+            get pending() {
+              return this._pendingCount;
+            }
+            get isPaused() {
+              return this._isPaused;
+            }
+            get timeout() {
+              return this._timeout;
+            }
+            set timeout(a3) {
+              this._timeout = a3;
+            }
+          }
+          e.default = h;
+        })(), a.exports = e;
+      })();
+    }, 136: (a, b, c) => {
+      "use strict";
+      c.d(b, { Z: () => d });
+      let d = (0, c(272).xl)();
+    }, 142: (a, b, c) => {
+      "use strict";
+      c.d(b, { f: () => d });
+      class d extends Error {
+        constructor(...a2) {
+          super(...a2), this.code = "NEXT_STATIC_GEN_BAILOUT";
+        }
+      }
+    }, 149: (a, b, c) => {
+      "use strict";
+      c.d(b, { xl: () => g });
+      let d = Object.defineProperty(Error("Invariant: AsyncLocalStorage accessed in runtime where it is not available"), "__NEXT_ERROR_CODE", { value: "E504", enumerable: false, configurable: true });
+      class e {
+        disable() {
+          throw d;
+        }
+        getStore() {
+        }
+        run() {
+          throw d;
+        }
+        exit() {
+          throw d;
+        }
+        enterWith() {
+          throw d;
+        }
+        static bind(a2) {
+          return a2;
+        }
+      }
+      let f = "u" > typeof globalThis && globalThis.AsyncLocalStorage;
+      function g() {
+        return f ? new f() : new e();
+      }
+    }, 161: (a, b, c) => {
+      "use strict";
+      c.d(b, { Ud: () => d.stringifyCookie, VO: () => d.ResponseCookies, tm: () => d.RequestCookies });
+      var d = c(640);
+    }, 172: (a, b, c) => {
+      "use strict";
+      c.d(b, { headers: () => q }), c(54), c(161);
+      var d = c(701), e = c(794), f = c(967), g = c(142), h = c(797), i = c(219);
+      let j = { current: null }, k = "function" == typeof i.cache ? i.cache : (a2) => a2, l = console.warn;
+      function m(a2) {
+        return function(...b2) {
+          l(a2(...b2));
+        };
+      }
+      k((a2) => {
+        try {
+          l(j.current);
+        } finally {
+          j.current = null;
+        }
+      });
+      var n = c(664), o = c(798);
+      c(301), /* @__PURE__ */ new WeakMap(), m(function(a2, b2) {
+        let c2 = a2 ? `Route "${a2}" ` : "This route ";
+        return Object.defineProperty(Error(`${c2}used ${b2}. \`cookies()\` returns a Promise and must be unwrapped with \`await\` or \`React.use()\` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis`), "__NEXT_ERROR_CODE", { value: "E830", enumerable: false, configurable: true });
+      });
+      var p = c(841);
+      function q() {
+        let a2 = "headers", b2 = d.J.getStore(), c2 = e.FP.getStore();
+        if (b2) {
+          if (c2 && "after" === c2.phase && !(0, n.iC)()) throw Object.defineProperty(Error(`Route ${b2.route} used \`headers()\` inside \`after()\`. This is not supported. If you need this data inside an \`after()\` callback, use \`headers()\` outside of the callback. See more info here: https://nextjs.org/docs/canary/app/api-reference/functions/after`), "__NEXT_ERROR_CODE", { value: "E839", enumerable: false, configurable: true });
+          if (b2.forceStatic) return s(p.o.seal(new Headers({})));
+          if (c2) switch (c2.type) {
+            case "cache": {
+              let a3 = Object.defineProperty(Error(`Route ${b2.route} used \`headers()\` inside "use cache". Accessing Dynamic data sources inside a cache scope is not supported. If you need this data inside a cached function use \`headers()\` outside of the cached function and pass the required dynamic data in as an argument. See more info here: https://nextjs.org/docs/messages/next-request-in-use-cache`), "__NEXT_ERROR_CODE", { value: "E833", enumerable: false, configurable: true });
+              throw Error.captureStackTrace(a3, q), b2.invalidDynamicUsageError ??= a3, a3;
+            }
+            case "unstable-cache":
+              throw Object.defineProperty(Error(`Route ${b2.route} used \`headers()\` inside a function cached with \`unstable_cache()\`. Accessing Dynamic data sources inside a cache scope is not supported. If you need this data inside a cached function use \`headers()\` outside of the cached function and pass the required dynamic data in as an argument. See more info here: https://nextjs.org/docs/app/api-reference/functions/unstable_cache`), "__NEXT_ERROR_CODE", { value: "E838", enumerable: false, configurable: true });
+            case "generate-static-params":
+              throw Object.defineProperty(Error(`Route ${b2.route} used \`headers()\` inside \`generateStaticParams\`. This is not supported because \`generateStaticParams\` runs at build time without an HTTP request. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context`), "__NEXT_ERROR_CODE", { value: "E1134", enumerable: false, configurable: true });
+          }
+          if (b2.dynamicShouldError) throw Object.defineProperty(new g.f(`Route ${b2.route} with \`dynamic = "error"\` couldn't be rendered statically because it used \`headers()\`. See more info here: https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic#dynamic-rendering`), "__NEXT_ERROR_CODE", { value: "E828", enumerable: false, configurable: true });
+          if (c2) switch (c2.type) {
+            case "prerender":
+              var i2 = b2, j2 = c2;
+              let d2 = r.get(j2);
+              if (d2) return d2;
+              let k2 = (0, h.W5)(j2.renderSignal, i2.route, "`headers()`");
+              return r.set(j2, k2), k2;
+            case "prerender-client":
+            case "validation-client":
+              let l2 = "`headers`";
+              throw Object.defineProperty(new o.z(`${l2} must not be used within a client component. Next.js should be preventing ${l2} from being included in client components statically, but did not in this case.`), "__NEXT_ERROR_CODE", { value: "E1017", enumerable: false, configurable: true });
+            case "prerender-ppr":
+              return (0, f.Ui)(b2.route, a2, c2.dynamicTracking);
+            case "prerender-legacy":
+              return (0, f.xI)(a2, b2, c2);
+            case "prerender-runtime":
+              return (0, h.wi)(c2, s(c2.headers));
+            case "private-cache":
+              return s(c2.headers);
+            case "request":
+              if ((0, f.Pk)(c2), c2.asyncApiPromises) return (0, e.fV)(c2) ? c2.asyncApiPromises.earlyHeaders : c2.asyncApiPromises.headers;
+              return s(c2.headers);
+          }
+        }
+        (0, e.M1)(a2);
+      }
+      let r = /* @__PURE__ */ new WeakMap();
+      function s(a2) {
+        let b2 = r.get(a2);
+        if (b2) return b2;
+        let c2 = Promise.resolve(a2);
+        return r.set(a2, c2), c2;
+      }
+      m(function(a2, b2) {
+        let c2 = a2 ? `Route "${a2}" ` : "This route ";
+        return Object.defineProperty(Error(`${c2}used ${b2}. \`headers()\` returns a Promise and must be unwrapped with \`await\` or \`React.use()\` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis`), "__NEXT_ERROR_CODE", { value: "E836", enumerable: false, configurable: true });
+      }), c(252), /* @__PURE__ */ new WeakMap(), m(function(a2, b2) {
+        let c2 = a2 ? `Route "${a2}" ` : "This route ";
+        return Object.defineProperty(Error(`${c2}used ${b2}. \`draftMode()\` returns a Promise and must be unwrapped with \`await\` or \`React.use()\` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis`), "__NEXT_ERROR_CODE", { value: "E835", enumerable: false, configurable: true });
+      });
+    }, 219: (a, b, c) => {
+      "use strict";
+      a.exports = c(231);
+    }, 231: (a, b) => {
+      "use strict";
+      var c = { H: null, A: null };
+      function d(a2) {
+        var b2 = "https://react.dev/errors/" + a2;
+        if (1 < arguments.length) {
+          b2 += "?args[]=" + encodeURIComponent(arguments[1]);
+          for (var c2 = 2; c2 < arguments.length; c2++) b2 += "&args[]=" + encodeURIComponent(arguments[c2]);
+        }
+        return "Minified React error #" + a2 + "; visit " + b2 + " for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";
+      }
+      var e = Array.isArray;
+      function f() {
+      }
+      var g = Symbol.for("react.transitional.element"), h = Symbol.for("react.portal"), i = Symbol.for("react.fragment"), j = Symbol.for("react.strict_mode"), k = Symbol.for("react.profiler"), l = Symbol.for("react.forward_ref"), m = Symbol.for("react.suspense"), n = Symbol.for("react.memo"), o = Symbol.for("react.lazy"), p = Symbol.for("react.activity"), q = Symbol.for("react.view_transition"), r = Symbol.iterator, s = Object.prototype.hasOwnProperty, t = Object.assign;
+      function u(a2, b2, c2) {
+        var d2 = c2.ref;
+        return { $$typeof: g, type: a2, key: b2, ref: void 0 !== d2 ? d2 : null, props: c2 };
+      }
+      function v(a2) {
+        return "object" == typeof a2 && null !== a2 && a2.$$typeof === g;
+      }
+      var w = /\/+/g;
+      function x(a2, b2) {
+        var c2, d2;
+        return "object" == typeof a2 && null !== a2 && null != a2.key ? (c2 = "" + a2.key, d2 = { "=": "=0", ":": "=2" }, "$" + c2.replace(/[=:]/g, function(a3) {
+          return d2[a3];
+        })) : b2.toString(36);
+      }
+      function y(a2, b2, c2) {
+        if (null == a2) return a2;
+        var i2 = [], j2 = 0;
+        return !function a3(b3, c3, i3, j3, k2) {
+          var l2, m2, n2, p2 = typeof b3;
+          ("undefined" === p2 || "boolean" === p2) && (b3 = null);
+          var q2 = false;
+          if (null === b3) q2 = true;
+          else switch (p2) {
+            case "bigint":
+            case "string":
+            case "number":
+              q2 = true;
+              break;
+            case "object":
+              switch (b3.$$typeof) {
+                case g:
+                case h:
+                  q2 = true;
+                  break;
+                case o:
+                  return a3((q2 = b3._init)(b3._payload), c3, i3, j3, k2);
+              }
+          }
+          if (q2) return k2 = k2(b3), q2 = "" === j3 ? "." + x(b3, 0) : j3, e(k2) ? (i3 = "", null != q2 && (i3 = q2.replace(w, "$&/") + "/"), a3(k2, c3, i3, "", function(a4) {
+            return a4;
+          })) : null != k2 && (v(k2) && (l2 = k2, m2 = i3 + (null == k2.key || b3 && b3.key === k2.key ? "" : ("" + k2.key).replace(w, "$&/") + "/") + q2, k2 = u(l2.type, m2, l2.props)), c3.push(k2)), 1;
+          q2 = 0;
+          var s2 = "" === j3 ? "." : j3 + ":";
+          if (e(b3)) for (var t2 = 0; t2 < b3.length; t2++) p2 = s2 + x(j3 = b3[t2], t2), q2 += a3(j3, c3, i3, p2, k2);
+          else if ("function" == typeof (t2 = null === (n2 = b3) || "object" != typeof n2 ? null : "function" == typeof (n2 = r && n2[r] || n2["@@iterator"]) ? n2 : null)) for (b3 = t2.call(b3), t2 = 0; !(j3 = b3.next()).done; ) p2 = s2 + x(j3 = j3.value, t2++), q2 += a3(j3, c3, i3, p2, k2);
+          else if ("object" === p2) {
+            if ("function" == typeof b3.then) return a3(function(a4) {
+              switch (a4.status) {
+                case "fulfilled":
+                  return a4.value;
+                case "rejected":
+                  throw a4.reason;
+                default:
+                  switch ("string" == typeof a4.status ? a4.then(f, f) : (a4.status = "pending", a4.then(function(b4) {
+                    "pending" === a4.status && (a4.status = "fulfilled", a4.value = b4);
+                  }, function(b4) {
+                    "pending" === a4.status && (a4.status = "rejected", a4.reason = b4);
+                  })), a4.status) {
+                    case "fulfilled":
+                      return a4.value;
+                    case "rejected":
+                      throw a4.reason;
+                  }
+              }
+              throw a4;
+            }(b3), c3, i3, j3, k2);
+            throw Error(d(31, "[object Object]" === (c3 = String(b3)) ? "object with keys {" + Object.keys(b3).join(", ") + "}" : c3));
+          }
+          return q2;
+        }(a2, i2, "", "", function(a3) {
+          return b2.call(c2, a3, j2++);
+        }), i2;
+      }
+      function z(a2) {
+        if (-1 === a2._status) {
+          var b2 = (0, a2._result)();
+          b2.then(function(c2) {
+            (0 === a2._status || -1 === a2._status) && (a2._status = 1, a2._result = c2, void 0 === b2.status && (b2.status = "fulfilled", b2.value = c2));
+          }, function(c2) {
+            (0 === a2._status || -1 === a2._status) && (a2._status = 2, a2._result = c2, void 0 === b2.status && (b2.status = "rejected", b2.reason = c2));
+          }), -1 === a2._status && (a2._status = 0, a2._result = b2);
+        }
+        if (1 === a2._status) return a2._result.default;
+        throw a2._result;
+      }
+      function A() {
+        return /* @__PURE__ */ new WeakMap();
+      }
+      function B() {
+        return { s: 0, v: void 0, o: null, p: null };
+      }
+      b.Activity = p, b.Children = { map: y, forEach: function(a2, b2, c2) {
+        y(a2, function() {
+          b2.apply(this, arguments);
+        }, c2);
+      }, count: function(a2) {
+        var b2 = 0;
+        return y(a2, function() {
+          b2++;
+        }), b2;
+      }, toArray: function(a2) {
+        return y(a2, function(a3) {
+          return a3;
+        }) || [];
+      }, only: function(a2) {
+        if (!v(a2)) throw Error(d(143));
+        return a2;
+      } }, b.Fragment = i, b.Profiler = k, b.StrictMode = j, b.Suspense = m, b.ViewTransition = q, b.__SERVER_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = c, b.cache = function(a2) {
+        return function() {
+          var b2 = c.A;
+          if (!b2) return a2.apply(null, arguments);
+          var d2 = b2.getCacheForType(A);
+          void 0 === (b2 = d2.get(a2)) && (b2 = B(), d2.set(a2, b2)), d2 = 0;
+          for (var e2 = arguments.length; d2 < e2; d2++) {
+            var f2 = arguments[d2];
+            if ("function" == typeof f2 || "object" == typeof f2 && null !== f2) {
+              var g2 = b2.o;
+              null === g2 && (b2.o = g2 = /* @__PURE__ */ new WeakMap()), void 0 === (b2 = g2.get(f2)) && (b2 = B(), g2.set(f2, b2));
+            } else null === (g2 = b2.p) && (b2.p = g2 = /* @__PURE__ */ new Map()), void 0 === (b2 = g2.get(f2)) && (b2 = B(), g2.set(f2, b2));
+          }
+          if (1 === b2.s) return b2.v;
+          if (2 === b2.s) throw b2.v;
+          try {
+            var h2 = a2.apply(null, arguments);
+            return (d2 = b2).s = 1, d2.v = h2;
+          } catch (a3) {
+            throw (h2 = b2).s = 2, h2.v = a3, a3;
+          }
+        };
+      }, b.cacheSignal = function() {
+        var a2 = c.A;
+        return a2 ? a2.cacheSignal() : null;
+      }, b.captureOwnerStack = function() {
+        return null;
+      }, b.cloneElement = function(a2, b2, c2) {
+        if (null == a2) throw Error(d(267, a2));
+        var e2 = t({}, a2.props), f2 = a2.key;
+        if (null != b2) for (g2 in void 0 !== b2.key && (f2 = "" + b2.key), b2) s.call(b2, g2) && "key" !== g2 && "__self" !== g2 && "__source" !== g2 && ("ref" !== g2 || void 0 !== b2.ref) && (e2[g2] = b2[g2]);
+        var g2 = arguments.length - 2;
+        if (1 === g2) e2.children = c2;
+        else if (1 < g2) {
+          for (var h2 = Array(g2), i2 = 0; i2 < g2; i2++) h2[i2] = arguments[i2 + 2];
+          e2.children = h2;
+        }
+        return u(a2.type, f2, e2);
+      }, b.createElement = function(a2, b2, c2) {
+        var d2, e2 = {}, f2 = null;
+        if (null != b2) for (d2 in void 0 !== b2.key && (f2 = "" + b2.key), b2) s.call(b2, d2) && "key" !== d2 && "__self" !== d2 && "__source" !== d2 && (e2[d2] = b2[d2]);
+        var g2 = arguments.length - 2;
+        if (1 === g2) e2.children = c2;
+        else if (1 < g2) {
+          for (var h2 = Array(g2), i2 = 0; i2 < g2; i2++) h2[i2] = arguments[i2 + 2];
+          e2.children = h2;
+        }
+        if (a2 && a2.defaultProps) for (d2 in g2 = a2.defaultProps) void 0 === e2[d2] && (e2[d2] = g2[d2]);
+        return u(a2, f2, e2);
+      }, b.createRef = function() {
+        return { current: null };
+      }, b.forwardRef = function(a2) {
+        return { $$typeof: l, render: a2 };
+      }, b.isValidElement = v, b.lazy = function(a2) {
+        return { $$typeof: o, _payload: { _status: -1, _result: a2 }, _init: z };
+      }, b.memo = function(a2, b2) {
+        return { $$typeof: n, type: a2, compare: void 0 === b2 ? null : b2 };
+      }, b.use = function(a2) {
+        return c.H.use(a2);
+      }, b.useCallback = function(a2, b2) {
+        return c.H.useCallback(a2, b2);
+      }, b.useDebugValue = function() {
+      }, b.useId = function() {
+        return c.H.useId();
+      }, b.useMemo = function(a2, b2) {
+        return c.H.useMemo(a2, b2);
+      }, b.version = "19.3.0-canary-3f0b9e61-20260317";
+    }, 252: (a, b, c) => {
+      "use strict";
+      c.d(b, { F: () => e, h: () => f });
+      let d = "DYNAMIC_SERVER_USAGE";
+      class e extends Error {
+        constructor(a2) {
+          super(`Dynamic server usage: ${a2}`), this.description = a2, this.digest = d;
+        }
+      }
+      function f(a2) {
+        return "object" == typeof a2 && null !== a2 && "digest" in a2 && "string" == typeof a2.digest && a2.digest === d;
+      }
+    }, 262: (a) => {
+      (() => {
+        "use strict";
+        "u" > typeof __nccwpck_require__ && (__nccwpck_require__.ab = "//");
+        var b, c, d, e, f = {};
+        f.parse = function(a2, c2) {
+          if ("string" != typeof a2) throw TypeError("argument str must be a string");
+          for (var e2 = {}, f2 = a2.split(d), g = (c2 || {}).decode || b, h = 0; h < f2.length; h++) {
+            var i = f2[h], j = i.indexOf("=");
+            if (!(j < 0)) {
+              var k = i.substr(0, j).trim(), l = i.substr(++j, i.length).trim();
+              '"' == l[0] && (l = l.slice(1, -1)), void 0 == e2[k] && (e2[k] = function(a3, b2) {
+                try {
+                  return b2(a3);
+                } catch (b3) {
+                  return a3;
+                }
+              }(l, g));
+            }
+          }
+          return e2;
+        }, f.serialize = function(a2, b2, d2) {
+          var f2 = d2 || {}, g = f2.encode || c;
+          if ("function" != typeof g) throw TypeError("option encode is invalid");
+          if (!e.test(a2)) throw TypeError("argument name is invalid");
+          var h = g(b2);
+          if (h && !e.test(h)) throw TypeError("argument val is invalid");
+          var i = a2 + "=" + h;
+          if (null != f2.maxAge) {
+            var j = f2.maxAge - 0;
+            if (isNaN(j) || !isFinite(j)) throw TypeError("option maxAge is invalid");
+            i += "; Max-Age=" + Math.floor(j);
+          }
+          if (f2.domain) {
+            if (!e.test(f2.domain)) throw TypeError("option domain is invalid");
+            i += "; Domain=" + f2.domain;
+          }
+          if (f2.path) {
+            if (!e.test(f2.path)) throw TypeError("option path is invalid");
+            i += "; Path=" + f2.path;
+          }
+          if (f2.expires) {
+            if ("function" != typeof f2.expires.toUTCString) throw TypeError("option expires is invalid");
+            i += "; Expires=" + f2.expires.toUTCString();
+          }
+          if (f2.httpOnly && (i += "; HttpOnly"), f2.secure && (i += "; Secure"), f2.sameSite) switch ("string" == typeof f2.sameSite ? f2.sameSite.toLowerCase() : f2.sameSite) {
+            case true:
+            case "strict":
+              i += "; SameSite=Strict";
+              break;
+            case "lax":
+              i += "; SameSite=Lax";
+              break;
+            case "none":
+              i += "; SameSite=None";
+              break;
+            default:
+              throw TypeError("option sameSite is invalid");
+          }
+          return i;
+        }, b = decodeURIComponent, c = encodeURIComponent, d = /; */, e = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/, a.exports = f;
+      })();
+    }, 269: (a, b, c) => {
+      "use strict";
+      Object.defineProperty(b, "__esModule", { value: true });
+      var d = { interceptTestApis: function() {
+        return h;
+      }, wrapRequestHandler: function() {
+        return i;
+      } };
+      for (var e in d) Object.defineProperty(b, e, { enumerable: true, get: d[e] });
+      let f = c(845), g = c(420);
+      function h() {
+        return (0, g.interceptFetch)(c.g.fetch);
+      }
+      function i(a2) {
+        return (b2, c2) => (0, f.withRequest)(b2, g.reader, () => a2(b2, c2));
+      }
+    }, 272: (a, b, c) => {
+      "use strict";
+      c.d(b, { $p: () => i, cg: () => h, xl: () => g });
+      let d = Object.defineProperty(Error("Invariant: AsyncLocalStorage accessed in runtime where it is not available"), "__NEXT_ERROR_CODE", { value: "E504", enumerable: false, configurable: true });
+      class e {
+        disable() {
+          throw d;
+        }
+        getStore() {
+        }
+        run() {
+          throw d;
+        }
+        exit() {
+          throw d;
+        }
+        enterWith() {
+          throw d;
+        }
+        static bind(a2) {
+          return a2;
+        }
+      }
+      let f = "u" > typeof globalThis && globalThis.AsyncLocalStorage;
+      function g() {
+        return f ? new f() : new e();
+      }
+      function h(a2) {
+        return f ? f.bind(a2) : e.bind(a2);
+      }
+      function i() {
+        return f ? f.snapshot() : function(a2, ...b2) {
+          return a2(...b2);
+        };
+      }
+    }, 301: (a, b, c) => {
+      "use strict";
+      c.d(b, { D: () => e }), c(798);
+      var d, e = ((d = {})[d.Before = 1] = "Before", d[d.EarlyStatic = 2] = "EarlyStatic", d[d.Static = 3] = "Static", d[d.EarlyRuntime = 4] = "EarlyRuntime", d[d.Runtime = 5] = "Runtime", d[d.Dynamic = 6] = "Dynamic", d[d.Abandoned = 7] = "Abandoned", d);
+    }, 328: (a, b, c) => {
+      (() => {
+        "use strict";
+        let b2, d, e, f, g;
+        var h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x = { 491: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.ContextAPI = void 0;
+          let d2 = c2(223), e2 = c2(172), f2 = c2(930), g2 = "context", h2 = new d2.NoopContextManager();
+          class i2 {
+            static getInstance() {
+              return this._instance || (this._instance = new i2()), this._instance;
+            }
+            setGlobalContextManager(a3) {
+              return (0, e2.registerGlobal)(g2, a3, f2.DiagAPI.instance());
+            }
+            active() {
+              return this._getContextManager().active();
+            }
+            with(a3, b4, c3, ...d3) {
+              return this._getContextManager().with(a3, b4, c3, ...d3);
+            }
+            bind(a3, b4) {
+              return this._getContextManager().bind(a3, b4);
+            }
+            _getContextManager() {
+              return (0, e2.getGlobal)(g2) || h2;
+            }
+            disable() {
+              this._getContextManager().disable(), (0, e2.unregisterGlobal)(g2, f2.DiagAPI.instance());
+            }
+          }
+          b3.ContextAPI = i2;
+        }, 930: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.DiagAPI = void 0;
+          let d2 = c2(56), e2 = c2(912), f2 = c2(957), g2 = c2(172);
+          class h2 {
+            constructor() {
+              function a3(a4) {
+                return function(...b5) {
+                  let c3 = (0, g2.getGlobal)("diag");
+                  if (c3) return c3[a4](...b5);
+                };
+              }
+              const b4 = this;
+              b4.setLogger = (a4, c3 = { logLevel: f2.DiagLogLevel.INFO }) => {
+                var d3, h3, i2;
+                if (a4 === b4) {
+                  let a5 = Error("Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation");
+                  return b4.error(null != (d3 = a5.stack) ? d3 : a5.message), false;
+                }
+                "number" == typeof c3 && (c3 = { logLevel: c3 });
+                let j2 = (0, g2.getGlobal)("diag"), k2 = (0, e2.createLogLevelDiagLogger)(null != (h3 = c3.logLevel) ? h3 : f2.DiagLogLevel.INFO, a4);
+                if (j2 && !c3.suppressOverrideMessage) {
+                  let a5 = null != (i2 = Error().stack) ? i2 : "<failed to generate stacktrace>";
+                  j2.warn(`Current logger will be overwritten from ${a5}`), k2.warn(`Current logger will overwrite one already registered from ${a5}`);
+                }
+                return (0, g2.registerGlobal)("diag", k2, b4, true);
+              }, b4.disable = () => {
+                (0, g2.unregisterGlobal)("diag", b4);
+              }, b4.createComponentLogger = (a4) => new d2.DiagComponentLogger(a4), b4.verbose = a3("verbose"), b4.debug = a3("debug"), b4.info = a3("info"), b4.warn = a3("warn"), b4.error = a3("error");
+            }
+            static instance() {
+              return this._instance || (this._instance = new h2()), this._instance;
+            }
+          }
+          b3.DiagAPI = h2;
+        }, 653: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.MetricsAPI = void 0;
+          let d2 = c2(660), e2 = c2(172), f2 = c2(930), g2 = "metrics";
+          class h2 {
+            static getInstance() {
+              return this._instance || (this._instance = new h2()), this._instance;
+            }
+            setGlobalMeterProvider(a3) {
+              return (0, e2.registerGlobal)(g2, a3, f2.DiagAPI.instance());
+            }
+            getMeterProvider() {
+              return (0, e2.getGlobal)(g2) || d2.NOOP_METER_PROVIDER;
+            }
+            getMeter(a3, b4, c3) {
+              return this.getMeterProvider().getMeter(a3, b4, c3);
+            }
+            disable() {
+              (0, e2.unregisterGlobal)(g2, f2.DiagAPI.instance());
+            }
+          }
+          b3.MetricsAPI = h2;
+        }, 181: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.PropagationAPI = void 0;
+          let d2 = c2(172), e2 = c2(874), f2 = c2(194), g2 = c2(277), h2 = c2(369), i2 = c2(930), j2 = "propagation", k2 = new e2.NoopTextMapPropagator();
+          class l2 {
+            constructor() {
+              this.createBaggage = h2.createBaggage, this.getBaggage = g2.getBaggage, this.getActiveBaggage = g2.getActiveBaggage, this.setBaggage = g2.setBaggage, this.deleteBaggage = g2.deleteBaggage;
+            }
+            static getInstance() {
+              return this._instance || (this._instance = new l2()), this._instance;
+            }
+            setGlobalPropagator(a3) {
+              return (0, d2.registerGlobal)(j2, a3, i2.DiagAPI.instance());
+            }
+            inject(a3, b4, c3 = f2.defaultTextMapSetter) {
+              return this._getGlobalPropagator().inject(a3, b4, c3);
+            }
+            extract(a3, b4, c3 = f2.defaultTextMapGetter) {
+              return this._getGlobalPropagator().extract(a3, b4, c3);
+            }
+            fields() {
+              return this._getGlobalPropagator().fields();
+            }
+            disable() {
+              (0, d2.unregisterGlobal)(j2, i2.DiagAPI.instance());
+            }
+            _getGlobalPropagator() {
+              return (0, d2.getGlobal)(j2) || k2;
+            }
+          }
+          b3.PropagationAPI = l2;
+        }, 997: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.TraceAPI = void 0;
+          let d2 = c2(172), e2 = c2(846), f2 = c2(139), g2 = c2(607), h2 = c2(930), i2 = "trace";
+          class j2 {
+            constructor() {
+              this._proxyTracerProvider = new e2.ProxyTracerProvider(), this.wrapSpanContext = f2.wrapSpanContext, this.isSpanContextValid = f2.isSpanContextValid, this.deleteSpan = g2.deleteSpan, this.getSpan = g2.getSpan, this.getActiveSpan = g2.getActiveSpan, this.getSpanContext = g2.getSpanContext, this.setSpan = g2.setSpan, this.setSpanContext = g2.setSpanContext;
+            }
+            static getInstance() {
+              return this._instance || (this._instance = new j2()), this._instance;
+            }
+            setGlobalTracerProvider(a3) {
+              let b4 = (0, d2.registerGlobal)(i2, this._proxyTracerProvider, h2.DiagAPI.instance());
+              return b4 && this._proxyTracerProvider.setDelegate(a3), b4;
+            }
+            getTracerProvider() {
+              return (0, d2.getGlobal)(i2) || this._proxyTracerProvider;
+            }
+            getTracer(a3, b4) {
+              return this.getTracerProvider().getTracer(a3, b4);
+            }
+            disable() {
+              (0, d2.unregisterGlobal)(i2, h2.DiagAPI.instance()), this._proxyTracerProvider = new e2.ProxyTracerProvider();
+            }
+          }
+          b3.TraceAPI = j2;
+        }, 277: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.deleteBaggage = b3.setBaggage = b3.getActiveBaggage = b3.getBaggage = void 0;
+          let d2 = c2(491), e2 = (0, c2(780).createContextKey)("OpenTelemetry Baggage Key");
+          function f2(a3) {
+            return a3.getValue(e2) || void 0;
+          }
+          b3.getBaggage = f2, b3.getActiveBaggage = function() {
+            return f2(d2.ContextAPI.getInstance().active());
+          }, b3.setBaggage = function(a3, b4) {
+            return a3.setValue(e2, b4);
+          }, b3.deleteBaggage = function(a3) {
+            return a3.deleteValue(e2);
+          };
+        }, 993: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.BaggageImpl = void 0;
+          class c2 {
+            constructor(a3) {
+              this._entries = a3 ? new Map(a3) : /* @__PURE__ */ new Map();
+            }
+            getEntry(a3) {
+              let b4 = this._entries.get(a3);
+              if (b4) return Object.assign({}, b4);
+            }
+            getAllEntries() {
+              return Array.from(this._entries.entries()).map(([a3, b4]) => [a3, b4]);
+            }
+            setEntry(a3, b4) {
+              let d2 = new c2(this._entries);
+              return d2._entries.set(a3, b4), d2;
+            }
+            removeEntry(a3) {
+              let b4 = new c2(this._entries);
+              return b4._entries.delete(a3), b4;
+            }
+            removeEntries(...a3) {
+              let b4 = new c2(this._entries);
+              for (let c3 of a3) b4._entries.delete(c3);
+              return b4;
+            }
+            clear() {
+              return new c2();
+            }
+          }
+          b3.BaggageImpl = c2;
+        }, 830: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.baggageEntryMetadataSymbol = void 0, b3.baggageEntryMetadataSymbol = Symbol("BaggageEntryMetadata");
+        }, 369: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.baggageEntryMetadataFromString = b3.createBaggage = void 0;
+          let d2 = c2(930), e2 = c2(993), f2 = c2(830), g2 = d2.DiagAPI.instance();
+          b3.createBaggage = function(a3 = {}) {
+            return new e2.BaggageImpl(new Map(Object.entries(a3)));
+          }, b3.baggageEntryMetadataFromString = function(a3) {
+            return "string" != typeof a3 && (g2.error(`Cannot create baggage metadata from unknown type: ${typeof a3}`), a3 = ""), { __TYPE__: f2.baggageEntryMetadataSymbol, toString: () => a3 };
+          };
+        }, 67: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.context = void 0, b3.context = c2(491).ContextAPI.getInstance();
+        }, 223: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.NoopContextManager = void 0;
+          let d2 = c2(780);
+          class e2 {
+            active() {
+              return d2.ROOT_CONTEXT;
+            }
+            with(a3, b4, c3, ...d3) {
+              return b4.call(c3, ...d3);
+            }
+            bind(a3, b4) {
+              return b4;
+            }
+            enable() {
+              return this;
+            }
+            disable() {
+              return this;
+            }
+          }
+          b3.NoopContextManager = e2;
+        }, 780: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.ROOT_CONTEXT = b3.createContextKey = void 0, b3.createContextKey = function(a3) {
+            return Symbol.for(a3);
+          };
+          class c2 {
+            constructor(a3) {
+              const b4 = this;
+              b4._currentContext = a3 ? new Map(a3) : /* @__PURE__ */ new Map(), b4.getValue = (a4) => b4._currentContext.get(a4), b4.setValue = (a4, d2) => {
+                let e2 = new c2(b4._currentContext);
+                return e2._currentContext.set(a4, d2), e2;
+              }, b4.deleteValue = (a4) => {
+                let d2 = new c2(b4._currentContext);
+                return d2._currentContext.delete(a4), d2;
+              };
+            }
+          }
+          b3.ROOT_CONTEXT = new c2();
+        }, 506: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.diag = void 0, b3.diag = c2(930).DiagAPI.instance();
+        }, 56: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.DiagComponentLogger = void 0;
+          let d2 = c2(172);
+          class e2 {
+            constructor(a3) {
+              this._namespace = a3.namespace || "DiagComponentLogger";
+            }
+            debug(...a3) {
+              return f2("debug", this._namespace, a3);
+            }
+            error(...a3) {
+              return f2("error", this._namespace, a3);
+            }
+            info(...a3) {
+              return f2("info", this._namespace, a3);
+            }
+            warn(...a3) {
+              return f2("warn", this._namespace, a3);
+            }
+            verbose(...a3) {
+              return f2("verbose", this._namespace, a3);
+            }
+          }
+          function f2(a3, b4, c3) {
+            let e3 = (0, d2.getGlobal)("diag");
+            if (e3) return c3.unshift(b4), e3[a3](...c3);
+          }
+          b3.DiagComponentLogger = e2;
+        }, 972: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.DiagConsoleLogger = void 0;
+          let c2 = [{ n: "error", c: "error" }, { n: "warn", c: "warn" }, { n: "info", c: "info" }, { n: "debug", c: "debug" }, { n: "verbose", c: "trace" }];
+          class d2 {
+            constructor() {
+              for (let a3 = 0; a3 < c2.length; a3++) this[c2[a3].n] = /* @__PURE__ */ function(a4) {
+                return function(...b4) {
+                  if (console) {
+                    let c3 = console[a4];
+                    if ("function" != typeof c3 && (c3 = console.log), "function" == typeof c3) return c3.apply(console, b4);
+                  }
+                };
+              }(c2[a3].c);
+            }
+          }
+          b3.DiagConsoleLogger = d2;
+        }, 912: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.createLogLevelDiagLogger = void 0;
+          let d2 = c2(957);
+          b3.createLogLevelDiagLogger = function(a3, b4) {
+            function c3(c4, d3) {
+              let e2 = b4[c4];
+              return "function" == typeof e2 && a3 >= d3 ? e2.bind(b4) : function() {
+              };
+            }
+            return a3 < d2.DiagLogLevel.NONE ? a3 = d2.DiagLogLevel.NONE : a3 > d2.DiagLogLevel.ALL && (a3 = d2.DiagLogLevel.ALL), b4 = b4 || {}, { error: c3("error", d2.DiagLogLevel.ERROR), warn: c3("warn", d2.DiagLogLevel.WARN), info: c3("info", d2.DiagLogLevel.INFO), debug: c3("debug", d2.DiagLogLevel.DEBUG), verbose: c3("verbose", d2.DiagLogLevel.VERBOSE) };
+          };
+        }, 957: (a2, b3) => {
+          var c2;
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.DiagLogLevel = void 0, (c2 = b3.DiagLogLevel || (b3.DiagLogLevel = {}))[c2.NONE = 0] = "NONE", c2[c2.ERROR = 30] = "ERROR", c2[c2.WARN = 50] = "WARN", c2[c2.INFO = 60] = "INFO", c2[c2.DEBUG = 70] = "DEBUG", c2[c2.VERBOSE = 80] = "VERBOSE", c2[c2.ALL = 9999] = "ALL";
+        }, 172: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.unregisterGlobal = b3.getGlobal = b3.registerGlobal = void 0;
+          let d2 = c2(200), e2 = c2(521), f2 = c2(130), g2 = e2.VERSION.split(".")[0], h2 = Symbol.for(`opentelemetry.js.api.${g2}`), i2 = d2._globalThis;
+          b3.registerGlobal = function(a3, b4, c3, d3 = false) {
+            var f3;
+            let g3 = i2[h2] = null != (f3 = i2[h2]) ? f3 : { version: e2.VERSION };
+            if (!d3 && g3[a3]) {
+              let b5 = Error(`@opentelemetry/api: Attempted duplicate registration of API: ${a3}`);
+              return c3.error(b5.stack || b5.message), false;
+            }
+            if (g3.version !== e2.VERSION) {
+              let b5 = Error(`@opentelemetry/api: Registration of version v${g3.version} for ${a3} does not match previously registered API v${e2.VERSION}`);
+              return c3.error(b5.stack || b5.message), false;
+            }
+            return g3[a3] = b4, c3.debug(`@opentelemetry/api: Registered a global for ${a3} v${e2.VERSION}.`), true;
+          }, b3.getGlobal = function(a3) {
+            var b4, c3;
+            let d3 = null == (b4 = i2[h2]) ? void 0 : b4.version;
+            if (d3 && (0, f2.isCompatible)(d3)) return null == (c3 = i2[h2]) ? void 0 : c3[a3];
+          }, b3.unregisterGlobal = function(a3, b4) {
+            b4.debug(`@opentelemetry/api: Unregistering a global for ${a3} v${e2.VERSION}.`);
+            let c3 = i2[h2];
+            c3 && delete c3[a3];
+          };
+        }, 130: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.isCompatible = b3._makeCompatibilityCheck = void 0;
+          let d2 = c2(521), e2 = /^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;
+          function f2(a3) {
+            let b4 = /* @__PURE__ */ new Set([a3]), c3 = /* @__PURE__ */ new Set(), d3 = a3.match(e2);
+            if (!d3) return () => false;
+            let f3 = { major: +d3[1], minor: +d3[2], patch: +d3[3], prerelease: d3[4] };
+            if (null != f3.prerelease) return function(b5) {
+              return b5 === a3;
+            };
+            function g2(a4) {
+              return c3.add(a4), false;
+            }
+            return function(a4) {
+              if (b4.has(a4)) return true;
+              if (c3.has(a4)) return false;
+              let d4 = a4.match(e2);
+              if (!d4) return g2(a4);
+              let h2 = { major: +d4[1], minor: +d4[2], patch: +d4[3], prerelease: d4[4] };
+              if (null != h2.prerelease || f3.major !== h2.major) return g2(a4);
+              if (0 === f3.major) return f3.minor === h2.minor && f3.patch <= h2.patch ? (b4.add(a4), true) : g2(a4);
+              return f3.minor <= h2.minor ? (b4.add(a4), true) : g2(a4);
+            };
+          }
+          b3._makeCompatibilityCheck = f2, b3.isCompatible = f2(d2.VERSION);
+        }, 886: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.metrics = void 0, b3.metrics = c2(653).MetricsAPI.getInstance();
+        }, 901: (a2, b3) => {
+          var c2;
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.ValueType = void 0, (c2 = b3.ValueType || (b3.ValueType = {}))[c2.INT = 0] = "INT", c2[c2.DOUBLE = 1] = "DOUBLE";
+        }, 102: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.createNoopMeter = b3.NOOP_OBSERVABLE_UP_DOWN_COUNTER_METRIC = b3.NOOP_OBSERVABLE_GAUGE_METRIC = b3.NOOP_OBSERVABLE_COUNTER_METRIC = b3.NOOP_UP_DOWN_COUNTER_METRIC = b3.NOOP_HISTOGRAM_METRIC = b3.NOOP_COUNTER_METRIC = b3.NOOP_METER = b3.NoopObservableUpDownCounterMetric = b3.NoopObservableGaugeMetric = b3.NoopObservableCounterMetric = b3.NoopObservableMetric = b3.NoopHistogramMetric = b3.NoopUpDownCounterMetric = b3.NoopCounterMetric = b3.NoopMetric = b3.NoopMeter = void 0;
+          class c2 {
+            createHistogram(a3, c3) {
+              return b3.NOOP_HISTOGRAM_METRIC;
+            }
+            createCounter(a3, c3) {
+              return b3.NOOP_COUNTER_METRIC;
+            }
+            createUpDownCounter(a3, c3) {
+              return b3.NOOP_UP_DOWN_COUNTER_METRIC;
+            }
+            createObservableGauge(a3, c3) {
+              return b3.NOOP_OBSERVABLE_GAUGE_METRIC;
+            }
+            createObservableCounter(a3, c3) {
+              return b3.NOOP_OBSERVABLE_COUNTER_METRIC;
+            }
+            createObservableUpDownCounter(a3, c3) {
+              return b3.NOOP_OBSERVABLE_UP_DOWN_COUNTER_METRIC;
+            }
+            addBatchObservableCallback(a3, b4) {
+            }
+            removeBatchObservableCallback(a3) {
+            }
+          }
+          b3.NoopMeter = c2;
+          class d2 {
+          }
+          b3.NoopMetric = d2;
+          class e2 extends d2 {
+            add(a3, b4) {
+            }
+          }
+          b3.NoopCounterMetric = e2;
+          class f2 extends d2 {
+            add(a3, b4) {
+            }
+          }
+          b3.NoopUpDownCounterMetric = f2;
+          class g2 extends d2 {
+            record(a3, b4) {
+            }
+          }
+          b3.NoopHistogramMetric = g2;
+          class h2 {
+            addCallback(a3) {
+            }
+            removeCallback(a3) {
+            }
+          }
+          b3.NoopObservableMetric = h2;
+          class i2 extends h2 {
+          }
+          b3.NoopObservableCounterMetric = i2;
+          class j2 extends h2 {
+          }
+          b3.NoopObservableGaugeMetric = j2;
+          class k2 extends h2 {
+          }
+          b3.NoopObservableUpDownCounterMetric = k2, b3.NOOP_METER = new c2(), b3.NOOP_COUNTER_METRIC = new e2(), b3.NOOP_HISTOGRAM_METRIC = new g2(), b3.NOOP_UP_DOWN_COUNTER_METRIC = new f2(), b3.NOOP_OBSERVABLE_COUNTER_METRIC = new i2(), b3.NOOP_OBSERVABLE_GAUGE_METRIC = new j2(), b3.NOOP_OBSERVABLE_UP_DOWN_COUNTER_METRIC = new k2(), b3.createNoopMeter = function() {
+            return b3.NOOP_METER;
+          };
+        }, 660: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.NOOP_METER_PROVIDER = b3.NoopMeterProvider = void 0;
+          let d2 = c2(102);
+          class e2 {
+            getMeter(a3, b4, c3) {
+              return d2.NOOP_METER;
+            }
+          }
+          b3.NoopMeterProvider = e2, b3.NOOP_METER_PROVIDER = new e2();
+        }, 200: function(a2, b3, c2) {
+          var d2 = this && this.__createBinding || (Object.create ? function(a3, b4, c3, d3) {
+            void 0 === d3 && (d3 = c3), Object.defineProperty(a3, d3, { enumerable: true, get: function() {
+              return b4[c3];
+            } });
+          } : function(a3, b4, c3, d3) {
+            void 0 === d3 && (d3 = c3), a3[d3] = b4[c3];
+          }), e2 = this && this.__exportStar || function(a3, b4) {
+            for (var c3 in a3) "default" === c3 || Object.prototype.hasOwnProperty.call(b4, c3) || d2(b4, a3, c3);
+          };
+          Object.defineProperty(b3, "__esModule", { value: true }), e2(c2(46), b3);
+        }, 651: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3._globalThis = void 0, b3._globalThis = "object" == typeof globalThis ? globalThis : c.g;
+        }, 46: function(a2, b3, c2) {
+          var d2 = this && this.__createBinding || (Object.create ? function(a3, b4, c3, d3) {
+            void 0 === d3 && (d3 = c3), Object.defineProperty(a3, d3, { enumerable: true, get: function() {
+              return b4[c3];
+            } });
+          } : function(a3, b4, c3, d3) {
+            void 0 === d3 && (d3 = c3), a3[d3] = b4[c3];
+          }), e2 = this && this.__exportStar || function(a3, b4) {
+            for (var c3 in a3) "default" === c3 || Object.prototype.hasOwnProperty.call(b4, c3) || d2(b4, a3, c3);
+          };
+          Object.defineProperty(b3, "__esModule", { value: true }), e2(c2(651), b3);
+        }, 939: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.propagation = void 0, b3.propagation = c2(181).PropagationAPI.getInstance();
+        }, 874: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.NoopTextMapPropagator = void 0;
+          class c2 {
+            inject(a3, b4) {
+            }
+            extract(a3, b4) {
+              return a3;
+            }
+            fields() {
+              return [];
+            }
+          }
+          b3.NoopTextMapPropagator = c2;
+        }, 194: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.defaultTextMapSetter = b3.defaultTextMapGetter = void 0, b3.defaultTextMapGetter = { get(a3, b4) {
+            if (null != a3) return a3[b4];
+          }, keys: (a3) => null == a3 ? [] : Object.keys(a3) }, b3.defaultTextMapSetter = { set(a3, b4, c2) {
+            null != a3 && (a3[b4] = c2);
+          } };
+        }, 845: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.trace = void 0, b3.trace = c2(997).TraceAPI.getInstance();
+        }, 403: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.NonRecordingSpan = void 0;
+          let d2 = c2(476);
+          class e2 {
+            constructor(a3 = d2.INVALID_SPAN_CONTEXT) {
+              this._spanContext = a3;
+            }
+            spanContext() {
+              return this._spanContext;
+            }
+            setAttribute(a3, b4) {
+              return this;
+            }
+            setAttributes(a3) {
+              return this;
+            }
+            addEvent(a3, b4) {
+              return this;
+            }
+            setStatus(a3) {
+              return this;
+            }
+            updateName(a3) {
+              return this;
+            }
+            end(a3) {
+            }
+            isRecording() {
+              return false;
+            }
+            recordException(a3, b4) {
+            }
+          }
+          b3.NonRecordingSpan = e2;
+        }, 614: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.NoopTracer = void 0;
+          let d2 = c2(491), e2 = c2(607), f2 = c2(403), g2 = c2(139), h2 = d2.ContextAPI.getInstance();
+          class i2 {
+            startSpan(a3, b4, c3 = h2.active()) {
+              var d3;
+              if (null == b4 ? void 0 : b4.root) return new f2.NonRecordingSpan();
+              let i3 = c3 && (0, e2.getSpanContext)(c3);
+              return "object" == typeof (d3 = i3) && "string" == typeof d3.spanId && "string" == typeof d3.traceId && "number" == typeof d3.traceFlags && (0, g2.isSpanContextValid)(i3) ? new f2.NonRecordingSpan(i3) : new f2.NonRecordingSpan();
+            }
+            startActiveSpan(a3, b4, c3, d3) {
+              let f3, g3, i3;
+              if (arguments.length < 2) return;
+              2 == arguments.length ? i3 = b4 : 3 == arguments.length ? (f3 = b4, i3 = c3) : (f3 = b4, g3 = c3, i3 = d3);
+              let j2 = null != g3 ? g3 : h2.active(), k2 = this.startSpan(a3, f3, j2), l2 = (0, e2.setSpan)(j2, k2);
+              return h2.with(l2, i3, void 0, k2);
+            }
+          }
+          b3.NoopTracer = i2;
+        }, 124: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.NoopTracerProvider = void 0;
+          let d2 = c2(614);
+          class e2 {
+            getTracer(a3, b4, c3) {
+              return new d2.NoopTracer();
+            }
+          }
+          b3.NoopTracerProvider = e2;
+        }, 125: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.ProxyTracer = void 0;
+          let d2 = new (c2(614)).NoopTracer();
+          class e2 {
+            constructor(a3, b4, c3, d3) {
+              this._provider = a3, this.name = b4, this.version = c3, this.options = d3;
+            }
+            startSpan(a3, b4, c3) {
+              return this._getTracer().startSpan(a3, b4, c3);
+            }
+            startActiveSpan(a3, b4, c3, d3) {
+              let e3 = this._getTracer();
+              return Reflect.apply(e3.startActiveSpan, e3, arguments);
+            }
+            _getTracer() {
+              if (this._delegate) return this._delegate;
+              let a3 = this._provider.getDelegateTracer(this.name, this.version, this.options);
+              return a3 ? (this._delegate = a3, this._delegate) : d2;
+            }
+          }
+          b3.ProxyTracer = e2;
+        }, 846: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.ProxyTracerProvider = void 0;
+          let d2 = c2(125), e2 = new (c2(124)).NoopTracerProvider();
+          class f2 {
+            getTracer(a3, b4, c3) {
+              var e3;
+              return null != (e3 = this.getDelegateTracer(a3, b4, c3)) ? e3 : new d2.ProxyTracer(this, a3, b4, c3);
+            }
+            getDelegate() {
+              var a3;
+              return null != (a3 = this._delegate) ? a3 : e2;
+            }
+            setDelegate(a3) {
+              this._delegate = a3;
+            }
+            getDelegateTracer(a3, b4, c3) {
+              var d3;
+              return null == (d3 = this._delegate) ? void 0 : d3.getTracer(a3, b4, c3);
+            }
+          }
+          b3.ProxyTracerProvider = f2;
+        }, 996: (a2, b3) => {
+          var c2;
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.SamplingDecision = void 0, (c2 = b3.SamplingDecision || (b3.SamplingDecision = {}))[c2.NOT_RECORD = 0] = "NOT_RECORD", c2[c2.RECORD = 1] = "RECORD", c2[c2.RECORD_AND_SAMPLED = 2] = "RECORD_AND_SAMPLED";
+        }, 607: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.getSpanContext = b3.setSpanContext = b3.deleteSpan = b3.setSpan = b3.getActiveSpan = b3.getSpan = void 0;
+          let d2 = c2(780), e2 = c2(403), f2 = c2(491), g2 = (0, d2.createContextKey)("OpenTelemetry Context Key SPAN");
+          function h2(a3) {
+            return a3.getValue(g2) || void 0;
+          }
+          function i2(a3, b4) {
+            return a3.setValue(g2, b4);
+          }
+          b3.getSpan = h2, b3.getActiveSpan = function() {
+            return h2(f2.ContextAPI.getInstance().active());
+          }, b3.setSpan = i2, b3.deleteSpan = function(a3) {
+            return a3.deleteValue(g2);
+          }, b3.setSpanContext = function(a3, b4) {
+            return i2(a3, new e2.NonRecordingSpan(b4));
+          }, b3.getSpanContext = function(a3) {
+            var b4;
+            return null == (b4 = h2(a3)) ? void 0 : b4.spanContext();
+          };
+        }, 325: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.TraceStateImpl = void 0;
+          let d2 = c2(564);
+          class e2 {
+            constructor(a3) {
+              this._internalState = /* @__PURE__ */ new Map(), a3 && this._parse(a3);
+            }
+            set(a3, b4) {
+              let c3 = this._clone();
+              return c3._internalState.has(a3) && c3._internalState.delete(a3), c3._internalState.set(a3, b4), c3;
+            }
+            unset(a3) {
+              let b4 = this._clone();
+              return b4._internalState.delete(a3), b4;
+            }
+            get(a3) {
+              return this._internalState.get(a3);
+            }
+            serialize() {
+              return this._keys().reduce((a3, b4) => (a3.push(b4 + "=" + this.get(b4)), a3), []).join(",");
+            }
+            _parse(a3) {
+              !(a3.length > 512) && (this._internalState = a3.split(",").reverse().reduce((a4, b4) => {
+                let c3 = b4.trim(), e3 = c3.indexOf("=");
+                if (-1 !== e3) {
+                  let f2 = c3.slice(0, e3), g2 = c3.slice(e3 + 1, b4.length);
+                  (0, d2.validateKey)(f2) && (0, d2.validateValue)(g2) && a4.set(f2, g2);
+                }
+                return a4;
+              }, /* @__PURE__ */ new Map()), this._internalState.size > 32 && (this._internalState = new Map(Array.from(this._internalState.entries()).reverse().slice(0, 32))));
+            }
+            _keys() {
+              return Array.from(this._internalState.keys()).reverse();
+            }
+            _clone() {
+              let a3 = new e2();
+              return a3._internalState = new Map(this._internalState), a3;
+            }
+          }
+          b3.TraceStateImpl = e2;
+        }, 564: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.validateValue = b3.validateKey = void 0;
+          let c2 = "[_0-9a-z-*/]", d2 = `[a-z]${c2}{0,255}`, e2 = `[a-z0-9]${c2}{0,240}@[a-z]${c2}{0,13}`, f2 = RegExp(`^(?:${d2}|${e2})$`), g2 = /^[ -~]{0,255}[!-~]$/, h2 = /,|=/;
+          b3.validateKey = function(a3) {
+            return f2.test(a3);
+          }, b3.validateValue = function(a3) {
+            return g2.test(a3) && !h2.test(a3);
+          };
+        }, 98: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.createTraceState = void 0;
+          let d2 = c2(325);
+          b3.createTraceState = function(a3) {
+            return new d2.TraceStateImpl(a3);
+          };
+        }, 476: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.INVALID_SPAN_CONTEXT = b3.INVALID_TRACEID = b3.INVALID_SPANID = void 0;
+          let d2 = c2(475);
+          b3.INVALID_SPANID = "0000000000000000", b3.INVALID_TRACEID = "00000000000000000000000000000000", b3.INVALID_SPAN_CONTEXT = { traceId: b3.INVALID_TRACEID, spanId: b3.INVALID_SPANID, traceFlags: d2.TraceFlags.NONE };
+        }, 357: (a2, b3) => {
+          var c2;
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.SpanKind = void 0, (c2 = b3.SpanKind || (b3.SpanKind = {}))[c2.INTERNAL = 0] = "INTERNAL", c2[c2.SERVER = 1] = "SERVER", c2[c2.CLIENT = 2] = "CLIENT", c2[c2.PRODUCER = 3] = "PRODUCER", c2[c2.CONSUMER = 4] = "CONSUMER";
+        }, 139: (a2, b3, c2) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.wrapSpanContext = b3.isSpanContextValid = b3.isValidSpanId = b3.isValidTraceId = void 0;
+          let d2 = c2(476), e2 = c2(403), f2 = /^([0-9a-f]{32})$/i, g2 = /^[0-9a-f]{16}$/i;
+          function h2(a3) {
+            return f2.test(a3) && a3 !== d2.INVALID_TRACEID;
+          }
+          function i2(a3) {
+            return g2.test(a3) && a3 !== d2.INVALID_SPANID;
+          }
+          b3.isValidTraceId = h2, b3.isValidSpanId = i2, b3.isSpanContextValid = function(a3) {
+            return h2(a3.traceId) && i2(a3.spanId);
+          }, b3.wrapSpanContext = function(a3) {
+            return new e2.NonRecordingSpan(a3);
+          };
+        }, 847: (a2, b3) => {
+          var c2;
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.SpanStatusCode = void 0, (c2 = b3.SpanStatusCode || (b3.SpanStatusCode = {}))[c2.UNSET = 0] = "UNSET", c2[c2.OK = 1] = "OK", c2[c2.ERROR = 2] = "ERROR";
+        }, 475: (a2, b3) => {
+          var c2;
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.TraceFlags = void 0, (c2 = b3.TraceFlags || (b3.TraceFlags = {}))[c2.NONE = 0] = "NONE", c2[c2.SAMPLED = 1] = "SAMPLED";
+        }, 521: (a2, b3) => {
+          Object.defineProperty(b3, "__esModule", { value: true }), b3.VERSION = void 0, b3.VERSION = "1.6.0";
+        } }, y = {};
+        function z(a2) {
+          var b3 = y[a2];
+          if (void 0 !== b3) return b3.exports;
+          var c2 = y[a2] = { exports: {} }, d2 = true;
+          try {
+            x[a2].call(c2.exports, c2, c2.exports, z), d2 = false;
+          } finally {
+            d2 && delete y[a2];
+          }
+          return c2.exports;
+        }
+        z.ab = "//";
+        var A = {};
+        Object.defineProperty(A, "__esModule", { value: true }), A.trace = A.propagation = A.metrics = A.diag = A.context = A.INVALID_SPAN_CONTEXT = A.INVALID_TRACEID = A.INVALID_SPANID = A.isValidSpanId = A.isValidTraceId = A.isSpanContextValid = A.createTraceState = A.TraceFlags = A.SpanStatusCode = A.SpanKind = A.SamplingDecision = A.ProxyTracerProvider = A.ProxyTracer = A.defaultTextMapSetter = A.defaultTextMapGetter = A.ValueType = A.createNoopMeter = A.DiagLogLevel = A.DiagConsoleLogger = A.ROOT_CONTEXT = A.createContextKey = A.baggageEntryMetadataFromString = void 0, h = z(369), Object.defineProperty(A, "baggageEntryMetadataFromString", { enumerable: true, get: function() {
+          return h.baggageEntryMetadataFromString;
+        } }), i = z(780), Object.defineProperty(A, "createContextKey", { enumerable: true, get: function() {
+          return i.createContextKey;
+        } }), Object.defineProperty(A, "ROOT_CONTEXT", { enumerable: true, get: function() {
+          return i.ROOT_CONTEXT;
+        } }), j = z(972), Object.defineProperty(A, "DiagConsoleLogger", { enumerable: true, get: function() {
+          return j.DiagConsoleLogger;
+        } }), k = z(957), Object.defineProperty(A, "DiagLogLevel", { enumerable: true, get: function() {
+          return k.DiagLogLevel;
+        } }), l = z(102), Object.defineProperty(A, "createNoopMeter", { enumerable: true, get: function() {
+          return l.createNoopMeter;
+        } }), m = z(901), Object.defineProperty(A, "ValueType", { enumerable: true, get: function() {
+          return m.ValueType;
+        } }), n = z(194), Object.defineProperty(A, "defaultTextMapGetter", { enumerable: true, get: function() {
+          return n.defaultTextMapGetter;
+        } }), Object.defineProperty(A, "defaultTextMapSetter", { enumerable: true, get: function() {
+          return n.defaultTextMapSetter;
+        } }), o = z(125), Object.defineProperty(A, "ProxyTracer", { enumerable: true, get: function() {
+          return o.ProxyTracer;
+        } }), p = z(846), Object.defineProperty(A, "ProxyTracerProvider", { enumerable: true, get: function() {
+          return p.ProxyTracerProvider;
+        } }), q = z(996), Object.defineProperty(A, "SamplingDecision", { enumerable: true, get: function() {
+          return q.SamplingDecision;
+        } }), r = z(357), Object.defineProperty(A, "SpanKind", { enumerable: true, get: function() {
+          return r.SpanKind;
+        } }), s = z(847), Object.defineProperty(A, "SpanStatusCode", { enumerable: true, get: function() {
+          return s.SpanStatusCode;
+        } }), t = z(475), Object.defineProperty(A, "TraceFlags", { enumerable: true, get: function() {
+          return t.TraceFlags;
+        } }), u = z(98), Object.defineProperty(A, "createTraceState", { enumerable: true, get: function() {
+          return u.createTraceState;
+        } }), v = z(139), Object.defineProperty(A, "isSpanContextValid", { enumerable: true, get: function() {
+          return v.isSpanContextValid;
+        } }), Object.defineProperty(A, "isValidTraceId", { enumerable: true, get: function() {
+          return v.isValidTraceId;
+        } }), Object.defineProperty(A, "isValidSpanId", { enumerable: true, get: function() {
+          return v.isValidSpanId;
+        } }), w = z(476), Object.defineProperty(A, "INVALID_SPANID", { enumerable: true, get: function() {
+          return w.INVALID_SPANID;
+        } }), Object.defineProperty(A, "INVALID_TRACEID", { enumerable: true, get: function() {
+          return w.INVALID_TRACEID;
+        } }), Object.defineProperty(A, "INVALID_SPAN_CONTEXT", { enumerable: true, get: function() {
+          return w.INVALID_SPAN_CONTEXT;
+        } }), b2 = z(67), Object.defineProperty(A, "context", { enumerable: true, get: function() {
+          return b2.context;
+        } }), d = z(506), Object.defineProperty(A, "diag", { enumerable: true, get: function() {
+          return d.diag;
+        } }), e = z(886), Object.defineProperty(A, "metrics", { enumerable: true, get: function() {
+          return e.metrics;
+        } }), f = z(939), Object.defineProperty(A, "propagation", { enumerable: true, get: function() {
+          return f.propagation;
+        } }), g = z(845), Object.defineProperty(A, "trace", { enumerable: true, get: function() {
+          return g.trace;
+        } }), A.default = { context: b2.context, diag: d.diag, metrics: e.metrics, propagation: f.propagation, trace: g.trace }, a.exports = A;
+      })();
+    }, 356: (a) => {
+      "use strict";
+      a.exports = (init_node_buffer(), __toCommonJS(node_buffer_exports));
+    }, 371: (a, b, c) => {
+      "use strict";
+      c.d(b, { RM: () => f, s8: () => e });
+      let d = new Set(Object.values({ NOT_FOUND: 404, FORBIDDEN: 403, UNAUTHORIZED: 401 })), e = "NEXT_HTTP_ERROR_FALLBACK";
+      function f(a2) {
+        if ("object" != typeof a2 || null === a2 || !("digest" in a2) || "string" != typeof a2.digest) return false;
+        let [b2, c2] = a2.digest.split(";");
+        return b2 === e && d.has(Number(c2));
+      }
+    }, 384: (a, b, c) => {
+      "use strict";
+      let d, e, f, g, h, i, j, k, l, m, n;
+      c.r(b), c.d(b, { default: () => jL, handler: () => jK });
+      var o, p = {};
+      async function q() {
+        return "_ENTRIES" in globalThis && _ENTRIES.middleware_instrumentation && await _ENTRIES.middleware_instrumentation;
+      }
+      c.r(p), c.d(p, { config: () => jE, default: () => jD });
+      let r = null;
+      async function s() {
+        if ("phase-production-build" === process.env.NEXT_PHASE) return;
+        r || (r = q());
+        let a10 = await r;
+        if (null == a10 ? void 0 : a10.register) try {
+          await a10.register();
+        } catch (a11) {
+          throw a11.message = `An error occurred while loading instrumentation hook: ${a11.message}`, a11;
+        }
+      }
+      async function t(...a10) {
+        let b10 = await q();
+        try {
+          var c10;
+          await (null == b10 || null == (c10 = b10.onRequestError) ? void 0 : c10.call(b10, ...a10));
+        } catch (a11) {
+          console.error("Error in instrumentation.onRequestError:", a11);
+        }
+      }
+      let u = null;
+      function v() {
+        return u || (u = s()), u;
+      }
+      function w(a10) {
+        return `The edge runtime does not support Node.js '${a10}' module.
+Learn More: https://nextjs.org/docs/messages/node-module-in-edge-runtime`;
+      }
+      process !== c.g.process && (process.env = c.g.process.env, c.g.process = process);
+      try {
+        Object.defineProperty(globalThis, "__import_unsupported", { value: function(a10) {
+          let b10 = new Proxy(function() {
+          }, { get(b11, c10) {
+            if ("then" === c10) return {};
+            throw Object.defineProperty(Error(w(a10)), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+          }, construct() {
+            throw Object.defineProperty(Error(w(a10)), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+          }, apply(c10, d10, e10) {
+            if ("function" == typeof e10[0]) return e10[0](b10);
+            throw Object.defineProperty(Error(w(a10)), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+          } });
+          return new Proxy({}, { get: () => b10 });
+        }, enumerable: false, configurable: false });
+      } catch {
+      }
+      v();
+      class x extends Error {
+        constructor({ page: a10 }) {
+          super(`The middleware "${a10}" accepts an async API directly with the form:
+  
+  export function middleware(request, event) {
+    return NextResponse.redirect('/new-location')
+  }
+  
+  Read more: https://nextjs.org/docs/messages/middleware-new-signature
+  `);
+        }
+      }
+      class y extends Error {
+        constructor() {
+          super("The request.page has been deprecated in favour of `URLPattern`.\n  Read more: https://nextjs.org/docs/messages/middleware-request-page\n  ");
+        }
+      }
+      class z extends Error {
+        constructor() {
+          super("The request.ua has been removed in favour of `userAgent` function.\n  Read more: https://nextjs.org/docs/messages/middleware-parse-user-agent\n  ");
+        }
+      }
+      let A = "x-prerender-revalidate", B = ".meta", C = "x-next-cache-tags", D = "x-next-revalidated-tags", E = "_N_T_", F = { shared: "shared", reactServerComponents: "rsc", serverSideRendering: "ssr", actionBrowser: "action-browser", apiNode: "api-node", apiEdge: "api-edge", middleware: "middleware", instrument: "instrument", edgeAsset: "edge-asset", appPagesBrowser: "app-pages-browser", pagesDirBrowser: "pages-dir-browser", pagesDirEdge: "pages-dir-edge", pagesDirNode: "pages-dir-node" };
+      function G(a10) {
+        var b10, c10, d10, e10, f10, g10 = [], h10 = 0;
+        function i10() {
+          for (; h10 < a10.length && /\s/.test(a10.charAt(h10)); ) h10 += 1;
+          return h10 < a10.length;
+        }
+        for (; h10 < a10.length; ) {
+          for (b10 = h10, f10 = false; i10(); ) if ("," === (c10 = a10.charAt(h10))) {
+            for (d10 = h10, h10 += 1, i10(), e10 = h10; h10 < a10.length && "=" !== (c10 = a10.charAt(h10)) && ";" !== c10 && "," !== c10; ) h10 += 1;
+            h10 < a10.length && "=" === a10.charAt(h10) ? (f10 = true, h10 = e10, g10.push(a10.substring(b10, d10)), b10 = h10) : h10 = d10 + 1;
+          } else h10 += 1;
+          (!f10 || h10 >= a10.length) && g10.push(a10.substring(b10, a10.length));
+        }
+        return g10;
+      }
+      function H(a10) {
+        let b10 = {}, c10 = [];
+        if (a10) for (let [d10, e10] of a10.entries()) "set-cookie" === d10.toLowerCase() ? (c10.push(...G(e10)), b10[d10] = 1 === c10.length ? c10[0] : c10) : b10[d10] = e10;
+        return b10;
+      }
+      function I(a10) {
+        try {
+          return String(new URL(String(a10)));
+        } catch (b10) {
+          throw Object.defineProperty(Error(`URL is malformed "${String(a10)}". Please use only absolute URLs - https://nextjs.org/docs/messages/middleware-relative-urls`, { cause: b10 }), "__NEXT_ERROR_CODE", { value: "E61", enumerable: false, configurable: true });
+        }
+      }
+      ({ ...F, GROUP: { builtinReact: [F.reactServerComponents, F.actionBrowser], serverOnly: [F.reactServerComponents, F.actionBrowser, F.instrument, F.middleware], neutralTarget: [F.apiNode, F.apiEdge], clientOnly: [F.serverSideRendering, F.appPagesBrowser], bundled: [F.reactServerComponents, F.actionBrowser, F.serverSideRendering, F.appPagesBrowser, F.shared, F.instrument, F.middleware], appPages: [F.reactServerComponents, F.serverSideRendering, F.appPagesBrowser, F.actionBrowser] } });
+      let J = Symbol("response"), K = Symbol("passThrough"), L = Symbol("waitUntil");
+      class M {
+        constructor(a10, b10) {
+          this[K] = false, this[L] = b10 ? { kind: "external", function: b10 } : { kind: "internal", promises: [] };
+        }
+        respondWith(a10) {
+          this[J] || (this[J] = Promise.resolve(a10));
+        }
+        passThroughOnException() {
+          this[K] = true;
+        }
+        waitUntil(a10) {
+          if ("external" === this[L].kind) return (0, this[L].function)(a10);
+          this[L].promises.push(a10);
+        }
+      }
+      class N extends M {
+        constructor(a10) {
+          var b10;
+          super(a10.request, null == (b10 = a10.context) ? void 0 : b10.waitUntil), this.sourcePage = a10.page;
+        }
+        get request() {
+          throw Object.defineProperty(new x({ page: this.sourcePage }), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+        }
+        respondWith() {
+          throw Object.defineProperty(new x({ page: this.sourcePage }), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+        }
+      }
+      function O(a10) {
+        return a10.replace(/\/$/, "") || "/";
+      }
+      function P(a10) {
+        let b10 = a10.indexOf("#"), c10 = a10.indexOf("?"), d10 = c10 > -1 && (b10 < 0 || c10 < b10);
+        return d10 || b10 > -1 ? { pathname: a10.substring(0, d10 ? c10 : b10), query: d10 ? a10.substring(c10, b10 > -1 ? b10 : void 0) : "", hash: b10 > -1 ? a10.slice(b10) : "" } : { pathname: a10, query: "", hash: "" };
+      }
+      function Q(a10, b10) {
+        if (!a10.startsWith("/") || !b10) return a10;
+        let { pathname: c10, query: d10, hash: e10 } = P(a10);
+        return `${b10}${c10}${d10}${e10}`;
+      }
+      function R(a10, b10) {
+        if (!a10.startsWith("/") || !b10) return a10;
+        let { pathname: c10, query: d10, hash: e10 } = P(a10);
+        return `${c10}${b10}${d10}${e10}`;
+      }
+      function S(a10, b10) {
+        if ("string" != typeof a10) return false;
+        let { pathname: c10 } = P(a10);
+        return c10 === b10 || c10.startsWith(b10 + "/");
+      }
+      let T = /* @__PURE__ */ new WeakMap();
+      function U(a10, b10) {
+        let c10;
+        if (!b10) return { pathname: a10 };
+        let d10 = T.get(b10);
+        d10 || (d10 = b10.map((a11) => a11.toLowerCase()), T.set(b10, d10));
+        let e10 = a10.split("/", 2);
+        if (!e10[1]) return { pathname: a10 };
+        let f10 = e10[1].toLowerCase(), g10 = d10.indexOf(f10);
+        return g10 < 0 ? { pathname: a10 } : (c10 = b10[g10], { pathname: a10 = a10.slice(c10.length + 1) || "/", detectedLocale: c10 });
+      }
+      let V = /^(?:127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}|\[::1\]|localhost)$/;
+      function W(a10, b10) {
+        let c10 = new URL(String(a10), b10 && String(b10));
+        return V.test(c10.hostname) && (c10.hostname = "localhost"), c10;
+      }
+      let X = Symbol("NextURLInternal");
+      class Y {
+        constructor(a10, b10, c10) {
+          let d10, e10;
+          "object" == typeof b10 && "pathname" in b10 || "string" == typeof b10 ? (d10 = b10, e10 = c10 || {}) : e10 = c10 || b10 || {}, this[X] = { url: W(a10, d10 ?? e10.base), options: e10, basePath: "" }, this.analyze();
+        }
+        analyze() {
+          var a10, b10, c10, d10, e10;
+          let f10 = function(a11, b11) {
+            let { basePath: c11, i18n: d11, trailingSlash: e11 } = b11.nextConfig ?? {}, f11 = { pathname: a11, trailingSlash: "/" !== a11 ? a11.endsWith("/") : e11 };
+            c11 && S(f11.pathname, c11) && (f11.pathname = function(a12, b12) {
+              if (!S(a12, b12)) return a12;
+              let c12 = a12.slice(b12.length);
+              return c12.startsWith("/") ? c12 : `/${c12}`;
+            }(f11.pathname, c11), f11.basePath = c11);
+            let g11 = f11.pathname;
+            if (f11.pathname.startsWith("/_next/data/") && f11.pathname.endsWith(".json")) {
+              let a12 = f11.pathname.replace(/^\/_next\/data\//, "").replace(/\.json$/, "").split("/");
+              f11.buildId = a12[0], g11 = "index" !== a12[1] ? `/${a12.slice(1).join("/")}` : "/", true === b11.parseData && (f11.pathname = g11);
+            }
+            if (d11) {
+              let a12 = b11.i18nProvider ? b11.i18nProvider.analyze(f11.pathname) : U(f11.pathname, d11.locales);
+              f11.locale = a12.detectedLocale, f11.pathname = a12.pathname ?? f11.pathname, !a12.detectedLocale && f11.buildId && (a12 = b11.i18nProvider ? b11.i18nProvider.analyze(g11) : U(g11, d11.locales)).detectedLocale && (f11.locale = a12.detectedLocale);
+            }
+            return f11;
+          }(this[X].url.pathname, { nextConfig: this[X].options.nextConfig, parseData: true, i18nProvider: this[X].options.i18nProvider }), g10 = function(a11, b11) {
+            let c11;
+            if (b11?.host && !Array.isArray(b11.host)) c11 = b11.host.toString().split(":", 1)[0];
+            else {
+              if (!a11.hostname) return;
+              c11 = a11.hostname;
+            }
+            return c11.toLowerCase();
+          }(this[X].url, this[X].options.headers);
+          this[X].domainLocale = this[X].options.i18nProvider ? this[X].options.i18nProvider.detectDomainLocale(g10) : function(a11, b11, c11) {
+            if (a11) {
+              for (let d11 of (c11 && (c11 = c11.toLowerCase()), a11)) if (b11 === d11.domain?.split(":", 1)[0].toLowerCase() || c11 === d11.defaultLocale.toLowerCase() || d11.locales?.some((a12) => a12.toLowerCase() === c11)) return d11;
+            }
+          }(null == (b10 = this[X].options.nextConfig) || null == (a10 = b10.i18n) ? void 0 : a10.domains, g10);
+          let h10 = (null == (c10 = this[X].domainLocale) ? void 0 : c10.defaultLocale) || (null == (e10 = this[X].options.nextConfig) || null == (d10 = e10.i18n) ? void 0 : d10.defaultLocale);
+          this[X].url.pathname = f10.pathname, this[X].defaultLocale = h10, this[X].basePath = f10.basePath ?? "", this[X].buildId = f10.buildId, this[X].locale = f10.locale ?? h10, this[X].trailingSlash = f10.trailingSlash;
+        }
+        formatPathname() {
+          var a10;
+          let b10;
+          return b10 = function(a11, b11, c10, d10) {
+            if (!b11 || b11 === c10) return a11;
+            let e10 = a11.toLowerCase();
+            return !d10 && (S(e10, "/api") || S(e10, `/${b11.toLowerCase()}`)) ? a11 : Q(a11, `/${b11}`);
+          }((a10 = { basePath: this[X].basePath, buildId: this[X].buildId, defaultLocale: this[X].options.forceLocale ? void 0 : this[X].defaultLocale, locale: this[X].locale, pathname: this[X].url.pathname, trailingSlash: this[X].trailingSlash }).pathname, a10.locale, a10.buildId ? void 0 : a10.defaultLocale, a10.ignorePrefix), (a10.buildId || !a10.trailingSlash) && (b10 = O(b10)), a10.buildId && (b10 = R(Q(b10, `/_next/data/${a10.buildId}`), "/" === a10.pathname ? "index.json" : ".json")), b10 = Q(b10, a10.basePath), !a10.buildId && a10.trailingSlash ? b10.endsWith("/") ? b10 : R(b10, "/") : O(b10);
+        }
+        formatSearch() {
+          return this[X].url.search;
+        }
+        get buildId() {
+          return this[X].buildId;
+        }
+        set buildId(a10) {
+          this[X].buildId = a10;
+        }
+        get locale() {
+          return this[X].locale ?? "";
+        }
+        set locale(a10) {
+          var b10, c10;
+          if (!this[X].locale || !(null == (c10 = this[X].options.nextConfig) || null == (b10 = c10.i18n) ? void 0 : b10.locales.includes(a10))) throw Object.defineProperty(TypeError(`The NextURL configuration includes no locale "${a10}"`), "__NEXT_ERROR_CODE", { value: "E597", enumerable: false, configurable: true });
+          this[X].locale = a10;
+        }
+        get defaultLocale() {
+          return this[X].defaultLocale;
+        }
+        get domainLocale() {
+          return this[X].domainLocale;
+        }
+        get searchParams() {
+          return this[X].url.searchParams;
+        }
+        get host() {
+          return this[X].url.host;
+        }
+        set host(a10) {
+          this[X].url.host = a10;
+        }
+        get hostname() {
+          return this[X].url.hostname;
+        }
+        set hostname(a10) {
+          this[X].url.hostname = a10;
+        }
+        get port() {
+          return this[X].url.port;
+        }
+        set port(a10) {
+          this[X].url.port = a10;
+        }
+        get protocol() {
+          return this[X].url.protocol;
+        }
+        set protocol(a10) {
+          this[X].url.protocol = a10;
+        }
+        get href() {
+          let a10 = this.formatPathname(), b10 = this.formatSearch();
+          return `${this.protocol}//${this.host}${a10}${b10}${this.hash}`;
+        }
+        set href(a10) {
+          this[X].url = W(a10), this.analyze();
+        }
+        get origin() {
+          return this[X].url.origin;
+        }
+        get pathname() {
+          return this[X].url.pathname;
+        }
+        set pathname(a10) {
+          this[X].url.pathname = a10;
+        }
+        get hash() {
+          return this[X].url.hash;
+        }
+        set hash(a10) {
+          this[X].url.hash = a10;
+        }
+        get search() {
+          return this[X].url.search;
+        }
+        set search(a10) {
+          this[X].url.search = a10;
+        }
+        get password() {
+          return this[X].url.password;
+        }
+        set password(a10) {
+          this[X].url.password = a10;
+        }
+        get username() {
+          return this[X].url.username;
+        }
+        set username(a10) {
+          this[X].url.username = a10;
+        }
+        get basePath() {
+          return this[X].basePath;
+        }
+        set basePath(a10) {
+          this[X].basePath = a10.startsWith("/") ? a10 : `/${a10}`;
+        }
+        toString() {
+          return this.href;
+        }
+        toJSON() {
+          return this.href;
+        }
+        [Symbol.for("edge-runtime.inspect.custom")]() {
+          return { href: this.href, origin: this.origin, protocol: this.protocol, username: this.username, password: this.password, host: this.host, hostname: this.hostname, port: this.port, pathname: this.pathname, search: this.search, searchParams: this.searchParams, hash: this.hash };
+        }
+        clone() {
+          return new Y(String(this), this[X].options);
+        }
+      }
+      var Z = c(161);
+      let $ = Symbol("internal request");
+      class _ extends Request {
+        constructor(a10, b10 = {}) {
+          const c10 = "string" != typeof a10 && "url" in a10 ? a10.url : String(a10);
+          I(c10), a10 instanceof Request ? super(a10, b10) : super(c10, b10);
+          const d10 = new Y(c10, { headers: H(this.headers), nextConfig: b10.nextConfig });
+          this[$] = { cookies: new Z.tm(this.headers), nextUrl: d10, url: d10.toString() };
+        }
+        [Symbol.for("edge-runtime.inspect.custom")]() {
+          return { cookies: this.cookies, nextUrl: this.nextUrl, url: this.url, bodyUsed: this.bodyUsed, cache: this.cache, credentials: this.credentials, destination: this.destination, headers: Object.fromEntries(this.headers), integrity: this.integrity, keepalive: this.keepalive, method: this.method, mode: this.mode, redirect: this.redirect, referrer: this.referrer, referrerPolicy: this.referrerPolicy, signal: this.signal };
+        }
+        get cookies() {
+          return this[$].cookies;
+        }
+        get nextUrl() {
+          return this[$].nextUrl;
+        }
+        get page() {
+          throw new y();
+        }
+        get ua() {
+          throw new z();
+        }
+        get url() {
+          return this[$].url;
+        }
+      }
+      var aa = c(408);
+      let ab = Symbol("internal response"), ac = /* @__PURE__ */ new Set([301, 302, 303, 307, 308]);
+      function ad(a10, b10) {
+        var c10;
+        if (null == a10 || null == (c10 = a10.request) ? void 0 : c10.headers) {
+          if (!(a10.request.headers instanceof Headers)) throw Object.defineProperty(Error("request.headers must be an instance of Headers"), "__NEXT_ERROR_CODE", { value: "E119", enumerable: false, configurable: true });
+          let c11 = [];
+          for (let [d10, e10] of a10.request.headers) b10.set("x-middleware-request-" + d10, e10), c11.push(d10);
+          b10.set("x-middleware-override-headers", c11.join(","));
+        }
+      }
+      class ae extends Response {
+        constructor(a10, b10 = {}) {
+          super(a10, b10);
+          const c10 = this.headers, d10 = new Proxy(new Z.VO(c10), { get(a11, d11, e10) {
+            switch (d11) {
+              case "delete":
+              case "set":
+                return (...e11) => {
+                  let f10 = Reflect.apply(a11[d11], a11, e11), g10 = new Headers(c10);
+                  return f10 instanceof Z.VO && c10.set("x-middleware-set-cookie", f10.getAll().map((a12) => (0, Z.Ud)(a12)).join(",")), ad(b10, g10), f10;
+                };
+              default:
+                return aa.l.get(a11, d11, e10);
+            }
+          } });
+          this[ab] = { cookies: d10, url: b10.url ? new Y(b10.url, { headers: H(c10), nextConfig: b10.nextConfig }) : void 0 };
+        }
+        [Symbol.for("edge-runtime.inspect.custom")]() {
+          return { cookies: this.cookies, url: this.url, body: this.body, bodyUsed: this.bodyUsed, headers: Object.fromEntries(this.headers), ok: this.ok, redirected: this.redirected, status: this.status, statusText: this.statusText, type: this.type };
+        }
+        get cookies() {
+          return this[ab].cookies;
+        }
+        static json(a10, b10) {
+          let c10 = Response.json(a10, b10);
+          return new ae(c10.body, c10);
+        }
+        static redirect(a10, b10) {
+          let c10 = "number" == typeof b10 ? b10 : (null == b10 ? void 0 : b10.status) ?? 307;
+          if (!ac.has(c10)) throw Object.defineProperty(RangeError('Failed to execute "redirect" on "response": Invalid status code'), "__NEXT_ERROR_CODE", { value: "E529", enumerable: false, configurable: true });
+          let d10 = "object" == typeof b10 ? b10 : {}, e10 = new Headers(null == d10 ? void 0 : d10.headers);
+          return e10.set("Location", I(a10)), new ae(null, { ...d10, headers: e10, status: c10 });
+        }
+        static rewrite(a10, b10) {
+          let c10 = new Headers(null == b10 ? void 0 : b10.headers);
+          return c10.set("x-middleware-rewrite", I(a10)), ad(b10, c10), new ae(null, { ...b10, headers: c10 });
+        }
+        static next(a10) {
+          let b10 = new Headers(null == a10 ? void 0 : a10.headers);
+          return b10.set("x-middleware-next", "1"), ad(a10, b10), new ae(null, { ...a10, headers: b10 });
+        }
+      }
+      function af(a10, b10) {
+        let c10 = "string" == typeof b10 ? new URL(b10) : b10, d10 = new URL(a10, b10), e10 = d10.origin === c10.origin;
+        return { url: e10 ? d10.toString().slice(c10.origin.length) : d10.toString(), isRelative: e10 };
+      }
+      let ag = "next-router-prefetch", ah = ["rsc", "next-router-state-tree", ag, "next-hmr-refresh", "next-router-segment-prefetch"], ai = "_rsc";
+      function aj(a10) {
+        return a10.startsWith("/") ? a10 : `/${a10}`;
+      }
+      function ak(a10) {
+        return aj(a10.split("/").reduce((a11, b10, c10, d10) => b10 ? "(" === b10[0] && b10.endsWith(")") || "@" === b10[0] || ("page" === b10 || "route" === b10) && c10 === d10.length - 1 ? a11 : `${a11}/${b10}` : a11, ""));
+      }
+      var al = c(841), am = c(54), an = ((hX = an || {}).handleRequest = "BaseServer.handleRequest", hX.run = "BaseServer.run", hX.pipe = "BaseServer.pipe", hX.getStaticHTML = "BaseServer.getStaticHTML", hX.render = "BaseServer.render", hX.renderToResponseWithComponents = "BaseServer.renderToResponseWithComponents", hX.renderToResponse = "BaseServer.renderToResponse", hX.renderToHTML = "BaseServer.renderToHTML", hX.renderError = "BaseServer.renderError", hX.renderErrorToResponse = "BaseServer.renderErrorToResponse", hX.renderErrorToHTML = "BaseServer.renderErrorToHTML", hX.render404 = "BaseServer.render404", hX), ao = ((hY = ao || {}).loadDefaultErrorComponents = "LoadComponents.loadDefaultErrorComponents", hY.loadComponents = "LoadComponents.loadComponents", hY), ap = ((hZ = ap || {}).getRequestHandler = "NextServer.getRequestHandler", hZ.getRequestHandlerWithMetadata = "NextServer.getRequestHandlerWithMetadata", hZ.getServer = "NextServer.getServer", hZ.getServerRequestHandler = "NextServer.getServerRequestHandler", hZ.createServer = "createServer.createServer", hZ), aq = ((h$ = aq || {}).compression = "NextNodeServer.compression", h$.getBuildId = "NextNodeServer.getBuildId", h$.createComponentTree = "NextNodeServer.createComponentTree", h$.clientComponentLoading = "NextNodeServer.clientComponentLoading", h$.getLayoutOrPageModule = "NextNodeServer.getLayoutOrPageModule", h$.generateStaticRoutes = "NextNodeServer.generateStaticRoutes", h$.generateFsStaticRoutes = "NextNodeServer.generateFsStaticRoutes", h$.generatePublicRoutes = "NextNodeServer.generatePublicRoutes", h$.generateImageRoutes = "NextNodeServer.generateImageRoutes.route", h$.sendRenderResult = "NextNodeServer.sendRenderResult", h$.proxyRequest = "NextNodeServer.proxyRequest", h$.runApi = "NextNodeServer.runApi", h$.render = "NextNodeServer.render", h$.renderHTML = "NextNodeServer.renderHTML", h$.imageOptimizer = "NextNodeServer.imageOptimizer", h$.getPagePath = "NextNodeServer.getPagePath", h$.getRoutesManifest = "NextNodeServer.getRoutesManifest", h$.findPageComponents = "NextNodeServer.findPageComponents", h$.getFontManifest = "NextNodeServer.getFontManifest", h$.getServerComponentManifest = "NextNodeServer.getServerComponentManifest", h$.getRequestHandler = "NextNodeServer.getRequestHandler", h$.renderToHTML = "NextNodeServer.renderToHTML", h$.renderError = "NextNodeServer.renderError", h$.renderErrorToHTML = "NextNodeServer.renderErrorToHTML", h$.render404 = "NextNodeServer.render404", h$.startResponse = "NextNodeServer.startResponse", h$.route = "route", h$.onProxyReq = "onProxyReq", h$.apiResolver = "apiResolver", h$.internalFetch = "internalFetch", h$), ar = ((h_ = ar || {}).startServer = "startServer.startServer", h_), as = ((h0 = as || {}).getServerSideProps = "Render.getServerSideProps", h0.getStaticProps = "Render.getStaticProps", h0.renderToString = "Render.renderToString", h0.renderDocument = "Render.renderDocument", h0.createBodyResult = "Render.createBodyResult", h0), at = ((h1 = at || {}).renderToString = "AppRender.renderToString", h1.renderToReadableStream = "AppRender.renderToReadableStream", h1.getBodyResult = "AppRender.getBodyResult", h1.fetch = "AppRender.fetch", h1), au = ((h2 = au || {}).executeRoute = "Router.executeRoute", h2), av = ((h3 = av || {}).runHandler = "Node.runHandler", h3), aw = ((h4 = aw || {}).runHandler = "AppRouteRouteHandlers.runHandler", h4), ax = ((h5 = ax || {}).generateMetadata = "ResolveMetadata.generateMetadata", h5.generateViewport = "ResolveMetadata.generateViewport", h5), ay = ((h6 = ay || {}).execute = "Middleware.execute", h6);
+      let az = /* @__PURE__ */ new Set(["Middleware.execute", "BaseServer.handleRequest", "Render.getServerSideProps", "Render.getStaticProps", "AppRender.fetch", "AppRender.getBodyResult", "Render.renderDocument", "Node.runHandler", "AppRouteRouteHandlers.runHandler", "ResolveMetadata.generateMetadata", "ResolveMetadata.generateViewport", "NextNodeServer.createComponentTree", "NextNodeServer.findPageComponents", "NextNodeServer.getLayoutOrPageModule", "NextNodeServer.startResponse", "NextNodeServer.clientComponentLoading"]), aA = /* @__PURE__ */ new Set(["NextNodeServer.findPageComponents", "NextNodeServer.createComponentTree", "NextNodeServer.clientComponentLoading"]);
+      function aB(a10) {
+        return null !== a10 && "object" == typeof a10 && "then" in a10 && "function" == typeof a10.then;
+      }
+      let aC = process.env.NEXT_OTEL_PERFORMANCE_PREFIX, { context: aD, propagation: aE, trace: aF, SpanStatusCode: aG, SpanKind: aH, ROOT_CONTEXT: aI } = d = c(328);
+      class aJ extends Error {
+        constructor(a10, b10) {
+          super(), this.bubble = a10, this.result = b10;
+        }
+      }
+      let aK = (a10, b10) => {
+        "object" == typeof b10 && null !== b10 && b10 instanceof aJ && b10.bubble ? a10.setAttribute("next.bubble", true) : (b10 && (a10.recordException(b10), a10.setAttribute("error.type", b10.name)), a10.setStatus({ code: aG.ERROR, message: null == b10 ? void 0 : b10.message })), a10.end();
+      }, aL = /* @__PURE__ */ new Map(), aM = d.createContextKey("next.rootSpanId"), aN = 0, aO = { set(a10, b10, c10) {
+        a10.push({ key: b10, value: c10 });
+      } };
+      class aP {
+        getTracerInstance() {
+          return aF.getTracer("next.js", "0.0.1");
+        }
+        getContext() {
+          return aD;
+        }
+        getTracePropagationData() {
+          let a10 = aD.active(), b10 = [];
+          return aE.inject(a10, b10, aO), b10;
+        }
+        getActiveScopeSpan() {
+          return aF.getSpan(null == aD ? void 0 : aD.active());
+        }
+        withPropagatedContext(a10, b10, c10, d10 = false) {
+          let e10 = aD.active();
+          if (d10) {
+            let d11 = aE.extract(aI, a10, c10);
+            if (aF.getSpanContext(d11)) return aD.with(d11, b10);
+            let f11 = aE.extract(e10, a10, c10);
+            return aD.with(f11, b10);
+          }
+          if (aF.getSpanContext(e10)) return b10();
+          let f10 = aE.extract(e10, a10, c10);
+          return aD.with(f10, b10);
+        }
+        trace(...a10) {
+          let [b10, c10, d10] = a10, { fn: e10, options: f10 } = "function" == typeof c10 ? { fn: c10, options: {} } : { fn: d10, options: { ...c10 } }, g10 = f10.spanName ?? b10;
+          if (!az.has(b10) && "1" !== process.env.NEXT_OTEL_VERBOSE || f10.hideSpan) return e10();
+          let h10 = this.getSpanContext((null == f10 ? void 0 : f10.parentSpan) ?? this.getActiveScopeSpan());
+          h10 || (h10 = (null == aD ? void 0 : aD.active()) ?? aI);
+          let i10 = h10.getValue(aM), j2 = "number" != typeof i10 || !aL.has(i10), k2 = aN++;
+          return f10.attributes = { "next.span_name": g10, "next.span_type": b10, ...f10.attributes }, aD.with(h10.setValue(aM, k2), () => this.getTracerInstance().startActiveSpan(g10, f10, (a11) => {
+            let c11;
+            aC && b10 && aA.has(b10) && (c11 = "performance" in globalThis && "measure" in performance ? globalThis.performance.now() : void 0);
+            let d11 = false, g11 = () => {
+              !d11 && (d11 = true, aL.delete(k2), c11 && performance.measure(`${aC}:next-${(b10.split(".").pop() || "").replace(/[A-Z]/g, (a12) => "-" + a12.toLowerCase())}`, { start: c11, end: performance.now() }));
+            };
+            if (j2 && aL.set(k2, new Map(Object.entries(f10.attributes ?? {}))), e10.length > 1) try {
+              return e10(a11, (b11) => aK(a11, b11));
+            } catch (b11) {
+              throw aK(a11, b11), b11;
+            } finally {
+              g11();
+            }
+            try {
+              let b11 = e10(a11);
+              if (aB(b11)) return b11.then((b12) => (a11.end(), b12)).catch((b12) => {
+                throw aK(a11, b12), b12;
+              }).finally(g11);
+              return a11.end(), g11(), b11;
+            } catch (b11) {
+              throw aK(a11, b11), g11(), b11;
+            }
+          }));
+        }
+        wrap(...a10) {
+          let b10 = this, [c10, d10, e10] = 3 === a10.length ? a10 : [a10[0], {}, a10[1]];
+          return az.has(c10) || "1" === process.env.NEXT_OTEL_VERBOSE ? function() {
+            let a11 = d10;
+            "function" == typeof a11 && "function" == typeof e10 && (a11 = a11.apply(this, arguments));
+            let f10 = arguments.length - 1, g10 = arguments[f10];
+            if ("function" != typeof g10) return b10.trace(c10, a11, () => e10.apply(this, arguments));
+            {
+              let d11 = b10.getContext().bind(aD.active(), g10);
+              return b10.trace(c10, a11, (a12, b11) => (arguments[f10] = function(a13) {
+                return null == b11 || b11(a13), d11.apply(this, arguments);
+              }, e10.apply(this, arguments)));
+            }
+          } : e10;
+        }
+        startSpan(...a10) {
+          let [b10, c10] = a10, d10 = this.getSpanContext((null == c10 ? void 0 : c10.parentSpan) ?? this.getActiveScopeSpan());
+          return this.getTracerInstance().startSpan(b10, c10, d10);
+        }
+        getSpanContext(a10) {
+          return a10 ? aF.setSpan(aD.active(), a10) : void 0;
+        }
+        getRootSpanAttributes() {
+          let a10 = aD.active().getValue(aM);
+          return aL.get(a10);
+        }
+        setRootSpanAttribute(a10, b10) {
+          let c10 = aD.active().getValue(aM), d10 = aL.get(c10);
+          d10 && !d10.has(a10) && d10.set(a10, b10);
+        }
+        withSpan(a10, b10) {
+          let c10 = aF.setSpan(aD.active(), a10);
+          return aD.with(c10, b10);
+        }
+      }
+      let aQ = (f = new aP(), () => f), aR = "__prerender_bypass";
+      Symbol("__next_preview_data"), Symbol(aR);
+      class aS {
+        constructor(a10, b10, c10, d10) {
+          var e10;
+          const f10 = a10 && function(a11, b11) {
+            let c11 = al.o.from(a11.headers);
+            return { isOnDemandRevalidate: c11.get(A) === b11.previewModeId, revalidateOnlyGenerated: c11.has("x-prerender-revalidate-if-generated") };
+          }(b10, a10).isOnDemandRevalidate, g10 = null == (e10 = c10.get(aR)) ? void 0 : e10.value;
+          this._isEnabled = !!(!f10 && g10 && a10 && g10 === a10.previewModeId), this._previewModeId = null == a10 ? void 0 : a10.previewModeId, this._mutableCookies = d10;
+        }
+        get isEnabled() {
+          return this._isEnabled;
+        }
+        enable() {
+          if (!this._previewModeId) throw Object.defineProperty(Error("Invariant: previewProps missing previewModeId this should never happen"), "__NEXT_ERROR_CODE", { value: "E93", enumerable: false, configurable: true });
+          this._mutableCookies.set({ name: aR, value: this._previewModeId, httpOnly: true, sameSite: "none", secure: true, path: "/" }), this._isEnabled = true;
+        }
+        disable() {
+          this._mutableCookies.set({ name: aR, value: "", httpOnly: true, sameSite: "none", secure: true, path: "/", expires: /* @__PURE__ */ new Date(0) }), this._isEnabled = false;
+        }
+      }
+      function aT(a10, b10) {
+        if ("x-middleware-set-cookie" in a10.headers && "string" == typeof a10.headers["x-middleware-set-cookie"]) {
+          let c10 = a10.headers["x-middleware-set-cookie"], d10 = new Headers();
+          for (let a11 of G(c10)) d10.append("set-cookie", a11);
+          for (let a11 of new Z.VO(d10).getAll()) b10.set(a11);
+        }
+      }
+      var aU = c(794), aV = c(134), aW = c.n(aV), aX = c(798), aY = c(701);
+      class aZ {
+        constructor(a10, b10, c10) {
+          this.prev = null, this.next = null, this.key = a10, this.data = b10, this.size = c10;
+        }
+      }
+      class a$ {
+        constructor() {
+          this.prev = null, this.next = null;
+        }
+      }
+      class a_ {
+        constructor(a10, b10, c10) {
+          this.cache = /* @__PURE__ */ new Map(), this.totalSize = 0, this.maxSize = a10, this.calculateSize = b10, this.onEvict = c10, this.head = new a$(), this.tail = new a$(), this.head.next = this.tail, this.tail.prev = this.head;
+        }
+        addToHead(a10) {
+          a10.prev = this.head, a10.next = this.head.next, this.head.next.prev = a10, this.head.next = a10;
+        }
+        removeNode(a10) {
+          a10.prev.next = a10.next, a10.next.prev = a10.prev;
+        }
+        moveToHead(a10) {
+          this.removeNode(a10), this.addToHead(a10);
+        }
+        removeTail() {
+          let a10 = this.tail.prev;
+          return this.removeNode(a10), a10;
+        }
+        set(a10, b10) {
+          let c10 = (null == this.calculateSize ? void 0 : this.calculateSize.call(this, b10)) ?? 1;
+          if (c10 <= 0) throw Object.defineProperty(Error(`LRUCache: calculateSize returned ${c10}, but size must be > 0. Items with size 0 would never be evicted, causing unbounded cache growth.`), "__NEXT_ERROR_CODE", { value: "E1045", enumerable: false, configurable: true });
+          if (c10 > this.maxSize) return console.warn("Single item size exceeds maxSize"), false;
+          let d10 = this.cache.get(a10);
+          if (d10) d10.data = b10, this.totalSize = this.totalSize - d10.size + c10, d10.size = c10, this.moveToHead(d10);
+          else {
+            let d11 = new aZ(a10, b10, c10);
+            this.cache.set(a10, d11), this.addToHead(d11), this.totalSize += c10;
+          }
+          for (; this.totalSize > this.maxSize && this.cache.size > 0; ) {
+            let a11 = this.removeTail();
+            this.cache.delete(a11.key), this.totalSize -= a11.size, null == this.onEvict || this.onEvict.call(this, a11.key, a11.data);
+          }
+          return true;
+        }
+        has(a10) {
+          return this.cache.has(a10);
+        }
+        get(a10) {
+          let b10 = this.cache.get(a10);
+          if (b10) return this.moveToHead(b10), b10.data;
+        }
+        *[Symbol.iterator]() {
+          let a10 = this.head.next;
+          for (; a10 && a10 !== this.tail; ) {
+            let b10 = a10;
+            yield [b10.key, b10.data], a10 = a10.next;
+          }
+        }
+        remove(a10) {
+          let b10 = this.cache.get(a10);
+          b10 && (this.removeNode(b10), this.cache.delete(a10), this.totalSize -= b10.size);
+        }
+        get size() {
+          return this.cache.size;
+        }
+        get currentSize() {
+          return this.totalSize;
+        }
+      }
+      let a0 = /* @__PURE__ */ new Map(), a1 = (a10, b10) => {
+        for (let c10 of a10) {
+          let a11 = a0.get(c10), d10 = null == a11 ? void 0 : a11.expired;
+          if ("number" == typeof d10 && d10 <= Date.now() && d10 > b10) return true;
+        }
+        return false;
+      }, a2 = (a10, b10) => {
+        for (let c10 of a10) {
+          let a11 = a0.get(c10), d10 = (null == a11 ? void 0 : a11.stale) ?? 0;
+          if ("number" == typeof d10 && d10 > b10) return true;
+        }
+        return false;
+      };
+      c(356).Buffer, process.env.NEXT_PRIVATE_DEBUG_CACHE, Symbol.for("@next/cache-handlers");
+      let a3 = Symbol.for("@next/cache-handlers-map"), a4 = Symbol.for("@next/cache-handlers-set"), a5 = globalThis;
+      function a6() {
+        if (a5[a3]) return a5[a3].entries();
+      }
+      async function a7(a10, b10) {
+        if (!a10) return b10();
+        let c10 = a8(a10);
+        try {
+          return await b10();
+        } finally {
+          var d10, e10, f10, g10;
+          let b11, h10, i10, j2, k2 = (d10 = c10, e10 = a8(a10), b11 = new Set(d10.pendingRevalidatedTags.map((a11) => {
+            let b12 = "object" == typeof a11.profile ? JSON.stringify(a11.profile) : a11.profile || "";
+            return `${a11.tag}:${b12}`;
+          })), h10 = new Set(d10.pendingRevalidateWrites), { pendingRevalidatedTags: e10.pendingRevalidatedTags.filter((a11) => {
+            let c11 = "object" == typeof a11.profile ? JSON.stringify(a11.profile) : a11.profile || "";
+            return !b11.has(`${a11.tag}:${c11}`);
+          }), pendingRevalidates: Object.fromEntries(Object.entries(e10.pendingRevalidates).filter(([a11]) => !(a11 in d10.pendingRevalidates))), pendingRevalidateWrites: e10.pendingRevalidateWrites.filter((a11) => !h10.has(a11)) });
+          await (f10 = a10, i10 = [], (j2 = (null == (g10 = k2) ? void 0 : g10.pendingRevalidatedTags) ?? f10.pendingRevalidatedTags ?? []).length > 0 && i10.push(a9(j2, f10.incrementalCache, f10)), i10.push(...Object.values((null == g10 ? void 0 : g10.pendingRevalidates) ?? f10.pendingRevalidates ?? {})), i10.push(...(null == g10 ? void 0 : g10.pendingRevalidateWrites) ?? f10.pendingRevalidateWrites ?? []), 0 !== i10.length && Promise.all(i10).then(() => void 0));
+        }
+      }
+      function a8(a10) {
+        return { pendingRevalidatedTags: a10.pendingRevalidatedTags ? [...a10.pendingRevalidatedTags] : [], pendingRevalidates: { ...a10.pendingRevalidates }, pendingRevalidateWrites: a10.pendingRevalidateWrites ? [...a10.pendingRevalidateWrites] : [] };
+      }
+      async function a9(a10, b10, c10) {
+        if (0 === a10.length) return;
+        let d10 = function() {
+          if (a5[a4]) return a5[a4].values();
+        }(), e10 = [], f10 = /* @__PURE__ */ new Map();
+        for (let b11 of a10) {
+          let a11, c11 = b11.profile;
+          for (let [b12] of f10) if ("string" == typeof b12 && "string" == typeof c11 && b12 === c11 || "object" == typeof b12 && "object" == typeof c11 && JSON.stringify(b12) === JSON.stringify(c11) || b12 === c11) {
+            a11 = b12;
+            break;
+          }
+          let d11 = a11 || c11;
+          f10.has(d11) || f10.set(d11, []), f10.get(d11).push(b11.tag);
+        }
+        for (let [a11, h10] of f10) {
+          let f11;
+          if (a11) {
+            let b11;
+            if ("object" == typeof a11) b11 = a11;
+            else if ("string" == typeof a11) {
+              var g10;
+              if (!(b11 = null == c10 || null == (g10 = c10.cacheLifeProfiles) ? void 0 : g10[a11])) throw Object.defineProperty(Error(`Invalid profile provided "${a11}" must be configured under cacheLife in next.config or be "max"`), "__NEXT_ERROR_CODE", { value: "E873", enumerable: false, configurable: true });
+            }
+            b11 && (f11 = { expire: b11.expire });
+          }
+          for (let b11 of d10 || []) a11 ? e10.push(null == b11.updateTags ? void 0 : b11.updateTags.call(b11, h10, f11)) : e10.push(null == b11.updateTags ? void 0 : b11.updateTags.call(b11, h10));
+          b10 && e10.push(b10.revalidateTag(h10, f11));
+        }
+        await Promise.all(e10);
+      }
+      var ba = c(272), bb = c(136);
+      class bc {
+        constructor({ waitUntil: a10, onClose: b10, onTaskError: c10 }) {
+          this.workUnitStores = /* @__PURE__ */ new Set(), this.waitUntil = a10, this.onClose = b10, this.onTaskError = c10, this.callbackQueue = new (aW())(), this.callbackQueue.pause();
+        }
+        after(a10) {
+          if (aB(a10)) this.waitUntil || bd(), this.waitUntil(a10.catch((a11) => this.reportTaskError("promise", a11)));
+          else if ("function" == typeof a10) this.addCallback(a10);
+          else throw Object.defineProperty(Error("`after()`: Argument must be a promise or a function"), "__NEXT_ERROR_CODE", { value: "E50", enumerable: false, configurable: true });
+        }
+        addCallback(a10) {
+          this.waitUntil || bd();
+          let b10 = aU.FP.getStore();
+          b10 && this.workUnitStores.add(b10);
+          let c10 = bb.Z.getStore(), d10 = c10 ? c10.rootTaskSpawnPhase : null == b10 ? void 0 : b10.phase;
+          this.runCallbacksOnClosePromise || (this.runCallbacksOnClosePromise = this.runCallbacksOnClose(), this.waitUntil(this.runCallbacksOnClosePromise));
+          let e10 = (0, ba.cg)(async () => {
+            try {
+              await bb.Z.run({ rootTaskSpawnPhase: d10 }, () => a10());
+            } catch (a11) {
+              this.reportTaskError("function", a11);
+            }
+          });
+          this.callbackQueue.add(e10);
+        }
+        async runCallbacksOnClose() {
+          return await new Promise((a10) => this.onClose(a10)), this.runCallbacks();
+        }
+        async runCallbacks() {
+          if (0 === this.callbackQueue.size) return;
+          for (let a11 of this.workUnitStores) a11.phase = "after";
+          let a10 = aY.J.getStore();
+          if (!a10) throw Object.defineProperty(new aX.z("Missing workStore in AfterContext.runCallbacks"), "__NEXT_ERROR_CODE", { value: "E547", enumerable: false, configurable: true });
+          return a7(a10, () => (this.callbackQueue.start(), this.callbackQueue.onIdle()));
+        }
+        reportTaskError(a10, b10) {
+          if (console.error("promise" === a10 ? "A promise passed to `after()` rejected:" : "An error occurred in a function passed to `after()`:", b10), this.onTaskError) try {
+            null == this.onTaskError || this.onTaskError.call(this, b10);
+          } catch (a11) {
+            console.error(Object.defineProperty(new aX.z("`onTaskError` threw while handling an error thrown from an `after` task", { cause: a11 }), "__NEXT_ERROR_CODE", { value: "E569", enumerable: false, configurable: true }));
+          }
+        }
+      }
+      function bd() {
+        throw Object.defineProperty(Error("`after()` will not work correctly, because `waitUntil` is not available in the current environment."), "__NEXT_ERROR_CODE", { value: "E91", enumerable: false, configurable: true });
+      }
+      function be(a10) {
+        let b10, c10 = { then: (d10, e10) => (b10 || (b10 = Promise.resolve(a10())), b10.then((a11) => {
+          c10.value = a11;
+        }).catch(() => {
+        }), b10.then(d10, e10)) };
+        return c10;
+      }
+      class bf {
+        onClose(a10) {
+          if (this.isClosed) throw Object.defineProperty(Error("Cannot subscribe to a closed CloseController"), "__NEXT_ERROR_CODE", { value: "E365", enumerable: false, configurable: true });
+          this.target.addEventListener("close", a10), this.listeners++;
+        }
+        dispatchClose() {
+          if (this.isClosed) throw Object.defineProperty(Error("Cannot close a CloseController multiple times"), "__NEXT_ERROR_CODE", { value: "E229", enumerable: false, configurable: true });
+          this.listeners > 0 && this.target.dispatchEvent(new Event("close")), this.isClosed = true;
+        }
+        constructor() {
+          this.target = new EventTarget(), this.listeners = 0, this.isClosed = false;
+        }
+      }
+      function bg() {
+        return { previewModeId: process.env.__NEXT_PREVIEW_MODE_ID || "", previewModeSigningKey: process.env.__NEXT_PREVIEW_MODE_SIGNING_KEY || "", previewModeEncryptionKey: process.env.__NEXT_PREVIEW_MODE_ENCRYPTION_KEY || "" };
+      }
+      let bh = Symbol.for("@next/request-context");
+      async function bi(a10, b10, c10) {
+        let d10 = /* @__PURE__ */ new Set();
+        for (let b11 of ((a11) => {
+          let b12 = ["/layout"];
+          if (a11.startsWith("/")) {
+            let c11 = a11.split("/");
+            for (let a12 = 1; a12 < c11.length + 1; a12++) {
+              let d11 = c11.slice(0, a12).join("/");
+              d11 && (d11.endsWith("/page") || d11.endsWith("/route") || (d11 = `${d11}${!d11.endsWith("/") ? "/" : ""}layout`), b12.push(d11));
+            }
+          }
+          return b12;
+        })(a10)) b11 = `${E}${b11}`, d10.add(b11);
+        if (b10 && (!c10 || 0 === c10.size)) {
+          let a11 = `${E}${b10}`;
+          d10.add(a11);
+        }
+        d10.has(`${E}/`) && d10.add(`${E}/index`), d10.has(`${E}/index`) && d10.add(`${E}/`);
+        let e10 = Array.from(d10);
+        return { tags: e10, expirationsByCacheKind: function(a11) {
+          let b11 = /* @__PURE__ */ new Map(), c11 = a6();
+          if (c11) for (let [d11, e11] of c11) "getExpiration" in e11 && b11.set(d11, be(async () => e11.getExpiration(a11)));
+          return b11;
+        }(e10) };
+      }
+      let bj = Symbol.for("NextInternalRequestMeta");
+      class bk extends _ {
+        constructor(a10) {
+          super(a10.input, a10.init), this.sourcePage = a10.page;
+        }
+        get request() {
+          throw Object.defineProperty(new x({ page: this.sourcePage }), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+        }
+        respondWith() {
+          throw Object.defineProperty(new x({ page: this.sourcePage }), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+        }
+        waitUntil() {
+          throw Object.defineProperty(new x({ page: this.sourcePage }), "__NEXT_ERROR_CODE", { value: "E394", enumerable: false, configurable: true });
+        }
+      }
+      let bl = { keys: (a10) => Array.from(a10.keys()), get: (a10, b10) => a10.get(b10) ?? void 0 }, bm = (a10, b10) => aQ().withPropagatedContext(a10.headers, b10, bl), bn = false;
+      async function bo(a10) {
+        var b10, d10, e10, f10, g10;
+        let h10, i10, j2, k2, l2;
+        !function() {
+          if (!bn && (bn = true, "true" === process.env.NEXT_PRIVATE_TEST_PROXY)) {
+            let { interceptTestApis: a11, wrapRequestHandler: b11 } = c(269);
+            a11(), bm = b11(bm);
+          }
+        }(), await v();
+        let m2 = void 0 !== globalThis.__BUILD_MANIFEST;
+        a10.request.url = a10.request.url.replace(/\.rsc($|\?)/, "$1");
+        let n2 = a10.bypassNextUrl ? new URL(a10.request.url) : new Y(a10.request.url, { headers: a10.request.headers, nextConfig: a10.request.nextConfig });
+        for (let a11 of [...n2.searchParams.keys()]) {
+          let b11 = n2.searchParams.getAll(a11), c10 = function(a12) {
+            for (let b12 of ["nxtP", "nxtI"]) if (a12 !== b12 && a12.startsWith(b12)) return a12.substring(b12.length);
+            return null;
+          }(a11);
+          if (c10) {
+            for (let a12 of (n2.searchParams.delete(c10), b11)) n2.searchParams.append(c10, a12);
+            n2.searchParams.delete(a11);
+          }
+        }
+        let o2 = process.env.__NEXT_BUILD_ID || "";
+        "buildId" in n2 && (o2 = n2.buildId || "", n2.buildId = "");
+        let p2 = function(a11) {
+          let b11 = new Headers();
+          for (let [c10, d11] of Object.entries(a11)) for (let a12 of Array.isArray(d11) ? d11 : [d11]) void 0 !== a12 && ("number" == typeof a12 && (a12 = a12.toString()), b11.append(c10, a12));
+          return b11;
+        }(a10.request.headers), q2 = p2.has("x-nextjs-data"), r2 = "1" === p2.get("rsc");
+        q2 && "/index" === n2.pathname && (n2.pathname = "/");
+        let s2 = /* @__PURE__ */ new Map();
+        if (!m2) for (let a11 of ah) {
+          let b11 = p2.get(a11);
+          null !== b11 && (s2.set(a11, b11), p2.delete(a11));
+        }
+        let t2 = n2.searchParams.get(ai), u2 = new bk({ page: a10.page, input: ((k2 = (j2 = "string" == typeof n2) ? new URL(n2) : n2).searchParams.delete(ai), j2 ? k2.toString() : k2).toString(), init: { body: a10.request.body, headers: p2, method: a10.request.method, nextConfig: a10.request.nextConfig, signal: a10.request.signal } });
+        a10.request.requestMeta && (g10 = a10.request.requestMeta, u2[bj] = g10), q2 && Object.defineProperty(u2, "__isData", { enumerable: false, value: true }), !globalThis.__incrementalCacheShared && a10.IncrementalCache && (globalThis.__incrementalCache = new a10.IncrementalCache({ CurCacheHandler: a10.incrementalCacheHandler, minimalMode: true, fetchCacheKeyPrefix: "", dev: false, requestHeaders: a10.request.headers, getPrerenderManifest: () => ({ version: -1, routes: {}, dynamicRoutes: {}, notFoundRoutes: [], preview: bg() }) }));
+        let w2 = a10.request.waitUntil ?? (null == (b10 = null == (l2 = globalThis[bh]) ? void 0 : l2.get()) ? void 0 : b10.waitUntil), x2 = new N({ request: u2, page: a10.page, context: w2 ? { waitUntil: w2 } : void 0 });
+        if ((h10 = await bm(u2, () => {
+          if ("/middleware" === a10.page || "/src/middleware" === a10.page || "/proxy" === a10.page || "/src/proxy" === a10.page) {
+            let b11 = x2.waitUntil.bind(x2), c10 = new bf();
+            return aQ().trace(ay.execute, { spanName: `middleware ${u2.method}`, attributes: { "http.target": u2.nextUrl.pathname, "http.method": u2.method } }, async () => {
+              try {
+                var d11, e11, f11, g11, h11, j3;
+                let k3 = bg(), l3 = await bi("/", u2.nextUrl.pathname, null), m3 = (h11 = u2.nextUrl, j3 = (a11) => {
+                  i10 = a11;
+                }, function(a11, b12, c11, d12, e12, f12, g12, h12, i11, j4) {
+                  function k4(a12) {
+                    c11 && c11.setHeader("Set-Cookie", a12);
+                  }
+                  let l4 = {};
+                  return { type: "request", phase: a11, implicitTags: f12, url: { pathname: d12.pathname, search: d12.search ?? "" }, rootParams: e12, get headers() {
+                    return l4.headers || (l4.headers = function(a12) {
+                      let b13 = al.o.from(a12);
+                      for (let a13 of ah) b13.delete(a13);
+                      return al.o.seal(b13);
+                    }(b12.headers)), l4.headers;
+                  }, get cookies() {
+                    if (!l4.cookies) {
+                      let a12 = new Z.tm(al.o.from(b12.headers));
+                      aT(b12, a12), l4.cookies = am.Ck.seal(a12);
+                    }
+                    return l4.cookies;
+                  }, set cookies(value) {
+                    l4.cookies = value;
+                  }, get mutableCookies() {
+                    if (!l4.mutableCookies) {
+                      var m4, n4;
+                      let a12, d13 = (m4 = b12.headers, n4 = g12 || (c11 ? k4 : void 0), a12 = new Z.tm(al.o.from(m4)), am.K8.wrap(a12, n4));
+                      aT(b12, d13), l4.mutableCookies = d13;
+                    }
+                    return l4.mutableCookies;
+                  }, get userspaceMutableCookies() {
+                    return l4.userspaceMutableCookies || (l4.userspaceMutableCookies = (0, am.EJ)(this)), l4.userspaceMutableCookies;
+                  }, get draftMode() {
+                    return l4.draftMode || (l4.draftMode = new aS(h12, b12, this.cookies, this.mutableCookies)), l4.draftMode;
+                  }, renderResumeDataCache: null, isHmrRefresh: i11, serverComponentsHmrCache: j4 || globalThis.__serverComponentsHmrCache, fallbackParams: null };
+                }("action", u2, void 0, h11, {}, l3, j3, k3, false, void 0)), n3 = function({ page: a11, renderOpts: b12, isPrefetchRequest: c11, buildId: d12, previouslyRevalidatedTags: e12, nonce: f12 }) {
+                  let g12 = !b12.shouldWaitOnAllReady && !b12.supportsDynamicResponse && !b12.isDraftMode && !b12.isPossibleServerAction, h12 = g12 && (!!process.env.NEXT_DEBUG_BUILD || "1" === process.env.NEXT_SSG_FETCH_METRICS), i11 = { isStaticGeneration: g12, page: a11, route: ak(a11), incrementalCache: b12.incrementalCache || globalThis.__incrementalCache, cacheLifeProfiles: b12.cacheLifeProfiles, isBuildTimePrerendering: b12.isBuildTimePrerendering, fetchCache: b12.fetchCache, isOnDemandRevalidate: b12.isOnDemandRevalidate, isDraftMode: b12.isDraftMode, isPrefetchRequest: c11, buildId: d12, reactLoadableManifest: (null == b12 ? void 0 : b12.reactLoadableManifest) || {}, assetPrefix: (null == b12 ? void 0 : b12.assetPrefix) || "", nonce: f12, afterContext: function(a12) {
+                    let { waitUntil: b13, onClose: c12, onAfterTaskError: d13 } = a12;
+                    return new bc({ waitUntil: b13, onClose: c12, onTaskError: d13 });
+                  }(b12), cacheComponentsEnabled: b12.cacheComponents, previouslyRevalidatedTags: e12, refreshTagsByCacheKind: function() {
+                    let a12 = /* @__PURE__ */ new Map(), b13 = a6();
+                    if (b13) for (let [c12, d13] of b13) "refreshTags" in d13 && a12.set(c12, be(async () => d13.refreshTags()));
+                    return a12;
+                  }(), runInCleanSnapshot: (0, ba.$p)(), shouldTrackFetchMetrics: h12, reactServerErrorsByDigest: /* @__PURE__ */ new Map() };
+                  return b12.store = i11, i11;
+                }({ page: "/", renderOpts: { cacheLifeProfiles: null == (e11 = a10.request.nextConfig) || null == (d11 = e11.experimental) ? void 0 : d11.cacheLife, cacheComponents: false, experimental: { isRoutePPREnabled: false, authInterrupts: !!(null == (g11 = a10.request.nextConfig) || null == (f11 = g11.experimental) ? void 0 : f11.authInterrupts) }, supportsDynamicResponse: true, waitUntil: b11, onClose: c10.onClose.bind(c10), onAfterTaskError: void 0 }, isPrefetchRequest: "1" === u2.headers.get(ag), buildId: o2 ?? "", previouslyRevalidatedTags: [] });
+                return await aY.J.run(n3, () => aU.FP.run(m3, a10.handler, u2, x2));
+              } finally {
+                setTimeout(() => {
+                  c10.dispatchClose();
+                }, 0);
+              }
+            });
+          }
+          return a10.handler(u2, x2);
+        })) && !(h10 instanceof Response)) throw Object.defineProperty(TypeError("Expected an instance of Response to be returned"), "__NEXT_ERROR_CODE", { value: "E567", enumerable: false, configurable: true });
+        h10 && i10 && h10.headers.set("set-cookie", i10);
+        let y2 = null == h10 ? void 0 : h10.headers.get("x-middleware-rewrite");
+        if (h10 && y2 && (r2 || !m2)) {
+          let b11 = new Y(y2, { forceLocale: true, headers: a10.request.headers, nextConfig: a10.request.nextConfig });
+          m2 || b11.host !== u2.nextUrl.host || (b11.buildId = o2 || b11.buildId, h10.headers.set("x-middleware-rewrite", String(b11)));
+          let { url: c10, isRelative: g11 } = af(b11.toString(), n2.toString());
+          !m2 && q2 && h10.headers.set("x-nextjs-rewrite", c10);
+          let i11 = !g11 && (null == (f10 = a10.request.nextConfig) || null == (e10 = f10.experimental) || null == (d10 = e10.clientParamParsingOrigins) ? void 0 : d10.some((a11) => new RegExp(a11).test(b11.origin)));
+          r2 && (g11 || i11) && (n2.pathname !== b11.pathname && h10.headers.set("x-nextjs-rewritten-path", b11.pathname), n2.search !== b11.search && h10.headers.set("x-nextjs-rewritten-query", b11.search.slice(1)));
+        }
+        if (h10 && y2 && r2 && t2) {
+          let a11 = new URL(y2);
+          a11.searchParams.has(ai) || (a11.searchParams.set(ai, t2), h10.headers.set("x-middleware-rewrite", a11.toString()));
+        }
+        let z2 = null == h10 ? void 0 : h10.headers.get("Location");
+        if (h10 && z2 && !m2) {
+          let b11 = new Y(z2, { forceLocale: false, headers: a10.request.headers, nextConfig: a10.request.nextConfig });
+          h10 = new Response(h10.body, h10), b11.host === n2.host && (b11.buildId = o2 || b11.buildId, h10.headers.set("Location", af(b11, n2).url)), q2 && (h10.headers.delete("Location"), h10.headers.set("x-nextjs-redirect", af(b11.toString(), n2.toString()).url));
+        }
+        let A2 = h10 || ae.next(), B2 = A2.headers.get("x-middleware-override-headers"), C2 = [];
+        if (B2) {
+          for (let [a11, b11] of s2) A2.headers.set(`x-middleware-request-${a11}`, b11), C2.push(a11);
+          C2.length > 0 && A2.headers.set("x-middleware-override-headers", B2 + "," + C2.join(","));
+        }
+        return { response: A2, waitUntil: ("internal" === x2[L].kind ? Promise.all(x2[L].promises).then(() => {
+        }) : void 0) ?? Promise.resolve(), fetchMetrics: u2.fetchMetrics };
+      }
+      let { env: bp, stdout: bq } = (null == (h9 = globalThis) ? void 0 : h9.process) ?? {}, br = bp && !bp.NO_COLOR && (bp.FORCE_COLOR || (null == bq ? void 0 : bq.isTTY) && !bp.CI && "dumb" !== bp.TERM), bs = (a10, b10, c10, d10) => {
+        let e10 = a10.substring(0, d10) + c10, f10 = a10.substring(d10 + b10.length), g10 = f10.indexOf(b10);
+        return ~g10 ? e10 + bs(f10, b10, c10, g10) : e10 + f10;
+      }, bt = (a10, b10, c10 = a10) => br ? (d10) => {
+        let e10 = "" + d10, f10 = e10.indexOf(b10, a10.length);
+        return ~f10 ? a10 + bs(e10, b10, c10, f10) + b10 : a10 + e10 + b10;
+      } : String, bu = bt("\x1B[1m", "\x1B[22m", "\x1B[22m\x1B[1m");
+      bt("\x1B[2m", "\x1B[22m", "\x1B[22m\x1B[2m"), bt("\x1B[3m", "\x1B[23m"), bt("\x1B[4m", "\x1B[24m"), bt("\x1B[7m", "\x1B[27m"), bt("\x1B[8m", "\x1B[28m"), bt("\x1B[9m", "\x1B[29m"), bt("\x1B[30m", "\x1B[39m");
+      let bv = bt("\x1B[31m", "\x1B[39m"), bw = bt("\x1B[32m", "\x1B[39m"), bx = bt("\x1B[33m", "\x1B[39m");
+      bt("\x1B[34m", "\x1B[39m");
+      let by = bt("\x1B[35m", "\x1B[39m");
+      bt("\x1B[38;2;173;127;168m", "\x1B[39m"), bt("\x1B[36m", "\x1B[39m");
+      let bz = bt("\x1B[37m", "\x1B[39m");
+      bt("\x1B[90m", "\x1B[39m"), bt("\x1B[40m", "\x1B[49m"), bt("\x1B[41m", "\x1B[49m"), bt("\x1B[42m", "\x1B[49m"), bt("\x1B[43m", "\x1B[49m"), bt("\x1B[44m", "\x1B[49m"), bt("\x1B[45m", "\x1B[49m"), bt("\x1B[46m", "\x1B[49m"), bt("\x1B[47m", "\x1B[49m"), bz(bu("\u25CB")), bv(bu("\u2A2F")), bx(bu("\u26A0")), bz(bu(" ")), bw(bu("\u2713")), by(bu("\xBB")), new a_(1e4, (a10) => a10.length), new a_(1e4, (a10) => a10.length);
+      var bA = ((h7 = {}).APP_PAGE = "APP_PAGE", h7.APP_ROUTE = "APP_ROUTE", h7.PAGES = "PAGES", h7.FETCH = "FETCH", h7.REDIRECT = "REDIRECT", h7.IMAGE = "IMAGE", h7), bB = ((h8 = {}).APP_PAGE = "APP_PAGE", h8.APP_ROUTE = "APP_ROUTE", h8.PAGES = "PAGES", h8.FETCH = "FETCH", h8.IMAGE = "IMAGE", h8);
+      function bC() {
+      }
+      new Uint8Array([60, 104, 116, 109, 108]), new Uint8Array([60, 104, 101, 97, 100]), new Uint8Array([60, 98, 111, 100, 121]), new Uint8Array([60, 47, 104, 101, 97, 100, 62]), new Uint8Array([60, 47, 98, 111, 100, 121, 62]), new Uint8Array([60, 47, 104, 116, 109, 108, 62]), new Uint8Array([60, 47, 98, 111, 100, 121, 62, 60, 47, 104, 116, 109, 108, 62]), new Uint8Array([60, 109, 101, 116, 97, 32, 110, 97, 109, 101, 61, 34, 194, 171, 110, 120, 116, 45, 105, 99, 111, 110, 194, 187, 34]), c(356).Buffer, c(356).Buffer;
+      let bD = new TextEncoder();
+      function bE(a10) {
+        return new ReadableStream({ start(b10) {
+          b10.enqueue(bD.encode(a10)), b10.close();
+        } });
+      }
+      function bF(a10) {
+        return new ReadableStream({ start(b10) {
+          b10.enqueue(a10), b10.close();
+        } });
+      }
+      async function bG(a10, b10) {
+        let c10 = new TextDecoder("utf-8", { fatal: true }), d10 = "";
+        for await (let e10 of a10) {
+          if (null == b10 ? void 0 : b10.aborted) return d10;
+          d10 += c10.decode(e10, { stream: true });
+        }
+        return d10 + c10.decode();
+      }
+      let bH = "ResponseAborted";
+      class bI extends Error {
+        constructor(...a10) {
+          super(...a10), this.name = bH;
+        }
+      }
+      class bJ {
+        constructor() {
+          let a10, b10;
+          this.promise = new Promise((c10, d10) => {
+            a10 = c10, b10 = d10;
+          }), this.resolve = a10, this.reject = b10;
+        }
+      }
+      let bK = 0, bL = 0, bM = 0;
+      function bN(a10) {
+        return (null == a10 ? void 0 : a10.name) === "AbortError" || (null == a10 ? void 0 : a10.name) === bH;
+      }
+      async function bO(a10, b10, c10) {
+        try {
+          let d10, { errored: e10, destroyed: f10 } = b10;
+          if (e10 || f10) return;
+          let g10 = (d10 = new AbortController(), b10.once("close", () => {
+            b10.writableFinished || d10.abort(new bI());
+          }), d10), h10 = function(a11, b11) {
+            let c11 = false, d11 = new bJ();
+            function e11() {
+              d11.resolve();
+            }
+            a11.on("drain", e11), a11.once("close", () => {
+              a11.off("drain", e11), d11.resolve();
+            });
+            let f11 = new bJ();
+            return a11.once("finish", () => {
+              f11.resolve();
+            }), new WritableStream({ write: async (b12) => {
+              if (!c11) {
+                if (c11 = true, "performance" in globalThis && process.env.NEXT_OTEL_PERFORMANCE_PREFIX) {
+                  let a12 = function(a13 = {}) {
+                    let b13 = 0 === bK ? void 0 : { clientComponentLoadStart: bK, clientComponentLoadTimes: bL, clientComponentLoadCount: bM };
+                    return a13.reset && (bK = 0, bL = 0, bM = 0), b13;
+                  }();
+                  a12 && performance.measure(`${process.env.NEXT_OTEL_PERFORMANCE_PREFIX}:next-client-component-loading`, { start: a12.clientComponentLoadStart, end: a12.clientComponentLoadStart + a12.clientComponentLoadTimes });
+                }
+                a11.flushHeaders(), aQ().trace(aq.startResponse, { spanName: "start response" }, () => void 0);
+              }
+              try {
+                let c12 = a11.write(b12);
+                "flush" in a11 && "function" == typeof a11.flush && a11.flush(), c12 || (await d11.promise, d11 = new bJ());
+              } catch (b13) {
+                throw a11.end(), Object.defineProperty(Error("failed to write chunk to response", { cause: b13 }), "__NEXT_ERROR_CODE", { value: "E321", enumerable: false, configurable: true });
+              }
+            }, abort: (b12) => {
+              a11.writableFinished || a11.destroy(b12);
+            }, close: async () => {
+              if (b11 && await b11, !a11.writableFinished) return a11.end(), f11.promise;
+            } });
+          }(b10, c10);
+          await a10.pipeTo(h10, { signal: g10.signal });
+        } catch (a11) {
+          if (bN(a11)) return;
+          throw Object.defineProperty(Error("failed to pipe response", { cause: a11 }), "__NEXT_ERROR_CODE", { value: "E180", enumerable: false, configurable: true });
+        }
+      }
+      var bP = c(356).Buffer;
+      class bQ {
+        static #a = this.EMPTY = new bQ(null, { metadata: {}, contentType: null });
+        static fromStatic(a10, b10) {
+          return new bQ(a10, { metadata: {}, contentType: b10 });
+        }
+        constructor(a10, { contentType: b10, waitUntil: c10, metadata: d10 }) {
+          this.response = a10, this.contentType = b10, this.metadata = d10, this.waitUntil = c10;
+        }
+        assignMetadata(a10) {
+          Object.assign(this.metadata, a10);
+        }
+        get isNull() {
+          return null === this.response;
+        }
+        get isDynamic() {
+          return "string" != typeof this.response;
+        }
+        toUnchunkedString(a10 = false) {
+          if (null === this.response) return "";
+          if ("string" != typeof this.response) {
+            if (!a10) throw Object.defineProperty(new aX.z("dynamic responses cannot be unchunked. This is a bug in Next.js"), "__NEXT_ERROR_CODE", { value: "E732", enumerable: false, configurable: true });
+            return bG(this.readable);
+          }
+          return this.response;
+        }
+        get readable() {
+          return null === this.response ? new ReadableStream({ start(a10) {
+            a10.close();
+          } }) : "string" == typeof this.response ? bE(this.response) : bP.isBuffer(this.response) ? bF(this.response) : Array.isArray(this.response) ? function(...a10) {
+            if (0 === a10.length) return new ReadableStream({ start(a11) {
+              a11.close();
+            } });
+            if (1 === a10.length) return a10[0];
+            let { readable: b10, writable: c10 } = new TransformStream(), d10 = a10[0].pipeTo(c10, { preventClose: true }), e10 = 1;
+            for (; e10 < a10.length - 1; e10++) {
+              let b11 = a10[e10];
+              d10 = d10.then(() => b11.pipeTo(c10, { preventClose: true }));
+            }
+            let f10 = a10[e10];
+            return (d10 = d10.then(() => f10.pipeTo(c10))).catch(bC), b10;
+          }(...this.response) : this.response;
+        }
+        coerce() {
+          return null === this.response ? [] : "string" == typeof this.response ? [bE(this.response)] : Array.isArray(this.response) ? this.response : bP.isBuffer(this.response) ? [bF(this.response)] : [this.response];
+        }
+        pipeThrough(a10) {
+          this.response = this.readable.pipeThrough(a10);
+        }
+        unshift(a10) {
+          this.response = this.coerce(), this.response.unshift(a10);
+        }
+        push(a10) {
+          this.response = this.coerce(), this.response.push(a10);
+        }
+        async pipeTo(a10) {
+          try {
+            await this.readable.pipeTo(a10, { preventClose: true }), this.waitUntil && await this.waitUntil, await a10.close();
+          } catch (b10) {
+            if (bN(b10)) return void await a10.abort(b10);
+            throw b10;
+          }
+        }
+        async pipeToNodeResponse(a10) {
+          await bO(this.readable, a10, this.waitUntil);
+        }
+      }
+      function bR(a10, b10) {
+        if (!a10) return b10;
+        let c10 = parseInt(a10, 10);
+        return Number.isFinite(c10) && c10 > 0 ? c10 : b10;
+      }
+      bR(process.env.NEXT_PRIVATE_RESPONSE_CACHE_TTL, 1e4), bR(process.env.NEXT_PRIVATE_RESPONSE_CACHE_MAX_SIZE, 150);
+      var bS = c(884), bT = c.n(bS);
+      class bU {
+        constructor(a10) {
+          this.fs = a10, this.tasks = [];
+        }
+        findOrCreateTask(a10) {
+          for (let b11 of this.tasks) if (b11[0] === a10) return b11;
+          let b10 = this.fs.mkdir(a10);
+          b10.catch(() => {
+          });
+          let c10 = [a10, b10, []];
+          return this.tasks.push(c10), c10;
+        }
+        append(a10, b10) {
+          let c10 = this.findOrCreateTask(bT().dirname(a10)), d10 = c10[1].then(() => this.fs.writeFile(a10, b10));
+          d10.catch(() => {
+          }), c10[2].push(d10);
+        }
+        wait() {
+          return Promise.all(this.tasks.flatMap((a10) => a10[2]));
+        }
+      }
+      function bV(a10) {
+        return (null == a10 ? void 0 : a10.length) || 0;
+      }
+      class bW {
+        static #a = this.debug = !!process.env.NEXT_PRIVATE_DEBUG_CACHE;
+        constructor(a10) {
+          this.fs = a10.fs, this.flushToDisk = a10.flushToDisk, this.serverDistDir = a10.serverDistDir, this.revalidatedTags = a10.revalidatedTags, a10.maxMemoryCacheSize ? bW.memoryCache ? bW.debug && console.log("FileSystemCache: memory store already initialized") : (bW.debug && console.log("FileSystemCache: using memory store for fetch cache"), bW.memoryCache = function(a11) {
+            return e || (e = new a_(a11, function({ value: a12 }) {
+              var b10, c10;
+              if (!a12) return 25;
+              if (a12.kind === bA.REDIRECT) return JSON.stringify(a12.props).length;
+              if (a12.kind === bA.IMAGE) throw Object.defineProperty(Error("invariant image should not be incremental-cache"), "__NEXT_ERROR_CODE", { value: "E501", enumerable: false, configurable: true });
+              if (a12.kind === bA.FETCH) return JSON.stringify(a12.data || "").length;
+              if (a12.kind === bA.APP_ROUTE) return a12.body.length;
+              return a12.kind === bA.APP_PAGE ? Math.max(1, a12.html.length + bV(a12.rscData) + ((null == (c10 = a12.postponed) ? void 0 : c10.length) || 0) + function(a13) {
+                if (!a13) return 0;
+                let b11 = 0;
+                for (let [c11, d10] of a13) b11 += c11.length + bV(d10);
+                return b11;
+              }(a12.segmentData)) : a12.html.length + ((null == (b10 = JSON.stringify(a12.pageData)) ? void 0 : b10.length) || 0);
+            })), e;
+          }(a10.maxMemoryCacheSize)) : bW.debug && console.log("FileSystemCache: not using memory store for fetch cache");
+        }
+        resetRequestCache() {
+        }
+        async revalidateTag(a10, b10) {
+          if (a10 = "string" == typeof a10 ? [a10] : a10, bW.debug && console.log("FileSystemCache: revalidateTag", a10, b10), 0 === a10.length) return;
+          let c10 = Date.now();
+          for (let d10 of a10) {
+            let a11 = a0.get(d10) || {};
+            if (b10) {
+              let e10 = { ...a11 };
+              e10.stale = c10, void 0 !== b10.expire && (e10.expired = c10 + 1e3 * b10.expire), a0.set(d10, e10);
+            } else a0.set(d10, { ...a11, expired: c10 });
+          }
+        }
+        async get(...a10) {
+          var b10, c10, d10, e10, f10, g10;
+          let [h10, i10] = a10, { kind: j2 } = i10, k2 = null == (b10 = bW.memoryCache) ? void 0 : b10.get(h10);
+          if (bW.debug && (j2 === bB.FETCH ? console.log("FileSystemCache: get", h10, i10.tags, j2, !!k2) : console.log("FileSystemCache: get", h10, j2, !!k2)), (null == k2 || null == (c10 = k2.value) ? void 0 : c10.kind) === bA.APP_PAGE || (null == k2 || null == (d10 = k2.value) ? void 0 : d10.kind) === bA.APP_ROUTE || (null == k2 || null == (e10 = k2.value) ? void 0 : e10.kind) === bA.PAGES) {
+            let a11 = null == (g10 = k2.value.headers) ? void 0 : g10[C];
+            if ("string" == typeof a11) {
+              let b11 = a11.split(",");
+              if (b11.length > 0 && a1(b11, k2.lastModified)) return bW.debug && console.log("FileSystemCache: expired tags", b11), null;
+            }
+          } else if ((null == k2 || null == (f10 = k2.value) ? void 0 : f10.kind) === bA.FETCH) {
+            let a11 = i10.kind === bB.FETCH ? [...i10.tags || [], ...i10.softTags || []] : [];
+            if (a11.some((a12) => this.revalidatedTags.includes(a12))) return bW.debug && console.log("FileSystemCache: was revalidated", a11), null;
+            if (a1(a11, k2.lastModified)) return bW.debug && console.log("FileSystemCache: expired tags", a11), null;
+          }
+          return k2 ?? null;
+        }
+        async set(a10, b10, c10) {
+          var d10;
+          if (null == (d10 = bW.memoryCache) || d10.set(a10, { value: b10, lastModified: Date.now() }), bW.debug && console.log("FileSystemCache: set", a10), !this.flushToDisk || !b10) return;
+          let e10 = new bU(this.fs);
+          if (b10.kind === bA.APP_ROUTE) {
+            let c11 = this.getFilePath(`${a10}.body`, bB.APP_ROUTE);
+            e10.append(c11, b10.body);
+            let d11 = { headers: b10.headers, status: b10.status, postponed: void 0, segmentPaths: void 0, prefetchHints: void 0 };
+            e10.append(c11.replace(/\.body$/, B), JSON.stringify(d11, null, 2));
+          } else if (b10.kind === bA.PAGES || b10.kind === bA.APP_PAGE) {
+            let d11 = b10.kind === bA.APP_PAGE, f10 = this.getFilePath(`${a10}.html`, d11 ? bB.APP_PAGE : bB.PAGES);
+            if (e10.append(f10, b10.html), c10.fetchCache || c10.isFallback || c10.isRoutePPREnabled || e10.append(this.getFilePath(`${a10}${d11 ? ".rsc" : ".json"}`, d11 ? bB.APP_PAGE : bB.PAGES), d11 ? b10.rscData : JSON.stringify(b10.pageData)), (null == b10 ? void 0 : b10.kind) === bA.APP_PAGE) {
+              let a11;
+              if (b10.segmentData) {
+                a11 = [];
+                let c12 = f10.replace(/\.html$/, ".segments");
+                for (let [d12, f11] of b10.segmentData) {
+                  a11.push(d12);
+                  let b11 = c12 + d12 + ".segment.rsc";
+                  e10.append(b11, f11);
+                }
+              }
+              let c11 = { headers: b10.headers, status: b10.status, postponed: b10.postponed, segmentPaths: a11, prefetchHints: void 0 };
+              e10.append(f10.replace(/\.html$/, B), JSON.stringify(c11));
+            }
+          } else if (b10.kind === bA.FETCH) {
+            let d11 = this.getFilePath(a10, bB.FETCH);
+            e10.append(d11, JSON.stringify({ ...b10, tags: c10.fetchCache ? c10.tags : [] }));
+          }
+          await e10.wait();
+        }
+        getFilePath(a10, b10) {
+          switch (b10) {
+            case bB.FETCH:
+              return bT().join(this.serverDistDir, "..", "cache", "fetch-cache", a10);
+            case bB.PAGES:
+              return bT().join(this.serverDistDir, "pages", a10);
+            case bB.IMAGE:
+            case bB.APP_PAGE:
+            case bB.APP_ROUTE:
+              return bT().join(this.serverDistDir, "app", a10);
+            default:
+              throw Object.defineProperty(Error(`Unexpected file path kind: ${b10}`), "__NEXT_ERROR_CODE", { value: "E479", enumerable: false, configurable: true });
+          }
+        }
+      }
+      let bX = ["(..)(..)", "(.)", "(..)", "(...)"], bY = /\/[^/]*\[[^/]+\][^/]*(?=\/|$)/, bZ = /\/\[[^/]+\](?=\/|$)/;
+      function b$(a10) {
+        return a10.replace(/(?:\/index)?\/?$/, "") || "/";
+      }
+      "u" > typeof performance && ["mark", "measure", "getEntriesByName"].every((a10) => "function" == typeof performance[a10]);
+      class b_ {
+        static #a = this.cacheControls = /* @__PURE__ */ new Map();
+        constructor(a10) {
+          this.prerenderManifest = a10;
+        }
+        get(a10) {
+          let b10 = b_.cacheControls.get(a10);
+          if (b10) return b10;
+          let c10 = this.prerenderManifest.routes[a10];
+          if (c10) {
+            let { initialRevalidateSeconds: a11, initialExpireSeconds: b11 } = c10;
+            if (void 0 !== a11) return { revalidate: a11, expire: b11 };
+          }
+          let d10 = this.prerenderManifest.dynamicRoutes[a10];
+          if (d10) {
+            let { fallbackRevalidate: a11, fallbackExpire: b11 } = d10;
+            if (void 0 !== a11) return { revalidate: a11, expire: b11 };
+          }
+        }
+        set(a10, b10) {
+          b_.cacheControls.set(a10, b10);
+        }
+        clear() {
+          b_.cacheControls.clear();
+        }
+      }
+      c(417);
+      class b0 {
+        static #a = this.debug = !!process.env.NEXT_PRIVATE_DEBUG_CACHE;
+        constructor({ fs: a10, dev: b10, flushToDisk: c10, minimalMode: d10, serverDistDir: e10, requestHeaders: f10, maxMemoryCacheSize: g10, getPrerenderManifest: h10, fetchCacheKeyPrefix: i10, CurCacheHandler: j2, allowedRevalidateHeaderKeys: k2 }) {
+          var l2, m2, n2, o2;
+          this.locks = /* @__PURE__ */ new Map(), this.hasCustomCacheHandler = !!j2;
+          const p2 = Symbol.for("@next/cache-handlers"), q2 = globalThis;
+          if (j2) b0.debug && console.log("IncrementalCache: using custom cache handler", j2.name);
+          else {
+            const b11 = q2[p2];
+            (null == b11 ? void 0 : b11.FetchCache) ? (j2 = b11.FetchCache, b0.debug && console.log("IncrementalCache: using global FetchCache cache handler")) : a10 && e10 && (b0.debug && console.log("IncrementalCache: using filesystem cache handler"), j2 = bW);
+          }
+          process.env.__NEXT_TEST_MAX_ISR_CACHE && (g10 = parseInt(process.env.__NEXT_TEST_MAX_ISR_CACHE, 10)), this.dev = b10, this.disableForTestmode = "true" === process.env.NEXT_PRIVATE_TEST_PROXY, this.minimalMode = d10, this.requestHeaders = f10, this.allowedRevalidateHeaderKeys = k2, this.prerenderManifest = h10(), this.cacheControls = new b_(this.prerenderManifest), this.fetchCacheKeyPrefix = i10;
+          let r2 = [];
+          f10[A] === (null == (m2 = this.prerenderManifest) || null == (l2 = m2.preview) ? void 0 : l2.previewModeId) && (this.isOnDemandRevalidate = true), d10 && (r2 = this.revalidatedTags = function(a11, b11) {
+            return "string" == typeof a11[D] && a11["x-next-revalidate-tag-token"] === b11 ? a11[D].split(",") : [];
+          }(f10, null == (o2 = this.prerenderManifest) || null == (n2 = o2.preview) ? void 0 : n2.previewModeId)), j2 && (this.cacheHandler = new j2({ dev: b10, fs: a10, flushToDisk: c10, serverDistDir: e10, revalidatedTags: r2, maxMemoryCacheSize: g10, _requestHeaders: f10, fetchCacheKeyPrefix: i10 }));
+        }
+        calculateRevalidate(a10, b10, c10, d10) {
+          if (c10) return Math.floor(performance.timeOrigin + performance.now() - 1e3);
+          let e10 = this.cacheControls.get(b$(a10)), f10 = e10 ? e10.revalidate : !d10 && 1;
+          return "number" == typeof f10 ? 1e3 * f10 + b10 : f10;
+        }
+        _getPathname(a10, b10) {
+          return b10 ? a10 : /^\/index(\/|$)/.test(a10) && !function(a11, b11 = true) {
+            return (void 0 !== a11.split("/").find((a12) => bX.find((b12) => a12.startsWith(b12))) && (a11 = function(a12) {
+              let b12, c10, d10;
+              for (let e10 of a12.split("/")) if (c10 = bX.find((a13) => e10.startsWith(a13))) {
+                [b12, d10] = a12.split(c10, 2);
+                break;
+              }
+              if (!b12 || !c10 || !d10) throw Object.defineProperty(Error(`Invalid interception route: ${a12}. Must be in the format /<intercepting route>/(..|...|..)(..)/<intercepted route>`), "__NEXT_ERROR_CODE", { value: "E269", enumerable: false, configurable: true });
+              switch (b12 = ak(b12), c10) {
+                case "(.)":
+                  d10 = "/" === b12 ? `/${d10}` : b12 + "/" + d10;
+                  break;
+                case "(..)":
+                  if ("/" === b12) throw Object.defineProperty(Error(`Invalid interception route: ${a12}. Cannot use (..) marker at the root level, use (.) instead.`), "__NEXT_ERROR_CODE", { value: "E207", enumerable: false, configurable: true });
+                  d10 = b12.split("/").slice(0, -1).concat(d10).join("/");
+                  break;
+                case "(...)":
+                  d10 = "/" + d10;
+                  break;
+                case "(..)(..)":
+                  let e10 = b12.split("/");
+                  if (e10.length <= 2) throw Object.defineProperty(Error(`Invalid interception route: ${a12}. Cannot use (..)(..) marker at the root level or one level up.`), "__NEXT_ERROR_CODE", { value: "E486", enumerable: false, configurable: true });
+                  d10 = e10.slice(0, -2).concat(d10).join("/");
+                  break;
+                default:
+                  throw Object.defineProperty(Error("Invariant: unexpected marker"), "__NEXT_ERROR_CODE", { value: "E112", enumerable: false, configurable: true });
+              }
+              return { interceptingRoute: b12, interceptedRoute: d10 };
+            }(a11).interceptedRoute), b11) ? bZ.test(a11) : bY.test(a11);
+          }(a10) ? `/index${a10}` : "/" === a10 ? "/index" : aj(a10);
+        }
+        resetRequestCache() {
+          var a10, b10;
+          null == (b10 = this.cacheHandler) || null == (a10 = b10.resetRequestCache) || a10.call(b10);
+        }
+        async lock(a10) {
+          for (; ; ) {
+            let b11 = this.locks.get(a10);
+            if (b0.debug && console.log("IncrementalCache: lock get", a10, !!b11), !b11) break;
+            await b11;
+          }
+          let { resolve: b10, promise: c10 } = new bJ();
+          return b0.debug && console.log("IncrementalCache: successfully locked", a10), this.locks.set(a10, c10), () => {
+            b10(), this.locks.delete(a10);
+          };
+        }
+        async revalidateTag(a10, b10) {
+          var c10;
+          return null == (c10 = this.cacheHandler) ? void 0 : c10.revalidateTag(a10, b10);
+        }
+        async generateCacheKey(a10, b10 = {}) {
+          let c10 = [], d10 = new TextEncoder(), e10 = new TextDecoder();
+          if (b10.body) if (b10.body instanceof Uint8Array) c10.push(e10.decode(b10.body)), b10._ogBody = b10.body;
+          else if ("function" == typeof b10.body.getReader) {
+            let a11 = b10.body, f11 = [];
+            try {
+              await a11.pipeTo(new WritableStream({ write(a12) {
+                "string" == typeof a12 ? (f11.push(d10.encode(a12)), c10.push(a12)) : (f11.push(a12), c10.push(e10.decode(a12, { stream: true })));
+              } })), c10.push(e10.decode());
+              let g11 = f11.reduce((a12, b11) => a12 + b11.length, 0), h11 = new Uint8Array(g11), i10 = 0;
+              for (let a12 of f11) h11.set(a12, i10), i10 += a12.length;
+              b10._ogBody = h11;
+            } catch (a12) {
+              console.error("Problem reading body", a12);
+            }
+          } else if ("function" == typeof b10.body.keys) {
+            let a11 = b10.body;
+            for (let d11 of (b10._ogBody = b10.body, /* @__PURE__ */ new Set([...a11.keys()]))) {
+              let b11 = a11.getAll(d11);
+              c10.push(`${d11}=${(await Promise.all(b11.map(async (a12) => "string" == typeof a12 ? a12 : await a12.text()))).join(",")}`);
+            }
+          } else if ("function" == typeof b10.body.arrayBuffer) {
+            let a11 = b10.body, d11 = await a11.arrayBuffer();
+            c10.push(await a11.text()), b10._ogBody = new Blob([d11], { type: a11.type });
+          } else "string" == typeof b10.body && (c10.push(b10.body), b10._ogBody = b10.body);
+          let f10 = "function" == typeof (b10.headers || {}).keys ? Object.fromEntries(b10.headers) : Object.assign({}, b10.headers);
+          "traceparent" in f10 && delete f10.traceparent, "tracestate" in f10 && delete f10.tracestate;
+          let g10 = JSON.stringify(["v3", this.fetchCacheKeyPrefix || "", a10, b10.method, f10, b10.mode, b10.redirect, b10.credentials, b10.referrer, b10.referrerPolicy, b10.integrity, b10.cache, c10]);
+          {
+            var h10;
+            let a11 = d10.encode(g10);
+            return h10 = await crypto.subtle.digest("SHA-256", a11), Array.prototype.map.call(new Uint8Array(h10), (a12) => a12.toString(16).padStart(2, "0")).join("");
+          }
+        }
+        async get(a10, b10) {
+          var c10, d10, e10, f10, g10, h10, i10;
+          let j2, k2;
+          if (b10.kind === bB.FETCH) {
+            let c11 = aU.FP.getStore(), d11 = c11 ? (0, aU.E0)(c11) : null;
+            if (d11) {
+              let c12 = d11.fetch.get(a10);
+              if ((null == c12 ? void 0 : c12.kind) === bA.FETCH) {
+                let d12 = aY.J.getStore();
+                if (![...b10.tags || [], ...b10.softTags || []].some((a11) => {
+                  var b11, c13;
+                  return (null == (b11 = this.revalidatedTags) ? void 0 : b11.includes(a11)) || (null == d12 || null == (c13 = d12.pendingRevalidatedTags) ? void 0 : c13.some((b12) => b12.tag === a11));
+                })) return b0.debug && console.log("IncrementalCache: rdc:hit", a10), { isStale: false, value: c12 };
+                b0.debug && console.log("IncrementalCache: rdc:revalidated-tag", a10);
+              } else b0.debug && console.log("IncrementalCache: rdc:miss", a10);
+            } else b0.debug && console.log("IncrementalCache: rdc:no-resume-data");
+          }
+          if (this.disableForTestmode || this.dev && (b10.kind !== bB.FETCH || "no-cache" === this.requestHeaders["cache-control"])) return null;
+          a10 = this._getPathname(a10, b10.kind === bB.FETCH);
+          let l2 = await (null == (c10 = this.cacheHandler) ? void 0 : c10.get(a10, b10));
+          if (b10.kind === bB.FETCH) {
+            if (!l2) return null;
+            if ((null == (e10 = l2.value) ? void 0 : e10.kind) !== bA.FETCH) throw Object.defineProperty(new aX.z(`Expected cached value for cache key ${JSON.stringify(a10)} to be a "FETCH" kind, got ${JSON.stringify(null == (f10 = l2.value) ? void 0 : f10.kind)} instead.`), "__NEXT_ERROR_CODE", { value: "E653", enumerable: false, configurable: true });
+            let c11 = aY.J.getStore(), d11 = [...b10.tags || [], ...b10.softTags || []];
+            if (d11.some((a11) => {
+              var b11, d12;
+              return (null == (b11 = this.revalidatedTags) ? void 0 : b11.includes(a11)) || (null == c11 || null == (d12 = c11.pendingRevalidatedTags) ? void 0 : d12.some((b12) => b12.tag === a11));
+            })) return b0.debug && console.log("IncrementalCache: expired tag", a10), null;
+            let g11 = aU.FP.getStore();
+            if (g11) {
+              let b11 = (0, aU.fm)(g11);
+              b11 && (b0.debug && console.log("IncrementalCache: rdc:set", a10), b11.fetch.set(a10, l2.value));
+            }
+            let h11 = b10.revalidate || l2.value.revalidate, i11 = (performance.timeOrigin + performance.now() - (l2.lastModified || 0)) / 1e3 > h11, j3 = l2.value.data;
+            return a1(d11, l2.lastModified) ? null : (a2(d11, l2.lastModified) && (i11 = true), { isStale: i11, value: { kind: bA.FETCH, data: j3, revalidate: h11 } });
+          }
+          if ((null == l2 || null == (d10 = l2.value) ? void 0 : d10.kind) === bA.FETCH) throw Object.defineProperty(new aX.z(`Expected cached value for cache key ${JSON.stringify(a10)} not to be a ${JSON.stringify(b10.kind)} kind, got "FETCH" instead.`), "__NEXT_ERROR_CODE", { value: "E652", enumerable: false, configurable: true });
+          let m2 = null, { isFallback: n2 } = b10, o2 = this.cacheControls.get(b$(a10));
+          if ((null == l2 ? void 0 : l2.lastModified) === -1) j2 = -1, k2 = -31536e6;
+          else {
+            let c11 = performance.timeOrigin + performance.now(), d11 = (null == l2 ? void 0 : l2.lastModified) || c11;
+            if (void 0 === (j2 = false !== (k2 = this.calculateRevalidate(a10, d11, this.dev ?? false, b10.isFallback)) && k2 < c11 || void 0) && ((null == l2 || null == (g10 = l2.value) ? void 0 : g10.kind) === bA.APP_PAGE || (null == l2 || null == (h10 = l2.value) ? void 0 : h10.kind) === bA.APP_ROUTE)) {
+              let a11 = null == (i10 = l2.value.headers) ? void 0 : i10[C];
+              if ("string" == typeof a11) {
+                let b11 = a11.split(",");
+                b11.length > 0 && (a1(b11, d11) ? j2 = -1 : a2(b11, d11) && (j2 = true));
+              }
+            }
+          }
+          return l2 && (m2 = { isStale: j2, cacheControl: o2, revalidateAfter: k2, value: l2.value, isFallback: n2 }), !l2 && this.prerenderManifest.notFoundRoutes.includes(a10) && (m2 = { isStale: j2, value: null, cacheControl: o2, revalidateAfter: k2, isFallback: n2 }, this.set(a10, m2.value, { ...b10, cacheControl: o2 })), m2;
+        }
+        async set(a10, b10, c10) {
+          if ((null == b10 ? void 0 : b10.kind) === bA.FETCH) {
+            let c11 = aU.FP.getStore(), d11 = c11 ? (0, aU.fm)(c11) : null;
+            d11 && (b0.debug && console.log("IncrementalCache: rdc:set", a10), d11.fetch.set(a10, b10));
+          }
+          if (this.disableForTestmode || this.dev && !c10.fetchCache) return;
+          a10 = this._getPathname(a10, c10.fetchCache);
+          let d10 = JSON.stringify(b10).length;
+          if (c10.fetchCache && d10 > 2097152 && !this.hasCustomCacheHandler && !c10.isImplicitBuildTimeCache) {
+            let b11 = `Failed to set Next.js data cache for ${c10.fetchUrl || a10}, items over 2MB can not be cached (${d10} bytes)`;
+            if (this.dev) throw Object.defineProperty(Error(b11), "__NEXT_ERROR_CODE", { value: "E1003", enumerable: false, configurable: true });
+            console.warn(b11);
+            return;
+          }
+          try {
+            var e10;
+            !c10.fetchCache && c10.cacheControl && this.cacheControls.set(b$(a10), c10.cacheControl), await (null == (e10 = this.cacheHandler) ? void 0 : e10.set(a10, b10, c10));
+          } catch (b11) {
+            console.warn("Failed to update prerender cache for", a10, b11);
+          }
+        }
+      }
+      let b1 = () => {
+        try {
+          return true;
+        } catch {
+        }
+        return false;
+      }, b2 = /* @__PURE__ */ new Set(), b3 = [".lcl.dev", ".lclstage.dev", ".lclclerk.com"], b4 = [".accounts.dev", ".accountsstage.dev", ".accounts.lclclerk.com"], b5 = [".lcl.dev", ".stg.dev", ".lclstage.dev", ".stgstage.dev", ".dev.lclclerk.com", ".stg.lclclerk.com", ".accounts.lclclerk.com", "accountsstage.dev", "accounts.dev"], b6 = [".lcl.dev", "lclstage.dev", ".lclclerk.com", ".accounts.lclclerk.com"], b7 = [".accountsstage.dev"], b8 = "https://api.clerk.com", b9 = "https://frontend-api.clerk.dev", ca = "/__clerk", cb = (a10) => "u" > typeof atob && "function" == typeof atob ? atob(a10) : void 0 !== globalThis.Buffer ? globalThis.Buffer.from(a10, "base64").toString() : a10, cc = "pk_live_";
+      function cd(a10) {
+        if (!a10.endsWith("$")) return false;
+        let b10 = a10.slice(0, -1);
+        return !b10.includes("$") && b10.includes(".");
+      }
+      function ce(a10, b10 = {}) {
+        let c10;
+        if (!(a10 = a10 || "") || !cf(a10)) {
+          if (b10.fatal && !a10) throw Error("Publishable key is missing. Ensure that your publishable key is correctly configured. Double-check your environment configuration for your keys, or access them here: https://dashboard.clerk.com/last-active?path=api-keys");
+          if (b10.fatal && !cf(a10)) throw Error("Publishable key not valid.");
+          return null;
+        }
+        let d10 = a10.startsWith(cc) ? "production" : "development";
+        try {
+          c10 = cb(a10.split("_")[2]);
+        } catch {
+          if (b10.fatal) throw Error("Publishable key not valid: Failed to decode key.");
+          return null;
+        }
+        if (!cd(c10)) {
+          if (b10.fatal) throw Error("Publishable key not valid: Decoded key has invalid format.");
+          return null;
+        }
+        let e10 = c10.slice(0, -1);
+        return b10.proxyUrl ? e10 = b10.proxyUrl : "development" !== d10 && b10.domain && b10.isSatellite && (e10 = `clerk.${b10.domain}`), { instanceType: d10, frontendApi: e10 };
+      }
+      function cf(a10 = "") {
+        try {
+          if (!(a10.startsWith(cc) || a10.startsWith("pk_test_"))) return false;
+          let b10 = a10.split("_");
+          if (3 !== b10.length) return false;
+          let c10 = b10[2];
+          if (!c10) return false;
+          return cd(cb(c10));
+        } catch {
+          return false;
+        }
+      }
+      function cg(a10) {
+        return a10.startsWith("test_") || a10.startsWith("sk_test_");
+      }
+      async function ch(a10, b10 = globalThis.crypto.subtle) {
+        var c10;
+        let d10 = new TextEncoder().encode(a10);
+        return (c10 = String.fromCharCode(...new Uint8Array(await b10.digest("sha-1", d10))), "u" > typeof btoa && "function" == typeof btoa ? btoa(c10) : void 0 !== globalThis.Buffer ? globalThis.Buffer.from(c10).toString("base64") : c10).replace(/\+/gi, "-").replace(/\//gi, "_").substring(0, 8);
+      }
+      let ci = { initialDelay: 125, maxDelayBetweenRetries: 0, factor: 2, shouldRetry: (a10, b10) => b10 < 5, retryImmediately: false, jitter: true }, cj = async (a10) => new Promise((b10) => setTimeout(b10, a10)), ck = (a10, b10) => b10 ? a10 * (1 + Math.random()) : a10, cl = async (a10, b10 = {}) => {
+        var c10;
+        let d10, e10 = 0, { shouldRetry: f10, initialDelay: g10, maxDelayBetweenRetries: h10, factor: i10, retryImmediately: j2, jitter: k2, onBeforeRetry: l2 } = { ...ci, ...b10 }, m2 = (c10 = { initialDelay: g10, maxDelayBetweenRetries: h10, factor: i10, jitter: k2 }, d10 = 0, async () => {
+          let a11;
+          await cj((a11 = ck(a11 = c10.initialDelay * Math.pow(c10.factor, d10), c10.jitter), Math.min(c10.maxDelayBetweenRetries || a11, a11))), d10++;
+        });
+        for (; ; ) try {
+          return await a10();
+        } catch (a11) {
+          if (!f10(a11, ++e10)) throw a11;
+          l2 && await l2(e10), j2 && 1 === e10 ? await cj(ck(100, k2)) : await m2();
+        }
+      };
+      function cm(a10) {
+        return function(b10) {
+          let c10 = b10 ?? this;
+          if (!c10) throw TypeError(`${a10.kind || a10.name} type guard requires an error object`);
+          return !!a10.kind && "object" == typeof c10 && null !== c10 && "constructor" in c10 && c10.constructor?.kind === a10.kind || c10 instanceof a10;
+        };
+      }
+      var cn = class a10 extends Error {
+        static kind = "ClerkError";
+        clerkError = true;
+        code;
+        longMessage;
+        docsUrl;
+        cause;
+        get name() {
+          return this.constructor.name;
+        }
+        constructor(b10) {
+          super(new.target.formatMessage(new.target.kind, b10.message, b10.code, b10.docsUrl), { cause: b10.cause }), Object.setPrototypeOf(this, a10.prototype), this.code = b10.code, this.docsUrl = b10.docsUrl, this.longMessage = b10.longMessage, this.cause = b10.cause;
+        }
+        toString() {
+          return `[${this.name}]
+Message:${this.message}`;
+        }
+        static formatMessage(a11, b10, c10, d10) {
+          let e10 = "Clerk:", f10 = RegExp(e10.replace(" ", "\\s*"), "i");
+          return b10 = b10.replace(f10, ""), b10 = `${e10} ${b10.trim()}
+
+(code="${c10}")
+
+`, d10 && (b10 += `
+
+Docs: ${d10}`), b10;
+        }
+      };
+      cm(class a10 extends cn {
+        static kind = "ClerkRuntimeError";
+        clerkRuntimeError = true;
+        constructor(b10, c10) {
+          super({ ...c10, message: b10 }), Object.setPrototypeOf(this, a10.prototype);
+        }
+      });
+      var co = class {
+        static kind = "ClerkAPIError";
+        code;
+        message;
+        longMessage;
+        meta;
+        constructor(a10) {
+          const b10 = { code: a10.code, message: a10.message, longMessage: a10.long_message, meta: { paramName: a10.meta?.param_name, sessionId: a10.meta?.session_id, emailAddresses: a10.meta?.email_addresses, identifiers: a10.meta?.identifiers, zxcvbn: a10.meta?.zxcvbn, plan: a10.meta?.plan, isPlanUpgradePossible: a10.meta?.is_plan_upgrade_possible } };
+          this.code = b10.code, this.message = b10.message, this.longMessage = b10.longMessage, this.meta = b10.meta;
+        }
+      };
+      function cp(a10) {
+        return new co(a10);
+      }
+      cm(co);
+      var cq = class a10 extends cn {
+        static kind = "ClerkAPIResponseError";
+        status;
+        clerkTraceId;
+        retryAfter;
+        errors;
+        constructor(b10, c10) {
+          const { data: d10, status: e10, clerkTraceId: f10, retryAfter: g10 } = c10;
+          super({ ...c10, message: b10, code: "api_response_error" }), Object.setPrototypeOf(this, a10.prototype), this.status = e10, this.clerkTraceId = f10, this.retryAfter = g10, this.errors = (d10 || []).map((a11) => new co(a11));
+        }
+        toString() {
+          let a11 = `[${this.name}]
+Message:${this.message}
+Status:${this.status}
+Serialized errors: ${this.errors.map((a12) => JSON.stringify(a12))}`;
+          return this.clerkTraceId && (a11 += `
+Clerk Trace ID: ${this.clerkTraceId}`), a11;
+        }
+        static formatMessage(a11, b10, c10, d10) {
+          return b10;
+        }
+      };
+      let cr = cm(cq), cs = Object.freeze({ InvalidProxyUrlErrorMessage: "The proxyUrl passed to Clerk is invalid. The expected value for proxyUrl is an absolute URL or a relative path with a leading '/'. (key={{url}})", InvalidPublishableKeyErrorMessage: "The publishableKey passed to Clerk is invalid. You can get your Publishable key at https://dashboard.clerk.com/last-active?path=api-keys. (key={{key}})", MissingPublishableKeyErrorMessage: "Missing publishableKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.", MissingSecretKeyErrorMessage: "Missing secretKey. You can get your key at https://dashboard.clerk.com/last-active?path=api-keys.", MissingClerkProvider: "{{source}} can only be used within the <ClerkProvider /> component. Learn more: https://clerk.com/docs/components/clerk-provider" });
+      function ct({ packageName: a10, customMessages: b10 }) {
+        let c10 = a10;
+        function d10(a11, b11) {
+          if (!b11) return `${c10}: ${a11}`;
+          let d11 = a11;
+          for (let c11 of a11.matchAll(/{{([a-zA-Z0-9-_]+)}}/g)) {
+            let a12 = (b11[c11[1]] || "").toString();
+            d11 = d11.replace(`{{${c11[1]}}}`, a12);
+          }
+          return `${c10}: ${d11}`;
+        }
+        let e10 = { ...cs, ...b10 };
+        return { setPackageName({ packageName: a11 }) {
+          return "string" == typeof a11 && (c10 = a11), this;
+        }, setMessages({ customMessages: a11 }) {
+          return Object.assign(e10, a11 || {}), this;
+        }, throwInvalidPublishableKeyError(a11) {
+          throw Error(d10(e10.InvalidPublishableKeyErrorMessage, a11));
+        }, throwInvalidProxyUrl(a11) {
+          throw Error(d10(e10.InvalidProxyUrlErrorMessage, a11));
+        }, throwMissingPublishableKeyError() {
+          throw Error(d10(e10.MissingPublishableKeyErrorMessage));
+        }, throwMissingSecretKeyError() {
+          throw Error(d10(e10.MissingSecretKeyErrorMessage));
+        }, throwMissingClerkProviderError(a11) {
+          throw Error(d10(e10.MissingClerkProvider, a11));
+        }, throw(a11) {
+          throw Error(d10(a11));
+        } };
+      }
+      var cu = ct({ packageName: "@clerk/backend" }), { isDevOrStagingUrl: cv } = (g = /* @__PURE__ */ new Map(), { isDevOrStagingUrl: (a10) => {
+        if (!a10) return false;
+        let b10 = "string" == typeof a10 ? a10 : a10.hostname, c10 = g.get(b10);
+        return void 0 === c10 && (c10 = b5.some((a11) => b10.endsWith(a11)), g.set(b10, c10)), c10;
+      } }), cw = "token-expired", cx = "token-invalid", cy = "token-invalid-signature", cz = "token-not-active-yet", cA = "token-iat-in-the-future", cB = "token-verification-failed", cC = "jwk-remote-failed-to-load", cD = "jwk-failed-to-resolve", cE = "Contact support@clerk.com", cF = "Make sure that this is a valid Clerk-generated JWT.", cG = "Set the CLERK_JWT_KEY environment variable.", cH = class a10 extends Error {
+        constructor({ action: b10, message: c10, reason: d10 }) {
+          super(c10), Object.setPrototypeOf(this, a10.prototype), this.reason = d10, this.message = c10, this.action = b10;
+        }
+        getFullMessage() {
+          return `${[this.message, this.action].filter((a11) => a11).join(" ")} (reason=${this.reason}, token-carrier=${this.tokenCarrier})`;
+        }
+      }, cI = "token-invalid", cJ = "unexpected-error", cK = "token-verification-failed", cL = class a10 extends cn {
+        constructor({ message: b10, code: c10, status: d10, action: e10 }) {
+          super({ message: b10, code: c10 }), Object.setPrototypeOf(this, a10.prototype), this.status = d10, this.action = e10;
+        }
+        static formatMessage(a11, b10, c10, d10) {
+          return b10;
+        }
+        getFullMessage() {
+          return `${this.message} (code=${this.code}, status=${this.status || "n/a"})`;
+        }
+      };
+      cL.kind = "MachineTokenVerificationError";
+      let cM = crypto;
+      var cN = fetch.bind(globalThis), cO = { crypto: cM, get fetch() {
+        return cN;
+      }, AbortController: globalThis.AbortController, Blob: globalThis.Blob, FormData: globalThis.FormData, Headers: globalThis.Headers, Request: globalThis.Request, Response: globalThis.Response }, cP = (a10, b10) => function(a11, b11, c10 = {}) {
+        if (!b11.codes) {
+          b11.codes = {};
+          for (let a12 = 0; a12 < b11.chars.length; ++a12) b11.codes[b11.chars[a12]] = a12;
+        }
+        if (!c10.loose && a11.length * b11.bits & 7) throw SyntaxError("Invalid padding");
+        let d10 = a11.length;
+        for (; "=" === a11[d10 - 1]; ) if (--d10, !c10.loose && !((a11.length - d10) * b11.bits & 7)) throw SyntaxError("Invalid padding");
+        let e10 = new (c10.out ?? Uint8Array)(d10 * b11.bits / 8 | 0), f10 = 0, g10 = 0, h10 = 0;
+        for (let c11 = 0; c11 < d10; ++c11) {
+          let d11 = b11.codes[a11[c11]];
+          if (void 0 === d11) throw SyntaxError("Invalid character " + a11[c11]);
+          g10 = g10 << b11.bits | d11, (f10 += b11.bits) >= 8 && (f10 -= 8, e10[h10++] = 255 & g10 >> f10);
+        }
+        if (f10 >= b11.bits || 255 & g10 << 8 - f10) throw SyntaxError("Unexpected end of data");
+        return e10;
+      }(a10, cQ, b10), cQ = { chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", bits: 6 }, cR = { RS256: "SHA-256", RS384: "SHA-384", RS512: "SHA-512" }, cS = "RSASSA-PKCS1-v1_5", cT = { RS256: cS, RS384: cS, RS512: cS }, cU = Object.keys(cR), cV = (a10, b10 = "JWT") => {
+        if (void 0 === a10) return;
+        let c10 = Array.isArray(b10) ? b10 : [b10];
+        if (!c10.includes(a10)) throw new cH({ action: cF, reason: cx, message: `Invalid JWT type ${JSON.stringify(a10)}. Expected "${c10.join(", ")}".` });
+      }, cW = (a10) => {
+        if (!cU.includes(a10)) throw new cH({ action: cF, reason: "token-invalid-algorithm", message: `Invalid JWT algorithm ${JSON.stringify(a10)}. Supported: ${cU}.` });
+      };
+      async function cX(a10, b10) {
+        let { header: c10, signature: d10, raw: e10 } = a10, f10 = new TextEncoder().encode([e10.header, e10.payload].join(".")), g10 = function(a11) {
+          let b11 = cR[a11], c11 = cT[a11];
+          if (!b11 || !c11) throw Error(`Unsupported algorithm ${a11}, expected one of ${cU.join(",")}.`);
+          return { hash: { name: cR[a11] }, name: cT[a11] };
+        }(c10.alg);
+        try {
+          let a11 = await function(a12, b11, c11) {
+            if ("object" == typeof a12) return cO.crypto.subtle.importKey("jwk", a12, b11, false, [c11]);
+            let d11 = function(a13) {
+              let b12 = cb(a13.replace(/-----BEGIN.*?-----/g, "").replace(/-----END.*?-----/g, "").replace(/\s/g, "")), c12 = new Uint8Array(new ArrayBuffer(b12.length));
+              for (let a14 = 0, d12 = b12.length; a14 < d12; a14++) c12[a14] = b12.charCodeAt(a14);
+              return c12;
+            }(a12), e11 = "sign" === c11 ? "pkcs8" : "spki";
+            return cO.crypto.subtle.importKey(e11, d11, b11, false, [c11]);
+          }(b10, g10, "verify");
+          return { data: await cO.crypto.subtle.verify(g10.name, a11, d10, f10) };
+        } catch (a11) {
+          return { errors: [new cH({ reason: cy, message: a11?.message })] };
+        }
+      }
+      function cY(a10) {
+        let b10 = (a10 || "").toString().split(".");
+        if (3 !== b10.length) return { errors: [new cH({ reason: cx, message: "Invalid JWT form. A JWT consists of three parts separated by dots." })] };
+        let [c10, d10, e10] = b10, f10 = new TextDecoder(), g10 = JSON.parse(f10.decode(cP(c10, { loose: true }))), h10 = JSON.parse(f10.decode(cP(d10, { loose: true })));
+        return { data: { header: g10, payload: h10, signature: cP(e10, { loose: true }), raw: { header: c10, payload: d10, signature: e10, text: a10 } } };
+      }
+      async function cZ(a10, b10) {
+        let { audience: c10, authorizedParties: d10, clockSkewInMs: e10, key: f10, headerType: g10 } = b10, h10 = e10 || 5e3, { data: i10, errors: j2 } = cY(a10);
+        if (j2) return { errors: j2 };
+        let { header: k2, payload: l2 } = i10;
+        try {
+          let { typ: a11, alg: b11 } = k2;
+          cV(a11, g10), cW(b11);
+          let { azp: e11, sub: f11, aud: i11, iat: j3, exp: m3, nbf: n3 } = l2;
+          if ("string" != typeof f11) throw new cH({ action: cF, reason: cB, message: `Subject claim (sub) is required and must be a string. Received ${JSON.stringify(f11)}.` });
+          ((a12, b12) => {
+            let c11 = [b12].flat().filter((a13) => !!a13), d11 = [a12].flat().filter((a13) => !!a13);
+            if (c11.length > 0 && d11.length > 0) {
+              if ("string" == typeof a12) {
+                if (!c11.includes(a12)) throw new cH({ action: cF, reason: cB, message: `Invalid JWT audience claim (aud) ${JSON.stringify(a12)}. Is not included in "${JSON.stringify(c11)}".` });
+              } else if (Array.isArray(a12) && a12.length > 0 && a12.every((a13) => "string" == typeof a13) && !a12.some((a13) => c11.includes(a13))) throw new cH({ action: cF, reason: cB, message: `Invalid JWT audience claim array (aud) ${JSON.stringify(a12)}. Is not included in "${JSON.stringify(c11)}".` });
+            }
+          })([i11], [c10]);
+          if (e11 && d10 && 0 !== d10.length && !d10.includes(e11)) throw new cH({ reason: "token-invalid-authorized-parties", message: `Invalid JWT Authorized party claim (azp) ${JSON.stringify(e11)}. Expected "${d10}".` });
+          if ("number" != typeof m3) throw new cH({ action: cF, reason: cB, message: `Invalid JWT expiry date claim (exp) ${JSON.stringify(m3)}. Expected number.` });
+          let o2 = new Date(Date.now()), p2 = /* @__PURE__ */ new Date(0);
+          if (p2.setUTCSeconds(m3), p2.getTime() <= o2.getTime() - h10) throw new cH({ reason: cw, message: `JWT is expired. Expiry date: ${p2.toUTCString()}, Current date: ${o2.toUTCString()}.` });
+          ((a12, b12) => {
+            if (void 0 === a12) return;
+            if ("number" != typeof a12) throw new cH({ action: cF, reason: cB, message: `Invalid JWT not before date claim (nbf) ${JSON.stringify(a12)}. Expected number.` });
+            let c11 = new Date(Date.now()), d11 = /* @__PURE__ */ new Date(0);
+            if (d11.setUTCSeconds(a12), d11.getTime() > c11.getTime() + b12) throw new cH({ reason: cz, message: `JWT cannot be used prior to not before date claim (nbf). Not before date: ${d11.toUTCString()}; Current date: ${c11.toUTCString()};` });
+          })(n3, h10), ((a12, b12) => {
+            if (void 0 === a12) return;
+            if ("number" != typeof a12) throw new cH({ action: cF, reason: cB, message: `Invalid JWT issued at date claim (iat) ${JSON.stringify(a12)}. Expected number.` });
+            let c11 = new Date(Date.now()), d11 = /* @__PURE__ */ new Date(0);
+            if (d11.setUTCSeconds(a12), d11.getTime() > c11.getTime() + b12) throw new cH({ reason: cA, message: `JWT issued at date claim (iat) is in the future. Issued at date: ${d11.toUTCString()}; Current date: ${c11.toUTCString()};` });
+          })(j3, h10);
+        } catch (a11) {
+          return { errors: [a11] };
+        }
+        let { data: m2, errors: n2 } = await cX(i10, f10);
+        return n2 ? { errors: [new cH({ action: cF, reason: cB, message: `Error verifying JWT signature. ${n2[0]}` })] } : m2 ? { data: l2 } : { errors: [new cH({ reason: cy, message: "JWT signature is invalid." })] };
+      }
+      var c$ = Object.create, c_ = Object.defineProperty, c0 = Object.getOwnPropertyDescriptor, c1 = Object.getOwnPropertyNames, c2 = Object.getPrototypeOf, c3 = Object.prototype.hasOwnProperty, c4 = (a10) => {
+        throw TypeError(a10);
+      }, c5 = (a10, b10, c10) => b10.has(a10) || c4("Cannot " + c10), c6 = (a10, b10, c10) => b10.has(a10) ? c4("Cannot add the same private member more than once") : b10 instanceof WeakSet ? b10.add(a10) : b10.set(a10, c10), c7 = (a10, b10, c10) => (c5(a10, b10, "access private method"), c10);
+      function c8(a10) {
+        return a10 ? `https://${a10.replace(/clerk\.accountsstage\./, "accountsstage.").replace(/clerk\.accounts\.|clerk\./, "accounts.")}` : "";
+      }
+      let c9 = { strict_mfa: { afterMinutes: 10, level: "multi_factor" }, strict: { afterMinutes: 10, level: "second_factor" }, moderate: { afterMinutes: 60, level: "second_factor" }, lax: { afterMinutes: 1440, level: "second_factor" } }, da = /* @__PURE__ */ new Set(["first_factor", "second_factor", "multi_factor"]), db = /* @__PURE__ */ new Set(["strict_mfa", "strict", "moderate", "lax"]), dc = /* @__PURE__ */ new Set(["o", "org", "organization"]), dd = /* @__PURE__ */ new Set(["u", "user"]), de = (a10, b10) => {
+        let { org: c10, user: d10 } = df(a10), [e10, f10] = b10.split(":"), g10 = void 0 !== f10, h10 = f10 || e10;
+        if (g10 && !dc.has(e10) && !dd.has(e10)) throw Error(`Invalid scope: ${e10}`);
+        if (g10) {
+          if (dc.has(e10)) return c10.includes(h10);
+          if (dd.has(e10)) return d10.includes(h10);
+        }
+        return [...c10, ...d10].includes(h10);
+      }, df = (a10) => {
+        let b10 = [], c10 = [];
+        if (!a10) return { org: b10, user: c10 };
+        let d10 = a10.split(",");
+        for (let a11 = 0; a11 < d10.length; a11++) {
+          let e10 = d10[a11].trim(), f10 = e10.indexOf(":");
+          if (-1 === f10) throw Error(`Invalid claim element (missing colon): ${e10}`);
+          let g10 = e10.slice(0, f10), h10 = e10.slice(f10 + 1);
+          "o" === g10 ? b10.push(h10) : "u" === g10 ? c10.push(h10) : ("ou" === g10 || "uo" === g10) && (b10.push(h10), c10.push(h10));
+        }
+        return { org: b10, user: c10 };
+      };
+      function dg(a10) {
+        return a10.replace(/([.+*?=^!:${}()[\]|/\\])/g, "\\$1");
+      }
+      function dh(a10) {
+        return a10 && a10.sensitive ? "" : "i";
+      }
+      var di = (h = { "../../node_modules/.pnpm/cookie@1.0.2/node_modules/cookie/dist/index.js"(a10) {
+        let b10;
+        Object.defineProperty(a10, "__esModule", { value: true }), a10.parse = function(a11, b11) {
+          let c11 = new h10(), d11 = a11.length;
+          if (d11 < 2) return c11;
+          let e11 = b11?.decode || k2, f11 = 0;
+          do {
+            let b12 = a11.indexOf("=", f11);
+            if (-1 === b12) break;
+            let g11 = a11.indexOf(";", f11), h11 = -1 === g11 ? d11 : g11;
+            if (b12 > h11) {
+              f11 = a11.lastIndexOf(";", b12 - 1) + 1;
+              continue;
+            }
+            let k3 = i10(a11, f11, b12), l2 = j2(a11, b12, k3), m2 = a11.slice(k3, l2);
+            if (void 0 === c11[m2]) {
+              let d12 = i10(a11, b12 + 1, h11), f12 = j2(a11, h11, d12), g12 = e11(a11.slice(d12, f12));
+              c11[m2] = g12;
+            }
+            f11 = h11 + 1;
+          } while (f11 < d11);
+          return c11;
+        }, a10.serialize = function(a11, b11, h11) {
+          let i11 = h11?.encode || encodeURIComponent;
+          if (!c10.test(a11)) throw TypeError(`argument name is invalid: ${a11}`);
+          let j3 = i11(b11);
+          if (!d10.test(j3)) throw TypeError(`argument val is invalid: ${b11}`);
+          let k3 = a11 + "=" + j3;
+          if (!h11) return k3;
+          if (void 0 !== h11.maxAge) {
+            if (!Number.isInteger(h11.maxAge)) throw TypeError(`option maxAge is invalid: ${h11.maxAge}`);
+            k3 += "; Max-Age=" + h11.maxAge;
+          }
+          if (h11.domain) {
+            if (!e10.test(h11.domain)) throw TypeError(`option domain is invalid: ${h11.domain}`);
+            k3 += "; Domain=" + h11.domain;
+          }
+          if (h11.path) {
+            if (!f10.test(h11.path)) throw TypeError(`option path is invalid: ${h11.path}`);
+            k3 += "; Path=" + h11.path;
+          }
+          if (h11.expires) {
+            var l2;
+            if (l2 = h11.expires, "[object Date]" !== g10.call(l2) || !Number.isFinite(h11.expires.valueOf())) throw TypeError(`option expires is invalid: ${h11.expires}`);
+            k3 += "; Expires=" + h11.expires.toUTCString();
+          }
+          if (h11.httpOnly && (k3 += "; HttpOnly"), h11.secure && (k3 += "; Secure"), h11.partitioned && (k3 += "; Partitioned"), h11.priority) switch ("string" == typeof h11.priority ? h11.priority.toLowerCase() : void 0) {
+            case "low":
+              k3 += "; Priority=Low";
+              break;
+            case "medium":
+              k3 += "; Priority=Medium";
+              break;
+            case "high":
+              k3 += "; Priority=High";
+              break;
+            default:
+              throw TypeError(`option priority is invalid: ${h11.priority}`);
+          }
+          if (h11.sameSite) switch ("string" == typeof h11.sameSite ? h11.sameSite.toLowerCase() : h11.sameSite) {
+            case true:
+            case "strict":
+              k3 += "; SameSite=Strict";
+              break;
+            case "lax":
+              k3 += "; SameSite=Lax";
+              break;
+            case "none":
+              k3 += "; SameSite=None";
+              break;
+            default:
+              throw TypeError(`option sameSite is invalid: ${h11.sameSite}`);
+          }
+          return k3;
+        };
+        var c10 = /^[\u0021-\u003A\u003C\u003E-\u007E]+$/, d10 = /^[\u0021-\u003A\u003C-\u007E]*$/, e10 = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i, f10 = /^[\u0020-\u003A\u003D-\u007E]*$/, g10 = Object.prototype.toString, h10 = ((b10 = function() {
+        }).prototype = /* @__PURE__ */ Object.create(null), b10);
+        function i10(a11, b11, c11) {
+          do {
+            let c12 = a11.charCodeAt(b11);
+            if (32 !== c12 && 9 !== c12) return b11;
+          } while (++b11 < c11);
+          return c11;
+        }
+        function j2(a11, b11, c11) {
+          for (; b11 > c11; ) {
+            let c12 = a11.charCodeAt(--b11);
+            if (32 !== c12 && 9 !== c12) return b11 + 1;
+          }
+          return c11;
+        }
+        function k2(a11) {
+          if (-1 === a11.indexOf("%")) return a11;
+          try {
+            return decodeURIComponent(a11);
+          } catch (b11) {
+            return a11;
+          }
+        }
+      } }, function() {
+        return i || (0, h[c1(h)[0]])((i = { exports: {} }).exports, i), i.exports;
+      }), dj = "https://api.clerk.com", dk = "@clerk/backend@3.2.2", dl = "2025-11-10", dm = { Session: "__session", Refresh: "__refresh", ClientUat: "__client_uat", Handshake: "__clerk_handshake", DevBrowser: "__clerk_db_jwt", RedirectCount: "__clerk_redirect_count", HandshakeNonce: "__clerk_handshake_nonce" }, dn = { ClerkSynced: "__clerk_synced", SuffixedCookies: "suffixed_cookies", ClerkRedirectUrl: "__clerk_redirect_url", DevBrowser: dm.DevBrowser, Handshake: dm.Handshake, HandshakeHelp: "__clerk_help", LegacyDevBrowser: "__dev_session", HandshakeReason: "__clerk_hs_reason", HandshakeNonce: dm.HandshakeNonce, HandshakeFormat: "format", Session: "__session" }, dp = { NeedsSync: "false", Completed: "true" }, dq = "accept", dr = "x-clerk-auth-message", ds = "authorization", dt = "x-clerk-auth-reason", du = "x-clerk-auth-signature", dv = "x-clerk-auth-status", dw = "x-clerk-auth-token", dx = "cache-control", dy = "x-clerk-redirect-to", dz = "x-clerk-request-data", dA = "x-clerk-clerk-url", dB = "cloudfront-forwarded-proto", dC = "content-type", dD = "content-security-policy", dE = "content-security-policy-report-only", dF = "x-clerk-debug", dG = "x-forwarded-host", dH = "x-forwarded-proto", dI = "host", dJ = "location", dK = "x-nonce", dL = "origin", dM = "referer", dN = "sec-fetch-dest", dO = "user-agent", dP = "reporting-endpoints", dQ = "application/json", dR = (a10, b10, c10, d10, e10) => {
+        if ("" === a10) return dS(b10.toString(), c10?.toString());
+        let f10 = new URL(a10), g10 = c10 ? new URL(c10, f10) : void 0, h10 = new URL(b10, f10), i10 = `${f10.hostname}:${f10.port}` != `${h10.hostname}:${h10.port}`;
+        return g10 && (i10 && e10 && g10.searchParams.set(dn.ClerkSynced, dp.NeedsSync), h10.searchParams.set("redirect_url", g10.toString())), i10 && d10 && h10.searchParams.set(dn.DevBrowser, d10), h10.toString();
+      }, dS = (a10, b10) => {
+        let c10;
+        if (a10.startsWith("http")) c10 = new URL(a10);
+        else {
+          if (!b10 || !b10.startsWith("http")) throw Error("destination url or return back url should be an absolute path url!");
+          let d10 = new URL(b10);
+          c10 = new URL(a10, d10.origin);
+        }
+        return b10 && c10.searchParams.set("redirect_url", b10), c10.toString();
+      };
+      function dT(a10, b10) {
+        return Object.keys(a10).reduce((a11, c10) => ({ ...a11, [c10]: b10[c10] || a11[c10] }), { ...a10 });
+      }
+      function dU(a10) {
+        if (!a10 || "string" != typeof a10) throw Error("Missing Clerk Secret Key. Go to https://dashboard.clerk.com and get your key for your instance.");
+      }
+      var dV = "session_token", dW = "api_key", dX = "m2m_token", dY = "oauth_token", dZ = class {
+        constructor(a10, b10, c10) {
+          this.cookieSuffix = a10, this.clerkRequest = b10, this.originalFrontendApi = "", c10.acceptsToken === dX || c10.acceptsToken === dW ? this.initHeaderValues() : (this.initPublishableKeyValues(c10), this.initHeaderValues(), this.initCookieValues(), this.initHandshakeValues()), Object.assign(this, c10), this.clerkUrl = this.clerkRequest.clerkUrl, this.proxyUrl?.startsWith("/") && (this.proxyUrl = `${this.clerkUrl.origin}${this.proxyUrl}`);
+        }
+        get sessionToken() {
+          return this.sessionTokenInCookie || this.tokenInHeader;
+        }
+        usesSuffixedCookies() {
+          let a10 = this.getSuffixedCookie(dm.ClientUat), b10 = this.getCookie(dm.ClientUat), c10 = this.getSuffixedCookie(dm.Session) || "", d10 = this.getCookie(dm.Session) || "";
+          if (d10 && !this.tokenHasIssuer(d10)) return false;
+          if (d10 && !this.tokenBelongsToInstance(d10)) return true;
+          if (!a10 && !c10) return false;
+          let { data: e10 } = cY(d10), f10 = e10?.payload.iat || 0, { data: g10 } = cY(c10), h10 = g10?.payload.iat || 0;
+          if ("0" !== a10 && "0" !== b10 && f10 > h10 || "0" === a10 && "0" !== b10) return false;
+          if ("production" !== this.instanceType) {
+            let c11 = this.sessionExpired(g10);
+            if ("0" !== a10 && "0" === b10 && c11) return false;
+          }
+          return !!a10 || !c10;
+        }
+        isCrossOriginReferrer() {
+          if (!this.referrer || !this.clerkUrl.origin) return false;
+          try {
+            return new URL(this.referrer).origin !== this.clerkUrl.origin;
+          } catch {
+            return false;
+          }
+        }
+        isKnownClerkReferrer() {
+          if (!this.referrer) return false;
+          try {
+            let a10 = new URL(this.referrer), b10 = a10.hostname;
+            if (this.frontendApi) {
+              let a11 = this.frontendApi.startsWith("http") ? new URL(this.frontendApi).hostname : this.frontendApi;
+              if (b10 === a11) return true;
+            }
+            if (b3.some((a11) => b10.startsWith("accounts.") && b10.endsWith(a11)) || b4.some((a11) => b10.endsWith(a11) && !b10.endsWith(".clerk" + a11))) return true;
+            let c10 = c8(this.frontendApi);
+            if (c10) {
+              let b11 = new URL(c10).origin;
+              if (a10.origin === b11) return true;
+            }
+            if (b10.startsWith("accounts.")) return true;
+            return false;
+          } catch {
+            return false;
+          }
+        }
+        initPublishableKeyValues(a10) {
+          ce(a10.publishableKey, { fatal: true }), this.publishableKey = a10.publishableKey;
+          let b10 = a10.proxyUrl;
+          b10?.startsWith("/") && (b10 = `${this.clerkRequest.clerkUrl.origin}${b10}`);
+          let c10 = ce(this.publishableKey, { fatal: true, domain: a10.domain, isSatellite: a10.isSatellite });
+          this.originalFrontendApi = c10.frontendApi;
+          let d10 = ce(this.publishableKey, { fatal: true, proxyUrl: b10, domain: a10.domain, isSatellite: a10.isSatellite });
+          this.instanceType = d10.instanceType, this.frontendApi = d10.frontendApi;
+        }
+        initHeaderValues() {
+          this.tokenInHeader = this.parseAuthorizationHeader(this.getHeader(ds)), this.origin = this.getHeader(dL), this.host = this.getHeader(dI), this.forwardedHost = this.getHeader(dG), this.forwardedProto = this.getHeader(dB) || this.getHeader(dH), this.referrer = this.getHeader(dM), this.userAgent = this.getHeader(dO), this.secFetchDest = this.getHeader(dN), this.accept = this.getHeader(dq);
+        }
+        initCookieValues() {
+          this.sessionTokenInCookie = this.getSuffixedOrUnSuffixedCookie(dm.Session), this.refreshTokenInCookie = this.getSuffixedCookie(dm.Refresh), this.clientUat = Number.parseInt(this.getSuffixedOrUnSuffixedCookie(dm.ClientUat) || "") || 0;
+        }
+        initHandshakeValues() {
+          this.devBrowserToken = this.getQueryParam(dn.DevBrowser) || this.getSuffixedOrUnSuffixedCookie(dm.DevBrowser), this.handshakeToken = this.getQueryParam(dn.Handshake) || this.getCookie(dm.Handshake), this.handshakeRedirectLoopCounter = Number(this.getCookie(dm.RedirectCount)) || 0, this.handshakeNonce = this.getQueryParam(dn.HandshakeNonce) || this.getCookie(dm.HandshakeNonce);
+        }
+        getQueryParam(a10) {
+          return this.clerkRequest.clerkUrl.searchParams.get(a10);
+        }
+        getHeader(a10) {
+          return this.clerkRequest.headers.get(a10) || void 0;
+        }
+        getCookie(a10) {
+          return this.clerkRequest.cookies.get(a10) || void 0;
+        }
+        getSuffixedCookie(a10) {
+          let b10;
+          return this.getCookie((b10 = this.cookieSuffix, `${a10}_${b10}`)) || void 0;
+        }
+        getSuffixedOrUnSuffixedCookie(a10) {
+          return this.usesSuffixedCookies() ? this.getSuffixedCookie(a10) : this.getCookie(a10);
+        }
+        parseAuthorizationHeader(a10) {
+          if (!a10) return;
+          let [b10, c10] = a10.split(" ", 2);
+          return c10 ? "Bearer" === b10 ? c10 : void 0 : b10;
+        }
+        tokenHasIssuer(a10) {
+          let { data: b10, errors: c10 } = cY(a10);
+          return !c10 && !!b10.payload.iss;
+        }
+        tokenBelongsToInstance(a10) {
+          if (!a10) return false;
+          let { data: b10, errors: c10 } = cY(a10);
+          if (c10) return false;
+          let d10 = b10.payload.iss.replace(/https?:\/\//gi, "");
+          return this.originalFrontendApi === d10;
+        }
+        sessionExpired(a10) {
+          return !!a10 && a10?.payload.exp <= (Date.now() / 1e3 | 0);
+        }
+      }, d$ = async (a10, b10) => new dZ(b10.publishableKey ? await ch(b10.publishableKey, cO.crypto.subtle) : "", a10, b10), d_ = RegExp("(?<!:)/{1,}", "g");
+      function d0(...a10) {
+        return a10.filter((a11) => a11).join("/").replace(d_, "/");
+      }
+      var d1 = class {
+        constructor(a10) {
+          this.request = a10;
+        }
+        requireId(a10) {
+          if (!a10) throw Error("A valid resource ID is required.");
+        }
+      }, d2 = "/actor_tokens", d3 = class extends d1 {
+        async create(a10) {
+          return this.request({ method: "POST", path: d2, bodyParams: a10 });
+        }
+        async revoke(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(d2, a10, "revoke") });
+        }
+      }, d4 = "/agents/tasks", d5 = class extends d1 {
+        async create(a10) {
+          return this.request({ method: "POST", path: d4, bodyParams: a10, options: { deepSnakecaseBodyParamKeys: true } });
+        }
+        async revoke(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(d4, a10, "revoke") });
+        }
+      }, d6 = "/accountless_applications", d7 = class extends d1 {
+        async createAccountlessApplication(a10) {
+          let b10 = a10?.requestHeaders ? Object.fromEntries(a10.requestHeaders.entries()) : void 0;
+          return this.request({ method: "POST", path: d6, headerParams: b10 });
+        }
+        async completeAccountlessApplicationOnboarding(a10) {
+          let b10 = a10?.requestHeaders ? Object.fromEntries(a10.requestHeaders.entries()) : void 0;
+          return this.request({ method: "POST", path: d0(d6, "complete"), headerParams: b10 });
+        }
+      }, d8 = "/allowlist_identifiers", d9 = class extends d1 {
+        async getAllowlistIdentifierList(a10 = {}) {
+          return this.request({ method: "GET", path: d8, queryParams: { ...a10, paginated: true } });
+        }
+        async createAllowlistIdentifier(a10) {
+          return this.request({ method: "POST", path: d8, bodyParams: a10 });
+        }
+        async deleteAllowlistIdentifier(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(d8, a10) });
+        }
+      }, ea = "/api_keys", eb = class extends d1 {
+        async list(a10) {
+          return this.request({ method: "GET", path: ea, queryParams: a10 });
+        }
+        async create(a10) {
+          return this.request({ method: "POST", path: ea, bodyParams: a10 });
+        }
+        async get(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(ea, a10) });
+        }
+        async update(a10) {
+          let { apiKeyId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "PATCH", path: d0(ea, b10), bodyParams: c10 });
+        }
+        async delete(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(ea, a10) });
+        }
+        async revoke(a10) {
+          let { apiKeyId: b10, revocationReason: c10 = null } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(ea, b10, "revoke"), bodyParams: { revocationReason: c10 } });
+        }
+        async getSecret(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(ea, a10, "secret") });
+        }
+        async verify(a10) {
+          return this.request({ method: "POST", path: d0(ea, "verify"), bodyParams: { secret: a10 } });
+        }
+      }, ec = class extends d1 {
+        async changeDomain(a10) {
+          return this.request({ method: "POST", path: d0("/beta_features", "change_domain"), bodyParams: a10 });
+        }
+      }, ed = "/blocklist_identifiers", ee = class extends d1 {
+        async getBlocklistIdentifierList(a10 = {}) {
+          return this.request({ method: "GET", path: ed, queryParams: a10 });
+        }
+        async createBlocklistIdentifier(a10) {
+          return this.request({ method: "POST", path: ed, bodyParams: a10 });
+        }
+        async deleteBlocklistIdentifier(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(ed, a10) });
+        }
+      }, ef = "/clients", eg = class extends d1 {
+        async getClientList(a10 = {}) {
+          return this.request({ method: "GET", path: ef, queryParams: { ...a10, paginated: true } });
+        }
+        async getClient(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(ef, a10) });
+        }
+        verifyClient(a10) {
+          return this.request({ method: "POST", path: d0(ef, "verify"), bodyParams: { token: a10 } });
+        }
+        async getHandshakePayload(a10) {
+          return this.request({ method: "GET", path: d0(ef, "handshake_payload"), queryParams: a10 });
+        }
+      }, eh = "/domains", ei = class extends d1 {
+        async list() {
+          return this.request({ method: "GET", path: eh });
+        }
+        async add(a10) {
+          return this.request({ method: "POST", path: eh, bodyParams: a10 });
+        }
+        async update(a10) {
+          let { domainId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "PATCH", path: d0(eh, b10), bodyParams: c10 });
+        }
+        async delete(a10) {
+          return this.deleteDomain(a10);
+        }
+        async deleteDomain(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(eh, a10) });
+        }
+      }, ej = "/email_addresses", ek = class extends d1 {
+        async getEmailAddress(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(ej, a10) });
+        }
+        async createEmailAddress(a10) {
+          return this.request({ method: "POST", path: ej, bodyParams: a10 });
+        }
+        async updateEmailAddress(a10, b10 = {}) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(ej, a10), bodyParams: b10 });
+        }
+        async deleteEmailAddress(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(ej, a10) });
+        }
+      }, el = "/enterprise_connections", em = class extends d1 {
+        async createEnterpriseConnection(a10) {
+          return this.request({ method: "POST", path: el, bodyParams: a10, options: { deepSnakecaseBodyParamKeys: true } });
+        }
+        async updateEnterpriseConnection(a10, b10) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(el, a10), bodyParams: b10, options: { deepSnakecaseBodyParamKeys: true } });
+        }
+        async getEnterpriseConnectionList(a10 = {}) {
+          return this.request({ method: "GET", path: el, queryParams: a10 });
+        }
+        async getEnterpriseConnection(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(el, a10) });
+        }
+        async deleteEnterpriseConnection(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(el, a10) });
+        }
+      }, en = class extends d1 {
+        async verify(a10) {
+          return this.request({ method: "POST", path: d0("/oauth_applications/access_tokens", "verify"), bodyParams: { access_token: a10 } });
+        }
+      }, eo = "/instance", ep = class extends d1 {
+        async get() {
+          return this.request({ method: "GET", path: eo });
+        }
+        async update(a10) {
+          return this.request({ method: "PATCH", path: eo, bodyParams: a10 });
+        }
+        async updateRestrictions(a10) {
+          return this.request({ method: "PATCH", path: d0(eo, "restrictions"), bodyParams: a10 });
+        }
+        async updateOrganizationSettings(a10) {
+          return this.request({ method: "PATCH", path: d0(eo, "organization_settings"), bodyParams: a10 });
+        }
+      }, eq = "/invitations", er = class extends d1 {
+        async getInvitationList(a10 = {}) {
+          return this.request({ method: "GET", path: eq, queryParams: { ...a10, paginated: true } });
+        }
+        async createInvitation(a10) {
+          return this.request({ method: "POST", path: eq, bodyParams: a10 });
+        }
+        async createInvitationBulk(a10) {
+          return this.request({ method: "POST", path: d0(eq, "bulk"), bodyParams: a10 });
+        }
+        async revokeInvitation(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(eq, a10, "revoke") });
+        }
+      }, es = "/machines", et = class extends d1 {
+        async get(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(es, a10) });
+        }
+        async list(a10 = {}) {
+          return this.request({ method: "GET", path: es, queryParams: a10 });
+        }
+        async create(a10) {
+          return this.request({ method: "POST", path: es, bodyParams: a10 });
+        }
+        async update(a10) {
+          let { machineId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "PATCH", path: d0(es, b10), bodyParams: c10 });
+        }
+        async delete(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(es, a10) });
+        }
+        async getSecretKey(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(es, a10, "secret_key") });
+        }
+        async rotateSecretKey(a10) {
+          let { machineId: b10, previousTokenTtl: c10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(es, b10, "secret_key", "rotate"), bodyParams: { previousTokenTtl: c10 } });
+        }
+        async createScope(a10, b10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(es, a10, "scopes"), bodyParams: { toMachineId: b10 } });
+        }
+        async deleteScope(a10, b10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(es, a10, "scopes", b10) });
+        }
+      }, eu = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2) {
+          this.id = a11, this.clientId = b10, this.type = c10, this.subject = d10, this.scopes = e10, this.revoked = f10, this.revocationReason = g10, this.expired = h10, this.expiration = i10, this.createdAt = j2, this.updatedAt = k2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.client_id, b10.type, b10.subject, b10.scopes, b10.revoked, b10.revocation_reason, b10.expired, b10.expiration, b10.created_at, b10.updated_at);
+        }
+        static fromJwtPayload(b10, c10 = 5e3) {
+          return new a10(b10.jti ?? "", b10.client_id ?? "", "oauth_token", b10.sub, b10.scp ?? b10.scope?.split(" ") ?? [], false, null, 1e3 * b10.exp <= Date.now() - c10, b10.exp, b10.iat, b10.iat);
+        }
+      }, ev = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2) {
+          this.id = a11, this.subject = b10, this.scopes = c10, this.claims = d10, this.revoked = e10, this.revocationReason = f10, this.expired = g10, this.expiration = h10, this.createdAt = i10, this.updatedAt = j2, this.token = k2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.subject, b10.scopes, b10.claims, b10.revoked, b10.revocation_reason, b10.expired, b10.expiration, b10.created_at, b10.updated_at, b10.token);
+        }
+        static fromJwtPayload(b10, c10 = 5e3) {
+          return new a10(b10.jti ?? "", b10.sub, b10.scopes?.split(" ") ?? b10.aud ?? [], null, false, null, 1e3 * b10.exp <= Date.now() - c10, 1e3 * b10.exp, 1e3 * b10.iat, 1e3 * b10.iat);
+        }
+      }, ew = {}, ex = 0;
+      function ey(a10, b10, c10 = true) {
+        ew[a10] = b10, ex = c10 ? Date.now() : -1;
+      }
+      function ez(a10) {
+        let { kid: b10, pem: c10 } = a10, d10 = `local-${b10}`, e10 = ew[d10];
+        if (e10) return e10;
+        if (!c10) throw new cH({ action: cG, message: "Missing local JWK.", reason: "jwk-local-missing" });
+        let f10 = { kid: d10, kty: "RSA", alg: "RS256", n: c10.replace(/\r\n|\n|\r/g, "").replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "").replace("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA", "").replace("IDAQAB", "").replace(/\+/g, "-").replace(/\//g, "_"), e: "AQAB" };
+        return ey(d10, f10, false), f10;
+      }
+      async function eA(a10) {
+        let { secretKey: b10, apiUrl: c10 = dj, apiVersion: d10 = "v1", kid: e10, skipJwksCache: f10 } = a10;
+        if (f10 || function() {
+          if (-1 === ex) return false;
+          let a11 = Date.now() - ex >= 3e5;
+          return a11 && (ew = {}), a11;
+        }() || !ew[e10]) {
+          if (!b10) throw new cH({ action: cE, message: "Failed to load JWKS from Clerk Backend or Frontend API.", reason: cC });
+          let { keys: a11 } = await cl(() => eB(c10, b10, d10));
+          if (!a11 || !a11.length) throw new cH({ action: cE, message: "The JWKS endpoint did not contain any signing keys. Contact support@clerk.com.", reason: cC });
+          a11.forEach((a12) => ey(a12.kid, a12));
+        }
+        let g10 = ew[e10];
+        if (!g10) {
+          let a11 = Object.values(ew).map((a12) => a12.kid).sort().join(", ");
+          throw new cH({ action: `Go to your Dashboard and validate your secret and public keys are correct. ${cE} if the issue persists.`, message: `Unable to find a signing key in JWKS that matches the kid='${e10}' of the provided session token. Please make sure that the __session cookie or the HTTP authorization header contain a Clerk-generated session JWT. The following kid is available: ${a11}`, reason: "jwk-kid-mismatch" });
+        }
+        return g10;
+      }
+      async function eB(a10, b10, c10) {
+        if (!b10) throw new cH({ action: "Set the CLERK_SECRET_KEY environment variable.", message: "Missing Clerk Secret Key or API Key. Go to https://dashboard.clerk.com and get your key for your instance.", reason: cC });
+        let d10 = new URL(a10);
+        d10.pathname = d0(d10.pathname, c10, "/jwks");
+        let e10 = await cO.fetch(d10.href, { headers: { Authorization: `Bearer ${b10}`, "Clerk-API-Version": dl, "Content-Type": "application/json", "User-Agent": dk } });
+        if (!e10.ok) {
+          let a11 = await e10.json(), b11 = eC(a11?.errors, "clerk_key_invalid");
+          if (b11) throw new cH({ action: cE, message: b11.message, reason: "secret-key-invalid" });
+          throw new cH({ action: cE, message: `Error loading Clerk JWKS from ${d10.href} with code=${e10.status}`, reason: cC });
+        }
+        return e10.json();
+      }
+      var eC = (a10, b10) => a10 ? a10.find((a11) => a11.code === b10) : null, eD = "mch_", eE = "oat_", eF = ["mt_", eE, "ak_"], eG = /^[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+$/;
+      function eH(a10) {
+        return eG.test(a10);
+      }
+      var eI = ["at+jwt", "application/at+jwt"];
+      function eJ(a10) {
+        if (!eH(a10)) return false;
+        try {
+          let { data: b10, errors: c10 } = cY(a10);
+          return !c10 && !!b10 && eI.includes(b10.header.typ);
+        } catch {
+          return false;
+        }
+      }
+      function eK(a10) {
+        if (!eH(a10)) return false;
+        try {
+          let { data: b10, errors: c10 } = cY(a10);
+          return !c10 && !!b10 && "string" == typeof b10.payload.sub && b10.payload.sub.startsWith(eD);
+        } catch {
+          return false;
+        }
+      }
+      function eL(a10) {
+        return eF.some((b10) => a10.startsWith(b10));
+      }
+      function eM(a10) {
+        return eL(a10) || eJ(a10) || eK(a10);
+      }
+      function eN(a10) {
+        if (a10.startsWith("mt_") || eK(a10)) return dX;
+        if (a10.startsWith(eE) || eJ(a10)) return dY;
+        if (a10.startsWith("ak_")) return dW;
+        throw Error("Unknown machine token type");
+      }
+      var eO = (a10, b10) => !!a10 && ("any" === b10 || (Array.isArray(b10) ? b10 : [b10]).includes(a10)), eP = /* @__PURE__ */ new Set([dW, dX, dY]);
+      async function eQ(a10, b10, c10, d10) {
+        try {
+          let e10;
+          if (c10.jwtKey) e10 = ez({ kid: b10, pem: c10.jwtKey });
+          else {
+            if (!c10.secretKey) return { error: new cL({ action: cG, message: "Failed to resolve JWK during verification.", code: cK }) };
+            e10 = await eA({ ...c10, kid: b10 });
+          }
+          let { data: f10, errors: g10 } = await cZ(a10, { ...c10, key: e10, ...d10 ? { headerType: d10 } : {} });
+          if (g10) return { error: new cL({ code: cK, message: g10[0].message }) };
+          return { payload: f10 };
+        } catch (a11) {
+          return { error: new cL({ code: cK, message: a11.message }) };
+        }
+      }
+      async function eR(a10, b10, c10) {
+        let d10 = await eQ(a10, b10.header.kid, c10);
+        return "error" in d10 ? { data: void 0, tokenType: dX, errors: [d10.error] } : { data: ev.fromJwtPayload(d10.payload, c10.clockSkewInMs), tokenType: dX, errors: void 0 };
+      }
+      async function eS(a10, b10, c10) {
+        let d10 = await eQ(a10, b10.header.kid, c10, eI);
+        return "error" in d10 ? { data: void 0, tokenType: dY, errors: [d10.error] } : { data: eu.fromJwtPayload(d10.payload, c10.clockSkewInMs), tokenType: dY, errors: void 0 };
+      }
+      var eT = "/m2m_tokens", eU = class extends d1 {
+        constructor(a10, b10 = {}) {
+          super(a10), c6(this, ib), c6(this, ia), ((a11, b11, c10, d10) => (c5(a11, b11, "write to private field"), d10 ? d10.call(a11, c10) : b11.set(a11, c10)))(this, ia, b10);
+        }
+        async list(a10) {
+          let { machineSecretKey: b10, ...c10 } = a10, d10 = c7(this, ib, ic).call(this, { method: "GET", path: eT, queryParams: c10 }, b10);
+          return this.request(d10);
+        }
+        async createToken(a10) {
+          let { claims: b10 = null, machineSecretKey: c10, secondsUntilExpiration: d10 = null, tokenFormat: e10 = "opaque" } = a10 || {}, f10 = c7(this, ib, ic).call(this, { method: "POST", path: eT, bodyParams: { secondsUntilExpiration: d10, claims: b10, tokenFormat: e10 } }, c10);
+          return this.request(f10);
+        }
+        async revokeToken(a10) {
+          let { m2mTokenId: b10, revocationReason: c10 = null, machineSecretKey: d10 } = a10;
+          this.requireId(b10);
+          let e10 = c7(this, ib, ic).call(this, { method: "POST", path: d0(eT, b10, "revoke"), bodyParams: { revocationReason: c10 } }, d10);
+          return this.request(e10);
+        }
+        async verify(a10) {
+          let { token: b10, machineSecretKey: c10 } = a10;
+          if (eK(b10)) return c7(this, ib, id).call(this, b10);
+          let d10 = c7(this, ib, ic).call(this, { method: "POST", path: d0(eT, "verify"), bodyParams: { token: b10 } }, c10);
+          return this.request(d10);
+        }
+      };
+      ia = /* @__PURE__ */ new WeakMap(), ib = /* @__PURE__ */ new WeakSet(), ic = function(a10, b10) {
+        return b10 ? { ...a10, headerParams: { ...a10.headerParams, Authorization: `Bearer ${b10}` } } : a10;
+      }, id = async function(a10) {
+        let b10, c10, d10;
+        try {
+          let { data: c11, errors: d11 } = cY(a10);
+          if (d11) throw d11[0];
+          b10 = c11;
+        } catch (a11) {
+          throw new cL({ code: cI, message: a11.message });
+        }
+        let e10 = await eR(a10, b10, (c5(this, c10 = ia, "read from private field"), d10 ? d10.call(this) : c10.get(this)));
+        if (e10.errors) throw e10.errors[0];
+        return e10.data;
+      };
+      var eV = class extends d1 {
+        async getJwks() {
+          return this.request({ method: "GET", path: "/jwks" });
+        }
+      }, eW = "/jwt_templates", eX = class extends d1 {
+        async list(a10 = {}) {
+          return this.request({ method: "GET", path: eW, queryParams: { ...a10, paginated: true } });
+        }
+        async get(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(eW, a10) });
+        }
+        async create(a10) {
+          return this.request({ method: "POST", path: eW, bodyParams: a10 });
+        }
+        async update(a10) {
+          let { templateId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "PATCH", path: d0(eW, b10), bodyParams: c10 });
+        }
+        async delete(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(eW, a10) });
+        }
+      }, eY = "/organizations", eZ = class extends d1 {
+        async getOrganizationList(a10) {
+          return this.request({ method: "GET", path: eY, queryParams: a10 });
+        }
+        async createOrganization(a10) {
+          return this.request({ method: "POST", path: eY, bodyParams: a10 });
+        }
+        async getOrganization(a10) {
+          let { includeMembersCount: b10 } = a10, c10 = "organizationId" in a10 ? a10.organizationId : a10.slug;
+          return this.requireId(c10), this.request({ method: "GET", path: d0(eY, c10), queryParams: { includeMembersCount: b10 } });
+        }
+        async updateOrganization(a10, b10) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(eY, a10), bodyParams: b10 });
+        }
+        async updateOrganizationLogo(a10, b10) {
+          this.requireId(a10);
+          let c10 = new cO.FormData();
+          return c10.append("file", b10?.file), b10?.uploaderUserId && c10.append("uploader_user_id", b10?.uploaderUserId), this.request({ method: "PUT", path: d0(eY, a10, "logo"), formData: c10 });
+        }
+        async deleteOrganizationLogo(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(eY, a10, "logo") });
+        }
+        async updateOrganizationMetadata(a10, b10) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(eY, a10, "metadata"), bodyParams: b10 });
+        }
+        async deleteOrganization(a10) {
+          return this.request({ method: "DELETE", path: d0(eY, a10) });
+        }
+        async getOrganizationMembershipList(a10) {
+          let { organizationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "GET", path: d0(eY, b10, "memberships"), queryParams: c10 });
+        }
+        async getInstanceOrganizationMembershipList(a10) {
+          return this.request({ method: "GET", path: "/organization_memberships", queryParams: a10 });
+        }
+        async createOrganizationMembership(a10) {
+          let { organizationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(eY, b10, "memberships"), bodyParams: c10 });
+        }
+        async updateOrganizationMembership(a10) {
+          let { organizationId: b10, userId: c10, ...d10 } = a10;
+          return this.requireId(b10), this.request({ method: "PATCH", path: d0(eY, b10, "memberships", c10), bodyParams: d10 });
+        }
+        async updateOrganizationMembershipMetadata(a10) {
+          let { organizationId: b10, userId: c10, ...d10 } = a10;
+          return this.request({ method: "PATCH", path: d0(eY, b10, "memberships", c10, "metadata"), bodyParams: d10 });
+        }
+        async deleteOrganizationMembership(a10) {
+          let { organizationId: b10, userId: c10 } = a10;
+          return this.requireId(b10), this.request({ method: "DELETE", path: d0(eY, b10, "memberships", c10) });
+        }
+        async getOrganizationInvitationList(a10) {
+          let { organizationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "GET", path: d0(eY, b10, "invitations"), queryParams: c10 });
+        }
+        async createOrganizationInvitation(a10) {
+          let { organizationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(eY, b10, "invitations"), bodyParams: c10 });
+        }
+        async createOrganizationInvitationBulk(a10, b10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(eY, a10, "invitations", "bulk"), bodyParams: b10 });
+        }
+        async getOrganizationInvitation(a10) {
+          let { organizationId: b10, invitationId: c10 } = a10;
+          return this.requireId(b10), this.requireId(c10), this.request({ method: "GET", path: d0(eY, b10, "invitations", c10) });
+        }
+        async revokeOrganizationInvitation(a10) {
+          let { organizationId: b10, invitationId: c10, ...d10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(eY, b10, "invitations", c10, "revoke"), bodyParams: d10 });
+        }
+        async getOrganizationDomainList(a10) {
+          let { organizationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "GET", path: d0(eY, b10, "domains"), queryParams: c10 });
+        }
+        async createOrganizationDomain(a10) {
+          let { organizationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(eY, b10, "domains"), bodyParams: { ...c10, verified: c10.verified ?? true } });
+        }
+        async updateOrganizationDomain(a10) {
+          let { organizationId: b10, domainId: c10, ...d10 } = a10;
+          return this.requireId(b10), this.requireId(c10), this.request({ method: "PATCH", path: d0(eY, b10, "domains", c10), bodyParams: d10 });
+        }
+        async deleteOrganizationDomain(a10) {
+          let { organizationId: b10, domainId: c10 } = a10;
+          return this.requireId(b10), this.requireId(c10), this.request({ method: "DELETE", path: d0(eY, b10, "domains", c10) });
+        }
+      }, e$ = "/oauth_applications", e_ = class extends d1 {
+        async list(a10 = {}) {
+          return this.request({ method: "GET", path: e$, queryParams: a10 });
+        }
+        async get(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(e$, a10) });
+        }
+        async create(a10) {
+          return this.request({ method: "POST", path: e$, bodyParams: a10 });
+        }
+        async update(a10) {
+          let { oauthApplicationId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "PATCH", path: d0(e$, b10), bodyParams: c10 });
+        }
+        async delete(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(e$, a10) });
+        }
+        async rotateSecret(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(e$, a10, "rotate_secret") });
+        }
+      }, e0 = "/phone_numbers", e1 = class extends d1 {
+        async getPhoneNumber(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(e0, a10) });
+        }
+        async createPhoneNumber(a10) {
+          return this.request({ method: "POST", path: e0, bodyParams: a10 });
+        }
+        async updatePhoneNumber(a10, b10 = {}) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(e0, a10), bodyParams: b10 });
+        }
+        async deletePhoneNumber(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(e0, a10) });
+        }
+      }, e2 = class extends d1 {
+        async verify(a10) {
+          return this.request({ method: "POST", path: "/proxy_checks", bodyParams: a10 });
+        }
+      }, e3 = "/redirect_urls", e4 = class extends d1 {
+        async getRedirectUrlList() {
+          return this.request({ method: "GET", path: e3, queryParams: { paginated: true } });
+        }
+        async getRedirectUrl(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(e3, a10) });
+        }
+        async createRedirectUrl(a10) {
+          return this.request({ method: "POST", path: e3, bodyParams: a10 });
+        }
+        async deleteRedirectUrl(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(e3, a10) });
+        }
+      }, e5 = "/saml_connections", e6 = class extends d1 {
+        async getSamlConnectionList(a10 = {}) {
+          return this.request({ method: "GET", path: e5, queryParams: a10 });
+        }
+        async createSamlConnection(a10) {
+          return this.request({ method: "POST", path: e5, bodyParams: a10, options: { deepSnakecaseBodyParamKeys: true } });
+        }
+        async getSamlConnection(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(e5, a10) });
+        }
+        async updateSamlConnection(a10, b10 = {}) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(e5, a10), bodyParams: b10, options: { deepSnakecaseBodyParamKeys: true } });
+        }
+        async deleteSamlConnection(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(e5, a10) });
+        }
+      }, e7 = "/sessions", e8 = class extends d1 {
+        async getSessionList(a10 = {}) {
+          return this.request({ method: "GET", path: e7, queryParams: { ...a10, paginated: true } });
+        }
+        async getSession(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(e7, a10) });
+        }
+        async createSession(a10) {
+          return this.request({ method: "POST", path: e7, bodyParams: a10 });
+        }
+        async revokeSession(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(e7, a10, "revoke") });
+        }
+        async verifySession(a10, b10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(e7, a10, "verify"), bodyParams: { token: b10 } });
+        }
+        async getToken(a10, b10, c10) {
+          this.requireId(a10);
+          let d10 = { method: "POST", path: b10 ? d0(e7, a10, "tokens", b10) : d0(e7, a10, "tokens") };
+          return void 0 !== c10 && (d10.bodyParams = { expires_in_seconds: c10 }), this.request(d10);
+        }
+        async refreshSession(a10, b10) {
+          this.requireId(a10);
+          let { suffixed_cookies: c10, ...d10 } = b10;
+          return this.request({ method: "POST", path: d0(e7, a10, "refresh"), bodyParams: d10, queryParams: { suffixed_cookies: c10 } });
+        }
+      }, e9 = "/sign_in_tokens", fa = class extends d1 {
+        async createSignInToken(a10) {
+          return this.request({ method: "POST", path: e9, bodyParams: a10 });
+        }
+        async revokeSignInToken(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(e9, a10, "revoke") });
+        }
+      }, fb = "/sign_ups", fc = class extends d1 {
+        async get(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(fb, a10) });
+        }
+        async update(a10) {
+          let { signUpAttemptId: b10, ...c10 } = a10;
+          return this.request({ method: "PATCH", path: d0(fb, b10), bodyParams: c10 });
+        }
+      }, fd = class extends d1 {
+        async createTestingToken() {
+          return this.request({ method: "POST", path: "/testing_tokens" });
+        }
+      }, fe = "/users", ff = class extends d1 {
+        async getUserList(a10 = {}) {
+          let { limit: b10, offset: c10, orderBy: d10, ...e10 } = a10, [f10, g10] = await Promise.all([this.request({ method: "GET", path: fe, queryParams: a10 }), this.getCount(e10)]);
+          return { data: f10, totalCount: g10 };
+        }
+        async getUser(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0(fe, a10) });
+        }
+        async createUser(a10) {
+          return this.request({ method: "POST", path: fe, bodyParams: a10 });
+        }
+        async updateUser(a10, b10 = {}) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(fe, a10), bodyParams: b10 });
+        }
+        async updateUserProfileImage(a10, b10) {
+          this.requireId(a10);
+          let c10 = new cO.FormData();
+          return c10.append("file", b10?.file), this.request({ method: "POST", path: d0(fe, a10, "profile_image"), formData: c10 });
+        }
+        async updateUserMetadata(a10, b10) {
+          return this.requireId(a10), this.request({ method: "PATCH", path: d0(fe, a10, "metadata"), bodyParams: b10 });
+        }
+        async deleteUser(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fe, a10) });
+        }
+        async getCount(a10 = {}) {
+          return this.request({ method: "GET", path: d0(fe, "count"), queryParams: a10 });
+        }
+        async getUserOauthAccessToken(a10, b10) {
+          var c10, d10;
+          let e10, f10;
+          this.requireId(a10);
+          let g10 = b10.startsWith("oauth_"), h10 = g10 ? b10 : `oauth_${b10}`;
+          return g10 && (c10 = "getUserOauthAccessToken(userId, provider)", e10 = b1(), f10 = d10 ?? c10, b2.has(f10) || e10 || (b2.add(f10), console.warn(`Clerk - DEPRECATION WARNING: "${c10}" is deprecated and will be removed in the next major release.
+Remove the \`oauth_\` prefix from the \`provider\` argument.`))), this.request({ method: "GET", path: d0(fe, a10, "oauth_access_tokens", h10), queryParams: { paginated: true } });
+        }
+        async disableUserMFA(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fe, a10, "mfa") });
+        }
+        async getOrganizationMembershipList(a10) {
+          let { userId: b10, limit: c10, offset: d10 } = a10;
+          return this.requireId(b10), this.request({ method: "GET", path: d0(fe, b10, "organization_memberships"), queryParams: { limit: c10, offset: d10 } });
+        }
+        async getOrganizationInvitationList(a10) {
+          let { userId: b10, ...c10 } = a10;
+          return this.requireId(b10), this.request({ method: "GET", path: d0(fe, b10, "organization_invitations"), queryParams: c10 });
+        }
+        async verifyPassword(a10) {
+          let { userId: b10, password: c10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(fe, b10, "verify_password"), bodyParams: { password: c10 } });
+        }
+        async verifyTOTP(a10) {
+          let { userId: b10, code: c10 } = a10;
+          return this.requireId(b10), this.request({ method: "POST", path: d0(fe, b10, "verify_totp"), bodyParams: { code: c10 } });
+        }
+        async banUser(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fe, a10, "ban") });
+        }
+        async unbanUser(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fe, a10, "unban") });
+        }
+        async lockUser(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fe, a10, "lock") });
+        }
+        async unlockUser(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fe, a10, "unlock") });
+        }
+        async deleteUserProfileImage(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fe, a10, "profile_image") });
+        }
+        async deleteUserPasskey(a10) {
+          return this.requireId(a10.userId), this.requireId(a10.passkeyIdentificationId), this.request({ method: "DELETE", path: d0(fe, a10.userId, "passkeys", a10.passkeyIdentificationId) });
+        }
+        async deleteUserWeb3Wallet(a10) {
+          return this.requireId(a10.userId), this.requireId(a10.web3WalletIdentificationId), this.request({ method: "DELETE", path: d0(fe, a10.userId, "web3_wallets", a10.web3WalletIdentificationId) });
+        }
+        async deleteUserExternalAccount(a10) {
+          return this.requireId(a10.userId), this.requireId(a10.externalAccountId), this.request({ method: "DELETE", path: d0(fe, a10.userId, "external_accounts", a10.externalAccountId) });
+        }
+        async deleteUserBackupCodes(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fe, a10, "backup_code") });
+        }
+        async deleteUserTOTP(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fe, a10, "totp") });
+        }
+        async setPasswordCompromised(a10, b10 = { revokeAllSessions: false }) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fe, a10, "password", "set_compromised"), bodyParams: b10 });
+        }
+        async unsetPasswordCompromised(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fe, a10, "password", "unset_compromised") });
+        }
+      }, fg = "/waitlist_entries", fh = class extends d1 {
+        async list(a10 = {}) {
+          return this.request({ method: "GET", path: fg, queryParams: a10 });
+        }
+        async create(a10) {
+          return this.request({ method: "POST", path: fg, bodyParams: a10 });
+        }
+        async createBulk(a10) {
+          return this.request({ method: "POST", path: d0(fg, "bulk"), bodyParams: a10 });
+        }
+        async invite(a10, b10 = {}) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fg, a10, "invite"), bodyParams: b10 });
+        }
+        async reject(a10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0(fg, a10, "reject") });
+        }
+        async delete(a10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fg, a10) });
+        }
+      }, fi = "/webhooks", fj = class extends d1 {
+        async createSvixApp() {
+          return this.request({ method: "POST", path: d0(fi, "svix") });
+        }
+        async generateSvixAuthURL() {
+          return this.request({ method: "POST", path: d0(fi, "svix_url") });
+        }
+        async deleteSvixApp() {
+          return this.request({ method: "DELETE", path: d0(fi, "svix") });
+        }
+      }, fk = "/billing", fl = class extends d1 {
+        async getPlanList(a10) {
+          return this.request({ method: "GET", path: d0(fk, "plans"), queryParams: a10 });
+        }
+        async cancelSubscriptionItem(a10, b10) {
+          return this.requireId(a10), this.request({ method: "DELETE", path: d0(fk, "subscription_items", a10), queryParams: b10 });
+        }
+        async extendSubscriptionItemFreeTrial(a10, b10) {
+          return this.requireId(a10), this.request({ method: "POST", path: d0("/billing", "subscription_items", a10, "extend_free_trial"), bodyParams: b10 });
+        }
+        async getOrganizationBillingSubscription(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0("/organizations", a10, "billing", "subscription") });
+        }
+        async getUserBillingSubscription(a10) {
+          return this.requireId(a10), this.request({ method: "GET", path: d0("/users", a10, "billing", "subscription") });
+        }
+      }, fm = (a10) => "object" == typeof a10 && null !== a10, fn = (a10) => fm(a10) && !(a10 instanceof RegExp) && !(a10 instanceof Error) && !(a10 instanceof Date) && !(globalThis.Blob && a10 instanceof globalThis.Blob), fo = Symbol("mapObjectSkip"), fp = (a10, b10, c10, d10 = /* @__PURE__ */ new WeakMap()) => {
+        if (c10 = { deep: false, target: {}, ...c10 }, d10.has(a10)) return d10.get(a10);
+        d10.set(a10, c10.target);
+        let { target: e10 } = c10;
+        delete c10.target;
+        let f10 = (a11) => a11.map((a12) => fn(a12) ? fp(a12, b10, c10, d10) : a12);
+        if (Array.isArray(a10)) return f10(a10);
+        for (let [g10, h10] of Object.entries(a10)) {
+          let i10 = b10(g10, h10, a10);
+          if (i10 === fo) continue;
+          let [j2, k2, { shouldRecurse: l2 = true } = {}] = i10;
+          "__proto__" !== j2 && (c10.deep && l2 && fn(k2) && (k2 = Array.isArray(k2) ? f10(k2) : fp(k2, b10, c10, d10)), e10[j2] = k2);
+        }
+        return e10;
+      };
+      function fq(a10, b10, c10) {
+        if (!fm(a10)) throw TypeError(`Expected an object, got \`${a10}\` (${typeof a10})`);
+        if (Array.isArray(a10)) throw TypeError("Expected an object, got an array");
+        return fp(a10, b10, c10);
+      }
+      var fr = /([\p{Ll}\d])(\p{Lu})/gu, fs = /(\p{Lu})([\p{Lu}][\p{Ll}])/gu, ft = /(\d)\p{Ll}|(\p{L})\d/u, fu = /[^\p{L}\d]+/giu, fv = "$1\0$2";
+      function fw(a10) {
+        let b10 = a10.trim();
+        b10 = (b10 = b10.replace(fr, fv).replace(fs, fv)).replace(fu, "\0");
+        let c10 = 0, d10 = b10.length;
+        for (; "\0" === b10.charAt(c10); ) c10++;
+        if (c10 === d10) return [];
+        for (; "\0" === b10.charAt(d10 - 1); ) d10--;
+        return b10.slice(c10, d10).split(/\0/g);
+      }
+      function fx(a10) {
+        let b10 = fw(a10);
+        for (let a11 = 0; a11 < b10.length; a11++) {
+          let c10 = b10[a11], d10 = ft.exec(c10);
+          if (d10) {
+            let e10 = d10.index + (d10[1] ?? d10[2]).length;
+            b10.splice(a11, 1, c10.slice(0, e10), c10.slice(e10));
+          }
+        }
+        return b10;
+      }
+      function fy(a10, b10) {
+        return function(a11, b11) {
+          var c10;
+          let [d10, e10, f10] = function(a12, b12 = {}) {
+            let c11 = b12.split ?? (b12.separateNumbers ? fx : fw), d11 = b12.prefixCharacters ?? "", e11 = b12.suffixCharacters ?? "", f11 = 0, g10 = a12.length;
+            for (; f11 < a12.length; ) {
+              let b13 = a12.charAt(f11);
+              if (!d11.includes(b13)) break;
+              f11++;
+            }
+            for (; g10 > f11; ) {
+              let b13 = g10 - 1, c12 = a12.charAt(b13);
+              if (!e11.includes(c12)) break;
+              g10 = b13;
+            }
+            return [a12.slice(0, f11), c11(a12.slice(f11, g10)), a12.slice(g10)];
+          }(a11, b11);
+          return d10 + e10.map(false === (c10 = b11?.locale) ? (a12) => a12.toLowerCase() : (a12) => a12.toLocaleLowerCase(c10)).join(b11?.delimiter ?? " ") + f10;
+        }(a10, { delimiter: "_", ...b10 });
+      }
+      var fz = {}.constructor;
+      function fA(a10, b10) {
+        return a10.some((a11) => "string" == typeof a11 ? a11 === b10 : a11.test(b10));
+      }
+      function fB(a10, b10, c10) {
+        return c10.shouldRecurse ? { shouldRecurse: c10.shouldRecurse(a10, b10) } : void 0;
+      }
+      var fC = function(a10, b10) {
+        if (Array.isArray(a10)) {
+          if (a10.some((a11) => a11.constructor !== fz)) throw Error("obj must be array of plain objects");
+          let c11 = (b10 = { deep: true, exclude: [], parsingOptions: {}, ...b10 }).snakeCase || ((a11) => fy(a11, b10.parsingOptions));
+          return a10.map((a11) => fq(a11, (a12, d10) => [fA(b10.exclude, a12) ? a12 : c11(a12), d10, fB(a12, d10, b10)], b10));
+        }
+        if (a10.constructor !== fz) throw Error("obj must be an plain object");
+        let c10 = (b10 = { deep: true, exclude: [], parsingOptions: {}, ...b10 }).snakeCase || ((a11) => fy(a11, b10.parsingOptions));
+        return fq(a10, (a11, d10) => [fA(b10.exclude, a11) ? a11 : c10(a11), d10, fB(a11, d10, b10)], b10);
+      }, fD = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.publishableKey = a11, this.secretKey = b10, this.claimUrl = c10, this.apiKeysUrl = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.publishable_key, b10.secret_key, b10.claim_url, b10.api_keys_url);
+        }
+      }, fE = class a10 {
+        constructor(a11, b10, c10) {
+          this.agentId = a11, this.taskId = b10, this.url = c10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.agent_id, b10.task_id, b10.url);
+        }
+      }, fF = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10) {
+          this.id = a11, this.status = b10, this.userId = c10, this.actor = d10, this.token = e10, this.url = f10, this.createdAt = g10, this.updatedAt = h10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.status, b10.user_id, b10.actor, b10.token, b10.url, b10.created_at, b10.updated_at);
+        }
+      }, fG = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10) {
+          this.id = a11, this.identifier = b10, this.identifierType = c10, this.createdAt = d10, this.updatedAt = e10, this.instanceId = f10, this.invitationId = g10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.identifier, b10.identifier_type, b10.created_at, b10.updated_at, b10.instance_id, b10.invitation_id);
+        }
+      }, fH = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2) {
+          this.id = a11, this.type = b10, this.name = c10, this.subject = d10, this.scopes = e10, this.claims = f10, this.revoked = g10, this.revocationReason = h10, this.expired = i10, this.expiration = j2, this.createdBy = k2, this.description = l2, this.lastUsedAt = m2, this.createdAt = n2, this.updatedAt = o2, this.secret = p2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.type, b10.name, b10.subject, b10.scopes, b10.claims, b10.revoked, b10.revocation_reason, b10.expired, b10.expiration, b10.created_by, b10.description, b10.last_used_at, b10.created_at, b10.updated_at, b10.secret);
+        }
+      }, fI = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10) {
+          this.id = a11, this.identifier = b10, this.identifierType = c10, this.createdAt = d10, this.updatedAt = e10, this.instanceId = f10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.identifier, b10.identifier_type, b10.created_at, b10.updated_at, b10.instance_id);
+        }
+      }, fJ = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10) {
+          this.id = a11, this.isMobile = b10, this.ipAddress = c10, this.city = d10, this.country = e10, this.browserVersion = f10, this.browserName = g10, this.deviceType = h10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.is_mobile, b10.ip_address, b10.city, b10.country, b10.browser_version, b10.browser_name, b10.device_type);
+        }
+      }, fK = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2 = null) {
+          this.id = a11, this.clientId = b10, this.userId = c10, this.status = d10, this.lastActiveAt = e10, this.expireAt = f10, this.abandonAt = g10, this.createdAt = h10, this.updatedAt = i10, this.lastActiveOrganizationId = j2, this.latestActivity = k2, this.actor = l2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.client_id, b10.user_id, b10.status, b10.last_active_at, b10.expire_at, b10.abandon_at, b10.created_at, b10.updated_at, b10.last_active_organization_id, b10.latest_activity && fJ.fromJSON(b10.latest_activity), b10.actor);
+        }
+      }, fL = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10) {
+          this.id = a11, this.sessionIds = b10, this.sessions = c10, this.signInId = d10, this.signUpId = e10, this.lastActiveSessionId = f10, this.lastAuthenticationStrategy = g10, this.createdAt = h10, this.updatedAt = i10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.session_ids, b10.sessions.map((a11) => fK.fromJSON(a11)), b10.sign_in_id, b10.sign_up_id, b10.last_active_session_id, b10.last_authentication_strategy, b10.created_at, b10.updated_at);
+        }
+      }, fM = class a10 {
+        constructor(a11, b10, c10) {
+          this.host = a11, this.value = b10, this.required = c10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.host, b10.value, b10.required);
+        }
+      }, fN = class a10 {
+        constructor(a11) {
+          this.cookies = a11;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.cookies);
+        }
+      }, fO = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.object = a11, this.id = b10, this.slug = c10, this.deleted = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.object, b10.id || null, b10.slug || null, b10.deleted);
+        }
+      }, fP = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10) {
+          this.id = a11, this.name = b10, this.isSatellite = c10, this.frontendApiUrl = d10, this.developmentOrigin = e10, this.cnameTargets = f10, this.accountsPortalUrl = g10, this.proxyUrl = h10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.name, b10.is_satellite, b10.frontend_api_url, b10.development_origin, b10.cname_targets && b10.cname_targets.map((a11) => fM.fromJSON(a11)), b10.accounts_portal_url, b10.proxy_url);
+        }
+      }, fQ = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2) {
+          this.id = a11, this.fromEmailName = b10, this.emailAddressId = c10, this.toEmailAddress = d10, this.subject = e10, this.body = f10, this.bodyPlain = g10, this.status = h10, this.slug = i10, this.data = j2, this.deliveredByClerk = k2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.from_email_name, b10.email_address_id, b10.to_email_address, b10.subject, b10.body, b10.body_plain, b10.status, b10.slug, b10.data, b10.delivered_by_clerk);
+        }
+      }, fR = class a10 {
+        constructor(a11, b10) {
+          this.id = a11, this.type = b10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.type);
+        }
+      }, fS = class a10 {
+        constructor(a11, b10, c10 = null, d10 = null, e10 = null, f10 = null, g10 = null) {
+          this.status = a11, this.strategy = b10, this.externalVerificationRedirectURL = c10, this.attempts = d10, this.expireAt = e10, this.nonce = f10, this.message = g10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.status, b10.strategy, b10.external_verification_redirect_url ? new URL(b10.external_verification_redirect_url) : null, b10.attempts, b10.expire_at, b10.nonce);
+        }
+      }, fT = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.id = a11, this.emailAddress = b10, this.verification = c10, this.linkedTo = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.email_address, b10.verification && fS.fromJSON(b10.verification), b10.linked_to.map((a11) => fR.fromJSON(a11)));
+        }
+      }, fU = class a10 {
+        constructor(a11, b10, c10, d10, e10) {
+          this.id = a11, this.name = b10, this.description = c10, this.slug = d10, this.avatarUrl = e10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.name, b10.description ?? null, b10.slug, b10.avatar_url ?? null);
+        }
+      }, fV = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2) {
+          this.id = a11, this.name = b10, this.slug = c10, this.description = d10, this.isDefault = e10, this.isRecurring = f10, this.hasBaseFee = g10, this.publiclyVisible = h10, this.fee = i10, this.annualFee = j2, this.annualMonthlyFee = k2, this.forPayerType = l2, this.features = m2, this.avatarUrl = n2, this.freeTrialDays = o2, this.freeTrialEnabled = p2;
+        }
+        static fromJSON(b10) {
+          let c10 = (a11) => a11 ? { amount: a11.amount, amountFormatted: a11.amount_formatted, currency: a11.currency, currencySymbol: a11.currency_symbol } : null;
+          return new a10(b10.id, b10.name, b10.slug, b10.description ?? null, b10.is_default, b10.is_recurring, b10.has_base_fee, b10.publicly_visible, c10(b10.fee), c10(b10.annual_fee), c10(b10.annual_monthly_fee), b10.for_payer_type, (b10.features ?? []).map((a11) => fU.fromJSON(a11)), b10.avatar_url, b10.free_trial_days, b10.free_trial_enabled);
+        }
+      }, fW = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2, q2) {
+          this.id = a11, this.status = b10, this.planPeriod = c10, this.periodStart = d10, this.nextPayment = e10, this.amount = f10, this.plan = g10, this.planId = h10, this.createdAt = i10, this.updatedAt = j2, this.periodEnd = k2, this.canceledAt = l2, this.pastDueAt = m2, this.endedAt = n2, this.payerId = o2, this.isFreeTrial = p2, this.lifetimePaid = q2;
+        }
+        static fromJSON(b10) {
+          function c10(a11) {
+            return a11 ? { amount: a11.amount, amountFormatted: a11.amount_formatted, currency: a11.currency, currencySymbol: a11.currency_symbol } : a11;
+          }
+          return new a10(b10.id, b10.status, b10.plan_period, b10.period_start, b10.next_payment, c10(b10.amount) ?? void 0, b10.plan ? fV.fromJSON(b10.plan) : null, b10.plan_id ?? null, b10.created_at, b10.updated_at, b10.period_end, b10.canceled_at, b10.past_due_at, b10.ended_at, b10.payer_id, b10.is_free_trial, c10(b10.lifetime_paid) ?? void 0);
+        }
+      }, fX = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2) {
+          this.id = a11, this.status = b10, this.payerId = c10, this.createdAt = d10, this.updatedAt = e10, this.activeAt = f10, this.pastDueAt = g10, this.subscriptionItems = h10, this.nextPayment = i10, this.eligibleForFreeTrial = j2;
+        }
+        static fromJSON(b10) {
+          let c10 = b10.next_payment ? { date: b10.next_payment.date, amount: { amount: b10.next_payment.amount.amount, amountFormatted: b10.next_payment.amount.amount_formatted, currency: b10.next_payment.amount.currency, currencySymbol: b10.next_payment.amount.currency_symbol } } : null;
+          return new a10(b10.id, b10.status, b10.payer_id, b10.created_at, b10.updated_at, b10.active_at ?? null, b10.past_due_at ?? null, (b10.subscription_items ?? []).map((a11) => fW.fromJSON(a11)), c10, b10.eligible_for_free_trial ?? false);
+        }
+      }, fY = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2) {
+          this.id = a11, this.name = b10, this.domains = c10, this.organizationId = d10, this.active = e10, this.syncUserAttributes = f10, this.allowSubdomains = g10, this.disableAdditionalIdentifications = h10, this.createdAt = i10, this.updatedAt = j2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.name, b10.domains, b10.organization_id, b10.active, b10.sync_user_attributes, b10.allow_subdomains, b10.disable_additional_identifications, b10.created_at, b10.updated_at);
+        }
+      }, fZ = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2 = {}, n2, o2) {
+          this.id = a11, this.provider = b10, this.providerUserId = c10, this.identificationId = d10, this.externalId = e10, this.approvedScopes = f10, this.emailAddress = g10, this.firstName = h10, this.lastName = i10, this.imageUrl = j2, this.username = k2, this.phoneNumber = l2, this.publicMetadata = m2, this.label = n2, this.verification = o2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.provider, b10.provider_user_id, b10.identification_id, b10.provider_user_id, b10.approved_scopes, b10.email_address, b10.first_name, b10.last_name, b10.image_url || "", b10.username, b10.phone_number, b10.public_metadata, b10.label, b10.verification && fS.fromJSON(b10.verification));
+        }
+      }, f$ = class a10 {
+        constructor(a11, b10, c10) {
+          this.id = a11, this.environmentType = b10, this.allowedOrigins = c10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.environment_type, b10.allowed_origins);
+        }
+      }, f_ = class a10 {
+        constructor(a11, b10, c10, d10, e10) {
+          this.allowlist = a11, this.blocklist = b10, this.blockEmailSubaddresses = c10, this.blockDisposableEmailDomains = d10, this.ignoreDotsForGmailAddresses = e10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.allowlist, b10.blocklist, b10.block_email_subaddresses, b10.block_disposable_email_domains, b10.ignore_dots_for_gmail_addresses);
+        }
+      }, f0 = class a10 {
+        constructor(a11, b10, c10, d10, e10) {
+          this.id = a11, this.restrictedToAllowlist = b10, this.fromEmailAddress = c10, this.progressiveSignUp = d10, this.enhancedEmailDeliverability = e10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.restricted_to_allowlist, b10.from_email_address, b10.progressive_sign_up, b10.enhanced_email_deliverability);
+        }
+      }, f1 = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10) {
+          this.id = a11, this.emailAddress = b10, this.publicMetadata = c10, this.createdAt = d10, this.updatedAt = e10, this.status = f10, this.url = g10, this.revoked = h10, this._raw = null;
+        }
+        get raw() {
+          return this._raw;
+        }
+        static fromJSON(b10) {
+          let c10 = new a10(b10.id, b10.email_address, b10.public_metadata, b10.created_at, b10.updated_at, b10.status, b10.url, b10.revoked);
+          return c10._raw = b10, c10;
+        }
+      }, f2 = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10) {
+          this.id = a11, this.name = b10, this.claims = c10, this.lifetime = d10, this.allowedClockSkew = e10, this.customSigningKey = f10, this.signingAlgorithm = g10, this.createdAt = h10, this.updatedAt = i10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.name, b10.claims, b10.lifetime, b10.allowed_clock_skew, b10.custom_signing_key, b10.signing_algorithm, b10.created_at, b10.updated_at);
+        }
+      }, f3 = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10) {
+          this.id = a11, this.name = b10, this.instanceId = c10, this.createdAt = d10, this.updatedAt = e10, this.scopedMachines = f10, this.defaultTokenTtl = g10, this.secretKey = h10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.name, b10.instance_id, b10.created_at, b10.updated_at, b10.scoped_machines.map((b11) => new a10(b11.id, b11.name, b11.instance_id, b11.created_at, b11.updated_at, [], b11.default_token_ttl)), b10.default_token_ttl, b10.secret_key);
+        }
+      }, f4 = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.fromMachineId = a11, this.toMachineId = b10, this.createdAt = c10, this.deleted = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.from_machine_id, b10.to_machine_id, b10.created_at, b10.deleted);
+        }
+      }, f5 = class a10 {
+        constructor(a11) {
+          this.secret = a11;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.secret);
+        }
+      }, f6 = class a10 {
+        constructor(a11, b10, c10, d10 = {}, e10, f10, g10, h10, i10) {
+          this.externalAccountId = a11, this.provider = b10, this.token = c10, this.publicMetadata = d10, this.label = e10, this.scopes = f10, this.tokenSecret = g10, this.expiresAt = h10, this.idToken = i10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.external_account_id, b10.provider, b10.token, b10.public_metadata, b10.label || "", b10.scopes, b10.token_secret, b10.expires_at, b10.id_token);
+        }
+      }, f7 = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2, q2, r2, s2, t2) {
+          this.id = a11, this.instanceId = b10, this.name = c10, this.clientId = d10, this.clientUri = e10, this.clientImageUrl = f10, this.dynamicallyRegistered = g10, this.consentScreenEnabled = h10, this.pkceRequired = i10, this.isPublic = j2, this.scopes = k2, this.redirectUris = l2, this.authorizeUrl = m2, this.tokenFetchUrl = n2, this.userInfoUrl = o2, this.discoveryUrl = p2, this.tokenIntrospectionUrl = q2, this.createdAt = r2, this.updatedAt = s2, this.clientSecret = t2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.instance_id, b10.name, b10.client_id, b10.client_uri, b10.client_image_url, b10.dynamically_registered, b10.consent_screen_enabled, b10.pkce_required, b10.public, b10.scopes, b10.redirect_uris, b10.authorize_url, b10.token_fetch_url, b10.user_info_url, b10.discovery_url, b10.token_introspection_url, b10.created_at, b10.updated_at, b10.client_secret);
+        }
+      }, f8 = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10 = {}, i10 = {}, j2, k2, l2, m2) {
+          this.id = a11, this.name = b10, this.slug = c10, this.imageUrl = d10, this.hasImage = e10, this.createdAt = f10, this.updatedAt = g10, this.publicMetadata = h10, this.privateMetadata = i10, this.maxAllowedMemberships = j2, this.adminDeleteEnabled = k2, this.membersCount = l2, this.createdBy = m2, this._raw = null;
+        }
+        get raw() {
+          return this._raw;
+        }
+        static fromJSON(b10) {
+          let c10 = new a10(b10.id, b10.name, b10.slug, b10.image_url || "", b10.has_image, b10.created_at, b10.updated_at, b10.public_metadata, b10.private_metadata, b10.max_allowed_memberships, b10.admin_delete_enabled, b10.members_count, b10.created_by);
+          return c10._raw = b10, c10;
+        }
+      }, f9 = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2 = {}, l2 = {}, m2) {
+          this.id = a11, this.emailAddress = b10, this.role = c10, this.roleName = d10, this.organizationId = e10, this.createdAt = f10, this.updatedAt = g10, this.expiresAt = h10, this.url = i10, this.status = j2, this.publicMetadata = k2, this.privateMetadata = l2, this.publicOrganizationData = m2, this._raw = null;
+        }
+        get raw() {
+          return this._raw;
+        }
+        static fromJSON(b10) {
+          let c10 = new a10(b10.id, b10.email_address, b10.role, b10.role_name, b10.organization_id, b10.created_at, b10.updated_at, b10.expires_at, b10.url, b10.status, b10.public_metadata, b10.private_metadata, b10.public_organization_data);
+          return c10._raw = b10, c10;
+        }
+      }, ga = class a10 {
+        constructor(a11, b10, c10, d10 = {}, e10 = {}, f10, g10, h10, i10) {
+          this.id = a11, this.role = b10, this.permissions = c10, this.publicMetadata = d10, this.privateMetadata = e10, this.createdAt = f10, this.updatedAt = g10, this.organization = h10, this.publicUserData = i10, this._raw = null;
+        }
+        get raw() {
+          return this._raw;
+        }
+        static fromJSON(b10) {
+          let c10 = new a10(b10.id, b10.role, b10.permissions, b10.public_metadata, b10.private_metadata, b10.created_at, b10.updated_at, f8.fromJSON(b10.organization), gb.fromJSON(b10.public_user_data));
+          return c10._raw = b10, c10;
+        }
+      }, gb = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10) {
+          this.identifier = a11, this.firstName = b10, this.lastName = c10, this.imageUrl = d10, this.hasImage = e10, this.userId = f10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.identifier, b10.first_name, b10.last_name, b10.image_url, b10.has_image, b10.user_id);
+        }
+      }, gc = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2) {
+          this.enabled = a11, this.maxAllowedMemberships = b10, this.maxAllowedRoles = c10, this.maxAllowedPermissions = d10, this.creatorRole = e10, this.adminDeleteEnabled = f10, this.domainsEnabled = g10, this.slugDisabled = h10, this.domainsEnrollmentModes = i10, this.domainsDefaultRole = j2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.enabled, b10.max_allowed_memberships, b10.max_allowed_roles, b10.max_allowed_permissions, b10.creator_role, b10.admin_delete_enabled, b10.domains_enabled, b10.slug_disabled, b10.domains_enrollment_modes, b10.domains_default_role);
+        }
+      }, gd = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10) {
+          this.id = a11, this.phoneNumber = b10, this.reservedForSecondFactor = c10, this.defaultSecondFactor = d10, this.verification = e10, this.linkedTo = f10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.phone_number, b10.reserved_for_second_factor, b10.default_second_factor, b10.verification && fS.fromJSON(b10.verification), b10.linked_to.map((a11) => fR.fromJSON(a11)));
+        }
+      }, ge = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10) {
+          this.id = a11, this.domainId = b10, this.lastRunAt = c10, this.proxyUrl = d10, this.successful = e10, this.createdAt = f10, this.updatedAt = g10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.domain_id, b10.last_run_at, b10.proxy_url, b10.successful, b10.created_at, b10.updated_at);
+        }
+      }, gf = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.id = a11, this.url = b10, this.createdAt = c10, this.updatedAt = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.url, b10.created_at, b10.updated_at);
+        }
+      }, gg = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2, q2, r2, s2, t2, u2) {
+          this.id = a11, this.name = b10, this.domain = c10, this.organizationId = d10, this.idpEntityId = e10, this.idpSsoUrl = f10, this.idpCertificate = g10, this.idpMetadataUrl = h10, this.idpMetadata = i10, this.acsUrl = j2, this.spEntityId = k2, this.spMetadataUrl = l2, this.active = m2, this.provider = n2, this.userCount = o2, this.syncUserAttributes = p2, this.allowSubdomains = q2, this.allowIdpInitiated = r2, this.createdAt = s2, this.updatedAt = t2, this.attributeMapping = u2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.name, b10.domain, b10.organization_id, b10.idp_entity_id, b10.idp_sso_url, b10.idp_certificate, b10.idp_metadata_url, b10.idp_metadata, b10.acs_url, b10.sp_entity_id, b10.sp_metadata_url, b10.active, b10.provider, b10.user_count, b10.sync_user_attributes, b10.allow_subdomains, b10.allow_idp_initiated, b10.created_at, b10.updated_at, b10.attribute_mapping && gh.fromJSON(b10.attribute_mapping));
+        }
+      }, gh = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.userId = a11, this.emailAddress = b10, this.firstName = c10, this.lastName = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.user_id, b10.email_address, b10.first_name, b10.last_name);
+        }
+      }, gi = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10) {
+          this.id = a11, this.userId = b10, this.token = c10, this.status = d10, this.url = e10, this.createdAt = f10, this.updatedAt = g10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.user_id, b10.token, b10.status, b10.url, b10.created_at, b10.updated_at);
+        }
+      }, gj = class a10 {
+        constructor(a11, b10) {
+          this.nextAction = a11, this.supportedStrategies = b10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.next_action, b10.supported_strategies);
+        }
+      }, gk = class a10 {
+        constructor(a11, b10, c10, d10) {
+          this.emailAddress = a11, this.phoneNumber = b10, this.web3Wallet = c10, this.externalAccount = d10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.email_address && gj.fromJSON(b10.email_address), b10.phone_number && gj.fromJSON(b10.phone_number), b10.web3_wallet && gj.fromJSON(b10.web3_wallet), b10.external_account);
+        }
+      }, gl = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2, q2, r2, s2, t2, u2, v2) {
+          this.id = a11, this.status = b10, this.requiredFields = c10, this.optionalFields = d10, this.missingFields = e10, this.unverifiedFields = f10, this.verifications = g10, this.username = h10, this.emailAddress = i10, this.phoneNumber = j2, this.web3Wallet = k2, this.passwordEnabled = l2, this.firstName = m2, this.lastName = n2, this.customAction = o2, this.externalId = p2, this.createdSessionId = q2, this.createdUserId = r2, this.abandonAt = s2, this.legalAcceptedAt = t2, this.publicMetadata = u2, this.unsafeMetadata = v2;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.status, b10.required_fields, b10.optional_fields, b10.missing_fields, b10.unverified_fields, b10.verifications ? gk.fromJSON(b10.verifications) : null, b10.username, b10.email_address, b10.phone_number, b10.web3_wallet, b10.password_enabled, b10.first_name, b10.last_name, b10.custom_action, b10.external_id, b10.created_session_id, b10.created_user_id, b10.abandon_at, b10.legal_accepted_at, b10.public_metadata, b10.unsafe_metadata);
+        }
+      }, gm = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10) {
+          this.id = a11, this.fromPhoneNumber = b10, this.toPhoneNumber = c10, this.message = d10, this.status = e10, this.phoneNumberId = f10, this.data = g10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.from_phone_number, b10.to_phone_number, b10.message, b10.status, b10.phone_number_id, b10.data);
+        }
+      }, gn = class a10 {
+        constructor(a11) {
+          this.jwt = a11;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.jwt);
+        }
+      }, go = class a10 {
+        constructor(a11, b10, c10) {
+          this.id = a11, this.web3Wallet = b10, this.verification = c10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.web3_wallet, b10.verification && fS.fromJSON(b10.verification));
+        }
+      }, gp = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10, h10, i10, j2, k2, l2, m2, n2, o2, p2, q2, r2, s2, t2 = {}, u2 = {}, v2 = {}, w2 = [], x2 = [], y2 = [], z2 = [], A2, B2, C2 = null, D2, E2, F2) {
+          this.id = a11, this.passwordEnabled = b10, this.totpEnabled = c10, this.backupCodeEnabled = d10, this.twoFactorEnabled = e10, this.banned = f10, this.locked = g10, this.createdAt = h10, this.updatedAt = i10, this.imageUrl = j2, this.hasImage = k2, this.primaryEmailAddressId = l2, this.primaryPhoneNumberId = m2, this.primaryWeb3WalletId = n2, this.lastSignInAt = o2, this.externalId = p2, this.username = q2, this.firstName = r2, this.lastName = s2, this.publicMetadata = t2, this.privateMetadata = u2, this.unsafeMetadata = v2, this.emailAddresses = w2, this.phoneNumbers = x2, this.web3Wallets = y2, this.externalAccounts = z2, this.lastActiveAt = A2, this.createOrganizationEnabled = B2, this.createOrganizationsLimit = C2, this.deleteSelfEnabled = D2, this.legalAcceptedAt = E2, this.locale = F2, this._raw = null;
+        }
+        get raw() {
+          return this._raw;
+        }
+        static fromJSON(b10) {
+          let c10 = new a10(b10.id, b10.password_enabled, b10.totp_enabled, b10.backup_code_enabled, b10.two_factor_enabled, b10.banned, b10.locked, b10.created_at, b10.updated_at, b10.image_url, b10.has_image, b10.primary_email_address_id, b10.primary_phone_number_id, b10.primary_web3_wallet_id, b10.last_sign_in_at, b10.external_id, b10.username, b10.first_name, b10.last_name, b10.public_metadata, b10.private_metadata, b10.unsafe_metadata, (b10.email_addresses || []).map((a11) => fT.fromJSON(a11)), (b10.phone_numbers || []).map((a11) => gd.fromJSON(a11)), (b10.web3_wallets || []).map((a11) => go.fromJSON(a11)), (b10.external_accounts || []).map((a11) => fZ.fromJSON(a11)), b10.last_active_at, b10.create_organization_enabled, b10.create_organizations_limit, b10.delete_self_enabled, b10.legal_accepted_at, b10.locale);
+          return c10._raw = b10, c10;
+        }
+        get primaryEmailAddress() {
+          return this.emailAddresses.find(({ id: a11 }) => a11 === this.primaryEmailAddressId) ?? null;
+        }
+        get primaryPhoneNumber() {
+          return this.phoneNumbers.find(({ id: a11 }) => a11 === this.primaryPhoneNumberId) ?? null;
+        }
+        get primaryWeb3Wallet() {
+          return this.web3Wallets.find(({ id: a11 }) => a11 === this.primaryWeb3WalletId) ?? null;
+        }
+        get fullName() {
+          return [this.firstName, this.lastName].join(" ").trim() || null;
+        }
+      }, gq = class a10 {
+        constructor(a11, b10, c10, d10, e10, f10, g10) {
+          this.id = a11, this.emailAddress = b10, this.status = c10, this.invitation = d10, this.createdAt = e10, this.updatedAt = f10, this.isLocked = g10;
+        }
+        static fromJSON(b10) {
+          return new a10(b10.id, b10.email_address, b10.status, b10.invitation && f1.fromJSON(b10.invitation), b10.created_at, b10.updated_at, b10.is_locked);
+        }
+      };
+      function gr(a10) {
+        if ("string" != typeof a10 && "object" in a10 && "deleted" in a10) return fO.fromJSON(a10);
+        switch (a10.object) {
+          case "accountless_application":
+            return fD.fromJSON(a10);
+          case "actor_token":
+            return fF.fromJSON(a10);
+          case "allowlist_identifier":
+            return fG.fromJSON(a10);
+          case "api_key":
+            return fH.fromJSON(a10);
+          case "blocklist_identifier":
+            return fI.fromJSON(a10);
+          case "client":
+            return fL.fromJSON(a10);
+          case "cookies":
+            return fN.fromJSON(a10);
+          case "domain":
+            return fP.fromJSON(a10);
+          case "email_address":
+            return fT.fromJSON(a10);
+          case "email":
+            return fQ.fromJSON(a10);
+          case "clerk_idp_oauth_access_token":
+            return eu.fromJSON(a10);
+          case "instance":
+            return f$.fromJSON(a10);
+          case "instance_restrictions":
+            return f_.fromJSON(a10);
+          case "instance_settings":
+            return f0.fromJSON(a10);
+          case "invitation":
+            return f1.fromJSON(a10);
+          case "jwt_template":
+            return f2.fromJSON(a10);
+          case "machine":
+            return f3.fromJSON(a10);
+          case "machine_scope":
+            return f4.fromJSON(a10);
+          case "machine_secret_key":
+            return f5.fromJSON(a10);
+          case "machine_to_machine_token":
+            return ev.fromJSON(a10);
+          case "oauth_access_token":
+            return f6.fromJSON(a10);
+          case "oauth_application":
+            return f7.fromJSON(a10);
+          case "organization":
+            return f8.fromJSON(a10);
+          case "organization_invitation":
+            return f9.fromJSON(a10);
+          case "organization_membership":
+            return ga.fromJSON(a10);
+          case "organization_settings":
+            return gc.fromJSON(a10);
+          case "phone_number":
+            return gd.fromJSON(a10);
+          case "proxy_check":
+            return ge.fromJSON(a10);
+          case "redirect_url":
+            return gf.fromJSON(a10);
+          case "enterprise_connection":
+            return fY.fromJSON(a10);
+          case "saml_connection":
+            return gg.fromJSON(a10);
+          case "sign_in_token":
+            return gi.fromJSON(a10);
+          case "agent_task":
+            return fE.fromJSON(a10);
+          case "sign_up_attempt":
+            return gl.fromJSON(a10);
+          case "session":
+            return fK.fromJSON(a10);
+          case "sms_message":
+            return gm.fromJSON(a10);
+          case "token":
+            return gn.fromJSON(a10);
+          case "total_count":
+            return a10.total_count;
+          case "user":
+            return gp.fromJSON(a10);
+          case "waitlist_entry":
+            return gq.fromJSON(a10);
+          case "commerce_plan":
+            return fV.fromJSON(a10);
+          case "commerce_subscription":
+            return fX.fromJSON(a10);
+          case "commerce_subscription_item":
+            return fW.fromJSON(a10);
+          case "feature":
+            return fU.fromJSON(a10);
+          default:
+            return a10;
+        }
+      }
+      function gs(a10) {
+        var b10;
+        return b10 = async (b11) => {
+          let c10, { secretKey: d10, machineSecretKey: e10, useMachineSecretKey: f10 = false, requireSecretKey: g10 = true, apiUrl: h10 = dj, apiVersion: i10 = "v1", userAgent: j2 = dk, skipApiVersionInUrl: k2 = false } = a10, { path: l2, method: m2, queryParams: n2, headerParams: o2, bodyParams: p2, formData: q2, options: r2 } = b11, { deepSnakecaseBodyParamKeys: s2 = false } = r2 || {};
+          g10 && dU(d10);
+          let t2 = new URL(k2 ? d0(h10, l2) : d0(h10, i10, l2));
+          if (n2) for (let [a11, b12] of Object.entries(fC({ ...n2 }))) b12 && [b12].flat().forEach((b13) => t2.searchParams.append(a11, b13));
+          let u2 = new Headers({ "Clerk-API-Version": dl, [dO]: j2, ...o2 }), v2 = ds;
+          !u2.has(v2) && (f10 && e10 ? u2.set(v2, `Bearer ${e10}`) : d10 && u2.set(v2, `Bearer ${d10}`));
+          try {
+            q2 ? c10 = await cO.fetch(t2.href, { method: m2, headers: u2, body: q2 }) : (u2.set("Content-Type", "application/json"), c10 = await cO.fetch(t2.href, { method: m2, headers: u2, ...(() => {
+              if (!("GET" !== m2 && p2 && Object.keys(p2).length > 0)) return null;
+              let a12 = (a13) => fC(a13, { deep: s2 });
+              return { body: JSON.stringify(Array.isArray(p2) ? p2.map(a12) : a12(p2)) };
+            })() }));
+            let a11 = c10?.headers && c10.headers?.get(dC) === dQ, b12 = await (a11 ? c10.json() : c10.text());
+            if (!c10.ok) return { data: null, errors: gv(b12), status: c10?.status, statusText: c10?.statusText, clerkTraceId: gt(b12, c10?.headers), retryAfter: gu(c10?.headers) };
+            return { ...function(a12) {
+              var b13, c11;
+              let d11;
+              if (Array.isArray(a12)) return { data: a12.map((a13) => gr(a13)) };
+              if ((b13 = a12) && "object" == typeof b13 && "m2m_tokens" in b13 && Array.isArray(b13.m2m_tokens)) return { data: d11 = a12.m2m_tokens.map((a13) => gr(a13)), totalCount: a12.total_count };
+              return (c11 = a12) && "object" == typeof c11 && "data" in c11 && Array.isArray(c11.data) && void 0 !== c11.data ? { data: d11 = a12.data.map((a13) => gr(a13)), totalCount: a12.total_count } : { data: gr(a12) };
+            }(b12), errors: null };
+          } catch (a11) {
+            if (a11 instanceof Error) return { data: null, errors: [{ code: "unexpected_error", message: a11.message || "Unexpected error" }], clerkTraceId: gt(a11, c10?.headers) };
+            return { data: null, errors: gv(a11), status: c10?.status, statusText: c10?.statusText, clerkTraceId: gt(a11, c10?.headers), retryAfter: gu(c10?.headers) };
+          }
+        }, async (...a11) => {
+          let { data: c10, errors: d10, totalCount: e10, status: f10, statusText: g10, clerkTraceId: h10, retryAfter: i10 } = await b10(...a11);
+          if (d10) {
+            let a12 = new cq(g10 || "", { data: [], status: f10, clerkTraceId: h10, retryAfter: i10 });
+            throw a12.errors = d10, a12;
+          }
+          return void 0 !== e10 ? { data: c10, totalCount: e10 } : c10;
+        };
+      }
+      function gt(a10, b10) {
+        return a10 && "object" == typeof a10 && "clerk_trace_id" in a10 && "string" == typeof a10.clerk_trace_id ? a10.clerk_trace_id : b10?.get("cf-ray") || "";
+      }
+      function gu(a10) {
+        let b10 = a10?.get("Retry-After");
+        if (!b10) return;
+        let c10 = parseInt(b10, 10);
+        if (!isNaN(c10)) return c10;
+      }
+      function gv(a10) {
+        if (a10 && "object" == typeof a10 && "errors" in a10) {
+          let b10 = a10.errors;
+          return b10.length > 0 ? b10.map(cp) : [];
+        }
+        return [];
+      }
+      function gw(a10) {
+        let b10 = gs(a10);
+        return { __experimental_accountlessApplications: new d7(gs({ ...a10, requireSecretKey: false })), actorTokens: new d3(b10), agentTasks: new d5(b10), allowlistIdentifiers: new d9(b10), apiKeys: new eb(gs({ ...a10, skipApiVersionInUrl: true })), betaFeatures: new ec(b10), blocklistIdentifiers: new ee(b10), billing: new fl(b10), clients: new eg(b10), domains: new ei(b10), emailAddresses: new ek(b10), enterpriseConnections: new em(b10), idPOAuthAccessToken: new en(gs({ ...a10, skipApiVersionInUrl: true })), instance: new ep(b10), invitations: new er(b10), jwks: new eV(b10), jwtTemplates: new eX(b10), machines: new et(b10), m2m: new eU(gs({ ...a10, skipApiVersionInUrl: true, requireSecretKey: false, useMachineSecretKey: true }), { secretKey: a10.secretKey, apiUrl: a10.apiUrl, jwtKey: a10.jwtKey }), oauthApplications: new e_(b10), organizations: new eZ(b10), phoneNumbers: new e1(b10), proxyChecks: new e2(b10), redirectUrls: new e4(b10), sessions: new e8(b10), signInTokens: new fa(b10), signUps: new fc(b10), testingTokens: new fd(b10), users: new ff(b10), waitlistEntries: new fh(b10), webhooks: new fj(b10), samlConnections: new e6(b10) };
+      }
+      var gx = (a10) => () => {
+        let b10 = { ...a10 };
+        return b10.secretKey = (b10.secretKey || "").substring(0, 7), b10.jwtKey = (b10.jwtKey || "").substring(0, 7), { ...b10 };
+      };
+      function gy(a10, b10) {
+        return { tokenType: dV, sessionClaims: null, sessionId: null, sessionStatus: b10 ?? null, userId: null, actor: null, orgId: null, orgRole: null, orgSlug: null, orgPermissions: null, factorVerificationAge: null, getToken: () => Promise.resolve(null), has: () => false, debug: gx(a10), isAuthenticated: false };
+      }
+      function gz(a10, b10) {
+        let c10 = { id: null, subject: null, scopes: null, has: () => false, getToken: () => Promise.resolve(null), debug: gx(b10), isAuthenticated: false };
+        switch (a10) {
+          case dW:
+            return { ...c10, tokenType: a10, name: null, claims: null, scopes: null, userId: null, orgId: null };
+          case dX:
+            return { ...c10, tokenType: a10, claims: null, scopes: null, machineId: null };
+          case dY:
+            return { ...c10, tokenType: a10, scopes: null, userId: null, clientId: null };
+          default:
+            throw Error(`Invalid token type: ${a10}`);
+        }
+      }
+      function gA() {
+        return { isAuthenticated: false, tokenType: null, getToken: () => Promise.resolve(null), has: () => false, debug: () => ({}) };
+      }
+      var gB = ({ authObject: a10, acceptsToken: b10 = dV }) => {
+        if ("any" === b10) return a10;
+        if (Array.isArray(b10)) return eO(a10.tokenType, b10) ? a10 : gA();
+        if (!eO(a10.tokenType, b10)) return eP.has(b10) ? gz(b10, a10.debug) : gy(a10.debug);
+        return a10;
+      }, gC = "signed-out", gD = "handshake", gE = "satellite-needs-syncing", gF = "session-token-and-uat-missing", gG = "token-type-mismatch", gH = "unexpected-error";
+      function gI(a10) {
+        let { authenticateContext: b10, headers: c10 = new Headers(), token: d10 } = a10;
+        return { status: "signed-in", reason: null, message: null, proxyUrl: b10.proxyUrl || "", publishableKey: b10.publishableKey || "", isSatellite: b10.isSatellite || false, domain: b10.domain || "", signInUrl: b10.signInUrl || "", signUpUrl: b10.signUpUrl || "", afterSignInUrl: b10.afterSignInUrl || "", afterSignUpUrl: b10.afterSignUpUrl || "", isSignedIn: true, isAuthenticated: true, tokenType: a10.tokenType, toAuth: ({ treatPendingAsSignedOut: c11 = true } = {}) => {
+          if (a10.tokenType === dV) {
+            let { sessionClaims: e11 } = a10, f11 = function(a11, b11, c12) {
+              let d11, { actor: e12, sessionId: f12, sessionStatus: g11, userId: h10, orgId: i10, orgRole: j2, orgSlug: k2, orgPermissions: l2, factorVerificationAge: m2 } = ((a12) => {
+                let b12, c13, d12, e13, f13 = a12.fva ?? null, g12 = a12.sts ?? null;
+                if (2 === a12.v) {
+                  if (a12.o) {
+                    b12 = a12.o?.id, d12 = a12.o?.slg, a12.o?.rol && (c13 = `org:${a12.o?.rol}`);
+                    let { org: f14 } = df(a12.fea), { permissions: g13, featurePermissionMap: h11 } = (({ per: a13, fpm: b13 }) => {
+                      if (!a13 || !b13) return { permissions: [], featurePermissionMap: [] };
+                      let c14 = a13.split(",").map((a14) => a14.trim());
+                      return { permissions: c14, featurePermissionMap: b13.split(",").map((a14) => Number.parseInt(a14.trim(), 10)).map((a14) => a14.toString(2).padStart(c14.length, "0").split("").map((a15) => Number.parseInt(a15, 10)).reverse()).filter(Boolean) };
+                    })({ per: a12.o?.per, fpm: a12.o?.fpm });
+                    e13 = function({ features: a13, permissions: b13, featurePermissionMap: c14 }) {
+                      if (!a13 || !b13 || !c14) return [];
+                      let d13 = [];
+                      for (let e14 = 0; e14 < a13.length; e14++) {
+                        let f15 = a13[e14];
+                        if (e14 >= c14.length) continue;
+                        let g14 = c14[e14];
+                        if (g14) for (let a14 = 0; a14 < g14.length; a14++) 1 === g14[a14] && d13.push(`org:${f15}:${b13[a14]}`);
+                      }
+                      return d13;
+                    }({ features: f14, featurePermissionMap: h11, permissions: g13 });
+                  }
+                } else b12 = a12.org_id, c13 = a12.org_role, d12 = a12.org_slug, e13 = a12.org_permissions;
+                return { sessionClaims: a12, sessionId: a12.sid, sessionStatus: g12, actor: a12.act, userId: a12.sub, orgId: b12, orgRole: c13, orgSlug: d12, orgPermissions: e13, factorVerificationAge: f13 };
+              })(c12), n2 = gw(a11), o2 = ((a12) => {
+                let { fetcher: b12, sessionToken: c13, sessionId: d12 } = a12 || {};
+                return async (a13 = {}) => d12 ? a13.template || void 0 !== a13.expiresInSeconds ? b12(d12, a13.template, a13.expiresInSeconds) : c13 : null;
+              })({ sessionId: f12, sessionToken: b11, fetcher: async (a12, b12, c13) => (await n2.sessions.getToken(a12, b12 || "", c13)).jwt });
+              return { tokenType: dV, actor: e12, sessionClaims: c12, sessionId: f12, sessionStatus: g11, userId: h10, orgId: i10, orgRole: j2, orgSlug: k2, orgPermissions: l2, factorVerificationAge: m2, getToken: o2, has: (d11 = { orgId: i10, orgRole: j2, orgPermissions: l2, userId: h10, factorVerificationAge: m2, features: c12.fea || "", plans: c12.pla || "" }, (a12) => {
+                if (!d11.userId) return false;
+                let b12 = ((a13, b13) => {
+                  let { features: c14, plans: d12 } = b13;
+                  return a13.feature && c14 ? de(c14, a13.feature) : a13.plan && d12 ? de(d12, a13.plan) : null;
+                })(a12, d11), c13 = ((a13, b13) => {
+                  let { orgId: c14, orgRole: d12, orgPermissions: e14 } = b13;
+                  return (a13.role || a13.permission) && c14 && d12 && e14 ? a13.permission ? e14.includes(a13.permission.replace(/^(org:)*/, "org:")) : a13.role ? d12.replace(/^(org:)*/, "org:") === a13.role.replace(/^(org:)*/, "org:") : null : null;
+                })(a12, d11), e13 = ((a13, { factorVerificationAge: b13 }) => {
+                  if (!a13.reverification || !b13) return null;
+                  let c14 = ((a14) => {
+                    let b14, c15;
+                    if (!a14) return false;
+                    let d13 = "string" == typeof a14 && db.has(a14), e15 = "object" == typeof a14 && (b14 = a14.level, da.has(b14)) && "number" == typeof (c15 = a14.afterMinutes) && c15 > 0;
+                    return (!!d13 || !!e15) && ((a15) => "string" == typeof a15 ? c9[a15] : a15).bind(null, a14);
+                  })(a13.reverification);
+                  if (!c14) return null;
+                  let { level: d12, afterMinutes: e14 } = c14(), [f13, g12] = b13, h11 = -1 !== f13 ? e14 > f13 : null, i11 = -1 !== g12 ? e14 > g12 : null;
+                  switch (d12) {
+                    case "first_factor":
+                      return h11;
+                    case "second_factor":
+                      return -1 !== g12 ? i11 : h11;
+                    case "multi_factor":
+                      return -1 === g12 ? h11 : h11 && i11;
+                  }
+                })(a12, d11);
+                return [b12 || c13, e13].some((a13) => null === a13) ? [b12 || c13, e13].some((a13) => true === a13) : [b12 || c13, e13].every((a13) => true === a13);
+              }), debug: gx({ ...a11, sessionToken: b11 }), isAuthenticated: true };
+            }(b10, d10, e11);
+            return c11 && "pending" === f11.sessionStatus ? gy(void 0, f11.sessionStatus) : f11;
+          }
+          let { machineData: e10 } = a10;
+          var f10 = a10.tokenType;
+          let g10 = { id: e10.id, subject: e10.subject, getToken: () => Promise.resolve(d10), has: () => false, debug: gx(b10), isAuthenticated: true };
+          switch (f10) {
+            case dW:
+              return { ...g10, tokenType: f10, name: e10.name, claims: e10.claims, scopes: e10.scopes, userId: e10.subject.startsWith("user_") ? e10.subject : null, orgId: e10.subject.startsWith("org_") ? e10.subject : null };
+            case dX:
+              return { ...g10, tokenType: f10, claims: e10.claims, scopes: e10.scopes, machineId: e10.subject };
+            case dY:
+              return { ...g10, tokenType: f10, scopes: e10.scopes, userId: e10.subject, clientId: e10.clientId };
+            default:
+              throw Error(`Invalid token type: ${f10}`);
+          }
+        }, headers: c10, token: d10 };
+      }
+      function gJ(a10) {
+        let { authenticateContext: b10, headers: c10 = new Headers(), reason: d10, message: e10 = "", tokenType: f10 } = a10;
+        return gK({ status: gC, reason: d10, message: e10, proxyUrl: b10.proxyUrl || "", publishableKey: b10.publishableKey || "", isSatellite: b10.isSatellite || false, domain: b10.domain || "", signInUrl: b10.signInUrl || "", signUpUrl: b10.signUpUrl || "", afterSignInUrl: b10.afterSignInUrl || "", afterSignUpUrl: b10.afterSignUpUrl || "", isSignedIn: false, isAuthenticated: false, tokenType: f10, toAuth: () => f10 === dV ? gy({ ...b10, status: gC, reason: d10, message: e10 }) : gz(f10, { reason: d10, message: e10, headers: c10 }), headers: c10, token: null });
+      }
+      var gK = (a10) => {
+        let b10 = new Headers(a10.headers || {});
+        if (a10.message) try {
+          b10.set(dr, a10.message);
+        } catch {
+        }
+        if (a10.reason) try {
+          b10.set(dt, a10.reason);
+        } catch {
+        }
+        if (a10.status) try {
+          b10.set(dv, a10.status);
+        } catch {
+        }
+        return a10.headers = b10, a10;
+      }, gL = (l = null != (j = di()) ? c$(c2(j)) : {}, ((a10, b10, c10, d10) => {
+        if (b10 && "object" == typeof b10 || "function" == typeof b10) for (let e10 of c1(b10)) c3.call(a10, e10) || e10 === c10 || c_(a10, e10, { get: () => b10[e10], enumerable: !(d10 = c0(b10, e10)) || d10.enumerable });
+        return a10;
+      })(!k && j && j.__esModule ? l : c_(l, "default", { value: j, enumerable: true }), j)), gM = class extends URL {
+        isCrossOrigin(a10) {
+          return this.origin !== new URL(a10.toString()).origin;
+        }
+      }, gN = (...a10) => new gM(...a10), gO = class extends Request {
+        constructor(a10, b10) {
+          super("string" != typeof a10 && "url" in a10 ? a10.url : String(a10), b10 || "string" == typeof a10 ? void 0 : a10), this.clerkUrl = this.deriveUrlFromHeaders(this), this.cookies = this.parseCookies(this);
+        }
+        toJSON() {
+          return { url: this.clerkUrl.href, method: this.method, headers: JSON.stringify(Object.fromEntries(this.headers)), clerkUrl: this.clerkUrl.toString(), cookies: JSON.stringify(Object.fromEntries(this.cookies)) };
+        }
+        deriveUrlFromHeaders(a10) {
+          let b10 = new URL(a10.url), c10 = a10.headers.get(dH), d10 = a10.headers.get(dG), e10 = a10.headers.get(dI), f10 = b10.protocol, g10 = this.getFirstValueFromHeader(d10) ?? e10, h10 = this.getFirstValueFromHeader(c10) ?? f10?.replace(/[:/]/, ""), i10 = g10 && h10 ? `${h10}://${g10}` : b10.origin;
+          if (i10 === b10.origin) return gN(b10);
+          try {
+            return gN(b10.pathname + b10.search, i10);
+          } catch {
+            return gN(b10);
+          }
+        }
+        getFirstValueFromHeader(a10) {
+          return a10?.split(",")[0];
+        }
+        parseCookies(a10) {
+          return new Map(Object.entries((0, gL.parse)(this.decodeCookieValue(a10.headers.get("cookie") || ""))));
+        }
+        decodeCookieValue(a10) {
+          return a10 ? a10.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent) : a10;
+        }
+      }, gP = (...a10) => a10[0] && "object" == typeof a10[0] && "clerkUrl" in a10[0] && "cookies" in a10[0] ? a10[0] : new gO(...a10), gQ = (a10) => a10.split(";")[0]?.split("=")[0], gR = (a10) => a10.split(";")[0]?.split("=")[1];
+      async function gS(a10, b10) {
+        let { data: c10, errors: d10 } = cY(a10);
+        if (d10) return { errors: d10 };
+        let { header: e10 } = c10, { kid: f10 } = e10;
+        try {
+          let c11;
+          if (b10.jwtKey) c11 = ez({ kid: f10, pem: b10.jwtKey });
+          else {
+            if (!b10.secretKey) return { errors: [new cH({ action: cG, message: "Failed to resolve JWK during verification.", reason: cD })] };
+            c11 = await eA({ ...b10, kid: f10 });
+          }
+          return await cZ(a10, { ...b10, key: c11 });
+        } catch (a11) {
+          return { errors: [a11] };
+        }
+      }
+      function gT(a10, b10, c10) {
+        if (cr(b10)) {
+          let d10, e10;
+          switch (b10.status) {
+            case 401:
+              d10 = "secret-key-invalid", e10 = b10.errors[0]?.message || "Invalid secret key";
+              break;
+            case 404:
+              d10 = cI, e10 = c10;
+              break;
+            default:
+              d10 = cJ, e10 = "Unexpected error";
+          }
+          return { data: void 0, tokenType: a10, errors: [new cL({ message: e10, code: d10, status: b10.status })] };
+        }
+        return { data: void 0, tokenType: a10, errors: [new cL({ message: "Unexpected error", code: cJ, status: b10.status })] };
+      }
+      async function gU(a10, b10) {
+        try {
+          let c10 = gw(b10);
+          return { data: await c10.m2m.verify({ token: a10 }), tokenType: dX, errors: void 0 };
+        } catch (a11) {
+          return gT(dX, a11, "Machine token not found");
+        }
+      }
+      async function gV(a10, b10) {
+        try {
+          let c10 = gw(b10);
+          return { data: await c10.idPOAuthAccessToken.verify(a10), tokenType: dY, errors: void 0 };
+        } catch (a11) {
+          return gT(dY, a11, "OAuth token not found");
+        }
+      }
+      async function gW(a10, b10) {
+        try {
+          let c10 = gw(b10);
+          return { data: await c10.apiKeys.verify(a10), tokenType: dW, errors: void 0 };
+        } catch (a11) {
+          return gT(dW, a11, "API key not found");
+        }
+      }
+      async function gX(a10, b10) {
+        if (eH(a10)) {
+          let c10;
+          try {
+            let { data: b11, errors: d10 } = cY(a10);
+            if (d10) throw d10[0];
+            c10 = b11;
+          } catch (a11) {
+            return { data: void 0, tokenType: dX, errors: [new cL({ code: cI, message: a11.message })] };
+          }
+          return c10.payload.sub.startsWith(eD) ? eR(a10, c10, b10) : eI.includes(c10.header.typ) ? eS(a10, c10, b10) : { data: void 0, tokenType: dY, errors: [new cL({ code: cK, message: `Invalid JWT type: ${c10.header.typ ?? "missing"}. Expected one of: ${eI.join(", ")} for OAuth, or sub starting with 'mch_' for M2M` })] };
+        }
+        if (a10.startsWith("mt_")) return gU(a10, b10);
+        if (a10.startsWith(eE)) return gV(a10, b10);
+        if (a10.startsWith("ak_")) return gW(a10, b10);
+        throw Error("Unknown machine token type");
+      }
+      async function gY(a10, { key: b10 }) {
+        let { data: c10, errors: d10 } = cY(a10);
+        if (d10) throw d10[0];
+        let { header: e10, payload: f10 } = c10, { typ: g10, alg: h10 } = e10;
+        cV(g10), cW(h10);
+        let { data: i10, errors: j2 } = await cX(c10, b10);
+        if (j2) throw new cH({ reason: cB, message: `Error verifying handshake token. ${j2[0]}` });
+        if (!i10) throw new cH({ reason: cy, message: "Handshake signature is invalid." });
+        return f10;
+      }
+      async function gZ(a10, b10) {
+        let c10, { secretKey: d10, apiUrl: e10, apiVersion: f10, jwksCacheTtlInMs: g10, jwtKey: h10, skipJwksCache: i10 } = b10, { data: j2, errors: k2 } = cY(a10);
+        if (k2) throw k2[0];
+        let { kid: l2 } = j2.header;
+        if (h10) c10 = ez({ kid: l2, pem: h10 });
+        else if (d10) c10 = await eA({ secretKey: d10, apiUrl: e10, apiVersion: f10, kid: l2, jwksCacheTtlInMs: g10, skipJwksCache: i10 });
+        else throw new cH({ action: cG, message: "Failed to resolve JWK during handshake verification.", reason: cD });
+        return gY(a10, { key: c10 });
+      }
+      var g$ = class {
+        constructor(a10, b10, c10) {
+          this.authenticateContext = a10, this.options = b10, this.organizationMatcher = c10;
+        }
+        isRequestEligibleForHandshake() {
+          let { accept: a10, secFetchDest: b10 } = this.authenticateContext;
+          return !!("document" === b10 || "iframe" === b10 || !b10 && a10?.startsWith("text/html"));
+        }
+        buildRedirectToHandshake(a10) {
+          if (!this.authenticateContext?.clerkUrl) throw Error("Missing clerkUrl in authenticateContext");
+          let b10 = this.removeDevBrowserFromURL(this.authenticateContext.clerkUrl), c10 = this.authenticateContext.frontendApi.startsWith("http") ? this.authenticateContext.frontendApi : `https://${this.authenticateContext.frontendApi}`, d10 = new URL("v1/client/handshake", c10 = c10.replace(/\/+$/, "") + "/");
+          d10.searchParams.append("redirect_url", b10?.href || ""), d10.searchParams.append("__clerk_api_version", dl), d10.searchParams.append(dn.SuffixedCookies, this.authenticateContext.usesSuffixedCookies().toString()), d10.searchParams.append(dn.HandshakeReason, a10), d10.searchParams.append(dn.HandshakeFormat, "nonce"), this.authenticateContext.sessionToken && d10.searchParams.append(dn.Session, this.authenticateContext.sessionToken), "development" === this.authenticateContext.instanceType && this.authenticateContext.devBrowserToken && d10.searchParams.append(dn.DevBrowser, this.authenticateContext.devBrowserToken);
+          let e10 = this.getOrganizationSyncTarget(this.authenticateContext.clerkUrl, this.organizationMatcher);
+          return e10 && this.getOrganizationSyncQueryParams(e10).forEach((a11, b11) => {
+            d10.searchParams.append(b11, a11);
+          }), new Headers({ [dJ]: d10.href });
+        }
+        async getCookiesFromHandshake() {
+          let a10 = [];
+          if (this.authenticateContext.handshakeNonce) try {
+            let b10 = await this.authenticateContext.apiClient?.clients.getHandshakePayload({ nonce: this.authenticateContext.handshakeNonce });
+            b10 && a10.push(...b10.directives);
+          } catch (a11) {
+            console.error("Clerk: HandshakeService: error getting handshake payload:", a11);
+          }
+          else if (this.authenticateContext.handshakeToken) {
+            let b10 = await gZ(this.authenticateContext.handshakeToken, this.authenticateContext);
+            b10 && Array.isArray(b10.handshake) && a10.push(...b10.handshake);
+          }
+          return a10;
+        }
+        async resolveHandshake() {
+          let a10 = new Headers({ "Access-Control-Allow-Origin": "null", "Access-Control-Allow-Credentials": "true" }), b10 = await this.getCookiesFromHandshake(), c10 = "";
+          if (b10.forEach((b11) => {
+            a10.append("Set-Cookie", b11), gQ(b11).startsWith(dm.Session) && (c10 = gR(b11));
+          }), "development" === this.authenticateContext.instanceType) {
+            let b11 = new URL(this.authenticateContext.clerkUrl);
+            b11.searchParams.delete(dn.Handshake), b11.searchParams.delete(dn.HandshakeHelp), b11.searchParams.delete(dn.DevBrowser), b11.searchParams.delete(dn.HandshakeNonce), a10.append(dJ, b11.toString()), a10.set(dx, "no-store");
+          }
+          if ("" === c10) return gJ({ tokenType: dV, authenticateContext: this.authenticateContext, reason: "session-token-missing", message: "", headers: a10 });
+          let { data: d10, errors: [e10] = [] } = await gS(c10, this.authenticateContext);
+          if (d10) return gI({ tokenType: dV, authenticateContext: this.authenticateContext, sessionClaims: d10, headers: a10, token: c10 });
+          if ("development" === this.authenticateContext.instanceType && (e10?.reason === cw || e10?.reason === cz || e10?.reason === cA)) {
+            let b11 = new cH({ action: e10.action, message: e10.message, reason: e10.reason });
+            b11.tokenCarrier = "cookie", console.error(`Clerk: Clock skew detected. This usually means that your system clock is inaccurate. Clerk will attempt to account for the clock skew in development.
+
+To resolve this issue, make sure your system's clock is set to the correct time (e.g. turn off and on automatic time synchronization).
+
+---
+
+${b11.getFullMessage()}`);
+            let { data: d11, errors: [f10] = [] } = await gS(c10, { ...this.authenticateContext, clockSkewInMs: 864e5 });
+            if (d11) return gI({ tokenType: dV, authenticateContext: this.authenticateContext, sessionClaims: d11, headers: a10, token: c10 });
+            throw Error(f10?.message || "Clerk: Handshake retry failed.");
+          }
+          throw Error(e10?.message || "Clerk: Handshake failed.");
+        }
+        handleTokenVerificationErrorInDevelopment(a10) {
+          if (a10.reason === cy) throw Error("Clerk: Handshake token verification failed due to an invalid signature. If you have switched Clerk keys locally, clear your cookies and try again.");
+          throw Error(`Clerk: Handshake token verification failed: ${a10.getFullMessage()}.`);
+        }
+        checkAndTrackRedirectLoop(a10) {
+          if (3 === this.authenticateContext.handshakeRedirectLoopCounter) return true;
+          let b10 = this.authenticateContext.handshakeRedirectLoopCounter + 1, c10 = dm.RedirectCount;
+          return a10.append("Set-Cookie", `${c10}=${b10}; SameSite=Lax; HttpOnly; Max-Age=2`), false;
+        }
+        removeDevBrowserFromURL(a10) {
+          let b10 = new URL(a10);
+          return b10.searchParams.delete(dn.DevBrowser), b10.searchParams.delete(dn.LegacyDevBrowser), b10;
+        }
+        getOrganizationSyncTarget(a10, b10) {
+          return b10.findTarget(a10);
+        }
+        getOrganizationSyncQueryParams(a10) {
+          let b10 = /* @__PURE__ */ new Map();
+          return "personalAccount" === a10.type && b10.set("organization_id", ""), "organization" === a10.type && (a10.organizationId && b10.set("organization_id", a10.organizationId), a10.organizationSlug && b10.set("organization_id", a10.organizationSlug)), b10;
+        }
+      }, g_ = class {
+        constructor(a10) {
+          this.organizationPattern = this.createMatcher(a10?.organizationPatterns), this.personalAccountPattern = this.createMatcher(a10?.personalAccountPatterns);
+        }
+        createMatcher(a10) {
+          if (!a10) return null;
+          try {
+            var b10, c10, d10, e10, f10, g10, h10;
+            try {
+              return b10 = void 0, c10 = [], d10 = function a11(b11, c11, d11) {
+                var e11;
+                return b11 instanceof RegExp ? function(a12, b12) {
+                  if (!b12) return a12;
+                  for (var c12 = /\((?:\?<(.*?)>)?(?!\?)/g, d12 = 0, e12 = c12.exec(a12.source); e12; ) b12.push({ name: e12[1] || d12++, prefix: "", suffix: "", modifier: "", pattern: "" }), e12 = c12.exec(a12.source);
+                  return a12;
+                }(b11, c11) : Array.isArray(b11) ? (e11 = b11.map(function(b12) {
+                  return a11(b12, c11, d11).source;
+                }), new RegExp("(?:".concat(e11.join("|"), ")"), dh(d11))) : function(a12, b12, c12) {
+                  void 0 === c12 && (c12 = {});
+                  for (var d12 = c12.strict, e12 = void 0 !== d12 && d12, f11 = c12.start, g11 = c12.end, h11 = c12.encode, i10 = void 0 === h11 ? function(a13) {
+                    return a13;
+                  } : h11, j2 = c12.delimiter, k2 = c12.endsWith, l2 = "[".concat(dg(void 0 === k2 ? "" : k2), "]|$"), m2 = "[".concat(dg(void 0 === j2 ? "/#?" : j2), "]"), n2 = void 0 === f11 || f11 ? "^" : "", o2 = 0; o2 < a12.length; o2++) {
+                    var p2 = a12[o2];
+                    if ("string" == typeof p2) n2 += dg(i10(p2));
+                    else {
+                      var q2 = dg(i10(p2.prefix)), r2 = dg(i10(p2.suffix));
+                      if (p2.pattern) if (b12 && b12.push(p2), q2 || r2) if ("+" === p2.modifier || "*" === p2.modifier) {
+                        var s2 = "*" === p2.modifier ? "?" : "";
+                        n2 += "(?:".concat(q2, "((?:").concat(p2.pattern, ")(?:").concat(r2).concat(q2, "(?:").concat(p2.pattern, "))*)").concat(r2, ")").concat(s2);
+                      } else n2 += "(?:".concat(q2, "(").concat(p2.pattern, ")").concat(r2, ")").concat(p2.modifier);
+                      else {
+                        if ("+" === p2.modifier || "*" === p2.modifier) throw TypeError('Can not repeat "'.concat(p2.name, '" without a prefix and suffix'));
+                        n2 += "(".concat(p2.pattern, ")").concat(p2.modifier);
+                      }
+                      else n2 += "(?:".concat(q2).concat(r2, ")").concat(p2.modifier);
+                    }
+                  }
+                  if (void 0 === g11 || g11) e12 || (n2 += "".concat(m2, "?")), n2 += c12.endsWith ? "(?=".concat(l2, ")") : "$";
+                  else {
+                    var t2 = a12[a12.length - 1], u2 = "string" == typeof t2 ? m2.indexOf(t2[t2.length - 1]) > -1 : void 0 === t2;
+                    e12 || (n2 += "(?:".concat(m2, "(?=").concat(l2, "))?")), u2 || (n2 += "(?=".concat(m2, "|").concat(l2, ")"));
+                  }
+                  return new RegExp(n2, dh(c12));
+                }(function(a12, b12) {
+                  void 0 === b12 && (b12 = {});
+                  for (var c12 = function(a13) {
+                    for (var b13 = [], c13 = 0; c13 < a13.length; ) {
+                      var d13 = a13[c13];
+                      if ("*" === d13 || "+" === d13 || "?" === d13) {
+                        b13.push({ type: "MODIFIER", index: c13, value: a13[c13++] });
+                        continue;
+                      }
+                      if ("\\" === d13) {
+                        b13.push({ type: "ESCAPED_CHAR", index: c13++, value: a13[c13++] });
+                        continue;
+                      }
+                      if ("{" === d13) {
+                        b13.push({ type: "OPEN", index: c13, value: a13[c13++] });
+                        continue;
+                      }
+                      if ("}" === d13) {
+                        b13.push({ type: "CLOSE", index: c13, value: a13[c13++] });
+                        continue;
+                      }
+                      if (":" === d13) {
+                        for (var e13 = "", f12 = c13 + 1; f12 < a13.length; ) {
+                          var g12 = a13.charCodeAt(f12);
+                          if (g12 >= 48 && g12 <= 57 || g12 >= 65 && g12 <= 90 || g12 >= 97 && g12 <= 122 || 95 === g12) {
+                            e13 += a13[f12++];
+                            continue;
+                          }
+                          break;
+                        }
+                        if (!e13) throw TypeError("Missing parameter name at ".concat(c13));
+                        b13.push({ type: "NAME", index: c13, value: e13 }), c13 = f12;
+                        continue;
+                      }
+                      if ("(" === d13) {
+                        var h12 = 1, i11 = "", f12 = c13 + 1;
+                        if ("?" === a13[f12]) throw TypeError('Pattern cannot start with "?" at '.concat(f12));
+                        for (; f12 < a13.length; ) {
+                          if ("\\" === a13[f12]) {
+                            i11 += a13[f12++] + a13[f12++];
+                            continue;
+                          }
+                          if (")" === a13[f12]) {
+                            if (0 == --h12) {
+                              f12++;
+                              break;
+                            }
+                          } else if ("(" === a13[f12] && (h12++, "?" !== a13[f12 + 1])) throw TypeError("Capturing groups are not allowed at ".concat(f12));
+                          i11 += a13[f12++];
+                        }
+                        if (h12) throw TypeError("Unbalanced pattern at ".concat(c13));
+                        if (!i11) throw TypeError("Missing pattern at ".concat(c13));
+                        b13.push({ type: "PATTERN", index: c13, value: i11 }), c13 = f12;
+                        continue;
+                      }
+                      b13.push({ type: "CHAR", index: c13, value: a13[c13++] });
+                    }
+                    return b13.push({ type: "END", index: c13, value: "" }), b13;
+                  }(a12), d12 = b12.prefixes, e12 = void 0 === d12 ? "./" : d12, f11 = b12.delimiter, g11 = void 0 === f11 ? "/#?" : f11, h11 = [], i10 = 0, j2 = 0, k2 = "", l2 = function(a13) {
+                    if (j2 < c12.length && c12[j2].type === a13) return c12[j2++].value;
+                  }, m2 = function(a13) {
+                    var b13 = l2(a13);
+                    if (void 0 !== b13) return b13;
+                    var d13 = c12[j2], e13 = d13.type, f12 = d13.index;
+                    throw TypeError("Unexpected ".concat(e13, " at ").concat(f12, ", expected ").concat(a13));
+                  }, n2 = function() {
+                    for (var a13, b13 = ""; a13 = l2("CHAR") || l2("ESCAPED_CHAR"); ) b13 += a13;
+                    return b13;
+                  }, o2 = function(a13) {
+                    for (var b13 = 0; b13 < g11.length; b13++) {
+                      var c13 = g11[b13];
+                      if (a13.indexOf(c13) > -1) return true;
+                    }
+                    return false;
+                  }, p2 = function(a13) {
+                    var b13 = h11[h11.length - 1], c13 = a13 || (b13 && "string" == typeof b13 ? b13 : "");
+                    if (b13 && !c13) throw TypeError('Must have text between two parameters, missing text after "'.concat(b13.name, '"'));
+                    return !c13 || o2(c13) ? "[^".concat(dg(g11), "]+?") : "(?:(?!".concat(dg(c13), ")[^").concat(dg(g11), "])+?");
+                  }; j2 < c12.length; ) {
+                    var q2 = l2("CHAR"), r2 = l2("NAME"), s2 = l2("PATTERN");
+                    if (r2 || s2) {
+                      var t2 = q2 || "";
+                      -1 === e12.indexOf(t2) && (k2 += t2, t2 = ""), k2 && (h11.push(k2), k2 = ""), h11.push({ name: r2 || i10++, prefix: t2, suffix: "", pattern: s2 || p2(t2), modifier: l2("MODIFIER") || "" });
+                      continue;
+                    }
+                    var u2 = q2 || l2("ESCAPED_CHAR");
+                    if (u2) {
+                      k2 += u2;
+                      continue;
+                    }
+                    if (k2 && (h11.push(k2), k2 = ""), l2("OPEN")) {
+                      var t2 = n2(), v2 = l2("NAME") || "", w2 = l2("PATTERN") || "", x2 = n2();
+                      m2("CLOSE"), h11.push({ name: v2 || (w2 ? i10++ : ""), pattern: v2 && !w2 ? p2(t2) : w2, prefix: t2, suffix: x2, modifier: l2("MODIFIER") || "" });
+                      continue;
+                    }
+                    m2("END");
+                  }
+                  return h11;
+                }(b11, d11), c11, d11);
+              }(a10, c10, b10), e10 = c10, f10 = b10, void 0 === f10 && (f10 = {}), g10 = f10.decode, h10 = void 0 === g10 ? function(a11) {
+                return a11;
+              } : g10, function(a11) {
+                var b11 = d10.exec(a11);
+                if (!b11) return false;
+                for (var c11 = b11[0], f11 = b11.index, g11 = /* @__PURE__ */ Object.create(null), i10 = 1; i10 < b11.length; i10++) !function(a12) {
+                  if (void 0 !== b11[a12]) {
+                    var c12 = e10[a12 - 1];
+                    "*" === c12.modifier || "+" === c12.modifier ? g11[c12.name] = b11[a12].split(c12.prefix + c12.suffix).map(function(a13) {
+                      return h10(a13, c12);
+                    }) : g11[c12.name] = h10(b11[a12], c12);
+                  }
+                }(i10);
+                return { path: c11, index: f11, params: g11 };
+              };
+            } catch (a11) {
+              throw Error(`Invalid path and options: Consult the documentation of path-to-regexp here: https://github.com/pillarjs/path-to-regexp/tree/6.x
+${a11.message}`);
+            }
+          } catch (b11) {
+            throw Error(`Invalid pattern "${a10}": ${b11}`);
+          }
+        }
+        findTarget(a10) {
+          let b10 = this.findOrganizationTarget(a10);
+          return b10 || this.findPersonalAccountTarget(a10);
+        }
+        findOrganizationTarget(a10) {
+          if (!this.organizationPattern) return null;
+          try {
+            let b10 = this.organizationPattern(a10.pathname);
+            if (!b10 || !("params" in b10)) return null;
+            let c10 = b10.params;
+            if (c10.id) return { type: "organization", organizationId: c10.id };
+            if (c10.slug) return { type: "organization", organizationSlug: c10.slug };
+            return null;
+          } catch (a11) {
+            return console.error("Failed to match organization pattern:", a11), null;
+          }
+        }
+        findPersonalAccountTarget(a10) {
+          if (!this.personalAccountPattern) return null;
+          try {
+            return this.personalAccountPattern(a10.pathname) ? { type: "personalAccount" } : null;
+          } catch (a11) {
+            return console.error("Failed to match personal account pattern:", a11), null;
+          }
+        }
+      };
+      function g0(a10, b10, c10) {
+        return eO(a10, b10) ? null : gJ({ tokenType: "string" == typeof b10 ? b10 : a10, authenticateContext: c10, reason: gG });
+      }
+      var g1 = async (a10, b10) => {
+        let c10 = await d$(gP(a10), b10), d10 = b10.acceptsToken ?? dV;
+        if (d10 !== dX && (dU(c10.secretKey), c10.isSatellite)) {
+          var e10 = c10.signInUrl, f10 = c10.secretKey;
+          if (!e10 && cg(f10)) throw Error("Missing signInUrl. Pass a signInUrl for dev instances if an app is satellite");
+          if (c10.signInUrl && c10.origin && function(a11, b11) {
+            let c11;
+            try {
+              c11 = new URL(a11);
+            } catch {
+              throw Error("The signInUrl needs to have a absolute url format.");
+            }
+            if (c11.origin === b11) throw Error("The signInUrl needs to be on a different origin than your satellite application.");
+          }(c10.signInUrl, c10.origin), !(c10.proxyUrl || c10.domain)) throw Error("Missing domain and proxyUrl. A satellite application needs to specify a domain or a proxyUrl");
+        }
+        d10 === dX && function(a11) {
+          if (!a11.machineSecretKey && !a11.secretKey) throw Error("Machine token authentication requires either a Machine secret key or a Clerk secret key. Ensure a Clerk secret key or Machine secret key is set.");
+        }(c10);
+        let g10 = new g_(b10.organizationSyncOptions), h10 = new g$(c10, { organizationSyncOptions: b10.organizationSyncOptions }, g10);
+        async function i10(c11) {
+          if (!b10.apiClient) return { data: null, error: { message: "An apiClient is needed to perform token refresh.", cause: { reason: "missing-api-client" } } };
+          let { sessionToken: d11, refreshTokenInCookie: e11 } = c11;
+          if (!d11) return { data: null, error: { message: "Session token must be provided.", cause: { reason: "missing-session-token" } } };
+          if (!e11) return { data: null, error: { message: "Refresh token must be provided.", cause: { reason: "missing-refresh-token" } } };
+          let { data: f11, errors: g11 } = cY(d11);
+          if (!f11 || g11) return { data: null, error: { message: "Unable to decode the expired session token.", cause: { reason: "expired-session-token-decode-failed", errors: g11 } } };
+          if (!f11?.payload?.sid) return { data: null, error: { message: "Expired session token is missing the `sid` claim.", cause: { reason: "expired-session-token-missing-sid-claim" } } };
+          try {
+            return { data: (await b10.apiClient.sessions.refreshSession(f11.payload.sid, { format: "cookie", suffixed_cookies: c11.usesSuffixedCookies(), expired_token: d11 || "", refresh_token: e11 || "", request_origin: c11.clerkUrl.origin, request_headers: Object.fromEntries(Array.from(a10.headers.entries()).map(([a11, b11]) => [a11, [b11]])) })).cookies, error: null };
+          } catch (a11) {
+            if (!a11?.errors?.length) return { data: null, error: { message: "Unexpected Server/BAPI error", cause: { reason: "unexpected-bapi-error", errors: [a11] } } };
+            if ("unexpected_error" === a11.errors[0].code) return { data: null, error: { message: "Fetch unexpected error", cause: { reason: "fetch-error", errors: a11.errors } } };
+            return { data: null, error: { message: a11.errors[0].code, cause: { reason: a11.errors[0].code, errors: a11.errors } } };
+          }
+        }
+        async function j2(a11) {
+          let { data: b11, error: c11 } = await i10(a11);
+          if (!b11 || 0 === b11.length) return { data: null, error: c11 };
+          let d11 = new Headers(), e11 = "";
+          b11.forEach((a12) => {
+            d11.append("Set-Cookie", a12), gQ(a12).startsWith(dm.Session) && (e11 = gR(a12));
+          });
+          let { data: f11, errors: g11 } = await gS(e11, a11);
+          return g11 ? { data: null, error: { message: "Clerk: unable to verify refreshed session token.", cause: { reason: "invalid-session-token", errors: g11 } } } : { data: { jwtPayload: f11, sessionToken: e11, headers: d11 }, error: null };
+        }
+        function k2(a11, b11, c11, d11) {
+          if (!h10.isRequestEligibleForHandshake()) return gJ({ tokenType: dV, authenticateContext: a11, reason: b11, message: c11 });
+          let e11 = d11 ?? h10.buildRedirectToHandshake(b11);
+          return (e11.get(dJ) && e11.set(dx, "no-store"), h10.checkAndTrackRedirectLoop(e11)) ? (console.log("Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard."), gJ({ tokenType: dV, authenticateContext: a11, reason: b11, message: c11 })) : function(a12, b12, c12 = "", d12) {
+            return gK({ status: gD, reason: b12, message: c12, publishableKey: a12.publishableKey || "", isSatellite: a12.isSatellite || false, domain: a12.domain || "", proxyUrl: a12.proxyUrl || "", signInUrl: a12.signInUrl || "", signUpUrl: a12.signUpUrl || "", afterSignInUrl: a12.afterSignInUrl || "", afterSignUpUrl: a12.afterSignUpUrl || "", isSignedIn: false, isAuthenticated: false, tokenType: dV, toAuth: () => null, headers: d12, token: null });
+          }(a11, b11, c11, e11);
+        }
+        async function l2() {
+          let { tokenInHeader: a11 } = c10;
+          if (eJ(a11) || eK(a11)) return gJ({ tokenType: dV, authenticateContext: c10, reason: gG, message: "" });
+          try {
+            let { data: b11, errors: d11 } = await gS(a11, c10);
+            if (d11) throw d11[0];
+            return gI({ tokenType: dV, authenticateContext: c10, sessionClaims: b11, headers: new Headers(), token: a11 });
+          } catch (a12) {
+            return n2(a12, "header");
+          }
+        }
+        async function m2() {
+          let a11 = c10.clientUat, b11 = !!c10.sessionTokenInCookie, d11 = !!c10.devBrowserToken;
+          if (c10.handshakeNonce || c10.handshakeToken) try {
+            return await h10.resolveHandshake();
+          } catch (a12) {
+            a12 instanceof cH && "development" === c10.instanceType ? h10.handleTokenVerificationErrorInDevelopment(a12) : console.error("Clerk: unable to resolve handshake:", a12);
+          }
+          let e11 = c10.isSatellite && "document" === c10.secFetchDest, f11 = c10.clerkUrl.searchParams.get(dn.ClerkSynced), i11 = f11 === dp.NeedsSync, j3 = f11 === dp.Completed, l3 = b11 || a11, m3 = false === c10.satelliteAutoSync && !l3 && !i11;
+          if ("production" === c10.instanceType && e11 && !j3) {
+            if (m3) return gJ({ tokenType: dV, authenticateContext: c10, reason: gF });
+            if (!l3 || i11) return k2(c10, gE, "");
+          }
+          if ("development" === c10.instanceType && e11 && !j3) {
+            if (m3) return gJ({ tokenType: dV, authenticateContext: c10, reason: gF });
+            if (!l3 || i11) {
+              let a12 = new URL(c10.signInUrl);
+              return a12.searchParams.append(dn.ClerkRedirectUrl, c10.clerkUrl.toString()), k2(c10, gE, "", new Headers({ [dJ]: a12.toString() }));
+            }
+          }
+          let o3 = new URL(c10.clerkUrl).searchParams.get(dn.ClerkRedirectUrl);
+          if ("development" === c10.instanceType && !c10.isSatellite && o3) {
+            let a12 = new URL(o3);
+            return c10.devBrowserToken && a12.searchParams.append(dn.DevBrowser, c10.devBrowserToken), a12.searchParams.set(dn.ClerkSynced, dp.Completed), k2(c10, "primary-responds-to-syncing", "", new Headers({ [dJ]: a12.toString() }));
+          }
+          if ("development" === c10.instanceType && c10.clerkUrl.searchParams.has(dn.DevBrowser)) return k2(c10, "dev-browser-sync", "");
+          if ("development" === c10.instanceType && !d11) return k2(c10, "dev-browser-missing", "");
+          if (!a11 && !b11) return gJ({ tokenType: dV, authenticateContext: c10, reason: gF });
+          if (!a11 && b11) return k2(c10, "session-token-but-no-client-uat", "");
+          if (a11 && !b11) return k2(c10, "client-uat-but-no-session-token", "");
+          let { data: p3, errors: q3 } = cY(c10.sessionTokenInCookie);
+          if (q3) return n2(q3[0], "cookie");
+          if (p3.payload.iat < c10.clientUat) return k2(c10, "session-token-iat-before-client-uat", "");
+          try {
+            let { data: a12, errors: b12 } = await gS(c10.sessionTokenInCookie, c10);
+            if (b12) throw b12[0];
+            a12.azp || console.warn("Clerk: Session token from cookie is missing the azp claim. In a future version of Clerk, this token will be considered invalid. Please contact Clerk support if you see this warning.");
+            let d12 = gI({ tokenType: dV, authenticateContext: c10, sessionClaims: a12, headers: new Headers(), token: c10.sessionTokenInCookie });
+            if (!c10.isSatellite && "document" === c10.secFetchDest && c10.isCrossOriginReferrer() && !c10.isKnownClerkReferrer() && 0 === c10.handshakeRedirectLoopCounter) return k2(c10, "primary-domain-cross-origin-sync", "Cross-origin request from satellite domain requires handshake");
+            let e12 = d12.toAuth();
+            if (e12.userId) {
+              let a13 = function(a14, b13) {
+                let c11 = g10.findTarget(a14.clerkUrl);
+                if (!c11) return null;
+                let d13 = false;
+                if ("organization" === c11.type && (c11.organizationSlug && c11.organizationSlug !== b13.orgSlug && (d13 = true), c11.organizationId && c11.organizationId !== b13.orgId && (d13 = true)), "personalAccount" === c11.type && b13.orgId && (d13 = true), !d13) return null;
+                if (a14.handshakeRedirectLoopCounter >= 3) return console.warn("Clerk: Organization activation handshake loop detected. This is likely due to an invalid organization ID or slug. Skipping organization activation."), null;
+                let e13 = k2(a14, "active-organization-mismatch", "");
+                return "handshake" !== e13.status ? null : e13;
+              }(c10, e12);
+              if (a13) return a13;
+            }
+            return d12;
+          } catch (a12) {
+            return n2(a12, "cookie");
+          }
+        }
+        async function n2(b11, d11) {
+          let e11;
+          if (!(b11 instanceof cH)) return gJ({ tokenType: dV, authenticateContext: c10, reason: gH });
+          if (b11.reason === cw && c10.refreshTokenInCookie && "GET" === a10.method) {
+            let { data: a11, error: b12 } = await j2(c10);
+            if (a11) return gI({ tokenType: dV, authenticateContext: c10, sessionClaims: a11.jwtPayload, headers: a11.headers, token: a11.sessionToken });
+            e11 = b12?.cause?.reason ? b12.cause.reason : "unexpected-sdk-error";
+          } else e11 = "GET" !== a10.method ? "non-eligible-non-get" : c10.refreshTokenInCookie ? null : "non-eligible-no-refresh-cookie";
+          return (b11.tokenCarrier = d11, [cw, cz, cA].includes(b11.reason)) ? k2(c10, g3({ tokenError: b11.reason, refreshError: e11 }), b11.getFullMessage()) : gJ({ tokenType: dV, authenticateContext: c10, reason: b11.reason, message: b11.getFullMessage() });
+        }
+        function o2(a11, b11) {
+          return b11 instanceof cL ? gJ({ tokenType: a11, authenticateContext: c10, reason: b11.code, message: b11.getFullMessage() }) : gJ({ tokenType: a11, authenticateContext: c10, reason: gH });
+        }
+        async function p2() {
+          let { tokenInHeader: a11 } = c10;
+          if (!a11) return n2(Error("Missing token in header"), "header");
+          if (!eM(a11)) return gJ({ tokenType: d10, authenticateContext: c10, reason: gG, message: "" });
+          let b11 = g0(eN(a11), d10, c10);
+          if (b11) return b11;
+          let { data: e11, tokenType: f11, errors: g11 } = await gX(a11, c10);
+          return g11 ? o2(f11, g11[0]) : gI({ tokenType: f11, authenticateContext: c10, machineData: e11, token: a11 });
+        }
+        async function q2() {
+          let { tokenInHeader: a11 } = c10;
+          if (!a11) return n2(Error("Missing token in header"), "header");
+          if (eM(a11)) {
+            let b12 = g0(eN(a11), d10, c10);
+            if (b12) return b12;
+            let { data: e12, tokenType: f11, errors: g11 } = await gX(a11, c10);
+            return g11 ? o2(f11, g11[0]) : gI({ tokenType: f11, authenticateContext: c10, machineData: e12, token: a11 });
+          }
+          let { data: b11, errors: e11 } = await gS(a11, c10);
+          return e11 ? n2(e11[0], "header") : gI({ tokenType: dV, authenticateContext: c10, sessionClaims: b11, token: a11 });
+        }
+        if (Array.isArray(d10) && !function(a11, b11) {
+          let c11 = null, { tokenInHeader: d11 } = b11;
+          return d11 && (c11 = eM(d11) ? eN(d11) : dV), eO(c11 ?? dV, a11);
+        }(d10, c10)) {
+          let a11;
+          return a11 = gA(), gK({ status: gC, reason: gG, message: "", proxyUrl: "", publishableKey: "", isSatellite: false, domain: "", signInUrl: "", signUpUrl: "", afterSignInUrl: "", afterSignUpUrl: "", isSignedIn: false, isAuthenticated: false, tokenType: null, toAuth: () => a11, headers: new Headers(), token: null });
+        }
+        return c10.tokenInHeader ? "any" === d10 || Array.isArray(d10) ? q2() : d10 === dV ? l2() : p2() : d10 === dY || d10 === dW || d10 === dX ? gJ({ tokenType: d10, authenticateContext: c10, reason: "No token in header" }) : m2();
+      }, g2 = (a10) => {
+        let { isSignedIn: b10, isAuthenticated: c10, proxyUrl: d10, reason: e10, message: f10, publishableKey: g10, isSatellite: h10, domain: i10 } = a10;
+        return { isSignedIn: b10, isAuthenticated: c10, proxyUrl: d10, reason: e10, message: f10, publishableKey: g10, isSatellite: h10, domain: i10 };
+      }, g3 = ({ tokenError: a10, refreshError: b10 }) => {
+        switch (a10) {
+          case cw:
+            return `session-token-expired-refresh-${b10}`;
+          case cz:
+            return "session-token-nbf";
+          case cA:
+            return "session-token-iat-in-the-future";
+          default:
+            return gH;
+        }
+      }, g4 = { secretKey: "", machineSecretKey: "", jwtKey: "", apiUrl: void 0, apiVersion: void 0, proxyUrl: "", publishableKey: "", isSatellite: false, domain: "", audience: "" }, g5 = ["connection", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailer", "transfer-encoding", "upgrade"];
+      function g6(a10) {
+        for (; a10.endsWith("/"); ) a10 = a10.slice(0, -1);
+        return a10;
+      }
+      function g7(a10, b10, c10) {
+        return new Response(JSON.stringify({ errors: [{ code: a10, message: b10 }] }), { status: c10, headers: { "Content-Type": "application/json" } });
+      }
+      async function g8(a10, b10) {
+        let c10, d10, e10, f10 = g6(b10?.proxyPath || ca), g10 = b10?.publishableKey || ("u" > typeof process ? process.env?.CLERK_PUBLISHABLE_KEY : void 0), h10 = b10?.secretKey || ("u" > typeof process ? process.env?.CLERK_SECRET_KEY : void 0);
+        if (!g10) return g7("proxy_configuration_error", "Missing publishableKey. Provide it in options or set CLERK_PUBLISHABLE_KEY environment variable.", 500);
+        if (!h10) return g7("proxy_configuration_error", "Missing secretKey. Provide it in options or set CLERK_SECRET_KEY environment variable.", 500);
+        let i10 = new URL(a10.url);
+        if (!(i10.pathname === f10 || i10.pathname.startsWith(f10 + "/"))) return g7("proxy_path_mismatch", `Request path "${i10.pathname}" does not match proxy path "${f10}"`, 400);
+        let j2 = (c10 = ce(g10)?.frontendApi, c10?.startsWith("clerk.") && b3.some((a11) => c10?.endsWith(a11)) ? b9 : b6.some((a11) => c10?.endsWith(a11)) ? "https://frontend-api.lclclerk.com" : b7.some((a11) => c10?.endsWith(a11)) ? "https://frontend-api.clerkstage.dev" : b9), k2 = new URL(i10.pathname.slice(f10.length) || "/", j2);
+        k2.search = i10.search;
+        let l2 = new Headers();
+        a10.headers.forEach((a11, b11) => {
+          g5.includes(b11.toLowerCase()) || l2.set(b11, a11);
+        });
+        let m2 = (d10 = a10.headers.get("x-forwarded-proto")?.split(",")[0]?.trim(), e10 = a10.headers.get("x-forwarded-host")?.split(",")[0]?.trim(), d10 && e10 ? `${d10}://${e10}` : i10.origin), n2 = `${m2}${f10}`;
+        l2.set("Clerk-Proxy-Url", n2), l2.set("Clerk-Secret-Key", h10);
+        let o2 = new URL(j2).host;
+        l2.set("Host", o2), l2.has("X-Forwarded-Host") || l2.set("X-Forwarded-Host", i10.host), l2.has("X-Forwarded-Proto") || l2.set("X-Forwarded-Proto", i10.protocol.replace(":", ""));
+        let p2 = function(a11) {
+          let b11 = a11.headers.get("cf-connecting-ip");
+          if (b11) return b11;
+          let c11 = a11.headers.get("x-real-ip");
+          if (c11) return c11;
+          let d11 = a11.headers.get("x-forwarded-for");
+          if (d11) return d11.split(",")[0]?.trim();
+        }(a10);
+        p2 && l2.set("X-Forwarded-For", p2);
+        let q2 = ["POST", "PUT", "PATCH"].includes(a10.method);
+        try {
+          let b11 = { method: a10.method, headers: l2, duplex: q2 ? "half" : void 0 };
+          q2 && a10.body && (b11.body = a10.body);
+          let c11 = await fetch(k2.toString(), b11), d11 = new Headers();
+          c11.headers.forEach((a11, b12) => {
+            g5.includes(b12.toLowerCase()) || d11.set(b12, a11);
+          });
+          let e11 = c11.headers.get("location");
+          if (e11) try {
+            let a11 = new URL(e11, j2);
+            if (a11.host === o2) {
+              let b12 = `${n2}${a11.pathname}${a11.search}${a11.hash}`;
+              d11.set("Location", b12);
+            }
+          } catch {
+          }
+          return new Response(c11.body, { status: c11.status, statusText: c11.statusText, headers: d11 });
+        } catch (b11) {
+          let a11 = b11 instanceof Error ? b11.message : "Unknown error";
+          return g7("proxy_request_failed", `Failed to proxy request to Clerk FAPI: ${a11}`, 502);
+        }
+      }
+      c(617), c(739), c(600).s;
+      var g9 = c(371);
+      let ha = `${g9.s8};404`;
+      c(685).X, c(503), "u" < typeof URLPattern || URLPattern, c(967), c(142), c(797), c(664), c(301);
+      let hb = "x-middleware-rewrite", hc = "x-middleware-next", hd = "Location", he = "next-url", hf = "next-action", hg = "x-nextjs-data", hh = (a10, b10, c10) => (a10.headers.set(b10, c10), a10), hi = "__clerk_db_jwt", hj = (a10) => {
+        if (!a10 || "string" != typeof a10) return a10;
+        try {
+          return (a10 || "").replace(/^(sk_(live|test)_)(.+?)(.{3})$/, "$1*********$4");
+        } catch {
+          return "";
+        }
+      }, hk = (a10) => (Array.isArray(a10) ? a10 : [a10]).map((a11) => "string" == typeof a11 ? hj(a11) : JSON.stringify(Object.fromEntries(Object.entries(a11).map(([a12, b10]) => [a12, hj(b10)])), null, 2)).join(", ");
+      function hl(a10, b10, c10) {
+        return "function" == typeof a10 ? a10(b10) : void 0 !== a10 ? a10 : void 0 !== c10 ? c10 : void 0;
+      }
+      let hm = (a10) => {
+        let b10 = (c10) => {
+          if (!c10) return c10;
+          if (Array.isArray(c10)) return c10.map((a11) => "object" == typeof a11 || Array.isArray(a11) ? b10(a11) : a11);
+          let d10 = { ...c10 };
+          for (let c11 of Object.keys(d10)) {
+            let e10 = a10(c11.toString());
+            e10 !== c11 && (d10[e10] = d10[c11], delete d10[c11]), "object" == typeof d10[e10] && (d10[e10] = b10(d10[e10]));
+          }
+          return d10;
+        };
+        return b10;
+      };
+      function hn(a10) {
+        if ("boolean" == typeof a10) return a10;
+        if (null == a10) return false;
+        if ("string" == typeof a10) {
+          if ("true" === a10.toLowerCase()) return true;
+          if ("false" === a10.toLowerCase()) return false;
+        }
+        let b10 = parseInt(a10, 10);
+        return !isNaN(b10) && b10 > 0;
+      }
+      hm(function(a10) {
+        return a10 ? a10.replace(/[A-Z]/g, (a11) => `_${a11.toLowerCase()}`) : "";
+      }), hm(function(a10) {
+        return a10 ? a10.replace(/([-_][a-z])/g, (a11) => a11.toUpperCase().replace(/-|_/, "")) : "";
+      }), process.env.NEXT_PUBLIC_CLERK_JS_VERSION, process.env.NEXT_PUBLIC_CLERK_JS_URL, process.env.NEXT_PUBLIC_CLERK_UI_URL, process.env.NEXT_PUBLIC_CLERK_UI_VERSION;
+      let ho = process.env.CLERK_API_VERSION || "v1", hp = process.env.CLERK_SECRET_KEY || "", hq = process.env.CLERK_MACHINE_SECRET_KEY || "", hr = "pk_test_Y29tcG9zZWQtY2hlZXRhaC03Ny5jbGVyay5hY2NvdW50cy5kZXYk", hs = process.env.CLERK_ENCRYPTION_KEY || "", ht = process.env.CLERK_API_URL || (m = ce(hr)?.frontendApi, m?.startsWith("clerk.") && b3.some((a10) => m?.endsWith(a10)) ? b8 : b6.some((a10) => m?.endsWith(a10)) ? "https://api.lclclerk.com" : b7.some((a10) => m?.endsWith(a10)) ? "https://api.clerkstage.dev" : b8), hu = process.env.NEXT_PUBLIC_CLERK_DOMAIN || "", hv = process.env.NEXT_PUBLIC_CLERK_PROXY_URL || "", hw = hn(process.env.NEXT_PUBLIC_CLERK_IS_SATELLITE) || false, hx = "/sign-in", hy = hn(process.env.NEXT_PUBLIC_CLERK_TELEMETRY_DISABLED), hz = hn(process.env.NEXT_PUBLIC_CLERK_TELEMETRY_DEBUG), hA = hn(process.env.NEXT_PUBLIC_CLERK_KEYLESS_DISABLED) || false, hB = false, hC = Symbol.for("clerk_use_cache_error");
+      class hD extends (ig = Error, ie = hC, ig) {
+        constructor(a10, b10) {
+          super(a10), this.originalError = b10, this[ie] = true, this.name = "ClerkUseCacheError";
+        }
+      }
+      let hE = /inside\s+["']use cache["']|["']use cache["'].*(?:headers|cookies)|(?:headers|cookies).*["']use cache["']/i, hF = /cache scope/i, hG = /dynamic data source/i, hH = /Route .*? needs to bail out of prerendering at this point because it used .*?./, hI = (a10) => {
+        if (!(a10 instanceof Error) || !("message" in a10)) return false;
+        let { message: b10 } = a10, c10 = b10.toLowerCase();
+        return hH.test(b10) || c10.includes("dynamic server usage") || c10.includes("this page needs to bail out of prerendering") || c10.includes("during prerendering");
+      }, hJ = `Clerk: auth() and currentUser() cannot be called inside a "use cache" function. These functions access \`headers()\` internally, which is a dynamic API not allowed in cached contexts.
+
+To fix this, call auth() outside the cached function and pass the values you need as arguments:
+
+  import { auth, clerkClient } from '@clerk/nextjs/server';
+
+  async function getCachedUser(userId: string) {
+    "use cache";
+    const client = await clerkClient();
+    return client.users.getUser(userId);
+  }
+
+  // In your component/page:
+  const { userId } = await auth();
+  if (userId) {
+    const user = await getCachedUser(userId);
+  }`;
+      async function hK() {
+        try {
+          let { headers: a10 } = await Promise.resolve().then(c.bind(c, 172)), b10 = await a10();
+          return new _("https://placeholder.com", { headers: b10 });
+        } catch (a10) {
+          if (a10 && hI(a10)) throw a10;
+          if (a10 && ((a11) => {
+            if (!(a11 instanceof Error)) return false;
+            let { message: b10 } = a11;
+            return !!(hE.test(b10) || hF.test(b10) && hG.test(b10));
+          })(a10)) throw new hD(`${hJ}
+
+Original error: ${a10.message}`, a10);
+          throw Error(`Clerk: auth(), currentUser() and clerkClient(), are only supported in App Router (/app directory).
+If you're using /pages, try getAuth() instead.
+Original error: ${a10}`);
+        }
+      }
+      var hL = class {
+        #b;
+        #c = 864e5;
+        constructor(a10) {
+          this.#b = a10;
+        }
+        isEventThrottled(a10) {
+          let b10 = Date.now(), c10 = this.#d(a10), d10 = this.#b.getItem(c10);
+          return !!d10 && !(b10 - d10 > this.#c) || (this.#b.setItem(c10, b10), false);
+        }
+        #d(a10) {
+          let { sk: b10, pk: c10, payload: d10, ...e10 } = a10, f10 = { ...d10, ...e10 };
+          return JSON.stringify(Object.keys({ ...d10, ...e10 }).sort().map((a11) => f10[a11]));
+        }
+      }, hM = class {
+        #e = "clerk_telemetry_throttler";
+        getItem(a10) {
+          return this.#f()[a10];
+        }
+        setItem(a10, b10) {
+          try {
+            let c10 = this.#f();
+            c10[a10] = b10, localStorage.setItem(this.#e, JSON.stringify(c10));
+          } catch (a11) {
+            a11 instanceof DOMException && ("QuotaExceededError" === a11.name || "NS_ERROR_DOM_QUOTA_REACHED" === a11.name) && localStorage.length > 0 && localStorage.removeItem(this.#e);
+          }
+        }
+        removeItem(a10) {
+          try {
+            let b10 = this.#f();
+            delete b10[a10], localStorage.setItem(this.#e, JSON.stringify(b10));
+          } catch {
+          }
+        }
+        #f() {
+          try {
+            let a10 = localStorage.getItem(this.#e);
+            if (!a10) return {};
+            return JSON.parse(a10);
+          } catch {
+            return {};
+          }
+        }
+        static isSupported() {
+          return "u" > typeof window && !!window.localStorage;
+        }
+      }, hN = class {
+        #b = /* @__PURE__ */ new Map();
+        #g = 1e4;
+        getItem(a10) {
+          return this.#b.size > this.#g ? void this.#b.clear() : this.#b.get(a10);
+        }
+        setItem(a10, b10) {
+          this.#b.set(a10, b10);
+        }
+        removeItem(a10) {
+          this.#b.delete(a10);
+        }
+      };
+      let hO = /* @__PURE__ */ new Set(["error", "warn", "info", "debug", "trace"]);
+      var hP = class {
+        #h;
+        #i;
+        #j = {};
+        #k = [];
+        #l = null;
+        constructor(a10) {
+          this.#h = { maxBufferSize: a10.maxBufferSize ?? 5, samplingRate: a10.samplingRate ?? 1, perEventSampling: a10.perEventSampling ?? true, disabled: a10.disabled ?? false, debug: a10.debug ?? false, endpoint: "https://clerk-telemetry.com" }, !a10.clerkVersion && "u" < typeof window ? this.#j.clerkVersion = "" : this.#j.clerkVersion = a10.clerkVersion ?? "", this.#j.sdk = a10.sdk, this.#j.sdkVersion = a10.sdkVersion, this.#j.publishableKey = a10.publishableKey ?? "";
+          const b10 = ce(a10.publishableKey);
+          b10 && (this.#j.instanceType = b10.instanceType), a10.secretKey && (this.#j.secretKey = a10.secretKey.substring(0, 16)), this.#i = new hL(hM.isSupported() ? new hM() : new hN());
+        }
+        get isEnabled() {
+          return !("development" !== this.#j.instanceType || this.#h.disabled || "u" > typeof process && process.env && hn(process.env.CLERK_TELEMETRY_DISABLED) || "u" > typeof window && window?.navigator?.webdriver);
+        }
+        get isDebug() {
+          return this.#h.debug || "u" > typeof process && process.env && hn(process.env.CLERK_TELEMETRY_DEBUG);
+        }
+        record(a10) {
+          try {
+            let b10 = this.#m(a10.event, a10.payload);
+            if (this.#n(b10.event, b10), !this.#o(b10, a10.eventSamplingRate)) return;
+            this.#k.push({ kind: "event", value: b10 }), this.#p();
+          } catch (a11) {
+            console.error("[clerk/telemetry] Error recording telemetry event", a11);
+          }
+        }
+        recordLog(a10) {
+          try {
+            if (!this.#q(a10)) return;
+            let b10 = "string" == typeof a10?.level && hO.has(a10.level), c10 = "string" == typeof a10?.message && a10.message.trim().length > 0, d10 = null, e10 = a10?.timestamp;
+            if ("number" == typeof e10 || "string" == typeof e10) {
+              let a11 = new Date(e10);
+              Number.isNaN(a11.getTime()) || (d10 = a11);
+            }
+            if (!b10 || !c10 || null === d10) {
+              this.isDebug && "u" > typeof console && console.warn("[clerk/telemetry] Dropping invalid telemetry log entry", { levelIsValid: b10, messageIsValid: c10, timestampIsValid: null !== d10 });
+              return;
+            }
+            let f10 = this.#r(), g10 = { sdk: f10.name, sdkv: f10.version, cv: this.#j.clerkVersion ?? "", lvl: a10.level, msg: a10.message, ts: d10.toISOString(), pk: this.#j.publishableKey || null, payload: this.#s(a10.context) };
+            this.#k.push({ kind: "log", value: g10 }), this.#p();
+          } catch (a11) {
+            console.error("[clerk/telemetry] Error recording telemetry log entry", a11);
+          }
+        }
+        #o(a10, b10) {
+          return this.isEnabled && !this.isDebug && this.#t(a10, b10);
+        }
+        #q(a10) {
+          return true;
+        }
+        #t(a10, b10) {
+          let c10 = Math.random();
+          return !!(c10 <= this.#h.samplingRate && (false === this.#h.perEventSampling || void 0 === b10 || c10 <= b10)) && !this.#i.isEventThrottled(a10);
+        }
+        #p() {
+          if ("u" < typeof window) return void this.#u();
+          if (this.#k.length >= this.#h.maxBufferSize) {
+            this.#l && ("u" > typeof cancelIdleCallback ? cancelIdleCallback(Number(this.#l)) : clearTimeout(Number(this.#l))), this.#u();
+            return;
+          }
+          this.#l || ("requestIdleCallback" in window ? this.#l = requestIdleCallback(() => {
+            this.#u(), this.#l = null;
+          }) : this.#l = setTimeout(() => {
+            this.#u(), this.#l = null;
+          }, 0));
+        }
+        #u() {
+          let a10 = [...this.#k];
+          if (this.#k = [], this.#l = null, 0 === a10.length) return;
+          let b10 = a10.filter((a11) => "event" === a11.kind).map((a11) => a11.value), c10 = a10.filter((a11) => "log" === a11.kind).map((a11) => a11.value);
+          b10.length > 0 && fetch(new URL("/v1/event", this.#h.endpoint), { headers: { "Content-Type": "application/json" }, keepalive: true, method: "POST", body: JSON.stringify({ events: b10 }) }).catch(() => void 0), c10.length > 0 && fetch(new URL("/v1/logs", this.#h.endpoint), { headers: { "Content-Type": "application/json" }, keepalive: true, method: "POST", body: JSON.stringify({ logs: c10 }) }).catch(() => void 0);
+        }
+        #n(a10, b10) {
+          this.isDebug && (void 0 !== console.groupCollapsed ? (console.groupCollapsed("[clerk/telemetry]", a10), console.log(b10), console.groupEnd()) : console.log("[clerk/telemetry]", a10, b10));
+        }
+        #r() {
+          let a10 = { name: this.#j.sdk, version: this.#j.sdkVersion };
+          if ("u" > typeof window) {
+            let b10 = window;
+            if (b10.Clerk) {
+              let c10 = b10.Clerk;
+              if ("object" == typeof c10 && null !== c10 && "constructor" in c10 && "function" == typeof c10.constructor && c10.constructor.sdkMetadata) {
+                let { name: b11, version: d10 } = c10.constructor.sdkMetadata;
+                void 0 !== b11 && (a10.name = b11), void 0 !== d10 && (a10.version = d10);
+              }
+            }
+          }
+          return a10;
+        }
+        #m(a10, b10) {
+          let c10 = this.#r();
+          return { event: a10, cv: this.#j.clerkVersion ?? "", it: this.#j.instanceType ?? "", sdk: c10.name, sdkv: c10.version, ...this.#j.publishableKey ? { pk: this.#j.publishableKey } : {}, ...this.#j.secretKey ? { sk: this.#j.secretKey } : {}, payload: b10 };
+        }
+        #s(a10) {
+          if (null == a10 || "object" != typeof a10) return null;
+          try {
+            let b10 = JSON.parse(JSON.stringify(a10));
+            if (b10 && "object" == typeof b10 && !Array.isArray(b10)) return b10;
+            return null;
+          } catch {
+            return null;
+          }
+        }
+      };
+      let hQ = { secretKey: hp, publishableKey: hr, apiUrl: ht, apiVersion: ho, userAgent: "@clerk/nextjs@7.0.6", proxyUrl: hv, domain: hu, isSatellite: hw, machineSecretKey: hq, sdkMetadata: { name: "@clerk/nextjs", version: "7.0.6", environment: "production" }, telemetry: { disabled: hy, debug: hz } }, hR = (a10) => {
+        var b10;
+        let c10, d10, e10, f10, g10, h10;
+        return d10 = gw(c10 = { ...hQ, ...a10 }), e10 = dT(g4, (b10 = { options: c10, apiClient: d10 }).options), f10 = b10.apiClient, g10 = { authenticateRequest: (a11, b11 = {}) => {
+          let { apiUrl: c11, apiVersion: d11 } = e10, g11 = dT(e10, b11);
+          return g1(a11, { ...b11, ...g11, apiUrl: c11, apiVersion: d11, apiClient: f10 });
+        }, debugRequestState: g2 }, h10 = new hP({ publishableKey: c10.publishableKey, secretKey: c10.secretKey, samplingRate: 0.1, ...c10.sdkMetadata ? { sdk: c10.sdkMetadata.name, sdkVersion: c10.sdkMetadata.version } : {}, ...c10.telemetry || {} }), { ...d10, ...g10, telemetry: h10 };
+      };
+      function hS(a10, b10) {
+        var c10, d10;
+        return function(a11) {
+          try {
+            let { headers: b11, nextUrl: c11, cookies: d11 } = a11 || {};
+            return "function" == typeof (null == b11 ? void 0 : b11.get) && "function" == typeof (null == c11 ? void 0 : c11.searchParams.get) && "function" == typeof (null == d11 ? void 0 : d11.get);
+          } catch {
+            return false;
+          }
+        }(a10) || function(a11) {
+          try {
+            let { headers: b11 } = a11 || {};
+            return "function" == typeof (null == b11 ? void 0 : b11.get);
+          } catch {
+            return false;
+          }
+        }(a10) ? a10.headers.get(b10) : a10.headers[b10] || a10.headers[b10.toLowerCase()] || (null == (d10 = null == (c10 = a10.socket) ? void 0 : c10._httpMessage) ? void 0 : d10.getHeader(b10));
+      }
+      var hT = c(521);
+      let hU = /* @__PURE__ */ new Map(), hV = new hT.AsyncLocalStorage();
+      function hW(a10) {
+        return /^http(s)?:\/\//.test(a10 || "");
+      }
+      var hX, hY, hZ, h$, h_, h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, ia, ib, ic, id, ie, ig, ih, ii, ij, ik, il, im, io, ip = Object.defineProperty, iq = (null == (ih = "u" > typeof globalThis ? globalThis : void 0) ? void 0 : ih.crypto) || (null == (ii = void 0 !== c.g ? c.g : void 0) ? void 0 : ii.crypto) || (null == (ij = "u" > typeof window ? window : void 0) ? void 0 : ij.crypto) || (null == (ik = "u" > typeof self ? self : void 0) ? void 0 : ik.crypto) || (null == (im = null == (il = "u" > typeof frames ? frames : void 0) ? void 0 : il[0]) ? void 0 : im.crypto);
+      io = iq ? (a10) => {
+        let b10 = [];
+        for (let c10 = 0; c10 < a10; c10 += 4) b10.push(iq.getRandomValues(new Uint32Array(1))[0]);
+        return new is(b10, a10);
+      } : (a10) => {
+        let b10 = [], c10 = (a11) => {
+          let b11 = a11, c11 = 987654321;
+          return () => {
+            let a12 = ((c11 = 36969 * (65535 & c11) + (c11 >> 16) | 0) << 16) + (b11 = 18e3 * (65535 & b11) + (b11 >> 16) | 0) | 0;
+            return a12 /= 4294967296, (a12 += 0.5) * (Math.random() > 0.5 ? 1 : -1);
+          };
+        };
+        for (let d10 = 0, e10; d10 < a10; d10 += 4) {
+          let a11 = c10(4294967296 * (e10 || Math.random()));
+          e10 = 987654071 * a11(), b10.push(4294967296 * a11() | 0);
+        }
+        return new is(b10, a10);
+      };
+      var ir = class {
+        static create(...a10) {
+          return new this(...a10);
+        }
+        mixIn(a10) {
+          return Object.assign(this, a10);
+        }
+        clone() {
+          let a10 = new this.constructor();
+          return Object.assign(a10, this), a10;
+        }
+      }, is = class extends ir {
+        constructor(a10 = [], b10 = 4 * a10.length) {
+          super();
+          let c10 = a10;
+          if (c10 instanceof ArrayBuffer && (c10 = new Uint8Array(c10)), (c10 instanceof Int8Array || c10 instanceof Uint8ClampedArray || c10 instanceof Int16Array || c10 instanceof Uint16Array || c10 instanceof Int32Array || c10 instanceof Uint32Array || c10 instanceof Float32Array || c10 instanceof Float64Array) && (c10 = new Uint8Array(c10.buffer, c10.byteOffset, c10.byteLength)), c10 instanceof Uint8Array) {
+            let a11 = c10.byteLength, b11 = [];
+            for (let d10 = 0; d10 < a11; d10 += 1) b11[d10 >>> 2] |= c10[d10] << 24 - d10 % 4 * 8;
+            this.words = b11, this.sigBytes = a11;
+          } else this.words = a10, this.sigBytes = b10;
+        }
+        toString(a10 = it) {
+          return a10.stringify(this);
+        }
+        concat(a10) {
+          let b10 = this.words, c10 = a10.words, d10 = this.sigBytes, e10 = a10.sigBytes;
+          if (this.clamp(), d10 % 4) for (let a11 = 0; a11 < e10; a11 += 1) {
+            let e11 = c10[a11 >>> 2] >>> 24 - a11 % 4 * 8 & 255;
+            b10[d10 + a11 >>> 2] |= e11 << 24 - (d10 + a11) % 4 * 8;
+          }
+          else for (let a11 = 0; a11 < e10; a11 += 4) b10[d10 + a11 >>> 2] = c10[a11 >>> 2];
+          return this.sigBytes += e10, this;
+        }
+        clamp() {
+          let { words: a10, sigBytes: b10 } = this;
+          a10[b10 >>> 2] &= 4294967295 << 32 - b10 % 4 * 8, a10.length = Math.ceil(b10 / 4);
+        }
+        clone() {
+          let a10 = super.clone.call(this);
+          return a10.words = this.words.slice(0), a10;
+        }
+      };
+      (n = "symbol" != typeof (o = "random") ? o + "" : o) in is ? ip(is, n, { enumerable: true, configurable: true, writable: true, value: io }) : is[n] = io;
+      var it = { stringify(a10) {
+        let { words: b10, sigBytes: c10 } = a10, d10 = [];
+        for (let a11 = 0; a11 < c10; a11 += 1) {
+          let c11 = b10[a11 >>> 2] >>> 24 - a11 % 4 * 8 & 255;
+          d10.push((c11 >>> 4).toString(16)), d10.push((15 & c11).toString(16));
+        }
+        return d10.join("");
+      }, parse(a10) {
+        let b10 = a10.length, c10 = [];
+        for (let d10 = 0; d10 < b10; d10 += 2) c10[d10 >>> 3] |= parseInt(a10.substr(d10, 2), 16) << 24 - d10 % 8 * 4;
+        return new is(c10, b10 / 2);
+      } }, iu = { stringify(a10) {
+        let { words: b10, sigBytes: c10 } = a10, d10 = [];
+        for (let a11 = 0; a11 < c10; a11 += 1) {
+          let c11 = b10[a11 >>> 2] >>> 24 - a11 % 4 * 8 & 255;
+          d10.push(String.fromCharCode(c11));
+        }
+        return d10.join("");
+      }, parse(a10) {
+        let b10 = a10.length, c10 = [];
+        for (let d10 = 0; d10 < b10; d10 += 1) c10[d10 >>> 2] |= (255 & a10.charCodeAt(d10)) << 24 - d10 % 4 * 8;
+        return new is(c10, b10);
+      } }, iv = { stringify(a10) {
+        try {
+          return decodeURIComponent(escape(iu.stringify(a10)));
+        } catch {
+          throw Error("Malformed UTF-8 data");
+        }
+      }, parse: (a10) => iu.parse(unescape(encodeURIComponent(a10))) }, iw = class extends ir {
+        constructor() {
+          super(), this._minBufferSize = 0;
+        }
+        reset() {
+          this._data = new is(), this._nDataBytes = 0;
+        }
+        _append(a10) {
+          let b10 = a10;
+          "string" == typeof b10 && (b10 = iv.parse(b10)), this._data.concat(b10), this._nDataBytes += b10.sigBytes;
+        }
+        _process(a10) {
+          let b10, { _data: c10, blockSize: d10 } = this, e10 = c10.words, f10 = c10.sigBytes, g10 = f10 / (4 * d10), h10 = (g10 = a10 ? Math.ceil(g10) : Math.max((0 | g10) - this._minBufferSize, 0)) * d10, i10 = Math.min(4 * h10, f10);
+          if (h10) {
+            for (let a11 = 0; a11 < h10; a11 += d10) this._doProcessBlock(e10, a11);
+            b10 = e10.splice(0, h10), c10.sigBytes -= i10;
+          }
+          return new is(b10, i10);
+        }
+        clone() {
+          let a10 = super.clone.call(this);
+          return a10._data = this._data.clone(), a10;
+        }
+      }, ix = class extends iw {
+        constructor(a10) {
+          super(), this.blockSize = 16, this.cfg = Object.assign(new ir(), a10), this.reset();
+        }
+        static _createHelper(a10) {
+          return (b10, c10) => new a10(c10).finalize(b10);
+        }
+        static _createHmacHelper(a10) {
+          return (b10, c10) => new iy(a10, c10).finalize(b10);
+        }
+        reset() {
+          super.reset.call(this), this._doReset();
+        }
+        update(a10) {
+          return this._append(a10), this._process(), this;
+        }
+        finalize(a10) {
+          return a10 && this._append(a10), this._doFinalize();
+        }
+      }, iy = class extends ir {
+        constructor(a10, b10) {
+          super();
+          let c10 = new a10();
+          this._hasher = c10;
+          let d10 = b10;
+          "string" == typeof d10 && (d10 = iv.parse(d10));
+          let e10 = c10.blockSize, f10 = 4 * e10;
+          d10.sigBytes > f10 && (d10 = c10.finalize(b10)), d10.clamp();
+          let g10 = d10.clone();
+          this._oKey = g10;
+          let h10 = d10.clone();
+          this._iKey = h10;
+          let i10 = g10.words, j2 = h10.words;
+          for (let a11 = 0; a11 < e10; a11 += 1) i10[a11] ^= 1549556828, j2[a11] ^= 909522486;
+          g10.sigBytes = f10, h10.sigBytes = f10, this.reset();
+        }
+        reset() {
+          let a10 = this._hasher;
+          a10.reset(), a10.update(this._iKey);
+        }
+        update(a10) {
+          return this._hasher.update(a10), this;
+        }
+        finalize(a10) {
+          let b10 = this._hasher, c10 = b10.finalize(a10);
+          return b10.reset(), b10.finalize(this._oKey.clone().concat(c10));
+        }
+      }, iz = { stringify(a10) {
+        let { words: b10, sigBytes: c10 } = a10, d10 = this._map;
+        a10.clamp();
+        let e10 = [];
+        for (let a11 = 0; a11 < c10; a11 += 3) {
+          let f11 = (b10[a11 >>> 2] >>> 24 - a11 % 4 * 8 & 255) << 16 | (b10[a11 + 1 >>> 2] >>> 24 - (a11 + 1) % 4 * 8 & 255) << 8 | b10[a11 + 2 >>> 2] >>> 24 - (a11 + 2) % 4 * 8 & 255;
+          for (let b11 = 0; b11 < 4 && a11 + 0.75 * b11 < c10; b11 += 1) e10.push(d10.charAt(f11 >>> 6 * (3 - b11) & 63));
+        }
+        let f10 = d10.charAt(64);
+        if (f10) for (; e10.length % 4; ) e10.push(f10);
+        return e10.join("");
+      }, parse(a10) {
+        let b10 = a10.length, c10 = this._map, d10 = this._reverseMap;
+        if (!d10) {
+          this._reverseMap = [], d10 = this._reverseMap;
+          for (let a11 = 0; a11 < c10.length; a11 += 1) d10[c10.charCodeAt(a11)] = a11;
+        }
+        let e10 = c10.charAt(64);
+        if (e10) {
+          let c11 = a10.indexOf(e10);
+          -1 !== c11 && (b10 = c11);
+        }
+        var f10 = b10, g10 = d10;
+        let h10 = [], i10 = 0;
+        for (let b11 = 0; b11 < f10; b11 += 1) if (b11 % 4) {
+          let c11 = g10[a10.charCodeAt(b11 - 1)] << b11 % 4 * 2 | g10[a10.charCodeAt(b11)] >>> 6 - b11 % 4 * 2;
+          h10[i10 >>> 2] |= c11 << 24 - i10 % 4 * 8, i10 += 1;
+        }
+        return is.create(h10, i10);
+      }, _map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" }, iA = [];
+      for (let a10 = 0; a10 < 64; a10 += 1) iA[a10] = 4294967296 * Math.abs(Math.sin(a10 + 1)) | 0;
+      var iB = (a10, b10, c10, d10, e10, f10, g10) => {
+        let h10 = a10 + (b10 & c10 | ~b10 & d10) + e10 + g10;
+        return (h10 << f10 | h10 >>> 32 - f10) + b10;
+      }, iC = (a10, b10, c10, d10, e10, f10, g10) => {
+        let h10 = a10 + (b10 & d10 | c10 & ~d10) + e10 + g10;
+        return (h10 << f10 | h10 >>> 32 - f10) + b10;
+      }, iD = (a10, b10, c10, d10, e10, f10, g10) => {
+        let h10 = a10 + (b10 ^ c10 ^ d10) + e10 + g10;
+        return (h10 << f10 | h10 >>> 32 - f10) + b10;
+      }, iE = (a10, b10, c10, d10, e10, f10, g10) => {
+        let h10 = a10 + (c10 ^ (b10 | ~d10)) + e10 + g10;
+        return (h10 << f10 | h10 >>> 32 - f10) + b10;
+      }, iF = class extends ix {
+        _doReset() {
+          this._hash = new is([1732584193, 4023233417, 2562383102, 271733878]);
+        }
+        _doProcessBlock(a10, b10) {
+          for (let c11 = 0; c11 < 16; c11 += 1) {
+            let d11 = b10 + c11, e11 = a10[d11];
+            a10[d11] = (e11 << 8 | e11 >>> 24) & 16711935 | (e11 << 24 | e11 >>> 8) & 4278255360;
+          }
+          let c10 = this._hash.words, d10 = a10[b10 + 0], e10 = a10[b10 + 1], f10 = a10[b10 + 2], g10 = a10[b10 + 3], h10 = a10[b10 + 4], i10 = a10[b10 + 5], j2 = a10[b10 + 6], k2 = a10[b10 + 7], l2 = a10[b10 + 8], m2 = a10[b10 + 9], n2 = a10[b10 + 10], o2 = a10[b10 + 11], p2 = a10[b10 + 12], q2 = a10[b10 + 13], r2 = a10[b10 + 14], s2 = a10[b10 + 15], t2 = c10[0], u2 = c10[1], v2 = c10[2], w2 = c10[3];
+          t2 = iB(t2, u2, v2, w2, d10, 7, iA[0]), w2 = iB(w2, t2, u2, v2, e10, 12, iA[1]), v2 = iB(v2, w2, t2, u2, f10, 17, iA[2]), u2 = iB(u2, v2, w2, t2, g10, 22, iA[3]), t2 = iB(t2, u2, v2, w2, h10, 7, iA[4]), w2 = iB(w2, t2, u2, v2, i10, 12, iA[5]), v2 = iB(v2, w2, t2, u2, j2, 17, iA[6]), u2 = iB(u2, v2, w2, t2, k2, 22, iA[7]), t2 = iB(t2, u2, v2, w2, l2, 7, iA[8]), w2 = iB(w2, t2, u2, v2, m2, 12, iA[9]), v2 = iB(v2, w2, t2, u2, n2, 17, iA[10]), u2 = iB(u2, v2, w2, t2, o2, 22, iA[11]), t2 = iB(t2, u2, v2, w2, p2, 7, iA[12]), w2 = iB(w2, t2, u2, v2, q2, 12, iA[13]), v2 = iB(v2, w2, t2, u2, r2, 17, iA[14]), u2 = iB(u2, v2, w2, t2, s2, 22, iA[15]), t2 = iC(t2, u2, v2, w2, e10, 5, iA[16]), w2 = iC(w2, t2, u2, v2, j2, 9, iA[17]), v2 = iC(v2, w2, t2, u2, o2, 14, iA[18]), u2 = iC(u2, v2, w2, t2, d10, 20, iA[19]), t2 = iC(t2, u2, v2, w2, i10, 5, iA[20]), w2 = iC(w2, t2, u2, v2, n2, 9, iA[21]), v2 = iC(v2, w2, t2, u2, s2, 14, iA[22]), u2 = iC(u2, v2, w2, t2, h10, 20, iA[23]), t2 = iC(t2, u2, v2, w2, m2, 5, iA[24]), w2 = iC(w2, t2, u2, v2, r2, 9, iA[25]), v2 = iC(v2, w2, t2, u2, g10, 14, iA[26]), u2 = iC(u2, v2, w2, t2, l2, 20, iA[27]), t2 = iC(t2, u2, v2, w2, q2, 5, iA[28]), w2 = iC(w2, t2, u2, v2, f10, 9, iA[29]), v2 = iC(v2, w2, t2, u2, k2, 14, iA[30]), u2 = iC(u2, v2, w2, t2, p2, 20, iA[31]), t2 = iD(t2, u2, v2, w2, i10, 4, iA[32]), w2 = iD(w2, t2, u2, v2, l2, 11, iA[33]), v2 = iD(v2, w2, t2, u2, o2, 16, iA[34]), u2 = iD(u2, v2, w2, t2, r2, 23, iA[35]), t2 = iD(t2, u2, v2, w2, e10, 4, iA[36]), w2 = iD(w2, t2, u2, v2, h10, 11, iA[37]), v2 = iD(v2, w2, t2, u2, k2, 16, iA[38]), u2 = iD(u2, v2, w2, t2, n2, 23, iA[39]), t2 = iD(t2, u2, v2, w2, q2, 4, iA[40]), w2 = iD(w2, t2, u2, v2, d10, 11, iA[41]), v2 = iD(v2, w2, t2, u2, g10, 16, iA[42]), u2 = iD(u2, v2, w2, t2, j2, 23, iA[43]), t2 = iD(t2, u2, v2, w2, m2, 4, iA[44]), w2 = iD(w2, t2, u2, v2, p2, 11, iA[45]), v2 = iD(v2, w2, t2, u2, s2, 16, iA[46]), u2 = iD(u2, v2, w2, t2, f10, 23, iA[47]), t2 = iE(t2, u2, v2, w2, d10, 6, iA[48]), w2 = iE(w2, t2, u2, v2, k2, 10, iA[49]), v2 = iE(v2, w2, t2, u2, r2, 15, iA[50]), u2 = iE(u2, v2, w2, t2, i10, 21, iA[51]), t2 = iE(t2, u2, v2, w2, p2, 6, iA[52]), w2 = iE(w2, t2, u2, v2, g10, 10, iA[53]), v2 = iE(v2, w2, t2, u2, n2, 15, iA[54]), u2 = iE(u2, v2, w2, t2, e10, 21, iA[55]), t2 = iE(t2, u2, v2, w2, l2, 6, iA[56]), w2 = iE(w2, t2, u2, v2, s2, 10, iA[57]), v2 = iE(v2, w2, t2, u2, j2, 15, iA[58]), u2 = iE(u2, v2, w2, t2, q2, 21, iA[59]), t2 = iE(t2, u2, v2, w2, h10, 6, iA[60]), w2 = iE(w2, t2, u2, v2, o2, 10, iA[61]), v2 = iE(v2, w2, t2, u2, f10, 15, iA[62]), u2 = iE(u2, v2, w2, t2, m2, 21, iA[63]), c10[0] = c10[0] + t2 | 0, c10[1] = c10[1] + u2 | 0, c10[2] = c10[2] + v2 | 0, c10[3] = c10[3] + w2 | 0;
+        }
+        _doFinalize() {
+          let a10 = this._data, b10 = a10.words, c10 = 8 * this._nDataBytes, d10 = 8 * a10.sigBytes;
+          b10[d10 >>> 5] |= 128 << 24 - d10 % 32;
+          let e10 = Math.floor(c10 / 4294967296);
+          b10[(d10 + 64 >>> 9 << 4) + 15] = (e10 << 8 | e10 >>> 24) & 16711935 | (e10 << 24 | e10 >>> 8) & 4278255360, b10[(d10 + 64 >>> 9 << 4) + 14] = (c10 << 8 | c10 >>> 24) & 16711935 | (c10 << 24 | c10 >>> 8) & 4278255360, a10.sigBytes = (b10.length + 1) * 4, this._process();
+          let f10 = this._hash, g10 = f10.words;
+          for (let a11 = 0; a11 < 4; a11 += 1) {
+            let b11 = g10[a11];
+            g10[a11] = (b11 << 8 | b11 >>> 24) & 16711935 | (b11 << 24 | b11 >>> 8) & 4278255360;
+          }
+          return f10;
+        }
+        clone() {
+          let a10 = super.clone.call(this);
+          return a10._hash = this._hash.clone(), a10;
+        }
+      };
+      ix._createHelper(iF), ix._createHmacHelper(iF);
+      var iG = class extends ir {
+        constructor(a10) {
+          super(), this.cfg = Object.assign(new ir(), { keySize: 4, hasher: iF, iterations: 1 }, a10);
+        }
+        compute(a10, b10) {
+          let c10, { cfg: d10 } = this, e10 = d10.hasher.create(), f10 = is.create(), g10 = f10.words, { keySize: h10, iterations: i10 } = d10;
+          for (; g10.length < h10; ) {
+            c10 && e10.update(c10), c10 = e10.update(a10).finalize(b10), e10.reset();
+            for (let a11 = 1; a11 < i10; a11 += 1) c10 = e10.finalize(c10), e10.reset();
+            f10.concat(c10);
+          }
+          return f10.sigBytes = 4 * h10, f10;
+        }
+      }, iH = class extends iw {
+        constructor(a10, b10, c10) {
+          super(), this.cfg = Object.assign(new ir(), c10), this._xformMode = a10, this._key = b10, this.reset();
+        }
+        static createEncryptor(a10, b10) {
+          return this.create(this._ENC_XFORM_MODE, a10, b10);
+        }
+        static createDecryptor(a10, b10) {
+          return this.create(this._DEC_XFORM_MODE, a10, b10);
+        }
+        static _createHelper(a10) {
+          let b10 = (a11) => "string" == typeof a11 ? iP : iO;
+          return { encrypt: (c10, d10, e10) => b10(d10).encrypt(a10, c10, d10, e10), decrypt: (c10, d10, e10) => b10(d10).decrypt(a10, c10, d10, e10) };
+        }
+        reset() {
+          super.reset.call(this), this._doReset();
+        }
+        process(a10) {
+          return this._append(a10), this._process();
+        }
+        finalize(a10) {
+          return a10 && this._append(a10), this._doFinalize();
+        }
+      };
+      iH._ENC_XFORM_MODE = 1, iH._DEC_XFORM_MODE = 2, iH.keySize = 4, iH.ivSize = 4;
+      var iI = class extends ir {
+        constructor(a10, b10) {
+          super(), this._cipher = a10, this._iv = b10;
+        }
+        static createEncryptor(a10, b10) {
+          return this.Encryptor.create(a10, b10);
+        }
+        static createDecryptor(a10, b10) {
+          return this.Decryptor.create(a10, b10);
+        }
+      };
+      function iJ(a10, b10, c10) {
+        let d10, e10 = this._iv;
+        e10 ? (d10 = e10, this._iv = void 0) : d10 = this._prevBlock;
+        for (let e11 = 0; e11 < c10; e11 += 1) a10[b10 + e11] ^= d10[e11];
+      }
+      var iK = class extends iI {
+      };
+      iK.Encryptor = class extends iK {
+        processBlock(a10, b10) {
+          let c10 = this._cipher, { blockSize: d10 } = c10;
+          iJ.call(this, a10, b10, d10), c10.encryptBlock(a10, b10), this._prevBlock = a10.slice(b10, b10 + d10);
+        }
+      }, iK.Decryptor = class extends iK {
+        processBlock(a10, b10) {
+          let c10 = this._cipher, { blockSize: d10 } = c10, e10 = a10.slice(b10, b10 + d10);
+          c10.decryptBlock(a10, b10), iJ.call(this, a10, b10, d10), this._prevBlock = e10;
+        }
+      };
+      var iL = { pad(a10, b10) {
+        let c10 = 4 * b10, d10 = c10 - a10.sigBytes % c10, e10 = d10 << 24 | d10 << 16 | d10 << 8 | d10, f10 = [];
+        for (let a11 = 0; a11 < d10; a11 += 4) f10.push(e10);
+        let g10 = is.create(f10, d10);
+        a10.concat(g10);
+      }, unpad(a10) {
+        let b10 = 255 & a10.words[a10.sigBytes - 1 >>> 2];
+        a10.sigBytes -= b10;
+      } }, iM = class extends iH {
+        constructor(a10, b10, c10) {
+          super(a10, b10, Object.assign({ mode: iK, padding: iL }, c10)), this.blockSize = 4;
+        }
+        reset() {
+          let a10;
+          super.reset.call(this);
+          let { cfg: b10 } = this, { iv: c10, mode: d10 } = b10;
+          this._xformMode === this.constructor._ENC_XFORM_MODE ? a10 = d10.createEncryptor : (a10 = d10.createDecryptor, this._minBufferSize = 1), this._mode = a10.call(d10, this, c10 && c10.words), this._mode.__creator = a10;
+        }
+        _doProcessBlock(a10, b10) {
+          this._mode.processBlock(a10, b10);
+        }
+        _doFinalize() {
+          let a10, { padding: b10 } = this.cfg;
+          return this._xformMode === this.constructor._ENC_XFORM_MODE ? (b10.pad(this._data, this.blockSize), a10 = this._process(true)) : (a10 = this._process(true), b10.unpad(a10)), a10;
+        }
+      }, iN = class extends ir {
+        constructor(a10) {
+          super(), this.mixIn(a10);
+        }
+        toString(a10) {
+          return (a10 || this.formatter).stringify(this);
+        }
+      }, iO = class extends ir {
+        static encrypt(a10, b10, c10, d10) {
+          let e10 = Object.assign(new ir(), this.cfg, d10), f10 = a10.createEncryptor(c10, e10), g10 = f10.finalize(b10), h10 = f10.cfg;
+          return iN.create({ ciphertext: g10, key: c10, iv: h10.iv, algorithm: a10, mode: h10.mode, padding: h10.padding, blockSize: f10.blockSize, formatter: e10.format });
+        }
+        static decrypt(a10, b10, c10, d10) {
+          let e10 = b10, f10 = Object.assign(new ir(), this.cfg, d10);
+          return e10 = this._parse(e10, f10.format), a10.createDecryptor(c10, f10).finalize(e10.ciphertext);
+        }
+        static _parse(a10, b10) {
+          return "string" == typeof a10 ? b10.parse(a10, this) : a10;
+        }
+      };
+      iO.cfg = Object.assign(new ir(), { format: { stringify(a10) {
+        let { ciphertext: b10, salt: c10 } = a10;
+        return (c10 ? is.create([1398893684, 1701076831]).concat(c10).concat(b10) : b10).toString(iz);
+      }, parse(a10) {
+        let b10, c10 = iz.parse(a10), d10 = c10.words;
+        return 1398893684 === d10[0] && 1701076831 === d10[1] && (b10 = is.create(d10.slice(2, 4)), d10.splice(0, 4), c10.sigBytes -= 16), iN.create({ ciphertext: c10, salt: b10 });
+      } } });
+      var iP = class extends iO {
+        static encrypt(a10, b10, c10, d10) {
+          let e10 = Object.assign(new ir(), this.cfg, d10), f10 = e10.kdf.execute(c10, a10.keySize, a10.ivSize, e10.salt, e10.hasher);
+          e10.iv = f10.iv;
+          let g10 = iO.encrypt.call(this, a10, b10, f10.key, e10);
+          return g10.mixIn(f10), g10;
+        }
+        static decrypt(a10, b10, c10, d10) {
+          let e10 = b10, f10 = Object.assign(new ir(), this.cfg, d10);
+          e10 = this._parse(e10, f10.format);
+          let g10 = f10.kdf.execute(c10, a10.keySize, a10.ivSize, e10.salt, f10.hasher);
+          return f10.iv = g10.iv, iO.decrypt.call(this, a10, e10, g10.key, f10);
+        }
+      };
+      iP.cfg = Object.assign(iO.cfg, { kdf: { execute(a10, b10, c10, d10, e10) {
+        let f10, g10 = d10;
+        g10 || (g10 = is.random(8)), f10 = e10 ? iG.create({ keySize: b10 + c10, hasher: e10 }).compute(a10, g10) : iG.create({ keySize: b10 + c10 }).compute(a10, g10);
+        let h10 = is.create(f10.words.slice(b10), 4 * c10);
+        return f10.sigBytes = 4 * b10, iN.create({ key: f10, iv: h10, salt: g10 });
+      } } });
+      var iQ = [], iR = [], iS = [], iT = [], iU = [], iV = [], iW = [], iX = [], iY = [], iZ = [], i$ = [];
+      for (let a10 = 0; a10 < 256; a10 += 1) a10 < 128 ? i$[a10] = a10 << 1 : i$[a10] = a10 << 1 ^ 283;
+      var i_ = 0, i0 = 0;
+      for (let a10 = 0; a10 < 256; a10 += 1) {
+        let a11 = i0 ^ i0 << 1 ^ i0 << 2 ^ i0 << 3 ^ i0 << 4;
+        a11 = a11 >>> 8 ^ 255 & a11 ^ 99, iQ[i_] = a11, iR[a11] = i_;
+        let b10 = i$[i_], c10 = i$[b10], d10 = i$[c10], e10 = 257 * i$[a11] ^ 16843008 * a11;
+        iS[i_] = e10 << 24 | e10 >>> 8, iT[i_] = e10 << 16 | e10 >>> 16, iU[i_] = e10 << 8 | e10 >>> 24, iV[i_] = e10, e10 = 16843009 * d10 ^ 65537 * c10 ^ 257 * b10 ^ 16843008 * i_, iW[a11] = e10 << 24 | e10 >>> 8, iX[a11] = e10 << 16 | e10 >>> 16, iY[a11] = e10 << 8 | e10 >>> 24, iZ[a11] = e10, i_ ? (i_ = b10 ^ i$[i$[i$[d10 ^ b10]]], i0 ^= i$[i$[i0]]) : i_ = i0 = 1;
+      }
+      var i1 = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54], i2 = class extends iM {
+        _doReset() {
+          let a10;
+          if (this._nRounds && this._keyPriorReset === this._key) return;
+          this._keyPriorReset = this._key;
+          let b10 = this._keyPriorReset, c10 = b10.words, d10 = b10.sigBytes / 4;
+          this._nRounds = d10 + 6;
+          let e10 = (this._nRounds + 1) * 4;
+          this._keySchedule = [];
+          let f10 = this._keySchedule;
+          for (let b11 = 0; b11 < e10; b11 += 1) b11 < d10 ? f10[b11] = c10[b11] : (a10 = f10[b11 - 1], b11 % d10 ? d10 > 6 && b11 % d10 == 4 && (a10 = iQ[a10 >>> 24] << 24 | iQ[a10 >>> 16 & 255] << 16 | iQ[a10 >>> 8 & 255] << 8 | iQ[255 & a10]) : a10 = (iQ[(a10 = a10 << 8 | a10 >>> 24) >>> 24] << 24 | iQ[a10 >>> 16 & 255] << 16 | iQ[a10 >>> 8 & 255] << 8 | iQ[255 & a10]) ^ i1[b11 / d10 | 0] << 24, f10[b11] = f10[b11 - d10] ^ a10);
+          this._invKeySchedule = [];
+          let g10 = this._invKeySchedule;
+          for (let b11 = 0; b11 < e10; b11 += 1) {
+            let c11 = e10 - b11;
+            a10 = b11 % 4 ? f10[c11] : f10[c11 - 4], b11 < 4 || c11 <= 4 ? g10[b11] = a10 : g10[b11] = iW[iQ[a10 >>> 24]] ^ iX[iQ[a10 >>> 16 & 255]] ^ iY[iQ[a10 >>> 8 & 255]] ^ iZ[iQ[255 & a10]];
+          }
+        }
+        encryptBlock(a10, b10) {
+          this._doCryptBlock(a10, b10, this._keySchedule, iS, iT, iU, iV, iQ);
+        }
+        decryptBlock(a10, b10) {
+          let c10 = a10[b10 + 1];
+          a10[b10 + 1] = a10[b10 + 3], a10[b10 + 3] = c10, this._doCryptBlock(a10, b10, this._invKeySchedule, iW, iX, iY, iZ, iR), c10 = a10[b10 + 1], a10[b10 + 1] = a10[b10 + 3], a10[b10 + 3] = c10;
+        }
+        _doCryptBlock(a10, b10, c10, d10, e10, f10, g10, h10) {
+          let i10 = this._nRounds, j2 = a10[b10] ^ c10[0], k2 = a10[b10 + 1] ^ c10[1], l2 = a10[b10 + 2] ^ c10[2], m2 = a10[b10 + 3] ^ c10[3], n2 = 4;
+          for (let a11 = 1; a11 < i10; a11 += 1) {
+            let a12 = d10[j2 >>> 24] ^ e10[k2 >>> 16 & 255] ^ f10[l2 >>> 8 & 255] ^ g10[255 & m2] ^ c10[n2];
+            n2 += 1;
+            let b11 = d10[k2 >>> 24] ^ e10[l2 >>> 16 & 255] ^ f10[m2 >>> 8 & 255] ^ g10[255 & j2] ^ c10[n2];
+            n2 += 1;
+            let h11 = d10[l2 >>> 24] ^ e10[m2 >>> 16 & 255] ^ f10[j2 >>> 8 & 255] ^ g10[255 & k2] ^ c10[n2];
+            n2 += 1;
+            let i11 = d10[m2 >>> 24] ^ e10[j2 >>> 16 & 255] ^ f10[k2 >>> 8 & 255] ^ g10[255 & l2] ^ c10[n2];
+            n2 += 1, j2 = a12, k2 = b11, l2 = h11, m2 = i11;
+          }
+          let o2 = (h10[j2 >>> 24] << 24 | h10[k2 >>> 16 & 255] << 16 | h10[l2 >>> 8 & 255] << 8 | h10[255 & m2]) ^ c10[n2];
+          n2 += 1;
+          let p2 = (h10[k2 >>> 24] << 24 | h10[l2 >>> 16 & 255] << 16 | h10[m2 >>> 8 & 255] << 8 | h10[255 & j2]) ^ c10[n2];
+          n2 += 1;
+          let q2 = (h10[l2 >>> 24] << 24 | h10[m2 >>> 16 & 255] << 16 | h10[j2 >>> 8 & 255] << 8 | h10[255 & k2]) ^ c10[n2];
+          n2 += 1;
+          let r2 = (h10[m2 >>> 24] << 24 | h10[j2 >>> 16 & 255] << 16 | h10[k2 >>> 8 & 255] << 8 | h10[255 & l2]) ^ c10[n2];
+          n2 += 1, a10[b10] = o2, a10[b10 + 1] = p2, a10[b10 + 2] = q2, a10[b10 + 3] = r2;
+        }
+      };
+      i2.keySize = 8;
+      var i3 = iM._createHelper(i2), i4 = [], i5 = class extends ix {
+        _doReset() {
+          this._hash = new is([1732584193, 4023233417, 2562383102, 271733878, 3285377520]);
+        }
+        _doProcessBlock(a10, b10) {
+          let c10 = this._hash.words, d10 = c10[0], e10 = c10[1], f10 = c10[2], g10 = c10[3], h10 = c10[4];
+          for (let c11 = 0; c11 < 80; c11 += 1) {
+            if (c11 < 16) i4[c11] = 0 | a10[b10 + c11];
+            else {
+              let a11 = i4[c11 - 3] ^ i4[c11 - 8] ^ i4[c11 - 14] ^ i4[c11 - 16];
+              i4[c11] = a11 << 1 | a11 >>> 31;
+            }
+            let i10 = (d10 << 5 | d10 >>> 27) + h10 + i4[c11];
+            c11 < 20 ? i10 += (e10 & f10 | ~e10 & g10) + 1518500249 : c11 < 40 ? i10 += (e10 ^ f10 ^ g10) + 1859775393 : c11 < 60 ? i10 += (e10 & f10 | e10 & g10 | f10 & g10) - 1894007588 : i10 += (e10 ^ f10 ^ g10) - 899497514, h10 = g10, g10 = f10, f10 = e10 << 30 | e10 >>> 2, e10 = d10, d10 = i10;
+          }
+          c10[0] = c10[0] + d10 | 0, c10[1] = c10[1] + e10 | 0, c10[2] = c10[2] + f10 | 0, c10[3] = c10[3] + g10 | 0, c10[4] = c10[4] + h10 | 0;
+        }
+        _doFinalize() {
+          let a10 = this._data, b10 = a10.words, c10 = 8 * this._nDataBytes, d10 = 8 * a10.sigBytes;
+          return b10[d10 >>> 5] |= 128 << 24 - d10 % 32, b10[(d10 + 64 >>> 9 << 4) + 14] = Math.floor(c10 / 4294967296), b10[(d10 + 64 >>> 9 << 4) + 15] = c10, a10.sigBytes = 4 * b10.length, this._process(), this._hash;
+        }
+        clone() {
+          let a10 = super.clone.call(this);
+          return a10._hash = this._hash.clone(), a10;
+        }
+      }, i6 = (ix._createHelper(i5), ix._createHmacHelper(i5));
+      let i7 = `
+Missing domain and proxyUrl. A satellite application needs to specify a domain or a proxyUrl.
+
+1) With middleware
+   e.g. export default clerkMiddleware({domain:'YOUR_DOMAIN',isSatellite:true});
+2) With environment variables e.g.
+   NEXT_PUBLIC_CLERK_DOMAIN='YOUR_DOMAIN'
+   NEXT_PUBLIC_CLERK_IS_SATELLITE='true'
+   `, i8 = `
+Invalid signInUrl. A satellite application requires a signInUrl for development instances.
+Check if signInUrl is missing from your configuration or if it is not an absolute URL
+
+1) With middleware
+   e.g. export default clerkMiddleware({signInUrl:'SOME_URL', isSatellite:true});
+2) With environment variables e.g.
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL='SOME_URL'
+   NEXT_PUBLIC_CLERK_IS_SATELLITE='true'`, i9 = `Clerk: Unable to decrypt request data.
+
+Refresh the page if your .env file was just updated. If the issue persists, ensure the encryption key is valid and properly set.
+
+For more information, see: https://clerk.com/docs/reference/nextjs/clerk-middleware#dynamic-keys. (code=encryption_key_invalid)`, ja = ct({ packageName: "@clerk/nextjs" }), jb = "x-middleware-override-headers", jc = "x-middleware-request", jd = (a10, b10, c10) => {
+        a10.headers.get(jb) || (a10.headers.set(jb, [...b10.headers.keys()]), b10.headers.forEach((b11, c11) => {
+          a10.headers.set(`${jc}-${c11}`, b11);
+        })), Object.entries(c10).forEach(([b11, c11]) => {
+          a10.headers.set(jb, `${a10.headers.get(jb)},${b11}`), a10.headers.set(`${jc}-${b11}`, c11);
+        });
+      }, je = (a10) => ae.redirect(a10, { headers: { [dy]: "true" } }), jf = "clerk_keyless_dummy_key";
+      function jg() {
+        if (b1()) throw Error("Clerk: Unable to decrypt request data, this usually means the encryption key is invalid. Ensure the encryption key is properly set. For more information, see: https://clerk.com/docs/reference/nextjs/clerk-middleware#dynamic-keys. (code=encryption_key_invalid)");
+        throw Error(i9);
+      }
+      function jh(a10, b10) {
+        return JSON.parse(i3.decrypt(a10, b10).toString(iv));
+      }
+      let ji = async () => {
+        var a10, b10;
+        let c10;
+        try {
+          let a11 = await hK(), b11 = hS(a11, dz);
+          c10 = function(a12) {
+            if (!a12) return {};
+            let b12 = b1() ? hs || hp : hs || hp || jf;
+            try {
+              return jh(a12, b12);
+            } catch {
+              if (hB) try {
+                return jh(a12, jf);
+              } catch {
+                jg();
+              }
+              jg();
+            }
+          }(b11);
+        } catch (a11) {
+          if (a11 && hI(a11) || a11 && a11 instanceof Error && hC in a11) throw a11;
+        }
+        let d10 = null != (b10 = null == (a10 = hV.getStore()) ? void 0 : a10.get("requestData")) ? b10 : c10;
+        return (null == d10 ? void 0 : d10.secretKey) || (null == d10 ? void 0 : d10.publishableKey) ? hR(d10) : hR({});
+      };
+      class jj {
+        static createDefaultDirectives() {
+          return Object.entries(this.DEFAULT_DIRECTIVES).reduce((a10, [b10, c10]) => (a10[b10] = new Set(c10), a10), {});
+        }
+        static isKeyword(a10) {
+          return this.KEYWORDS.has(a10.replace(/^'|'$/g, ""));
+        }
+        static formatValue(a10) {
+          let b10 = a10.replace(/^'|'$/g, "");
+          return this.isKeyword(b10) ? `'${b10}'` : a10;
+        }
+        static handleDirectiveValues(a10) {
+          let b10 = /* @__PURE__ */ new Set();
+          return a10.includes("'none'") || a10.includes("none") ? b10.add("'none'") : a10.forEach((a11) => b10.add(this.formatValue(a11))), b10;
+        }
+      }
+      jj.KEYWORDS = /* @__PURE__ */ new Set(["none", "self", "strict-dynamic", "unsafe-eval", "unsafe-hashes", "unsafe-inline"]), jj.DEFAULT_DIRECTIVES = { "connect-src": ["self", "https://clerk-telemetry.com", "https://*.clerk-telemetry.com", "https://api.stripe.com", "https://maps.googleapis.com", "https://img.clerk.com", "https://images.clerkstage.dev"], "default-src": ["self"], "form-action": ["self"], "frame-src": ["self", "https://challenges.cloudflare.com", "https://*.js.stripe.com", "https://js.stripe.com", "https://hooks.stripe.com"], "img-src": ["self", "https://img.clerk.com"], "script-src": ["self", "unsafe-inline", "https:", "http:", "https://*.js.stripe.com", "https://js.stripe.com", "https://maps.googleapis.com"], "style-src": ["self", "unsafe-inline"], "worker-src": ["self", "blob:"] };
+      let jk = "__clerk_keys_";
+      async function jl(a10) {
+        let b10 = new TextEncoder().encode(a10);
+        return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", b10))).map((a11) => a11.toString(16).padStart(2, "0")).join("").slice(0, 16);
+      }
+      async function jm() {
+        let a10 = process.env.PWD;
+        if (!a10) return `${jk}0`;
+        let b10 = a10.split("/").filter(Boolean).slice(-3).reverse().join("/"), c10 = await jl(b10);
+        return `${jk}${c10}`;
+      }
+      async function jn(a10) {
+        let b10;
+        if (!hB) return;
+        let c10 = await jm();
+        try {
+          c10 && (b10 = JSON.parse(a10(c10) || "{}"));
+        } catch {
+          b10 = void 0;
+        }
+        return b10;
+      }
+      let jo = "CLERK_PROTECT_REDIRECT_TO_SIGN_IN", jp = "CLERK_PROTECT_REDIRECT_TO_SIGN_UP", jq = { NOT_FOUND: 404, FORBIDDEN: 403, UNAUTHORIZED: 401 }, jr = new Set(Object.values(jq)), js = "NEXT_HTTP_ERROR_FALLBACK";
+      function jt(a10) {
+        if (!function(a11) {
+          if ("object" != typeof a11 || null === a11 || !("digest" in a11) || "string" != typeof a11.digest) return false;
+          let [b11, c10] = a11.digest.split(";");
+          return b11 === js && jr.has(Number(c10));
+        }(a10)) return;
+        let [, b10] = a10.digest.split(";");
+        return Number(b10);
+      }
+      let ju = "NEXT_REDIRECT";
+      function jv(a10, b10, c10 = "replace", d10 = 307) {
+        let e10 = Error(ju);
+        throw e10.digest = `${ju};${c10};${a10};${d10};`, e10.clerk_digest = "CLERK_PROTECT_REDIRECT_TO_URL", Object.assign(e10, b10), e10;
+      }
+      function jw(a10, b10) {
+        return null === b10 ? "" : b10 || a10;
+      }
+      function jx(a10) {
+        if ("object" != typeof a10 || null === a10 || !("digest" in a10) || "string" != typeof a10.digest) return false;
+        let b10 = a10.digest.split(";"), [c10, d10] = b10, e10 = b10.slice(2, -2).join(";"), f10 = Number(b10.at(-2));
+        return c10 === ju && ("replace" === d10 || "push" === d10) && "string" == typeof e10 && !isNaN(f10) && 307 === f10;
+      }
+      function jy() {
+        let a10 = Error(js);
+        throw a10.digest = `${js};${jq.UNAUTHORIZED}`, a10;
+      }
+      let jz = (a10) => {
+        var b10, c10;
+        return !!a10.headers.get(he) && ((null == (b10 = a10.headers.get(dq)) ? void 0 : b10.includes("text/x-component")) || (null == (c10 = a10.headers.get(dC)) ? void 0 : c10.includes("multipart/form-data")) || !!a10.headers.get(hf));
+      }, jA = (a10) => !!a10.headers.get(he) && !jz(a10) || jB(), jB = () => {
+        let a10 = globalThis.fetch;
+        if (!("__nextPatched" in a10 && true === a10.__nextPatched)) return false;
+        let { page: b10 } = a10.__nextGetStaticStore().getStore() || {};
+        return !!b10;
+      }, jC = (a10) => !!a10.headers.get(hg), jD = ((...a10) => {
+        let b10, c10, [d10, e10] = [(b10 = a10)[0] instanceof Request ? b10[0] : void 0, b10[0] instanceof Request ? b10[1] : void 0], [f10, g10] = ["function" == typeof (c10 = a10)[0] ? c10[0] : void 0, (2 === c10.length ? c10[1] : "function" == typeof c10[0] ? {} : c10[0]) || {}];
+        return hV.run(hU, () => {
+          let a11, b11, c11 = (a11 = "clerkMiddleware", b11 = (a12) => async (b12, c12) => {
+            var d11, e11, h11, i11, j2, k2, l2, m2, n2, o2;
+            let p2, q2, r2, s2, t2, u2, v2, w2, x2 = "function" == typeof g10 ? await g10(b12) : g10, y2 = await jn((a13) => {
+              var c13;
+              return null == (c13 = b12.cookies.get(a13)) ? void 0 : c13.value;
+            }), z2 = (h11 = x2.publishableKey || hr || (null == y2 ? void 0 : y2.publishableKey), i11 = () => ja.throwMissingPublishableKeyError(), h11 || i11(), h11), A2 = (j2 = x2.secretKey || hp || (null == y2 ? void 0 : y2.secretKey), k2 = () => ja.throwMissingSecretKeyError(), j2 || k2(), j2), B2 = x2.frontendApiProxy;
+            if (B2) {
+              let a13, c13, { enabled: d12, path: e12 = ca } = B2, f11 = new URL(b12.url);
+              if (("function" == typeof d12 ? d12(f11) : d12) && (l2 = { proxyPath: e12 }, a13 = g6(l2?.proxyPath || ca), (c13 = new URL(b12.url)).pathname === a13 || c13.pathname.startsWith(a13 + "/"))) return g8(b12, { proxyPath: e12, publishableKey: z2, secretKey: A2 });
+            }
+            let C2 = { publishableKey: z2, secretKey: A2, signInUrl: x2.signInUrl || hx, signUpUrl: x2.signUpUrl || "/sign-up", ...x2 };
+            hU.set("requestData", C2);
+            let D2 = await ji();
+            C2.debug && a12.enable();
+            let E2 = gP(b12);
+            a12.debug("options", C2), a12.debug("url", () => E2.toJSON());
+            let F2 = b12.headers.get(ds);
+            F2 && F2.startsWith("Basic ") && a12.debug("Basic Auth detected");
+            let G2 = b12.headers.get(dD);
+            G2 && a12.debug("Content-Security-Policy detected", () => ({ value: G2 }));
+            let H2 = await D2.authenticateRequest(E2, ((a13, b13) => {
+              let c13 = b13;
+              if (b13.frontendApiProxy && !b13.proxyUrl) {
+                let { enabled: d12, path: e12 = ca } = b13.frontendApiProxy, f11 = new URL(a13.url);
+                if ("function" == typeof d12 ? d12(f11) : d12) {
+                  let a14 = `${f11.origin}${e12}`;
+                  c13 = { ...b13, proxyUrl: a14 };
+                }
+              }
+              return { ...c13, ...((a14, b14) => {
+                let c14, d12 = hl(null == b14 ? void 0 : b14.proxyUrl, a14.clerkUrl, hv);
+                c14 = d12 && !hW(d12) ? new URL(d12, a14.clerkUrl).toString() : d12;
+                let e12 = hl(b14.isSatellite, new URL(a14.url), hw), f11 = hl(b14.domain, new URL(a14.url), hu), g11 = (null == b14 ? void 0 : b14.signInUrl) || hx;
+                if (e12 && !c14 && !f11) throw Error(i7);
+                if (e12 && !hW(g11) && cg(b14.secretKey || hp)) throw Error(i8);
+                return { proxyUrl: c14, isSatellite: e12, domain: f11, signInUrl: g11 };
+              })(a13, c13), acceptsToken: "any" };
+            })(E2, C2));
+            a12.debug("requestState", () => ({ status: H2.status, headers: JSON.stringify(Object.fromEntries(H2.headers)), reason: H2.reason }));
+            let I2 = H2.headers.get(dJ);
+            if (I2) {
+              !function({ locationHeader: a14, requestStateHeaders: b13, publishableKey: c13 }) {
+                let d12 = !("u" < typeof process) && !!process.env && (!!process.env.NETLIFY || !!process.env.NETLIFY_FUNCTIONS_TOKEN || "string" == typeof process.env.URL && process.env.URL.endsWith("netlify.app")), e12 = c13.startsWith("test_") || c13.startsWith("pk_test_");
+                if (d12 && e12 && !a14.includes("__clerk_handshake")) {
+                  let c14 = new URL(a14);
+                  c14.searchParams.append("__clerk_netlify_cache_bust", Date.now().toString()), b13.set("Location", c14.toString());
+                }
+              }({ locationHeader: I2, requestStateHeaders: H2.headers, publishableKey: H2.publishableKey });
+              let a13 = ae.redirect(H2.headers.get(dJ) || I2);
+              return H2.headers.forEach((b13, c13) => {
+                c13 !== dJ && a13.headers.append(c13, b13);
+              }), a13;
+            }
+            if (H2.status === gD) throw Error("Clerk: handshake status without redirect");
+            let J2 = H2.toAuth();
+            a12.debug("auth", () => ({ auth: J2, debug: J2.debug() }));
+            let K2 = (p2 = E2, (a13 = {}) => {
+              var b13;
+              jv(b13 = p2.clerkUrl.toString(), { clerk_digest: jo, returnBackUrl: jw(b13, a13.returnBackUrl) });
+            }), L2 = (q2 = E2, (a13 = {}) => {
+              var b13;
+              jv(b13 = q2.clerkUrl.toString(), { clerk_digest: jp, returnBackUrl: jw(b13, a13.returnBackUrl) });
+            }), M2 = await (r2 = E2, s2 = J2, t2 = K2, async (a13, b13) => function(a14) {
+              let { redirectToSignIn: b14, authObject: c13, redirect: d12, notFound: e12, request: f11, unauthorized: g11 } = a14;
+              return async (...a15) => {
+                var h12, i12, j3, k3, l3, m3, n3, o3;
+                let p3 = ((a16) => {
+                  if (a16 && !a16.unauthenticatedUrl && !a16.unauthorizedUrl && !a16.token && (1 !== Object.keys(a16).length || !("token" in a16))) return a16;
+                })(a15[0]), q3 = (null == (h12 = a15[0]) ? void 0 : h12.unauthenticatedUrl) || (null == (i12 = a15[1]) ? void 0 : i12.unauthenticatedUrl), r3 = (null == (j3 = a15[0]) ? void 0 : j3.unauthorizedUrl) || (null == (k3 = a15[1]) ? void 0 : k3.unauthorizedUrl), s3 = (null == (l3 = a15[0]) ? void 0 : l3.token) || (null == (m3 = a15[1]) ? void 0 : m3.token) || dV, t3 = () => c13.tokenType === dV && eO(dV, s3) ? r3 ? d12(r3) : e12() : g11();
+                if (!eO(c13.tokenType, s3)) return t3();
+                if (c13.tokenType !== dV) return c13.isAuthenticated ? c13 : t3();
+                if ("pending" === c13.sessionStatus || !c13.userId) {
+                  return q3 ? d12(q3) : "document" === (n3 = f11).headers.get(dN) || "iframe" === n3.headers.get(dN) || (null == (o3 = n3.headers.get(dq)) ? void 0 : o3.includes("text/html")) || jA(n3) || jC(n3) ? b14() : jz(f11) ? g11() : e12();
+                }
+                return p3 ? "function" == typeof p3 ? p3(c13.has) ? c13 : t3() : c13.has(p3) ? c13 : t3() : c13;
+              };
+            }({ request: r2, redirect: (a14) => jv(a14, { redirectUrl: a14 }), notFound: () => function() {
+              let a14 = Object.defineProperty(Error(ha), "__NEXT_ERROR_CODE", { value: "E1041", enumerable: false, configurable: true });
+              throw a14.digest = ha, a14;
+            }(), unauthorized: jy, authObject: gB({ authObject: s2, acceptsToken: (null == a13 ? void 0 : a13.token) || (null == b13 ? void 0 : b13.token) || dV }), redirectToSignIn: t2 })(a13, b13)), N2 = (u2 = H2, v2 = K2, w2 = L2, async (a13) => {
+              var b13;
+              let c13 = u2.toAuth({ treatPendingAsSignedOut: null == a13 ? void 0 : a13.treatPendingAsSignedOut }), d12 = null != (b13 = null == a13 ? void 0 : a13.acceptsToken) ? b13 : dV, e12 = gB({ authObject: c13, acceptsToken: d12 });
+              return e12.tokenType === dV && eO(dV, d12) ? Object.assign(e12, { redirectToSignIn: v2, redirectToSignUp: w2 }) : e12;
+            });
+            N2.protect = M2;
+            let O2 = ae.next();
+            try {
+              O2 = await hV.run(hU, async () => null == f10 ? void 0 : f10(N2, b12, c12)) || O2;
+            } catch (a13) {
+              O2 = ((a14, b13, c13, d12) => {
+                var e12;
+                if (jt(a14) === jq.UNAUTHORIZED) {
+                  let a15 = new ae(null, { status: 401 }), b14 = d12.toAuth();
+                  if (b14 && b14.tokenType === dY) {
+                    let b15 = ce(d12.publishableKey);
+                    return hh(a15, "WWW-Authenticate", `Bearer resource_metadata="https://${null == b15 ? void 0 : b15.frontendApi}/.well-known/oauth-protected-resource"`);
+                  }
+                  return a15;
+                }
+                if ("object" == typeof a14 && null !== a14 && "digest" in a14 && "NEXT_NOT_FOUND" === a14.digest || jt(a14) === jq.NOT_FOUND) return hh(ae.rewrite(new URL(`/clerk_${Date.now()}`, c13.url)), dt, "protect-rewrite");
+                let f11 = !!jx(a14) && "clerk_digest" in a14 && a14.clerk_digest === jo, g11 = !!jx(a14) && "clerk_digest" in a14 && a14.clerk_digest === jp;
+                if (f11 || g11) {
+                  let c14 = ((a15) => {
+                    let { publishableKey: b14, redirectAdapter: c15, signInUrl: d13, signUpUrl: e13, baseUrl: f12, sessionStatus: g13, isSatellite: h12 } = a15, i12 = ce(b14), j3 = i12?.frontendApi, k3 = i12?.instanceType === "development", l3 = c8(j3), m3 = "pending" === g13, n3 = (b15, { returnBackUrl: d14 }) => c15(dR(f12, `${b15}/tasks`, d14, k3 ? a15.devBrowserToken : null, h12));
+                    return { redirectToSignUp: ({ returnBackUrl: b15 } = {}) => {
+                      e13 || l3 || cu.throwMissingPublishableKeyError();
+                      let g14 = `${l3}/sign-up`, i13 = e13 || function(a16) {
+                        if (!a16) return;
+                        let b16 = new URL(a16, f12);
+                        return b16.pathname = `${b16.pathname}/create`, b16.toString();
+                      }(d13) || g14;
+                      return m3 ? n3(i13, { returnBackUrl: b15 }) : c15(dR(f12, i13, b15, k3 ? a15.devBrowserToken : null, h12));
+                    }, redirectToSignIn: ({ returnBackUrl: b15 } = {}) => {
+                      d13 || l3 || cu.throwMissingPublishableKeyError();
+                      let e14 = `${l3}/sign-in`, g14 = d13 || e14;
+                      return m3 ? n3(g14, { returnBackUrl: b15 }) : c15(dR(f12, g14, b15, k3 ? a15.devBrowserToken : null, h12));
+                    } };
+                  })({ redirectAdapter: je, baseUrl: b13.clerkUrl, signInUrl: d12.signInUrl, signUpUrl: d12.signUpUrl, publishableKey: d12.publishableKey, sessionStatus: null == (e12 = d12.toAuth()) ? void 0 : e12.sessionStatus, isSatellite: d12.isSatellite }), { returnBackUrl: g12 } = a14;
+                  return c14[f11 ? "redirectToSignIn" : "redirectToSignUp"]({ returnBackUrl: g12 });
+                }
+                if (jx(a14)) return je(a14.redirectUrl);
+                throw a14;
+              })(a13, E2, b12, H2);
+            }
+            if (C2.contentSecurityPolicy) {
+              let b13, c13, f11, g11, { headers: h12 } = (m2 = (null != (e11 = null == (d11 = ce(z2)) ? void 0 : d11.frontendApi) ? e11 : "").replace("$", ""), n2 = C2.contentSecurityPolicy, b13 = [], f11 = n2.strict ? (c13 = new Uint8Array(16), crypto.getRandomValues(c13), btoa(Array.from(c13, (a13) => String.fromCharCode(a13)).join(""))) : void 0, g11 = function(a13, b14, c14, d12) {
+                let e12 = Object.entries(jj.DEFAULT_DIRECTIVES).reduce((a14, [b15, c15]) => (a14[b15] = new Set(c15), a14), {});
+                if (e12["connect-src"].add(b14), a13 && (e12["script-src"].delete("http:"), e12["script-src"].delete("https:"), e12["script-src"].add("'strict-dynamic'"), d12 && e12["script-src"].add(`'nonce-${d12}'`)), c14) {
+                  let a14 = /* @__PURE__ */ new Map();
+                  Object.entries(c14).forEach(([b15, c15]) => {
+                    let d13 = Array.isArray(c15) ? c15 : [c15];
+                    jj.DEFAULT_DIRECTIVES[b15] ? function(a15, b16, c16) {
+                      if (c16.includes("'none'") || c16.includes("none")) {
+                        a15[b16] = /* @__PURE__ */ new Set(["'none'"]);
+                        return;
+                      }
+                      let d14 = /* @__PURE__ */ new Set();
+                      a15[b16].forEach((a16) => {
+                        d14.add(jj.formatValue(a16));
+                      }), c16.forEach((a16) => {
+                        d14.add(jj.formatValue(a16));
+                      }), a15[b16] = d14;
+                    }(e12, b15, d13) : function(a15, b16, c16) {
+                      if (c16.includes("'none'") || c16.includes("none")) return a15.set(b16, /* @__PURE__ */ new Set(["'none'"]));
+                      let d14 = /* @__PURE__ */ new Set();
+                      c16.forEach((a16) => {
+                        let b17 = jj.formatValue(a16);
+                        d14.add(b17);
+                      }), a15.set(b16, d14);
+                    }(a14, b15, d13);
+                  }), a14.forEach((a15, b15) => {
+                    e12[b15] = a15;
+                  });
+                }
+                return Object.entries(e12).sort(([a14], [b15]) => a14.localeCompare(b15)).map(([a14, b15]) => {
+                  let c15 = Array.from(b15).map((a15) => ({ raw: a15, formatted: jj.formatValue(a15) }));
+                  return `${a14} ${c15.map((a15) => a15.formatted).join(" ")}`;
+                }).join("; ");
+              }(null != (o2 = n2.strict) && o2, m2, n2.directives, f11), n2.reportTo && (g11 += "; report-to csp-endpoint", b13.push([dP, `csp-endpoint="${n2.reportTo}"`])), n2.reportOnly ? b13.push([dE, g11]) : b13.push([dD, g11]), f11 && b13.push([dK, f11]), { headers: b13 }), i12 = {};
+              h12.forEach(([a13, b14]) => {
+                hh(O2, a13, b14), i12[a13] = b14;
+              }), jd(O2, E2, i12), a12.debug("Clerk generated CSP", () => ({ headers: h12 }));
+            }
+            if (H2.headers && H2.headers.forEach((b13, c13) => {
+              c13 === dD && a12.debug("Content-Security-Policy detected", () => ({ value: b13 })), O2.headers.append(c13, b13);
+            }), O2.headers.get(hd)) return a12.debug("handlerResult is redirect"), ((a13, b13, c13) => {
+              let d12 = b13.headers.get("location");
+              if ("true" === b13.headers.get(dy) && d12 && cg(c13.secretKey) && a13.clerkUrl.isCrossOrigin(d12)) {
+                var e12;
+                let c14, f11, g11, h12 = a13.cookies.get(hi) || "", i12 = (e12 = new URL(d12), f11 = (c14 = new URL(e12)).searchParams.get(hi), c14.searchParams.delete(hi), (g11 = f11 || h12) && c14.searchParams.set(hi, g11), c14);
+                return ae.redirect(i12.href, b13);
+              }
+              return b13;
+            })(E2, O2, C2);
+            C2.debug && jd(O2, E2, { [dF]: "true" });
+            let P2 = A2 === (null == y2 ? void 0 : y2.secretKey) ? { publishableKey: null == y2 ? void 0 : y2.publishableKey, secretKey: null == y2 ? void 0 : y2.secretKey } : {};
+            return !function(a13, b13, c13, d12, e12, f11) {
+              let g11, { reason: h12, message: i12, status: j3, token: k3 } = c13;
+              if (b13 || (b13 = ae.next()), b13.headers.get(hd)) return;
+              "1" === b13.headers.get(hc) && (b13.headers.delete(hc), g11 = new URL(a13.url));
+              let l3 = b13.headers.get(hb);
+              if (l3) {
+                let b14 = new URL(a13.url);
+                if ((g11 = new URL(l3)).origin !== b14.origin) return;
+              }
+              if (g11) {
+                let c14 = function(a14, b14, c15) {
+                  var d13;
+                  let e13 = (a15) => !a15 || !Object.values(a15).some((a16) => void 0 !== a16);
+                  if (e13(a14) && e13(b14) && !c15) return;
+                  if (a14.secretKey && !hs) throw Error("Clerk: Missing `CLERK_ENCRYPTION_KEY`. Required for propagating `secretKey` middleware option. See docs: https://clerk.com/docs/references/nextjs/clerk-middleware#dynamic-keys. (code=encryption_key_missing)");
+                  let f12 = b1() ? hs || (d13 = () => ja.throwMissingSecretKeyError(), hp || d13(), hp) : hs || hp || jf;
+                  return i3.encrypt(JSON.stringify({ ...b14, ...a14, machineAuthObject: null != c15 ? c15 : void 0 }), f12).toString();
+                }(d12, e12, f11);
+                jd(b13, a13, { [dv]: j3, [dw]: k3 || "", [du]: k3 ? i6(k3, (null == d12 ? void 0 : d12.secretKey) || hp || e12.secretKey || "").toString() : "", [dr]: i12 || "", [dt]: h12 || "", [dA]: a13.clerkUrl.toString(), ...c14 ? { [dz]: c14 } : {} }), b13.headers.set(hb, g11.href);
+              }
+            }(E2, O2, H2, x2, P2, "session_token" === J2.tokenType ? null : ((a13) => {
+              let { debug: b13, getToken: c13, has: d12, ...e12 } = a13;
+              return e12;
+            })(J2)), O2;
+          }, (...c12) => {
+            let d11 = ("string" == typeof a11 ? () => {
+              let b12 = [], c13 = false;
+              return { enable: () => {
+                c13 = true;
+              }, debug: (...a12) => {
+                c13 && b12.push(a12.map((a13) => "function" == typeof a13 ? a13() : a13));
+              }, commit: () => {
+                if (c13) {
+                  for (let c14 of (console.log(`[clerk debug start: ${a11}]`), b12)) {
+                    let a12 = hk(c14);
+                    a12 = a12.split("\n").map((a13) => `  ${a13}`).join("\n"), process.env.VERCEL && (a12 = function(a13) {
+                      let b13 = new TextEncoder(), c15 = new TextDecoder("utf-8"), d12 = b13.encode(a13).slice(0, 4096);
+                      return c15.decode(d12).replace(/\uFFFD/g, "");
+                    }(a12)), console.log(a12);
+                  }
+                  console.log(`[clerk debug end: ${a11}] (@clerk/nextjs=7.0.6,next=16.2.1,timestamp=${Math.round((/* @__PURE__ */ new Date()).getTime() / 1e3)})`);
+                }
+              } };
+            } : a11)(), e11 = b11(d11);
+            try {
+              let a12 = e11(...c12);
+              if ("object" == typeof a12 && "then" in a12 && "function" == typeof a12.then) return a12.then((a13) => (d11.commit(), a13)).catch((a13) => {
+                throw d11.commit(), a13;
+              });
+              return d11.commit(), a12;
+            } catch (a12) {
+              throw d11.commit(), a12;
+            }
+          }), h10 = async (a12, b12) => {
+            var d11, e11, f11;
+            if ("/clerk-sync-keyless" === a12.nextUrl.pathname) {
+              let b13, c12;
+              return b13 = (f11 = a12).nextUrl.searchParams.get("returnUrl"), (c12 = new URL(f11.url)).pathname = "", ae.redirect(b13 || c12.toString());
+            }
+            let h11 = "function" == typeof g10 ? await g10(a12) : g10, i11 = await jn((b13) => {
+              var c12;
+              return null == (c12 = a12.cookies.get(b13)) ? void 0 : c12.value;
+            }), j2 = !(h11.publishableKey || hr || (null == i11 ? void 0 : i11.publishableKey)), k2 = null != (e11 = null == (d11 = hS(a12, ds)) ? void 0 : d11.replace("Bearer ", "")) ? e11 : "";
+            if (j2 && !eL(k2)) {
+              let b13 = ae.next();
+              return jd(b13, a12, { [dv]: "signed-out" }), b13;
+            }
+            return c11(a12, b12);
+          }, i10 = async (a12, b12) => hB ? h10(a12, b12) : c11(a12, b12);
+          return d10 && e10 ? i10(d10, e10) : i10;
+        });
+      })(), jE = { matcher: ["/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)", "/(api|trpc)(.*)"] };
+      c(955);
+      let jF = { ...p }, jG = "/src/middleware", jH = (0, jF.middleware || jF.default);
+      class jI extends Error {
+        constructor(a10) {
+          super(a10), this.stack = "";
+        }
+      }
+      if ("function" != typeof jH) throw new jI(`The Middleware file "${jG}" must export a function named \`middleware\` or a default function.`);
+      let jJ = (a10) => bo({ ...a10, IncrementalCache: b0, incrementalCacheHandler: null, page: jG, handler: async (...a11) => {
+        try {
+          return await jH(...a11);
+        } catch (e10) {
+          let b10 = a11[0], c10 = new URL(b10.url), d10 = c10.pathname + c10.search;
+          throw await t(e10, { path: d10, method: b10.method, headers: Object.fromEntries(b10.headers.entries()) }, { routerKind: "Pages Router", routePath: "/proxy", routeType: "proxy", revalidateReason: void 0 }), e10;
+        }
+      } });
+      async function jK(a10, b10) {
+        let c10 = await jJ({ request: { url: a10.url, method: a10.method, headers: H(a10.headers), nextConfig: { basePath: "", i18n: "", trailingSlash: false, experimental: { cacheLife: { default: { stale: 300, revalidate: 900, expire: 4294967294 }, seconds: { stale: 30, revalidate: 1, expire: 60 }, minutes: { stale: 300, revalidate: 60, expire: 3600 }, hours: { stale: 300, revalidate: 3600, expire: 86400 }, days: { stale: 300, revalidate: 86400, expire: 604800 }, weeks: { stale: 300, revalidate: 604800, expire: 2592e3 }, max: { stale: 300, revalidate: 2592e3, expire: 31536e3 } }, authInterrupts: false, clientParamParsingOrigins: [] } }, page: { name: jG }, body: "GET" !== a10.method && "HEAD" !== a10.method ? a10.body ?? void 0 : void 0, waitUntil: b10.waitUntil, requestMeta: b10.requestMeta, signal: b10.signal || new AbortController().signal } });
+        return null == b10.waitUntil || b10.waitUntil.call(b10, c10.waitUntil), c10.response;
+      }
+      let jL = jJ;
+    }, 408: (a, b, c) => {
+      "use strict";
+      c.d(b, { l: () => d });
+      class d {
+        static get(a2, b2, c2) {
+          let d2 = Reflect.get(a2, b2, c2);
+          return "function" == typeof d2 ? d2.bind(a2) : d2;
+        }
+        static set(a2, b2, c2, d2) {
+          return Reflect.set(a2, b2, c2, d2);
+        }
+        static has(a2, b2) {
+          return Reflect.has(a2, b2);
+        }
+        static deleteProperty(a2, b2) {
+          return Reflect.deleteProperty(a2, b2);
+        }
+      }
+    }, 417: (a) => {
+      (() => {
+        "use strict";
+        "u" > typeof __nccwpck_require__ && (__nccwpck_require__.ab = "//");
+        var b = {};
+        (() => {
+          function a2(a3, b2) {
+            void 0 === b2 && (b2 = {});
+            for (var c2 = function(a4) {
+              for (var b3 = [], c3 = 0; c3 < a4.length; ) {
+                var d3 = a4[c3];
+                if ("*" === d3 || "+" === d3 || "?" === d3) {
+                  b3.push({ type: "MODIFIER", index: c3, value: a4[c3++] });
+                  continue;
+                }
+                if ("\\" === d3) {
+                  b3.push({ type: "ESCAPED_CHAR", index: c3++, value: a4[c3++] });
+                  continue;
+                }
+                if ("{" === d3) {
+                  b3.push({ type: "OPEN", index: c3, value: a4[c3++] });
+                  continue;
+                }
+                if ("}" === d3) {
+                  b3.push({ type: "CLOSE", index: c3, value: a4[c3++] });
+                  continue;
+                }
+                if (":" === d3) {
+                  for (var e2 = "", f3 = c3 + 1; f3 < a4.length; ) {
+                    var g3 = a4.charCodeAt(f3);
+                    if (g3 >= 48 && g3 <= 57 || g3 >= 65 && g3 <= 90 || g3 >= 97 && g3 <= 122 || 95 === g3) {
+                      e2 += a4[f3++];
+                      continue;
+                    }
+                    break;
+                  }
+                  if (!e2) throw TypeError("Missing parameter name at ".concat(c3));
+                  b3.push({ type: "NAME", index: c3, value: e2 }), c3 = f3;
+                  continue;
+                }
+                if ("(" === d3) {
+                  var h3 = 1, i2 = "", f3 = c3 + 1;
+                  if ("?" === a4[f3]) throw TypeError('Pattern cannot start with "?" at '.concat(f3));
+                  for (; f3 < a4.length; ) {
+                    if ("\\" === a4[f3]) {
+                      i2 += a4[f3++] + a4[f3++];
+                      continue;
+                    }
+                    if (")" === a4[f3]) {
+                      if (0 == --h3) {
+                        f3++;
+                        break;
+                      }
+                    } else if ("(" === a4[f3] && (h3++, "?" !== a4[f3 + 1])) throw TypeError("Capturing groups are not allowed at ".concat(f3));
+                    i2 += a4[f3++];
+                  }
+                  if (h3) throw TypeError("Unbalanced pattern at ".concat(c3));
+                  if (!i2) throw TypeError("Missing pattern at ".concat(c3));
+                  b3.push({ type: "PATTERN", index: c3, value: i2 }), c3 = f3;
+                  continue;
+                }
+                b3.push({ type: "CHAR", index: c3, value: a4[c3++] });
+              }
+              return b3.push({ type: "END", index: c3, value: "" }), b3;
+            }(a3), d2 = b2.prefixes, f2 = void 0 === d2 ? "./" : d2, g2 = b2.delimiter, h2 = void 0 === g2 ? "/#?" : g2, i = [], j = 0, k = 0, l = "", m = function(a4) {
+              if (k < c2.length && c2[k].type === a4) return c2[k++].value;
+            }, n = function(a4) {
+              var b3 = m(a4);
+              if (void 0 !== b3) return b3;
+              var d3 = c2[k], e2 = d3.type, f3 = d3.index;
+              throw TypeError("Unexpected ".concat(e2, " at ").concat(f3, ", expected ").concat(a4));
+            }, o = function() {
+              for (var a4, b3 = ""; a4 = m("CHAR") || m("ESCAPED_CHAR"); ) b3 += a4;
+              return b3;
+            }, p = function(a4) {
+              for (var b3 = 0; b3 < h2.length; b3++) {
+                var c3 = h2[b3];
+                if (a4.indexOf(c3) > -1) return true;
+              }
+              return false;
+            }, q = function(a4) {
+              var b3 = i[i.length - 1], c3 = a4 || (b3 && "string" == typeof b3 ? b3 : "");
+              if (b3 && !c3) throw TypeError('Must have text between two parameters, missing text after "'.concat(b3.name, '"'));
+              return !c3 || p(c3) ? "[^".concat(e(h2), "]+?") : "(?:(?!".concat(e(c3), ")[^").concat(e(h2), "])+?");
+            }; k < c2.length; ) {
+              var r = m("CHAR"), s = m("NAME"), t = m("PATTERN");
+              if (s || t) {
+                var u = r || "";
+                -1 === f2.indexOf(u) && (l += u, u = ""), l && (i.push(l), l = ""), i.push({ name: s || j++, prefix: u, suffix: "", pattern: t || q(u), modifier: m("MODIFIER") || "" });
+                continue;
+              }
+              var v = r || m("ESCAPED_CHAR");
+              if (v) {
+                l += v;
+                continue;
+              }
+              if (l && (i.push(l), l = ""), m("OPEN")) {
+                var u = o(), w = m("NAME") || "", x = m("PATTERN") || "", y = o();
+                n("CLOSE"), i.push({ name: w || (x ? j++ : ""), pattern: w && !x ? q(u) : x, prefix: u, suffix: y, modifier: m("MODIFIER") || "" });
+                continue;
+              }
+              n("END");
+            }
+            return i;
+          }
+          function c(a3, b2) {
+            void 0 === b2 && (b2 = {});
+            var c2 = f(b2), d2 = b2.encode, e2 = void 0 === d2 ? function(a4) {
+              return a4;
+            } : d2, g2 = b2.validate, h2 = void 0 === g2 || g2, i = a3.map(function(a4) {
+              if ("object" == typeof a4) return new RegExp("^(?:".concat(a4.pattern, ")$"), c2);
+            });
+            return function(b3) {
+              for (var c3 = "", d3 = 0; d3 < a3.length; d3++) {
+                var f2 = a3[d3];
+                if ("string" == typeof f2) {
+                  c3 += f2;
+                  continue;
+                }
+                var g3 = b3 ? b3[f2.name] : void 0, j = "?" === f2.modifier || "*" === f2.modifier, k = "*" === f2.modifier || "+" === f2.modifier;
+                if (Array.isArray(g3)) {
+                  if (!k) throw TypeError('Expected "'.concat(f2.name, '" to not repeat, but got an array'));
+                  if (0 === g3.length) {
+                    if (j) continue;
+                    throw TypeError('Expected "'.concat(f2.name, '" to not be empty'));
+                  }
+                  for (var l = 0; l < g3.length; l++) {
+                    var m = e2(g3[l], f2);
+                    if (h2 && !i[d3].test(m)) throw TypeError('Expected all "'.concat(f2.name, '" to match "').concat(f2.pattern, '", but got "').concat(m, '"'));
+                    c3 += f2.prefix + m + f2.suffix;
+                  }
+                  continue;
+                }
+                if ("string" == typeof g3 || "number" == typeof g3) {
+                  var m = e2(String(g3), f2);
+                  if (h2 && !i[d3].test(m)) throw TypeError('Expected "'.concat(f2.name, '" to match "').concat(f2.pattern, '", but got "').concat(m, '"'));
+                  c3 += f2.prefix + m + f2.suffix;
+                  continue;
+                }
+                if (!j) {
+                  var n = k ? "an array" : "a string";
+                  throw TypeError('Expected "'.concat(f2.name, '" to be ').concat(n));
+                }
+              }
+              return c3;
+            };
+          }
+          function d(a3, b2, c2) {
+            void 0 === c2 && (c2 = {});
+            var d2 = c2.decode, e2 = void 0 === d2 ? function(a4) {
+              return a4;
+            } : d2;
+            return function(c3) {
+              var d3 = a3.exec(c3);
+              if (!d3) return false;
+              for (var f2 = d3[0], g2 = d3.index, h2 = /* @__PURE__ */ Object.create(null), i = 1; i < d3.length; i++) !function(a4) {
+                if (void 0 !== d3[a4]) {
+                  var c4 = b2[a4 - 1];
+                  "*" === c4.modifier || "+" === c4.modifier ? h2[c4.name] = d3[a4].split(c4.prefix + c4.suffix).map(function(a5) {
+                    return e2(a5, c4);
+                  }) : h2[c4.name] = e2(d3[a4], c4);
+                }
+              }(i);
+              return { path: f2, index: g2, params: h2 };
+            };
+          }
+          function e(a3) {
+            return a3.replace(/([.+*?=^!:${}()[\]|/\\])/g, "\\$1");
+          }
+          function f(a3) {
+            return a3 && a3.sensitive ? "" : "i";
+          }
+          function g(a3, b2, c2) {
+            void 0 === c2 && (c2 = {});
+            for (var d2 = c2.strict, g2 = void 0 !== d2 && d2, h2 = c2.start, i = c2.end, j = c2.encode, k = void 0 === j ? function(a4) {
+              return a4;
+            } : j, l = c2.delimiter, m = c2.endsWith, n = "[".concat(e(void 0 === m ? "" : m), "]|$"), o = "[".concat(e(void 0 === l ? "/#?" : l), "]"), p = void 0 === h2 || h2 ? "^" : "", q = 0; q < a3.length; q++) {
+              var r = a3[q];
+              if ("string" == typeof r) p += e(k(r));
+              else {
+                var s = e(k(r.prefix)), t = e(k(r.suffix));
+                if (r.pattern) if (b2 && b2.push(r), s || t) if ("+" === r.modifier || "*" === r.modifier) {
+                  var u = "*" === r.modifier ? "?" : "";
+                  p += "(?:".concat(s, "((?:").concat(r.pattern, ")(?:").concat(t).concat(s, "(?:").concat(r.pattern, "))*)").concat(t, ")").concat(u);
+                } else p += "(?:".concat(s, "(").concat(r.pattern, ")").concat(t, ")").concat(r.modifier);
+                else {
+                  if ("+" === r.modifier || "*" === r.modifier) throw TypeError('Can not repeat "'.concat(r.name, '" without a prefix and suffix'));
+                  p += "(".concat(r.pattern, ")").concat(r.modifier);
+                }
+                else p += "(?:".concat(s).concat(t, ")").concat(r.modifier);
+              }
+            }
+            if (void 0 === i || i) g2 || (p += "".concat(o, "?")), p += c2.endsWith ? "(?=".concat(n, ")") : "$";
+            else {
+              var v = a3[a3.length - 1], w = "string" == typeof v ? o.indexOf(v[v.length - 1]) > -1 : void 0 === v;
+              g2 || (p += "(?:".concat(o, "(?=").concat(n, "))?")), w || (p += "(?=".concat(o, "|").concat(n, ")"));
+            }
+            return new RegExp(p, f(c2));
+          }
+          function h(b2, c2, d2) {
+            if (b2 instanceof RegExp) {
+              var e2;
+              if (!c2) return b2;
+              for (var i = /\((?:\?<(.*?)>)?(?!\?)/g, j = 0, k = i.exec(b2.source); k; ) c2.push({ name: k[1] || j++, prefix: "", suffix: "", modifier: "", pattern: "" }), k = i.exec(b2.source);
+              return b2;
+            }
+            return Array.isArray(b2) ? (e2 = b2.map(function(a3) {
+              return h(a3, c2, d2).source;
+            }), new RegExp("(?:".concat(e2.join("|"), ")"), f(d2))) : g(a2(b2, d2), c2, d2);
+          }
+          Object.defineProperty(b, "__esModule", { value: true }), b.pathToRegexp = b.tokensToRegexp = b.regexpToFunction = b.match = b.tokensToFunction = b.compile = b.parse = void 0, b.parse = a2, b.compile = function(b2, d2) {
+            return c(a2(b2, d2), d2);
+          }, b.tokensToFunction = c, b.match = function(a3, b2) {
+            var c2 = [];
+            return d(h(a3, c2, b2), c2, b2);
+          }, b.regexpToFunction = d, b.tokensToRegexp = g, b.pathToRegexp = h;
+        })(), a.exports = b;
+      })();
+    }, 420: (a, b, c) => {
+      "use strict";
+      var d = c(356).Buffer;
+      Object.defineProperty(b, "__esModule", { value: true });
+      var e = { handleFetch: function() {
+        return j;
+      }, interceptFetch: function() {
+        return k;
+      }, reader: function() {
+        return h;
+      } };
+      for (var f in e) Object.defineProperty(b, f, { enumerable: true, get: e[f] });
+      let g = c(845), h = { url: (a2) => a2.url, header: (a2, b2) => a2.headers.get(b2) };
+      async function i(a2, b2) {
+        let { url: c2, method: e2, headers: f2, body: g2, cache: h2, credentials: i2, integrity: j2, mode: k2, redirect: l, referrer: m, referrerPolicy: n } = b2;
+        return { testData: a2, api: "fetch", request: { url: c2, method: e2, headers: [...Array.from(f2), ["next-test-stack", function() {
+          let a3 = (Error().stack ?? "").split("\n");
+          for (let b3 = 1; b3 < a3.length; b3++) if (a3[b3].length > 0) {
+            a3 = a3.slice(b3);
+            break;
+          }
+          return (a3 = (a3 = (a3 = a3.filter((a4) => !a4.includes("/next/dist/"))).slice(0, 5)).map((a4) => a4.replace("webpack-internal:///(rsc)/", "").trim())).join("    ");
+        }()]], body: g2 ? d.from(await b2.arrayBuffer()).toString("base64") : null, cache: h2, credentials: i2, integrity: j2, mode: k2, redirect: l, referrer: m, referrerPolicy: n } };
+      }
+      async function j(a2, b2) {
+        let c2 = (0, g.getTestReqInfo)(b2, h);
+        if (!c2) return a2(b2);
+        let { testData: e2, proxyPort: f2 } = c2, j2 = await i(e2, b2), k2 = await a2(`http://localhost:${f2}`, { method: "POST", body: JSON.stringify(j2), next: { internal: true } });
+        if (!k2.ok) throw Object.defineProperty(Error(`Proxy request failed: ${k2.status}`), "__NEXT_ERROR_CODE", { value: "E146", enumerable: false, configurable: true });
+        let l = await k2.json(), { api: m } = l;
+        switch (m) {
+          case "continue":
+            return a2(b2);
+          case "abort":
+          case "unhandled":
+            throw Object.defineProperty(Error(`Proxy request aborted [${b2.method} ${b2.url}]`), "__NEXT_ERROR_CODE", { value: "E145", enumerable: false, configurable: true });
+          case "fetch":
+            return function(a3) {
+              let { status: b3, headers: c3, body: e3 } = a3.response;
+              return new Response(e3 ? d.from(e3, "base64") : null, { status: b3, headers: new Headers(c3) });
+            }(l);
+          default:
+            return m;
+        }
+      }
+      function k(a2) {
+        return c.g.fetch = function(b2, c2) {
+          var d2;
+          return (null == c2 || null == (d2 = c2.next) ? void 0 : d2.internal) ? a2(b2, c2) : j(a2, new Request(b2, c2));
+        }, () => {
+          c.g.fetch = a2;
+        };
+      }
+    }, 503: (a, b, c) => {
+      var d, e = { 226: function(e2, f2) {
+        !function(g2) {
+          "use strict";
+          var h = "function", i = "undefined", j = "object", k = "string", l = "major", m = "model", n = "name", o = "type", p = "vendor", q = "version", r = "architecture", s = "console", t = "mobile", u = "tablet", v = "smarttv", w = "wearable", x = "embedded", y = "Amazon", z = "Apple", A = "ASUS", B = "BlackBerry", C = "Browser", D = "Chrome", E = "Firefox", F = "Google", G = "Huawei", H = "Microsoft", I = "Motorola", J = "Opera", K = "Samsung", L = "Sharp", M = "Sony", N = "Xiaomi", O = "Zebra", P = "Facebook", Q = "Chromium OS", R = "Mac OS", S = function(a2, b2) {
+            var c2 = {};
+            for (var d2 in a2) b2[d2] && b2[d2].length % 2 == 0 ? c2[d2] = b2[d2].concat(a2[d2]) : c2[d2] = a2[d2];
+            return c2;
+          }, T = function(a2) {
+            for (var b2 = {}, c2 = 0; c2 < a2.length; c2++) b2[a2[c2].toUpperCase()] = a2[c2];
+            return b2;
+          }, U = function(a2, b2) {
+            return typeof a2 === k && -1 !== V(b2).indexOf(V(a2));
+          }, V = function(a2) {
+            return a2.toLowerCase();
+          }, W = function(a2, b2) {
+            if (typeof a2 === k) return a2 = a2.replace(/^\s\s*/, ""), typeof b2 === i ? a2 : a2.substring(0, 350);
+          }, X = function(a2, b2) {
+            for (var c2, d2, e3, f3, g3, i2, k2 = 0; k2 < b2.length && !g3; ) {
+              var l2 = b2[k2], m2 = b2[k2 + 1];
+              for (c2 = d2 = 0; c2 < l2.length && !g3 && l2[c2]; ) if (g3 = l2[c2++].exec(a2)) for (e3 = 0; e3 < m2.length; e3++) i2 = g3[++d2], typeof (f3 = m2[e3]) === j && f3.length > 0 ? 2 === f3.length ? typeof f3[1] == h ? this[f3[0]] = f3[1].call(this, i2) : this[f3[0]] = f3[1] : 3 === f3.length ? typeof f3[1] !== h || f3[1].exec && f3[1].test ? this[f3[0]] = i2 ? i2.replace(f3[1], f3[2]) : void 0 : this[f3[0]] = i2 ? f3[1].call(this, i2, f3[2]) : void 0 : 4 === f3.length && (this[f3[0]] = i2 ? f3[3].call(this, i2.replace(f3[1], f3[2])) : void 0) : this[f3] = i2 || void 0;
+              k2 += 2;
+            }
+          }, Y = function(a2, b2) {
+            for (var c2 in b2) if (typeof b2[c2] === j && b2[c2].length > 0) {
+              for (var d2 = 0; d2 < b2[c2].length; d2++) if (U(b2[c2][d2], a2)) return "?" === c2 ? void 0 : c2;
+            } else if (U(b2[c2], a2)) return "?" === c2 ? void 0 : c2;
+            return a2;
+          }, Z = { ME: "4.90", "NT 3.11": "NT3.51", "NT 4.0": "NT4.0", 2e3: "NT 5.0", XP: ["NT 5.1", "NT 5.2"], Vista: "NT 6.0", 7: "NT 6.1", 8: "NT 6.2", 8.1: "NT 6.3", 10: ["NT 6.4", "NT 10.0"], RT: "ARM" }, $ = { browser: [[/\b(?:crmo|crios)\/([\w\.]+)/i], [q, [n, "Chrome"]], [/edg(?:e|ios|a)?\/([\w\.]+)/i], [q, [n, "Edge"]], [/(opera mini)\/([-\w\.]+)/i, /(opera [mobiletab]{3,6})\b.+version\/([-\w\.]+)/i, /(opera)(?:.+version\/|[\/ ]+)([\w\.]+)/i], [n, q], [/opios[\/ ]+([\w\.]+)/i], [q, [n, J + " Mini"]], [/\bopr\/([\w\.]+)/i], [q, [n, J]], [/(kindle)\/([\w\.]+)/i, /(lunascape|maxthon|netfront|jasmine|blazer)[\/ ]?([\w\.]*)/i, /(avant |iemobile|slim)(?:browser)?[\/ ]?([\w\.]*)/i, /(ba?idubrowser)[\/ ]?([\w\.]+)/i, /(?:ms|\()(ie) ([\w\.]+)/i, /(flock|rockmelt|midori|epiphany|silk|skyfire|bolt|iron|vivaldi|iridium|phantomjs|bowser|quark|qupzilla|falkon|rekonq|puffin|brave|whale(?!.+naver)|qqbrowserlite|qq|duckduckgo)\/([-\w\.]+)/i, /(heytap|ovi)browser\/([\d\.]+)/i, /(weibo)__([\d\.]+)/i], [n, q], [/(?:\buc? ?browser|(?:juc.+)ucweb)[\/ ]?([\w\.]+)/i], [q, [n, "UC" + C]], [/microm.+\bqbcore\/([\w\.]+)/i, /\bqbcore\/([\w\.]+).+microm/i], [q, [n, "WeChat(Win) Desktop"]], [/micromessenger\/([\w\.]+)/i], [q, [n, "WeChat"]], [/konqueror\/([\w\.]+)/i], [q, [n, "Konqueror"]], [/trident.+rv[: ]([\w\.]{1,9})\b.+like gecko/i], [q, [n, "IE"]], [/ya(?:search)?browser\/([\w\.]+)/i], [q, [n, "Yandex"]], [/(avast|avg)\/([\w\.]+)/i], [[n, /(.+)/, "$1 Secure " + C], q], [/\bfocus\/([\w\.]+)/i], [q, [n, E + " Focus"]], [/\bopt\/([\w\.]+)/i], [q, [n, J + " Touch"]], [/coc_coc\w+\/([\w\.]+)/i], [q, [n, "Coc Coc"]], [/dolfin\/([\w\.]+)/i], [q, [n, "Dolphin"]], [/coast\/([\w\.]+)/i], [q, [n, J + " Coast"]], [/miuibrowser\/([\w\.]+)/i], [q, [n, "MIUI " + C]], [/fxios\/([-\w\.]+)/i], [q, [n, E]], [/\bqihu|(qi?ho?o?|360)browser/i], [[n, "360 " + C]], [/(oculus|samsung|sailfish|huawei)browser\/([\w\.]+)/i], [[n, /(.+)/, "$1 " + C], q], [/(comodo_dragon)\/([\w\.]+)/i], [[n, /_/g, " "], q], [/(electron)\/([\w\.]+) safari/i, /(tesla)(?: qtcarbrowser|\/(20\d\d\.[-\w\.]+))/i, /m?(qqbrowser|baiduboxapp|2345Explorer)[\/ ]?([\w\.]+)/i], [n, q], [/(metasr)[\/ ]?([\w\.]+)/i, /(lbbrowser)/i, /\[(linkedin)app\]/i], [n], [/((?:fban\/fbios|fb_iab\/fb4a)(?!.+fbav)|;fbav\/([\w\.]+);)/i], [[n, P], q], [/(kakao(?:talk|story))[\/ ]([\w\.]+)/i, /(naver)\(.*?(\d+\.[\w\.]+).*\)/i, /safari (line)\/([\w\.]+)/i, /\b(line)\/([\w\.]+)\/iab/i, /(chromium|instagram)[\/ ]([-\w\.]+)/i], [n, q], [/\bgsa\/([\w\.]+) .*safari\//i], [q, [n, "GSA"]], [/musical_ly(?:.+app_?version\/|_)([\w\.]+)/i], [q, [n, "TikTok"]], [/headlesschrome(?:\/([\w\.]+)| )/i], [q, [n, D + " Headless"]], [/ wv\).+(chrome)\/([\w\.]+)/i], [[n, D + " WebView"], q], [/droid.+ version\/([\w\.]+)\b.+(?:mobile safari|safari)/i], [q, [n, "Android " + C]], [/(chrome|omniweb|arora|[tizenoka]{5} ?browser)\/v?([\w\.]+)/i], [n, q], [/version\/([\w\.\,]+) .*mobile\/\w+ (safari)/i], [q, [n, "Mobile Safari"]], [/version\/([\w(\.|\,)]+) .*(mobile ?safari|safari)/i], [q, n], [/webkit.+?(mobile ?safari|safari)(\/[\w\.]+)/i], [n, [q, Y, { "1.0": "/8", 1.2: "/1", 1.3: "/3", "2.0": "/412", "2.0.2": "/416", "2.0.3": "/417", "2.0.4": "/419", "?": "/" }]], [/(webkit|khtml)\/([\w\.]+)/i], [n, q], [/(navigator|netscape\d?)\/([-\w\.]+)/i], [[n, "Netscape"], q], [/mobile vr; rv:([\w\.]+)\).+firefox/i], [q, [n, E + " Reality"]], [/ekiohf.+(flow)\/([\w\.]+)/i, /(swiftfox)/i, /(icedragon|iceweasel|camino|chimera|fennec|maemo browser|minimo|conkeror|klar)[\/ ]?([\w\.\+]+)/i, /(seamonkey|k-meleon|icecat|iceape|firebird|phoenix|palemoon|basilisk|waterfox)\/([-\w\.]+)$/i, /(firefox)\/([\w\.]+)/i, /(mozilla)\/([\w\.]+) .+rv\:.+gecko\/\d+/i, /(polaris|lynx|dillo|icab|doris|amaya|w3m|netsurf|sleipnir|obigo|mosaic|(?:go|ice|up)[\. ]?browser)[-\/ ]?v?([\w\.]+)/i, /(links) \(([\w\.]+)/i, /panasonic;(viera)/i], [n, q], [/(cobalt)\/([\w\.]+)/i], [n, [q, /master.|lts./, ""]]], cpu: [[/(?:(amd|x(?:(?:86|64)[-_])?|wow|win)64)[;\)]/i], [[r, "amd64"]], [/(ia32(?=;))/i], [[r, V]], [/((?:i[346]|x)86)[;\)]/i], [[r, "ia32"]], [/\b(aarch64|arm(v?8e?l?|_?64))\b/i], [[r, "arm64"]], [/\b(arm(?:v[67])?ht?n?[fl]p?)\b/i], [[r, "armhf"]], [/windows (ce|mobile); ppc;/i], [[r, "arm"]], [/((?:ppc|powerpc)(?:64)?)(?: mac|;|\))/i], [[r, /ower/, "", V]], [/(sun4\w)[;\)]/i], [[r, "sparc"]], [/((?:avr32|ia64(?=;))|68k(?=\))|\barm(?=v(?:[1-7]|[5-7]1)l?|;|eabi)|(?=atmel )avr|(?:irix|mips|sparc)(?:64)?\b|pa-risc)/i], [[r, V]]], device: [[/\b(sch-i[89]0\d|shw-m380s|sm-[ptx]\w{2,4}|gt-[pn]\d{2,4}|sgh-t8[56]9|nexus 10)/i], [m, [p, K], [o, u]], [/\b((?:s[cgp]h|gt|sm)-\w+|sc[g-]?[\d]+a?|galaxy nexus)/i, /samsung[- ]([-\w]+)/i, /sec-(sgh\w+)/i], [m, [p, K], [o, t]], [/(?:\/|\()(ip(?:hone|od)[\w, ]*)(?:\/|;)/i], [m, [p, z], [o, t]], [/\((ipad);[-\w\),; ]+apple/i, /applecoremedia\/[\w\.]+ \((ipad)/i, /\b(ipad)\d\d?,\d\d?[;\]].+ios/i], [m, [p, z], [o, u]], [/(macintosh);/i], [m, [p, z]], [/\b(sh-?[altvz]?\d\d[a-ekm]?)/i], [m, [p, L], [o, t]], [/\b((?:ag[rs][23]?|bah2?|sht?|btv)-a?[lw]\d{2})\b(?!.+d\/s)/i], [m, [p, G], [o, u]], [/(?:huawei|honor)([-\w ]+)[;\)]/i, /\b(nexus 6p|\w{2,4}e?-[atu]?[ln][\dx][012359c][adn]?)\b(?!.+d\/s)/i], [m, [p, G], [o, t]], [/\b(poco[\w ]+)(?: bui|\))/i, /\b; (\w+) build\/hm\1/i, /\b(hm[-_ ]?note?[_ ]?(?:\d\w)?) bui/i, /\b(redmi[\-_ ]?(?:note|k)?[\w_ ]+)(?: bui|\))/i, /\b(mi[-_ ]?(?:a\d|one|one[_ ]plus|note lte|max|cc)?[_ ]?(?:\d?\w?)[_ ]?(?:plus|se|lite)?)(?: bui|\))/i], [[m, /_/g, " "], [p, N], [o, t]], [/\b(mi[-_ ]?(?:pad)(?:[\w_ ]+))(?: bui|\))/i], [[m, /_/g, " "], [p, N], [o, u]], [/; (\w+) bui.+ oppo/i, /\b(cph[12]\d{3}|p(?:af|c[al]|d\w|e[ar])[mt]\d0|x9007|a101op)\b/i], [m, [p, "OPPO"], [o, t]], [/vivo (\w+)(?: bui|\))/i, /\b(v[12]\d{3}\w?[at])(?: bui|;)/i], [m, [p, "Vivo"], [o, t]], [/\b(rmx[12]\d{3})(?: bui|;|\))/i], [m, [p, "Realme"], [o, t]], [/\b(milestone|droid(?:[2-4x]| (?:bionic|x2|pro|razr))?:?( 4g)?)\b[\w ]+build\//i, /\bmot(?:orola)?[- ](\w*)/i, /((?:moto[\w\(\) ]+|xt\d{3,4}|nexus 6)(?= bui|\)))/i], [m, [p, I], [o, t]], [/\b(mz60\d|xoom[2 ]{0,2}) build\//i], [m, [p, I], [o, u]], [/((?=lg)?[vl]k\-?\d{3}) bui| 3\.[-\w; ]{10}lg?-([06cv9]{3,4})/i], [m, [p, "LG"], [o, u]], [/(lm(?:-?f100[nv]?|-[\w\.]+)(?= bui|\))|nexus [45])/i, /\blg[-e;\/ ]+((?!browser|netcast|android tv)\w+)/i, /\blg-?([\d\w]+) bui/i], [m, [p, "LG"], [o, t]], [/(ideatab[-\w ]+)/i, /lenovo ?(s[56]000[-\w]+|tab(?:[\w ]+)|yt[-\d\w]{6}|tb[-\d\w]{6})/i], [m, [p, "Lenovo"], [o, u]], [/(?:maemo|nokia).*(n900|lumia \d+)/i, /nokia[-_ ]?([-\w\.]*)/i], [[m, /_/g, " "], [p, "Nokia"], [o, t]], [/(pixel c)\b/i], [m, [p, F], [o, u]], [/droid.+; (pixel[\daxl ]{0,6})(?: bui|\))/i], [m, [p, F], [o, t]], [/droid.+ (a?\d[0-2]{2}so|[c-g]\d{4}|so[-gl]\w+|xq-a\w[4-7][12])(?= bui|\).+chrome\/(?![1-6]{0,1}\d\.))/i], [m, [p, M], [o, t]], [/sony tablet [ps]/i, /\b(?:sony)?sgp\w+(?: bui|\))/i], [[m, "Xperia Tablet"], [p, M], [o, u]], [/ (kb2005|in20[12]5|be20[12][59])\b/i, /(?:one)?(?:plus)? (a\d0\d\d)(?: b|\))/i], [m, [p, "OnePlus"], [o, t]], [/(alexa)webm/i, /(kf[a-z]{2}wi|aeo[c-r]{2})( bui|\))/i, /(kf[a-z]+)( bui|\)).+silk\//i], [m, [p, y], [o, u]], [/((?:sd|kf)[0349hijorstuw]+)( bui|\)).+silk\//i], [[m, /(.+)/g, "Fire Phone $1"], [p, y], [o, t]], [/(playbook);[-\w\),; ]+(rim)/i], [m, p, [o, u]], [/\b((?:bb[a-f]|st[hv])100-\d)/i, /\(bb10; (\w+)/i], [m, [p, B], [o, t]], [/(?:\b|asus_)(transfo[prime ]{4,10} \w+|eeepc|slider \w+|nexus 7|padfone|p00[cj])/i], [m, [p, A], [o, u]], [/ (z[bes]6[027][012][km][ls]|zenfone \d\w?)\b/i], [m, [p, A], [o, t]], [/(nexus 9)/i], [m, [p, "HTC"], [o, u]], [/(htc)[-;_ ]{1,2}([\w ]+(?=\)| bui)|\w+)/i, /(zte)[- ]([\w ]+?)(?: bui|\/|\))/i, /(alcatel|geeksphone|nexian|panasonic(?!(?:;|\.))|sony(?!-bra))[-_ ]?([-\w]*)/i], [p, [m, /_/g, " "], [o, t]], [/droid.+; ([ab][1-7]-?[0178a]\d\d?)/i], [m, [p, "Acer"], [o, u]], [/droid.+; (m[1-5] note) bui/i, /\bmz-([-\w]{2,})/i], [m, [p, "Meizu"], [o, t]], [/(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus|dell|meizu|motorola|polytron)[-_ ]?([-\w]*)/i, /(hp) ([\w ]+\w)/i, /(asus)-?(\w+)/i, /(microsoft); (lumia[\w ]+)/i, /(lenovo)[-_ ]?([-\w]+)/i, /(jolla)/i, /(oppo) ?([\w ]+) bui/i], [p, m, [o, t]], [/(kobo)\s(ereader|touch)/i, /(archos) (gamepad2?)/i, /(hp).+(touchpad(?!.+tablet)|tablet)/i, /(kindle)\/([\w\.]+)/i, /(nook)[\w ]+build\/(\w+)/i, /(dell) (strea[kpr\d ]*[\dko])/i, /(le[- ]+pan)[- ]+(\w{1,9}) bui/i, /(trinity)[- ]*(t\d{3}) bui/i, /(gigaset)[- ]+(q\w{1,9}) bui/i, /(vodafone) ([\w ]+)(?:\)| bui)/i], [p, m, [o, u]], [/(surface duo)/i], [m, [p, H], [o, u]], [/droid [\d\.]+; (fp\du?)(?: b|\))/i], [m, [p, "Fairphone"], [o, t]], [/(u304aa)/i], [m, [p, "AT&T"], [o, t]], [/\bsie-(\w*)/i], [m, [p, "Siemens"], [o, t]], [/\b(rct\w+) b/i], [m, [p, "RCA"], [o, u]], [/\b(venue[\d ]{2,7}) b/i], [m, [p, "Dell"], [o, u]], [/\b(q(?:mv|ta)\w+) b/i], [m, [p, "Verizon"], [o, u]], [/\b(?:barnes[& ]+noble |bn[rt])([\w\+ ]*) b/i], [m, [p, "Barnes & Noble"], [o, u]], [/\b(tm\d{3}\w+) b/i], [m, [p, "NuVision"], [o, u]], [/\b(k88) b/i], [m, [p, "ZTE"], [o, u]], [/\b(nx\d{3}j) b/i], [m, [p, "ZTE"], [o, t]], [/\b(gen\d{3}) b.+49h/i], [m, [p, "Swiss"], [o, t]], [/\b(zur\d{3}) b/i], [m, [p, "Swiss"], [o, u]], [/\b((zeki)?tb.*\b) b/i], [m, [p, "Zeki"], [o, u]], [/\b([yr]\d{2}) b/i, /\b(dragon[- ]+touch |dt)(\w{5}) b/i], [[p, "Dragon Touch"], m, [o, u]], [/\b(ns-?\w{0,9}) b/i], [m, [p, "Insignia"], [o, u]], [/\b((nxa|next)-?\w{0,9}) b/i], [m, [p, "NextBook"], [o, u]], [/\b(xtreme\_)?(v(1[045]|2[015]|[3469]0|7[05])) b/i], [[p, "Voice"], m, [o, t]], [/\b(lvtel\-)?(v1[12]) b/i], [[p, "LvTel"], m, [o, t]], [/\b(ph-1) /i], [m, [p, "Essential"], [o, t]], [/\b(v(100md|700na|7011|917g).*\b) b/i], [m, [p, "Envizen"], [o, u]], [/\b(trio[-\w\. ]+) b/i], [m, [p, "MachSpeed"], [o, u]], [/\btu_(1491) b/i], [m, [p, "Rotor"], [o, u]], [/(shield[\w ]+) b/i], [m, [p, "Nvidia"], [o, u]], [/(sprint) (\w+)/i], [p, m, [o, t]], [/(kin\.[onetw]{3})/i], [[m, /\./g, " "], [p, H], [o, t]], [/droid.+; (cc6666?|et5[16]|mc[239][23]x?|vc8[03]x?)\)/i], [m, [p, O], [o, u]], [/droid.+; (ec30|ps20|tc[2-8]\d[kx])\)/i], [m, [p, O], [o, t]], [/smart-tv.+(samsung)/i], [p, [o, v]], [/hbbtv.+maple;(\d+)/i], [[m, /^/, "SmartTV"], [p, K], [o, v]], [/(nux; netcast.+smarttv|lg (netcast\.tv-201\d|android tv))/i], [[p, "LG"], [o, v]], [/(apple) ?tv/i], [p, [m, z + " TV"], [o, v]], [/crkey/i], [[m, D + "cast"], [p, F], [o, v]], [/droid.+aft(\w)( bui|\))/i], [m, [p, y], [o, v]], [/\(dtv[\);].+(aquos)/i, /(aquos-tv[\w ]+)\)/i], [m, [p, L], [o, v]], [/(bravia[\w ]+)( bui|\))/i], [m, [p, M], [o, v]], [/(mitv-\w{5}) bui/i], [m, [p, N], [o, v]], [/Hbbtv.*(technisat) (.*);/i], [p, m, [o, v]], [/\b(roku)[\dx]*[\)\/]((?:dvp-)?[\d\.]*)/i, /hbbtv\/\d+\.\d+\.\d+ +\([\w\+ ]*; *([\w\d][^;]*);([^;]*)/i], [[p, W], [m, W], [o, v]], [/\b(android tv|smart[- ]?tv|opera tv|tv; rv:)\b/i], [[o, v]], [/(ouya)/i, /(nintendo) ([wids3utch]+)/i], [p, m, [o, s]], [/droid.+; (shield) bui/i], [m, [p, "Nvidia"], [o, s]], [/(playstation [345portablevi]+)/i], [m, [p, M], [o, s]], [/\b(xbox(?: one)?(?!; xbox))[\); ]/i], [m, [p, H], [o, s]], [/((pebble))app/i], [p, m, [o, w]], [/(watch)(?: ?os[,\/]|\d,\d\/)[\d\.]+/i], [m, [p, z], [o, w]], [/droid.+; (glass) \d/i], [m, [p, F], [o, w]], [/droid.+; (wt63?0{2,3})\)/i], [m, [p, O], [o, w]], [/(quest( 2| pro)?)/i], [m, [p, P], [o, w]], [/(tesla)(?: qtcarbrowser|\/[-\w\.]+)/i], [p, [o, x]], [/(aeobc)\b/i], [m, [p, y], [o, x]], [/droid .+?; ([^;]+?)(?: bui|\) applew).+? mobile safari/i], [m, [o, t]], [/droid .+?; ([^;]+?)(?: bui|\) applew).+?(?! mobile) safari/i], [m, [o, u]], [/\b((tablet|tab)[;\/]|focus\/\d(?!.+mobile))/i], [[o, u]], [/(phone|mobile(?:[;\/]| [ \w\/\.]*safari)|pda(?=.+windows ce))/i], [[o, t]], [/(android[-\w\. ]{0,9});.+buil/i], [m, [p, "Generic"]]], engine: [[/windows.+ edge\/([\w\.]+)/i], [q, [n, "EdgeHTML"]], [/webkit\/537\.36.+chrome\/(?!27)([\w\.]+)/i], [q, [n, "Blink"]], [/(presto)\/([\w\.]+)/i, /(webkit|trident|netfront|netsurf|amaya|lynx|w3m|goanna)\/([\w\.]+)/i, /ekioh(flow)\/([\w\.]+)/i, /(khtml|tasman|links)[\/ ]\(?([\w\.]+)/i, /(icab)[\/ ]([23]\.[\d\.]+)/i, /\b(libweb)/i], [n, q], [/rv\:([\w\.]{1,9})\b.+(gecko)/i], [q, n]], os: [[/microsoft (windows) (vista|xp)/i], [n, q], [/(windows) nt 6\.2; (arm)/i, /(windows (?:phone(?: os)?|mobile))[\/ ]?([\d\.\w ]*)/i, /(windows)[\/ ]?([ntce\d\. ]+\w)(?!.+xbox)/i], [n, [q, Y, Z]], [/(win(?=3|9|n)|win 9x )([nt\d\.]+)/i], [[n, "Windows"], [q, Y, Z]], [/ip[honead]{2,4}\b(?:.*os ([\w]+) like mac|; opera)/i, /ios;fbsv\/([\d\.]+)/i, /cfnetwork\/.+darwin/i], [[q, /_/g, "."], [n, "iOS"]], [/(mac os x) ?([\w\. ]*)/i, /(macintosh|mac_powerpc\b)(?!.+haiku)/i], [[n, R], [q, /_/g, "."]], [/droid ([\w\.]+)\b.+(android[- ]x86|harmonyos)/i], [q, n], [/(android|webos|qnx|bada|rim tablet os|maemo|meego|sailfish)[-\/ ]?([\w\.]*)/i, /(blackberry)\w*\/([\w\.]*)/i, /(tizen|kaios)[\/ ]([\w\.]+)/i, /\((series40);/i], [n, q], [/\(bb(10);/i], [q, [n, B]], [/(?:symbian ?os|symbos|s60(?=;)|series60)[-\/ ]?([\w\.]*)/i], [q, [n, "Symbian"]], [/mozilla\/[\d\.]+ \((?:mobile|tablet|tv|mobile; [\w ]+); rv:.+ gecko\/([\w\.]+)/i], [q, [n, E + " OS"]], [/web0s;.+rt(tv)/i, /\b(?:hp)?wos(?:browser)?\/([\w\.]+)/i], [q, [n, "webOS"]], [/watch(?: ?os[,\/]|\d,\d\/)([\d\.]+)/i], [q, [n, "watchOS"]], [/crkey\/([\d\.]+)/i], [q, [n, D + "cast"]], [/(cros) [\w]+(?:\)| ([\w\.]+)\b)/i], [[n, Q], q], [/panasonic;(viera)/i, /(netrange)mmh/i, /(nettv)\/(\d+\.[\w\.]+)/i, /(nintendo|playstation) ([wids345portablevuch]+)/i, /(xbox); +xbox ([^\);]+)/i, /\b(joli|palm)\b ?(?:os)?\/?([\w\.]*)/i, /(mint)[\/\(\) ]?(\w*)/i, /(mageia|vectorlinux)[; ]/i, /([kxln]?ubuntu|debian|suse|opensuse|gentoo|arch(?= linux)|slackware|fedora|mandriva|centos|pclinuxos|red ?hat|zenwalk|linpus|raspbian|plan 9|minix|risc os|contiki|deepin|manjaro|elementary os|sabayon|linspire)(?: gnu\/linux)?(?: enterprise)?(?:[- ]linux)?(?:-gnu)?[-\/ ]?(?!chrom|package)([-\w\.]*)/i, /(hurd|linux) ?([\w\.]*)/i, /(gnu) ?([\w\.]*)/i, /\b([-frentopcghs]{0,5}bsd|dragonfly)[\/ ]?(?!amd|[ix346]{1,2}86)([\w\.]*)/i, /(haiku) (\w+)/i], [n, q], [/(sunos) ?([\w\.\d]*)/i], [[n, "Solaris"], q], [/((?:open)?solaris)[-\/ ]?([\w\.]*)/i, /(aix) ((\d)(?=\.|\)| )[\w\.])*/i, /\b(beos|os\/2|amigaos|morphos|openvms|fuchsia|hp-ux|serenityos)/i, /(unix) ?([\w\.]*)/i], [n, q]] }, _ = function(a2, b2) {
+            if (typeof a2 === j && (b2 = a2, a2 = void 0), !(this instanceof _)) return new _(a2, b2).getResult();
+            var c2 = typeof g2 !== i && g2.navigator ? g2.navigator : void 0, d2 = a2 || (c2 && c2.userAgent ? c2.userAgent : ""), e3 = c2 && c2.userAgentData ? c2.userAgentData : void 0, f3 = b2 ? S($, b2) : $, s2 = c2 && c2.userAgent == d2;
+            return this.getBrowser = function() {
+              var a3, b3 = {};
+              return b3[n] = void 0, b3[q] = void 0, X.call(b3, d2, f3.browser), b3[l] = typeof (a3 = b3[q]) === k ? a3.replace(/[^\d\.]/g, "").split(".")[0] : void 0, s2 && c2 && c2.brave && typeof c2.brave.isBrave == h && (b3[n] = "Brave"), b3;
+            }, this.getCPU = function() {
+              var a3 = {};
+              return a3[r] = void 0, X.call(a3, d2, f3.cpu), a3;
+            }, this.getDevice = function() {
+              var a3 = {};
+              return a3[p] = void 0, a3[m] = void 0, a3[o] = void 0, X.call(a3, d2, f3.device), s2 && !a3[o] && e3 && e3.mobile && (a3[o] = t), s2 && "Macintosh" == a3[m] && c2 && typeof c2.standalone !== i && c2.maxTouchPoints && c2.maxTouchPoints > 2 && (a3[m] = "iPad", a3[o] = u), a3;
+            }, this.getEngine = function() {
+              var a3 = {};
+              return a3[n] = void 0, a3[q] = void 0, X.call(a3, d2, f3.engine), a3;
+            }, this.getOS = function() {
+              var a3 = {};
+              return a3[n] = void 0, a3[q] = void 0, X.call(a3, d2, f3.os), s2 && !a3[n] && e3 && "Unknown" != e3.platform && (a3[n] = e3.platform.replace(/chrome os/i, Q).replace(/macos/i, R)), a3;
+            }, this.getResult = function() {
+              return { ua: this.getUA(), browser: this.getBrowser(), engine: this.getEngine(), os: this.getOS(), device: this.getDevice(), cpu: this.getCPU() };
+            }, this.getUA = function() {
+              return d2;
+            }, this.setUA = function(a3) {
+              return d2 = typeof a3 === k && a3.length > 350 ? W(a3, 350) : a3, this;
+            }, this.setUA(d2), this;
+          };
+          _.VERSION = "1.0.35", _.BROWSER = T([n, q, l]), _.CPU = T([r]), _.DEVICE = T([m, p, o, s, t, v, u, w, x]), _.ENGINE = _.OS = T([n, q]), typeof f2 !== i ? (e2.exports && (f2 = e2.exports = _), f2.UAParser = _) : c.amdO ? void 0 === (d = function() {
+            return _;
+          }.call(b, c, b, a)) || (a.exports = d) : typeof g2 !== i && (g2.UAParser = _);
+          var aa = typeof g2 !== i && (g2.jQuery || g2.Zepto);
+          if (aa && !aa.ua) {
+            var ab = new _();
+            aa.ua = ab.getResult(), aa.ua.get = function() {
+              return ab.getUA();
+            }, aa.ua.set = function(a2) {
+              ab.setUA(a2);
+              var b2 = ab.getResult();
+              for (var c2 in b2) aa.ua[c2] = b2[c2];
+            };
+          }
+        }("object" == typeof window ? window : this);
+      } }, f = {};
+      function g(a2) {
+        var b2 = f[a2];
+        if (void 0 !== b2) return b2.exports;
+        var c2 = f[a2] = { exports: {} }, d2 = true;
+        try {
+          e[a2].call(c2.exports, c2, c2.exports, g), d2 = false;
+        } finally {
+          d2 && delete f[a2];
+        }
+        return c2.exports;
+      }
+      g.ab = "//", a.exports = g(226);
+    }, 521: (a) => {
+      "use strict";
+      a.exports = (init_node_async_hooks(), __toCommonJS(node_async_hooks_exports));
+    }, 591: (a, b, c) => {
+      "use strict";
+      function d(a2) {
+        return "object" == typeof a2 && null !== a2 && "digest" in a2 && "BAILOUT_TO_CLIENT_SIDE_RENDERING" === a2.digest;
+      }
+      c.d(b, { C: () => d });
+    }, 600: (a, b, c) => {
+      "use strict";
+      c.d(b, { s: () => d });
+      let d = (0, c(149).xl)();
+    }, 617: (a, b, c) => {
+      "use strict";
+      c.d(b, { Q: () => e });
+      var d, e = ((d = {})[d.SeeOther = 303] = "SeeOther", d[d.TemporaryRedirect = 307] = "TemporaryRedirect", d[d.PermanentRedirect = 308] = "PermanentRedirect", d);
+    }, 640: (a) => {
+      "use strict";
+      var b = Object.defineProperty, c = Object.getOwnPropertyDescriptor, d = Object.getOwnPropertyNames, e = Object.prototype.hasOwnProperty, f = {}, g = { RequestCookies: () => n, ResponseCookies: () => o, parseCookie: () => j, parseSetCookie: () => k, stringifyCookie: () => i };
+      for (var h in g) b(f, h, { get: g[h], enumerable: true });
+      function i(a2) {
+        var b2;
+        let c2 = ["path" in a2 && a2.path && `Path=${a2.path}`, "expires" in a2 && (a2.expires || 0 === a2.expires) && `Expires=${("number" == typeof a2.expires ? new Date(a2.expires) : a2.expires).toUTCString()}`, "maxAge" in a2 && "number" == typeof a2.maxAge && `Max-Age=${a2.maxAge}`, "domain" in a2 && a2.domain && `Domain=${a2.domain}`, "secure" in a2 && a2.secure && "Secure", "httpOnly" in a2 && a2.httpOnly && "HttpOnly", "sameSite" in a2 && a2.sameSite && `SameSite=${a2.sameSite}`, "partitioned" in a2 && a2.partitioned && "Partitioned", "priority" in a2 && a2.priority && `Priority=${a2.priority}`].filter(Boolean), d2 = `${a2.name}=${encodeURIComponent(null != (b2 = a2.value) ? b2 : "")}`;
+        return 0 === c2.length ? d2 : `${d2}; ${c2.join("; ")}`;
+      }
+      function j(a2) {
+        let b2 = /* @__PURE__ */ new Map();
+        for (let c2 of a2.split(/; */)) {
+          if (!c2) continue;
+          let a3 = c2.indexOf("=");
+          if (-1 === a3) {
+            b2.set(c2, "true");
+            continue;
+          }
+          let [d2, e2] = [c2.slice(0, a3), c2.slice(a3 + 1)];
+          try {
+            b2.set(d2, decodeURIComponent(null != e2 ? e2 : "true"));
+          } catch {
+          }
+        }
+        return b2;
+      }
+      function k(a2) {
+        if (!a2) return;
+        let [[b2, c2], ...d2] = j(a2), { domain: e2, expires: f2, httponly: g2, maxage: h2, path: i2, samesite: k2, secure: n2, partitioned: o2, priority: p } = Object.fromEntries(d2.map(([a3, b3]) => [a3.toLowerCase().replace(/-/g, ""), b3]));
+        {
+          var q, r, s = { name: b2, value: decodeURIComponent(c2), domain: e2, ...f2 && { expires: new Date(f2) }, ...g2 && { httpOnly: true }, ..."string" == typeof h2 && { maxAge: Number(h2) }, path: i2, ...k2 && { sameSite: l.includes(q = (q = k2).toLowerCase()) ? q : void 0 }, ...n2 && { secure: true }, ...p && { priority: m.includes(r = (r = p).toLowerCase()) ? r : void 0 }, ...o2 && { partitioned: true } };
+          let a3 = {};
+          for (let b3 in s) s[b3] && (a3[b3] = s[b3]);
+          return a3;
+        }
+      }
+      a.exports = ((a2, f2, g2, h2) => {
+        if (f2 && "object" == typeof f2 || "function" == typeof f2) for (let i2 of d(f2)) e.call(a2, i2) || i2 === g2 || b(a2, i2, { get: () => f2[i2], enumerable: !(h2 = c(f2, i2)) || h2.enumerable });
+        return a2;
+      })(b({}, "__esModule", { value: true }), f);
+      var l = ["strict", "lax", "none"], m = ["low", "medium", "high"], n = class {
+        constructor(a2) {
+          this._parsed = /* @__PURE__ */ new Map(), this._headers = a2;
+          const b2 = a2.get("cookie");
+          if (b2) for (const [a3, c2] of j(b2)) this._parsed.set(a3, { name: a3, value: c2 });
+        }
+        [Symbol.iterator]() {
+          return this._parsed[Symbol.iterator]();
+        }
+        get size() {
+          return this._parsed.size;
+        }
+        get(...a2) {
+          let b2 = "string" == typeof a2[0] ? a2[0] : a2[0].name;
+          return this._parsed.get(b2);
+        }
+        getAll(...a2) {
+          var b2;
+          let c2 = Array.from(this._parsed);
+          if (!a2.length) return c2.map(([a3, b3]) => b3);
+          let d2 = "string" == typeof a2[0] ? a2[0] : null == (b2 = a2[0]) ? void 0 : b2.name;
+          return c2.filter(([a3]) => a3 === d2).map(([a3, b3]) => b3);
+        }
+        has(a2) {
+          return this._parsed.has(a2);
+        }
+        set(...a2) {
+          let [b2, c2] = 1 === a2.length ? [a2[0].name, a2[0].value] : a2, d2 = this._parsed;
+          return d2.set(b2, { name: b2, value: c2 }), this._headers.set("cookie", Array.from(d2).map(([a3, b3]) => i(b3)).join("; ")), this;
+        }
+        delete(a2) {
+          let b2 = this._parsed, c2 = Array.isArray(a2) ? a2.map((a3) => b2.delete(a3)) : b2.delete(a2);
+          return this._headers.set("cookie", Array.from(b2).map(([a3, b3]) => i(b3)).join("; ")), c2;
+        }
+        clear() {
+          return this.delete(Array.from(this._parsed.keys())), this;
+        }
+        [Symbol.for("edge-runtime.inspect.custom")]() {
+          return `RequestCookies ${JSON.stringify(Object.fromEntries(this._parsed))}`;
+        }
+        toString() {
+          return [...this._parsed.values()].map((a2) => `${a2.name}=${encodeURIComponent(a2.value)}`).join("; ");
+        }
+      }, o = class {
+        constructor(a2) {
+          var b2, c2, d2;
+          this._parsed = /* @__PURE__ */ new Map(), this._headers = a2;
+          const e2 = null != (d2 = null != (c2 = null == (b2 = a2.getSetCookie) ? void 0 : b2.call(a2)) ? c2 : a2.get("set-cookie")) ? d2 : [];
+          for (const a3 of Array.isArray(e2) ? e2 : function(a4) {
+            if (!a4) return [];
+            var b3, c3, d3, e3, f2, g2 = [], h2 = 0;
+            function i2() {
+              for (; h2 < a4.length && /\s/.test(a4.charAt(h2)); ) h2 += 1;
+              return h2 < a4.length;
+            }
+            for (; h2 < a4.length; ) {
+              for (b3 = h2, f2 = false; i2(); ) if ("," === (c3 = a4.charAt(h2))) {
+                for (d3 = h2, h2 += 1, i2(), e3 = h2; h2 < a4.length && "=" !== (c3 = a4.charAt(h2)) && ";" !== c3 && "," !== c3; ) h2 += 1;
+                h2 < a4.length && "=" === a4.charAt(h2) ? (f2 = true, h2 = e3, g2.push(a4.substring(b3, d3)), b3 = h2) : h2 = d3 + 1;
+              } else h2 += 1;
+              (!f2 || h2 >= a4.length) && g2.push(a4.substring(b3, a4.length));
+            }
+            return g2;
+          }(e2)) {
+            const b3 = k(a3);
+            b3 && this._parsed.set(b3.name, b3);
+          }
+        }
+        get(...a2) {
+          let b2 = "string" == typeof a2[0] ? a2[0] : a2[0].name;
+          return this._parsed.get(b2);
+        }
+        getAll(...a2) {
+          var b2;
+          let c2 = Array.from(this._parsed.values());
+          if (!a2.length) return c2;
+          let d2 = "string" == typeof a2[0] ? a2[0] : null == (b2 = a2[0]) ? void 0 : b2.name;
+          return c2.filter((a3) => a3.name === d2);
+        }
+        has(a2) {
+          return this._parsed.has(a2);
+        }
+        set(...a2) {
+          let [b2, c2, d2] = 1 === a2.length ? [a2[0].name, a2[0].value, a2[0]] : a2, e2 = this._parsed;
+          return e2.set(b2, function(a3 = { name: "", value: "" }) {
+            return "number" == typeof a3.expires && (a3.expires = new Date(a3.expires)), a3.maxAge && (a3.expires = new Date(Date.now() + 1e3 * a3.maxAge)), (null === a3.path || void 0 === a3.path) && (a3.path = "/"), a3;
+          }({ name: b2, value: c2, ...d2 })), function(a3, b3) {
+            for (let [, c3] of (b3.delete("set-cookie"), a3)) {
+              let a4 = i(c3);
+              b3.append("set-cookie", a4);
+            }
+          }(e2, this._headers), this;
+        }
+        delete(...a2) {
+          let [b2, c2] = "string" == typeof a2[0] ? [a2[0]] : [a2[0].name, a2[0]];
+          return this.set({ ...c2, name: b2, value: "", expires: /* @__PURE__ */ new Date(0) });
+        }
+        [Symbol.for("edge-runtime.inspect.custom")]() {
+          return `ResponseCookies ${JSON.stringify(Object.fromEntries(this._parsed))}`;
+        }
+        toString() {
+          return [...this._parsed.values()].map(i).join("; ");
+        }
+      };
+    }, 664: (a, b, c) => {
+      "use strict";
+      c.d(b, { iC: () => e }), c(142);
+      var d = c(136);
+      function e() {
+        let a2 = d.Z.getStore();
+        return (null == a2 ? void 0 : a2.rootTaskSpawnPhase) === "action";
+      }
+    }, 685: (a, b, c) => {
+      "use strict";
+      c.d(b, { X: () => function a2(b2) {
+        if ((0, g.p)(b2) || (0, f.C)(b2) || (0, i.h)(b2) || (0, h.I3)(b2) || "object" == typeof b2 && null !== b2 && b2.$$typeof === e || (0, d.Ts)(b2) || (0, h.AA)(b2)) throw b2;
+        b2 instanceof Error && "cause" in b2 && a2(b2.cause);
+      } });
+      var d = c(797);
+      let e = Symbol.for("react.postpone");
+      var f = c(591), g = c(955), h = c(967), i = c(252);
+    }, 701: (a, b, c) => {
+      "use strict";
+      c.d(b, { J: () => d });
+      let d = (0, c(149).xl)();
+    }, 739: (a, b, c) => {
+      "use strict";
+      c.d(b, { n: () => e });
+      var d = c(617);
+      function e(a2) {
+        if ("object" != typeof a2 || null === a2 || !("digest" in a2) || "string" != typeof a2.digest) return false;
+        let b2 = a2.digest.split(";"), [c2, e2] = b2, f = b2.slice(2, -2).join(";"), g = Number(b2.at(-2));
+        return "NEXT_REDIRECT" === c2 && ("replace" === e2 || "push" === e2) && "string" == typeof f && !isNaN(g) && g in d.Q;
+      }
+    }, 748: (a) => {
+      !function() {
+        "use strict";
+        var b = { 114: function(a2) {
+          function b2(a3) {
+            if ("string" != typeof a3) throw TypeError("Path must be a string. Received " + JSON.stringify(a3));
+          }
+          function c2(a3, b3) {
+            for (var c3, d3 = "", e = 0, f = -1, g = 0, h = 0; h <= a3.length; ++h) {
+              if (h < a3.length) c3 = a3.charCodeAt(h);
+              else if (47 === c3) break;
+              else c3 = 47;
+              if (47 === c3) {
+                if (f === h - 1 || 1 === g) ;
+                else if (f !== h - 1 && 2 === g) {
+                  if (d3.length < 2 || 2 !== e || 46 !== d3.charCodeAt(d3.length - 1) || 46 !== d3.charCodeAt(d3.length - 2)) {
+                    if (d3.length > 2) {
+                      var i = d3.lastIndexOf("/");
+                      if (i !== d3.length - 1) {
+                        -1 === i ? (d3 = "", e = 0) : e = (d3 = d3.slice(0, i)).length - 1 - d3.lastIndexOf("/"), f = h, g = 0;
+                        continue;
+                      }
+                    } else if (2 === d3.length || 1 === d3.length) {
+                      d3 = "", e = 0, f = h, g = 0;
+                      continue;
+                    }
+                  }
+                  b3 && (d3.length > 0 ? d3 += "/.." : d3 = "..", e = 2);
+                } else d3.length > 0 ? d3 += "/" + a3.slice(f + 1, h) : d3 = a3.slice(f + 1, h), e = h - f - 1;
+                f = h, g = 0;
+              } else 46 === c3 && -1 !== g ? ++g : g = -1;
+            }
+            return d3;
+          }
+          var d2 = { resolve: function() {
+            for (var a3, d3, e = "", f = false, g = arguments.length - 1; g >= -1 && !f; g--) g >= 0 ? d3 = arguments[g] : (void 0 === a3 && (a3 = ""), d3 = a3), b2(d3), 0 !== d3.length && (e = d3 + "/" + e, f = 47 === d3.charCodeAt(0));
+            if (e = c2(e, !f), f) if (e.length > 0) return "/" + e;
+            else return "/";
+            return e.length > 0 ? e : ".";
+          }, normalize: function(a3) {
+            if (b2(a3), 0 === a3.length) return ".";
+            var d3 = 47 === a3.charCodeAt(0), e = 47 === a3.charCodeAt(a3.length - 1);
+            return (0 !== (a3 = c2(a3, !d3)).length || d3 || (a3 = "."), a3.length > 0 && e && (a3 += "/"), d3) ? "/" + a3 : a3;
+          }, isAbsolute: function(a3) {
+            return b2(a3), a3.length > 0 && 47 === a3.charCodeAt(0);
+          }, join: function() {
+            if (0 == arguments.length) return ".";
+            for (var a3, c3 = 0; c3 < arguments.length; ++c3) {
+              var e = arguments[c3];
+              b2(e), e.length > 0 && (void 0 === a3 ? a3 = e : a3 += "/" + e);
+            }
+            return void 0 === a3 ? "." : d2.normalize(a3);
+          }, relative: function(a3, c3) {
+            if (b2(a3), b2(c3), a3 === c3 || (a3 = d2.resolve(a3)) === (c3 = d2.resolve(c3))) return "";
+            for (var e = 1; e < a3.length && 47 === a3.charCodeAt(e); ++e) ;
+            for (var f = a3.length, g = f - e, h = 1; h < c3.length && 47 === c3.charCodeAt(h); ++h) ;
+            for (var i = c3.length - h, j = g < i ? g : i, k = -1, l = 0; l <= j; ++l) {
+              if (l === j) {
+                if (i > j) {
+                  if (47 === c3.charCodeAt(h + l)) return c3.slice(h + l + 1);
+                  else if (0 === l) return c3.slice(h + l);
+                } else g > j && (47 === a3.charCodeAt(e + l) ? k = l : 0 === l && (k = 0));
+                break;
+              }
+              var m = a3.charCodeAt(e + l);
+              if (m !== c3.charCodeAt(h + l)) break;
+              47 === m && (k = l);
+            }
+            var n = "";
+            for (l = e + k + 1; l <= f; ++l) (l === f || 47 === a3.charCodeAt(l)) && (0 === n.length ? n += ".." : n += "/..");
+            return n.length > 0 ? n + c3.slice(h + k) : (h += k, 47 === c3.charCodeAt(h) && ++h, c3.slice(h));
+          }, _makeLong: function(a3) {
+            return a3;
+          }, dirname: function(a3) {
+            if (b2(a3), 0 === a3.length) return ".";
+            for (var c3 = a3.charCodeAt(0), d3 = 47 === c3, e = -1, f = true, g = a3.length - 1; g >= 1; --g) if (47 === (c3 = a3.charCodeAt(g))) {
+              if (!f) {
+                e = g;
+                break;
+              }
+            } else f = false;
+            return -1 === e ? d3 ? "/" : "." : d3 && 1 === e ? "//" : a3.slice(0, e);
+          }, basename: function(a3, c3) {
+            if (void 0 !== c3 && "string" != typeof c3) throw TypeError('"ext" argument must be a string');
+            b2(a3);
+            var d3, e = 0, f = -1, g = true;
+            if (void 0 !== c3 && c3.length > 0 && c3.length <= a3.length) {
+              if (c3.length === a3.length && c3 === a3) return "";
+              var h = c3.length - 1, i = -1;
+              for (d3 = a3.length - 1; d3 >= 0; --d3) {
+                var j = a3.charCodeAt(d3);
+                if (47 === j) {
+                  if (!g) {
+                    e = d3 + 1;
+                    break;
+                  }
+                } else -1 === i && (g = false, i = d3 + 1), h >= 0 && (j === c3.charCodeAt(h) ? -1 == --h && (f = d3) : (h = -1, f = i));
+              }
+              return e === f ? f = i : -1 === f && (f = a3.length), a3.slice(e, f);
+            }
+            for (d3 = a3.length - 1; d3 >= 0; --d3) if (47 === a3.charCodeAt(d3)) {
+              if (!g) {
+                e = d3 + 1;
+                break;
+              }
+            } else -1 === f && (g = false, f = d3 + 1);
+            return -1 === f ? "" : a3.slice(e, f);
+          }, extname: function(a3) {
+            b2(a3);
+            for (var c3 = -1, d3 = 0, e = -1, f = true, g = 0, h = a3.length - 1; h >= 0; --h) {
+              var i = a3.charCodeAt(h);
+              if (47 === i) {
+                if (!f) {
+                  d3 = h + 1;
+                  break;
+                }
+                continue;
+              }
+              -1 === e && (f = false, e = h + 1), 46 === i ? -1 === c3 ? c3 = h : 1 !== g && (g = 1) : -1 !== c3 && (g = -1);
+            }
+            return -1 === c3 || -1 === e || 0 === g || 1 === g && c3 === e - 1 && c3 === d3 + 1 ? "" : a3.slice(c3, e);
+          }, format: function(a3) {
+            var b3, c3;
+            if (null === a3 || "object" != typeof a3) throw TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof a3);
+            return b3 = a3.dir || a3.root, c3 = a3.base || (a3.name || "") + (a3.ext || ""), b3 ? b3 === a3.root ? b3 + c3 : b3 + "/" + c3 : c3;
+          }, parse: function(a3) {
+            b2(a3);
+            var c3, d3 = { root: "", dir: "", base: "", ext: "", name: "" };
+            if (0 === a3.length) return d3;
+            var e = a3.charCodeAt(0), f = 47 === e;
+            f ? (d3.root = "/", c3 = 1) : c3 = 0;
+            for (var g = -1, h = 0, i = -1, j = true, k = a3.length - 1, l = 0; k >= c3; --k) {
+              if (47 === (e = a3.charCodeAt(k))) {
+                if (!j) {
+                  h = k + 1;
+                  break;
+                }
+                continue;
+              }
+              -1 === i && (j = false, i = k + 1), 46 === e ? -1 === g ? g = k : 1 !== l && (l = 1) : -1 !== g && (l = -1);
+            }
+            return -1 === g || -1 === i || 0 === l || 1 === l && g === i - 1 && g === h + 1 ? -1 !== i && (0 === h && f ? d3.base = d3.name = a3.slice(1, i) : d3.base = d3.name = a3.slice(h, i)) : (0 === h && f ? (d3.name = a3.slice(1, g), d3.base = a3.slice(1, i)) : (d3.name = a3.slice(h, g), d3.base = a3.slice(h, i)), d3.ext = a3.slice(g, i)), h > 0 ? d3.dir = a3.slice(0, h - 1) : f && (d3.dir = "/"), d3;
+          }, sep: "/", delimiter: ":", win32: null, posix: null };
+          d2.posix = d2, a2.exports = d2;
+        } }, c = {};
+        function d(a2) {
+          var e = c[a2];
+          if (void 0 !== e) return e.exports;
+          var f = c[a2] = { exports: {} }, g = true;
+          try {
+            b[a2](f, f.exports, d), g = false;
+          } finally {
+            g && delete c[a2];
+          }
+          return f.exports;
+        }
+        d.ab = "//", a.exports = d(114);
+      }();
+    }, 794: (a, b, c) => {
+      "use strict";
+      c.d(b, { fm: () => i, E0: () => j, fV: () => g, M1: () => h, FP: () => d });
+      let d = (0, c(149).xl)();
+      var e, f = ((e = {})[e.Before = 1] = "Before", e[e.EarlyStatic = 2] = "EarlyStatic", e[e.Static = 3] = "Static", e[e.EarlyRuntime = 4] = "EarlyRuntime", e[e.Runtime = 5] = "Runtime", e[e.Dynamic = 6] = "Dynamic", e[e.Abandoned = 7] = "Abandoned", e);
+      function g(a2) {
+        let b2 = a2.stagedRendering;
+        return !!b2 && (b2.currentStage === f.EarlyStatic || b2.currentStage === f.EarlyRuntime);
+      }
+      function h(a2) {
+        throw Object.defineProperty(Error(`\`${a2}\` was called outside a request scope. Read more: https://nextjs.org/docs/messages/next-dynamic-api-wrong-context`), "__NEXT_ERROR_CODE", { value: "E251", enumerable: false, configurable: true });
+      }
+      function i(a2) {
+        switch (a2.type) {
+          case "prerender":
+          case "prerender-runtime":
+          case "prerender-ppr":
+          case "prerender-client":
+          case "validation-client":
+            return a2.prerenderResumeDataCache;
+          case "request":
+            if (a2.prerenderResumeDataCache) return a2.prerenderResumeDataCache;
+          case "prerender-legacy":
+          case "cache":
+          case "private-cache":
+          case "unstable-cache":
+          case "generate-static-params":
+            return null;
+          default:
+            return a2;
+        }
+      }
+      function j(a2) {
+        switch (a2.type) {
+          case "request":
+          case "prerender":
+          case "prerender-runtime":
+          case "prerender-client":
+          case "validation-client":
+            if (a2.renderResumeDataCache) return a2.renderResumeDataCache;
+          case "prerender-ppr":
+            return a2.prerenderResumeDataCache ?? null;
+          case "cache":
+          case "private-cache":
+          case "unstable-cache":
+          case "prerender-legacy":
+          case "generate-static-params":
+            return null;
+          default:
+            return a2;
+        }
+      }
+    }, 797: (a, b, c) => {
+      "use strict";
+      c.d(b, { Ts: () => e, W5: () => i, wi: () => k });
+      var d = c(301);
+      function e(a2) {
+        return "object" == typeof a2 && null !== a2 && "digest" in a2 && a2.digest === f;
+      }
+      let f = "HANGING_PROMISE_REJECTION";
+      class g extends Error {
+        constructor(a2, b2) {
+          super(`During prerendering, ${b2} rejects when the prerender is complete. Typically these errors are handled by React but if you move ${b2} to a different context by using \`setTimeout\`, \`after\`, or similar functions you may observe this error and you should handle it in that context. This occurred at route "${a2}".`), this.route = a2, this.expression = b2, this.digest = f;
+        }
+      }
+      let h = /* @__PURE__ */ new WeakMap();
+      function i(a2, b2, c2) {
+        if (a2.aborted) return Promise.reject(new g(b2, c2));
+        {
+          let d2 = new Promise((d3, e2) => {
+            let f2 = e2.bind(null, new g(b2, c2)), i2 = h.get(a2);
+            if (i2) i2.push(f2);
+            else {
+              let b3 = [f2];
+              h.set(a2, b3), a2.addEventListener("abort", () => {
+                for (let a3 = 0; a3 < b3.length; a3++) b3[a3]();
+              }, { once: true });
+            }
+          });
+          return d2.catch(j), d2;
+        }
+      }
+      function j() {
+      }
+      function k(a2, b2) {
+        let { stagedRendering: c2 } = a2;
+        return c2 ? c2.waitForStage(c2.currentStage === d.D.EarlyStatic || c2.currentStage === d.D.EarlyRuntime ? d.D.EarlyRuntime : d.D.Runtime).then(() => b2) : b2;
+      }
+    }, 798: (a, b, c) => {
+      "use strict";
+      c.d(b, { z: () => d });
+      class d extends Error {
+        constructor(a2, b2) {
+          super(`Invariant: ${a2.endsWith(".") ? a2 : a2 + "."} This is a bug in Next.js.`, b2), this.name = "InvariantError";
+        }
+      }
+    }, 841: (a, b, c) => {
+      "use strict";
+      c.d(b, { o: () => f });
+      var d = c(408);
+      class e extends Error {
+        constructor() {
+          super("Headers cannot be modified. Read more: https://nextjs.org/docs/app/api-reference/functions/headers");
+        }
+        static callable() {
+          throw new e();
+        }
+      }
+      class f extends Headers {
+        constructor(a2) {
+          super(), this.headers = new Proxy(a2, { get(b2, c2, e2) {
+            if ("symbol" == typeof c2) return d.l.get(b2, c2, e2);
+            let f2 = c2.toLowerCase(), g = Object.keys(a2).find((a3) => a3.toLowerCase() === f2);
+            if (void 0 !== g) return d.l.get(b2, g, e2);
+          }, set(b2, c2, e2, f2) {
+            if ("symbol" == typeof c2) return d.l.set(b2, c2, e2, f2);
+            let g = c2.toLowerCase(), h = Object.keys(a2).find((a3) => a3.toLowerCase() === g);
+            return d.l.set(b2, h ?? c2, e2, f2);
+          }, has(b2, c2) {
+            if ("symbol" == typeof c2) return d.l.has(b2, c2);
+            let e2 = c2.toLowerCase(), f2 = Object.keys(a2).find((a3) => a3.toLowerCase() === e2);
+            return void 0 !== f2 && d.l.has(b2, f2);
+          }, deleteProperty(b2, c2) {
+            if ("symbol" == typeof c2) return d.l.deleteProperty(b2, c2);
+            let e2 = c2.toLowerCase(), f2 = Object.keys(a2).find((a3) => a3.toLowerCase() === e2);
+            return void 0 === f2 || d.l.deleteProperty(b2, f2);
+          } });
+        }
+        static seal(a2) {
+          return new Proxy(a2, { get(a3, b2, c2) {
+            switch (b2) {
+              case "append":
+              case "delete":
+              case "set":
+                return e.callable;
+              default:
+                return d.l.get(a3, b2, c2);
+            }
+          } });
+        }
+        merge(a2) {
+          return Array.isArray(a2) ? a2.join(", ") : a2;
+        }
+        static from(a2) {
+          return a2 instanceof Headers ? a2 : new f(a2);
+        }
+        append(a2, b2) {
+          let c2 = this.headers[a2];
+          "string" == typeof c2 ? this.headers[a2] = [c2, b2] : Array.isArray(c2) ? c2.push(b2) : this.headers[a2] = b2;
+        }
+        delete(a2) {
+          delete this.headers[a2];
+        }
+        get(a2) {
+          let b2 = this.headers[a2];
+          return void 0 !== b2 ? this.merge(b2) : null;
+        }
+        has(a2) {
+          return void 0 !== this.headers[a2];
+        }
+        set(a2, b2) {
+          this.headers[a2] = b2;
+        }
+        forEach(a2, b2) {
+          for (let [c2, d2] of this.entries()) a2.call(b2, d2, c2, this);
+        }
+        *entries() {
+          for (let a2 of Object.keys(this.headers)) {
+            let b2 = a2.toLowerCase(), c2 = this.get(b2);
+            yield [b2, c2];
+          }
+        }
+        *keys() {
+          for (let a2 of Object.keys(this.headers)) {
+            let b2 = a2.toLowerCase();
+            yield b2;
+          }
+        }
+        *values() {
+          for (let a2 of Object.keys(this.headers)) {
+            let b2 = this.get(a2);
+            yield b2;
+          }
+        }
+        [Symbol.iterator]() {
+          return this.entries();
+        }
+      }
+    }, 845: (a, b, c) => {
+      "use strict";
+      Object.defineProperty(b, "__esModule", { value: true });
+      var d = { getTestReqInfo: function() {
+        return i;
+      }, withRequest: function() {
+        return h;
+      } };
+      for (var e in d) Object.defineProperty(b, e, { enumerable: true, get: d[e] });
+      let f = new (c(521)).AsyncLocalStorage();
+      function g(a2, b2) {
+        let c2 = b2.header(a2, "next-test-proxy-port");
+        if (!c2) return;
+        let d2 = b2.url(a2);
+        return { url: d2, proxyPort: Number(c2), testData: b2.header(a2, "next-test-data") || "" };
+      }
+      function h(a2, b2, c2) {
+        let d2 = g(a2, b2);
+        return d2 ? f.run(d2, c2) : c2();
+      }
+      function i(a2, b2) {
+        let c2 = f.getStore();
+        return c2 || (a2 && b2 ? g(a2, b2) : void 0);
+      }
+    }, 884: (a, b, c) => {
+      "use strict";
+      a.exports = c(748);
+    }, 955: (a, b, c) => {
+      "use strict";
+      c.d(b, { p: () => f });
+      var d = c(371), e = c(739);
+      function f(a2) {
+        return (0, e.n)(a2) || (0, d.RM)(a2);
+      }
+    }, 967: (a, b, c) => {
+      "use strict";
+      c.d(b, { I3: () => k, AA: () => m, Ui: () => i, xI: () => g, Pk: () => h });
+      var d = c(219), e = c(252);
+      c(142), c(794), c(701), c(797), c(591), c(798);
+      let f = "function" == typeof d.unstable_postpone;
+      function g(a2, b2, c2) {
+        let d2 = Object.defineProperty(new e.F(`Route ${b2.route} couldn't be rendered statically because it used \`${a2}\`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error`), "__NEXT_ERROR_CODE", { value: "E558", enumerable: false, configurable: true });
+        throw c2.revalidate = 0, b2.dynamicUsageDescription = a2, b2.dynamicUsageStack = d2.stack, d2;
+      }
+      function h(a2) {
+        switch (a2.type) {
+          case "cache":
+          case "unstable-cache":
+          case "private-cache":
+            return;
+        }
+      }
+      function i(a2, b2, c2) {
+        (function() {
+          if (!f) throw Object.defineProperty(Error("Invariant: React.unstable_postpone is not defined. This suggests the wrong version of React was loaded. This is a bug in Next.js"), "__NEXT_ERROR_CODE", { value: "E224", enumerable: false, configurable: true });
+        })(), c2 && c2.dynamicAccesses.push({ stack: c2.isDebugDynamicAccesses ? Error().stack : void 0, expression: b2 }), d.unstable_postpone(j(a2, b2));
+      }
+      function j(a2, b2) {
+        return `Route ${a2} needs to bail out of prerendering at this point because it used ${b2}. React throws this special object to indicate where. It should not be caught by your own try/catch. Learn more: https://nextjs.org/docs/messages/ppr-caught-error`;
+      }
+      function k(a2) {
+        return "object" == typeof a2 && null !== a2 && "string" == typeof a2.message && l(a2.message);
+      }
+      function l(a2) {
+        return a2.includes("needs to bail out of prerendering at this point because it used") && a2.includes("Learn more: https://nextjs.org/docs/messages/ppr-caught-error");
+      }
+      if (false === l(j("%%%", "^^^"))) throw Object.defineProperty(Error("Invariant: isDynamicPostpone misidentified a postpone reason. This is a bug in Next.js"), "__NEXT_ERROR_CODE", { value: "E296", enumerable: false, configurable: true });
+      function m(a2) {
+        return "object" == typeof a2 && null !== a2 && "NEXT_PRERENDER_INTERRUPTED" === a2.digest && "name" in a2 && "message" in a2 && a2 instanceof Error;
+      }
+      RegExp("\\n\\s+at Suspense \\(<anonymous>\\)(?:(?!\\n\\s+at (?:body|div|main|section|article|aside|header|footer|nav|form|p|span|h1|h2|h3|h4|h5|h6) \\(<anonymous>\\))[\\s\\S])*?\\n\\s+at __next_root_layout_boundary__ \\([^\\n]*\\)"), RegExp("\\n\\s+at __next_metadata_boundary__[\\n\\s]"), RegExp("\\n\\s+at __next_viewport_boundary__[\\n\\s]"), RegExp("\\n\\s+at __next_outlet_boundary__[\\n\\s]"), RegExp("\\n\\s+at __next_instant_validation_boundary__[\\n\\s]");
+    } }, (a) => {
+      var b = a(a.s = 384);
+      (_ENTRIES = "u" < typeof _ENTRIES ? {} : _ENTRIES)["middleware_src/middleware"] = b;
+    }]);
+  }
+});
+
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/core/edgeFunctionHandler.js
 var edgeFunctionHandler_exports = {};
 __export(edgeFunctionHandler_exports, {
@@ -726,7 +8634,9 @@ var init_edgeFunctionHandler = __esm({
   "../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/core/edgeFunctionHandler.js"() {
     globalThis._ENTRIES = {};
     globalThis.self = globalThis;
-    globalThis._ROUTES = [];
+    globalThis._ROUTES = [{ "name": "src/middleware", "page": "/", "regex": ["^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*))(\\.json)?[\\/#\\?]?$", "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/(api|trpc))(.*)(\\.json)?[\\/#\\?]?$"] }];
+    require_edge_runtime_webpack();
+    require_middleware();
   }
 });
 
@@ -867,7 +8777,7 @@ async function createGenericHandler(handler3) {
 }
 
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/core/routing/util.js
-import crypto from "node:crypto";
+import crypto2 from "node:crypto";
 import { parse as parseQs, stringify as stringifyQs } from "node:querystring";
 
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/adapters/config/index.js
@@ -877,13 +8787,13 @@ globalThis.__dirname ??= "";
 var NEXT_DIR = path.join(__dirname, ".next");
 var OPEN_NEXT_DIR = path.join(__dirname, ".open-next");
 debug({ NEXT_DIR, OPEN_NEXT_DIR });
-var NextConfig = { "env": {}, "webpack": null, "typescript": { "ignoreBuildErrors": false }, "typedRoutes": false, "distDir": ".next", "cleanDistDir": true, "assetPrefix": "", "cacheMaxMemorySize": 52428800, "configOrigin": "next.config.ts", "useFileSystemPublicRoutes": true, "generateEtags": true, "pageExtensions": ["tsx", "ts", "jsx", "js"], "poweredByHeader": true, "compress": true, "images": { "deviceSizes": [640, 750, 828, 1080, 1200, 1920, 2048, 3840], "imageSizes": [32, 48, 64, 96, 128, 256, 384], "path": "/_next/image", "loader": "default", "loaderFile": "", "domains": [], "disableStaticImages": false, "minimumCacheTTL": 14400, "formats": ["image/webp"], "maximumRedirects": 3, "maximumResponseBody": 5e7, "dangerouslyAllowLocalIP": false, "dangerouslyAllowSVG": false, "contentSecurityPolicy": "script-src 'none'; frame-src 'none'; sandbox;", "contentDispositionType": "attachment", "localPatterns": [{ "pathname": "**", "search": "" }], "remotePatterns": [], "qualities": [75], "unoptimized": false, "customCacheHandler": false }, "devIndicators": { "position": "bottom-left" }, "onDemandEntries": { "maxInactiveAge": 6e4, "pagesBufferLength": 5 }, "basePath": "", "sassOptions": {}, "trailingSlash": false, "i18n": null, "productionBrowserSourceMaps": false, "excludeDefaultMomentLocales": true, "reactProductionProfiling": false, "reactStrictMode": null, "reactMaxHeadersLength": 6e3, "httpAgentOptions": { "keepAlive": true }, "logging": { "serverFunctions": true, "browserToTerminal": "warn" }, "compiler": {}, "expireTime": 31536e3, "staticPageGenerationTimeout": 60, "output": "standalone", "modularizeImports": { "@mui/icons-material": { "transform": "@mui/icons-material/{{member}}" }, "lodash": { "transform": "lodash/{{member}}" } }, "outputFileTracingRoot": "/Users/25LP9922/Desktop/pinequest-ep2/pinequest-s3-e2-update", "cacheComponents": false, "cacheLife": { "default": { "stale": 300, "revalidate": 900, "expire": 4294967294 }, "seconds": { "stale": 30, "revalidate": 1, "expire": 60 }, "minutes": { "stale": 300, "revalidate": 60, "expire": 3600 }, "hours": { "stale": 300, "revalidate": 3600, "expire": 86400 }, "days": { "stale": 300, "revalidate": 86400, "expire": 604800 }, "weeks": { "stale": 300, "revalidate": 604800, "expire": 2592e3 }, "max": { "stale": 300, "revalidate": 2592e3, "expire": 31536e3 } }, "cacheHandlers": {}, "experimental": { "appNewScrollHandler": false, "useSkewCookie": false, "cssChunking": true, "multiZoneDraftMode": false, "appNavFailHandling": false, "prerenderEarlyExit": true, "serverMinification": true, "linkNoTouchStart": false, "caseSensitiveRoutes": false, "cachedNavigations": false, "partialFallbacks": false, "dynamicOnHover": false, "varyParams": false, "prefetchInlining": false, "preloadEntriesOnStart": true, "clientRouterFilter": true, "clientRouterFilterRedirects": false, "fetchCacheKeyPrefix": "", "proxyPrefetch": "flexible", "optimisticClientCache": true, "manualClientBasePath": false, "cpus": 7, "memoryBasedWorkersCount": false, "imgOptConcurrency": null, "imgOptTimeoutInSeconds": 7, "imgOptMaxInputPixels": 268402689, "imgOptSequentialRead": null, "imgOptSkipMetadata": null, "isrFlushToDisk": true, "workerThreads": false, "optimizeCss": false, "nextScriptWorkers": false, "scrollRestoration": false, "externalDir": false, "disableOptimizedLoading": false, "gzipSize": true, "craCompat": false, "esmExternals": true, "fullySpecified": false, "swcTraceProfiling": false, "forceSwcTransforms": false, "largePageDataBytes": 128e3, "typedEnv": false, "parallelServerCompiles": false, "parallelServerBuildTraces": false, "ppr": false, "authInterrupts": false, "webpackMemoryOptimizations": false, "optimizeServerReact": true, "strictRouteTypes": false, "viewTransition": false, "removeUncaughtErrorAndRejectionListeners": false, "validateRSCRequestHeaders": false, "staleTimes": { "dynamic": 0, "static": 300 }, "reactDebugChannel": true, "serverComponentsHmrCache": true, "staticGenerationMaxConcurrency": 8, "staticGenerationMinPagesPerWorker": 25, "transitionIndicator": false, "gestureTransition": false, "inlineCss": false, "useCache": false, "globalNotFound": false, "browserDebugInfoInTerminal": "warn", "lockDistDir": true, "proxyClientMaxBodySize": 10485760, "hideLogsAfterAbort": false, "mcpServer": true, "turbopackFileSystemCacheForDev": true, "turbopackFileSystemCacheForBuild": false, "turbopackInferModuleSideEffects": true, "turbopackPluginRuntimeStrategy": "childProcesses", "optimizePackageImports": ["lucide-react", "date-fns", "lodash-es", "ramda", "antd", "react-bootstrap", "ahooks", "@ant-design/icons", "@headlessui/react", "@headlessui-float/react", "@heroicons/react/20/solid", "@heroicons/react/24/solid", "@heroicons/react/24/outline", "@visx/visx", "@tremor/react", "rxjs", "@mui/material", "@mui/icons-material", "recharts", "react-use", "effect", "@effect/schema", "@effect/platform", "@effect/platform-node", "@effect/platform-browser", "@effect/platform-bun", "@effect/sql", "@effect/sql-mssql", "@effect/sql-mysql2", "@effect/sql-pg", "@effect/sql-sqlite-node", "@effect/sql-sqlite-bun", "@effect/sql-sqlite-wasm", "@effect/sql-sqlite-react-native", "@effect/rpc", "@effect/rpc-http", "@effect/typeclass", "@effect/experimental", "@effect/opentelemetry", "@material-ui/core", "@material-ui/icons", "@tabler/icons-react", "mui-core", "react-icons/ai", "react-icons/bi", "react-icons/bs", "react-icons/cg", "react-icons/ci", "react-icons/di", "react-icons/fa", "react-icons/fa6", "react-icons/fc", "react-icons/fi", "react-icons/gi", "react-icons/go", "react-icons/gr", "react-icons/hi", "react-icons/hi2", "react-icons/im", "react-icons/io", "react-icons/io5", "react-icons/lia", "react-icons/lib", "react-icons/lu", "react-icons/md", "react-icons/pi", "react-icons/ri", "react-icons/rx", "react-icons/si", "react-icons/sl", "react-icons/tb", "react-icons/tfi", "react-icons/ti", "react-icons/vsc", "react-icons/wi"], "trustHostHeader": false, "isExperimentalCompile": false }, "htmlLimitedBots": "[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight", "bundlePagesRouterDependencies": false, "configFileName": "next.config.ts", "reactCompiler": true, "turbopack": { "root": "/Users/25LP9922/Desktop/pinequest-ep2/pinequest-s3-e2-update" }, "distDirRoot": ".next" };
-var BuildId = "6FhS-o1_31b79qdLAgkle";
-var RoutesManifest = { "basePath": "", "rewrites": { "beforeFiles": [], "afterFiles": [], "fallback": [] }, "redirects": [{ "source": "/:path+/", "destination": "/:path+", "internal": true, "priority": true, "statusCode": 308, "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$" }], "routes": { "static": [{ "page": "/", "regex": "^/(?:/)?$", "routeKeys": {}, "namedRegex": "^/(?:/)?$" }, { "page": "/_global-error", "regex": "^/_global\\-error(?:/)?$", "routeKeys": {}, "namedRegex": "^/_global\\-error(?:/)?$" }, { "page": "/_not-found", "regex": "^/_not\\-found(?:/)?$", "routeKeys": {}, "namedRegex": "^/_not\\-found(?:/)?$" }, { "page": "/favicon.ico", "regex": "^/favicon\\.ico(?:/)?$", "routeKeys": {}, "namedRegex": "^/favicon\\.ico(?:/)?$" }, { "page": "/teacher", "regex": "^/teacher(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher(?:/)?$" }, { "page": "/teacher/angi", "regex": "^/teacher/angi(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/angi(?:/)?$" }, { "page": "/teacher/shalgalt", "regex": "^/teacher/shalgalt(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/shalgalt(?:/)?$" }, { "page": "/teacher/statistic", "regex": "^/teacher/statistic(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/statistic(?:/)?$" }], "dynamic": [], "data": { "static": [], "dynamic": [] } }, "locales": [] };
+var NextConfig = { "env": {}, "webpack": null, "typescript": { "ignoreBuildErrors": false }, "typedRoutes": false, "distDir": ".next", "cleanDistDir": true, "assetPrefix": "", "cacheMaxMemorySize": 52428800, "configOrigin": "next.config.ts", "useFileSystemPublicRoutes": true, "generateEtags": true, "pageExtensions": ["tsx", "ts", "jsx", "js"], "poweredByHeader": true, "compress": true, "images": { "deviceSizes": [640, 750, 828, 1080, 1200, 1920, 2048, 3840], "imageSizes": [32, 48, 64, 96, 128, 256, 384], "path": "/_next/image", "loader": "default", "loaderFile": "", "domains": [], "disableStaticImages": false, "minimumCacheTTL": 14400, "formats": ["image/webp"], "maximumRedirects": 3, "maximumResponseBody": 5e7, "dangerouslyAllowLocalIP": false, "dangerouslyAllowSVG": false, "contentSecurityPolicy": "script-src 'none'; frame-src 'none'; sandbox;", "contentDispositionType": "attachment", "localPatterns": [{ "pathname": "**", "search": "" }], "remotePatterns": [{ "protocol": "https", "hostname": "images.unsplash.com", "pathname": "/**" }], "qualities": [75], "unoptimized": false, "customCacheHandler": false }, "devIndicators": { "position": "bottom-left" }, "onDemandEntries": { "maxInactiveAge": 6e4, "pagesBufferLength": 5 }, "basePath": "", "sassOptions": {}, "trailingSlash": false, "i18n": null, "productionBrowserSourceMaps": false, "excludeDefaultMomentLocales": true, "reactProductionProfiling": false, "reactStrictMode": null, "reactMaxHeadersLength": 6e3, "httpAgentOptions": { "keepAlive": true }, "logging": { "serverFunctions": true, "browserToTerminal": "warn" }, "compiler": {}, "expireTime": 31536e3, "staticPageGenerationTimeout": 60, "output": "standalone", "modularizeImports": { "@mui/icons-material": { "transform": "@mui/icons-material/{{member}}" }, "lodash": { "transform": "lodash/{{member}}" } }, "outputFileTracingRoot": "/Users/angarag/Desktop/PineQuest.E2/pinequest-s3-e2-update", "cacheComponents": false, "cacheLife": { "default": { "stale": 300, "revalidate": 900, "expire": 4294967294 }, "seconds": { "stale": 30, "revalidate": 1, "expire": 60 }, "minutes": { "stale": 300, "revalidate": 60, "expire": 3600 }, "hours": { "stale": 300, "revalidate": 3600, "expire": 86400 }, "days": { "stale": 300, "revalidate": 86400, "expire": 604800 }, "weeks": { "stale": 300, "revalidate": 604800, "expire": 2592e3 }, "max": { "stale": 300, "revalidate": 2592e3, "expire": 31536e3 } }, "cacheHandlers": {}, "experimental": { "appNewScrollHandler": false, "useSkewCookie": false, "cssChunking": true, "multiZoneDraftMode": false, "appNavFailHandling": false, "prerenderEarlyExit": true, "serverMinification": true, "linkNoTouchStart": false, "caseSensitiveRoutes": false, "cachedNavigations": false, "partialFallbacks": false, "dynamicOnHover": false, "varyParams": false, "prefetchInlining": false, "preloadEntriesOnStart": true, "clientRouterFilter": true, "clientRouterFilterRedirects": false, "fetchCacheKeyPrefix": "", "proxyPrefetch": "flexible", "optimisticClientCache": true, "manualClientBasePath": false, "cpus": 9, "memoryBasedWorkersCount": false, "imgOptConcurrency": null, "imgOptTimeoutInSeconds": 7, "imgOptMaxInputPixels": 268402689, "imgOptSequentialRead": null, "imgOptSkipMetadata": null, "isrFlushToDisk": true, "workerThreads": false, "optimizeCss": false, "nextScriptWorkers": false, "scrollRestoration": false, "externalDir": false, "disableOptimizedLoading": false, "gzipSize": true, "craCompat": false, "esmExternals": true, "fullySpecified": false, "swcTraceProfiling": false, "forceSwcTransforms": false, "largePageDataBytes": 128e3, "typedEnv": false, "parallelServerCompiles": false, "parallelServerBuildTraces": false, "ppr": false, "authInterrupts": false, "webpackMemoryOptimizations": false, "optimizeServerReact": true, "strictRouteTypes": false, "viewTransition": false, "removeUncaughtErrorAndRejectionListeners": false, "validateRSCRequestHeaders": false, "staleTimes": { "dynamic": 0, "static": 300 }, "reactDebugChannel": true, "serverComponentsHmrCache": true, "staticGenerationMaxConcurrency": 8, "staticGenerationMinPagesPerWorker": 25, "transitionIndicator": false, "gestureTransition": false, "inlineCss": false, "useCache": false, "globalNotFound": false, "browserDebugInfoInTerminal": "warn", "lockDistDir": true, "proxyClientMaxBodySize": 10485760, "hideLogsAfterAbort": false, "mcpServer": true, "turbopackFileSystemCacheForDev": true, "turbopackFileSystemCacheForBuild": false, "turbopackInferModuleSideEffects": true, "turbopackPluginRuntimeStrategy": "childProcesses", "optimizePackageImports": ["lucide-react", "date-fns", "lodash-es", "ramda", "antd", "react-bootstrap", "ahooks", "@ant-design/icons", "@headlessui/react", "@headlessui-float/react", "@heroicons/react/20/solid", "@heroicons/react/24/solid", "@heroicons/react/24/outline", "@visx/visx", "@tremor/react", "rxjs", "@mui/material", "@mui/icons-material", "recharts", "react-use", "effect", "@effect/schema", "@effect/platform", "@effect/platform-node", "@effect/platform-browser", "@effect/platform-bun", "@effect/sql", "@effect/sql-mssql", "@effect/sql-mysql2", "@effect/sql-pg", "@effect/sql-sqlite-node", "@effect/sql-sqlite-bun", "@effect/sql-sqlite-wasm", "@effect/sql-sqlite-react-native", "@effect/rpc", "@effect/rpc-http", "@effect/typeclass", "@effect/experimental", "@effect/opentelemetry", "@material-ui/core", "@material-ui/icons", "@tabler/icons-react", "mui-core", "react-icons/ai", "react-icons/bi", "react-icons/bs", "react-icons/cg", "react-icons/ci", "react-icons/di", "react-icons/fa", "react-icons/fa6", "react-icons/fc", "react-icons/fi", "react-icons/gi", "react-icons/go", "react-icons/gr", "react-icons/hi", "react-icons/hi2", "react-icons/im", "react-icons/io", "react-icons/io5", "react-icons/lia", "react-icons/lib", "react-icons/lu", "react-icons/md", "react-icons/pi", "react-icons/ri", "react-icons/rx", "react-icons/si", "react-icons/sl", "react-icons/tb", "react-icons/tfi", "react-icons/ti", "react-icons/vsc", "react-icons/wi"], "trustHostHeader": false, "isExperimentalCompile": false }, "htmlLimitedBots": "[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight", "bundlePagesRouterDependencies": false, "configFileName": "next.config.ts", "reactCompiler": true, "turbopack": { "root": "/Users/angarag/Desktop/PineQuest.E2/pinequest-s3-e2-update" }, "distDirRoot": ".next" };
+var BuildId = "HY1_AxPaScU6STV1BnE-8";
+var RoutesManifest = { "basePath": "", "rewrites": { "beforeFiles": [], "afterFiles": [], "fallback": [] }, "redirects": [{ "source": "/:path+/", "destination": "/:path+", "internal": true, "priority": true, "statusCode": 308, "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$" }], "routes": { "static": [{ "page": "/", "regex": "^/(?:/)?$", "routeKeys": {}, "namedRegex": "^/(?:/)?$" }, { "page": "/_global-error", "regex": "^/_global\\-error(?:/)?$", "routeKeys": {}, "namedRegex": "^/_global\\-error(?:/)?$" }, { "page": "/_not-found", "regex": "^/_not\\-found(?:/)?$", "routeKeys": {}, "namedRegex": "^/_not\\-found(?:/)?$" }, { "page": "/admin", "regex": "^/admin(?:/)?$", "routeKeys": {}, "namedRegex": "^/admin(?:/)?$" }, { "page": "/admin/classes", "regex": "^/admin/classes(?:/)?$", "routeKeys": {}, "namedRegex": "^/admin/classes(?:/)?$" }, { "page": "/admin/school", "regex": "^/admin/school(?:/)?$", "routeKeys": {}, "namedRegex": "^/admin/school(?:/)?$" }, { "page": "/admin/teachers", "regex": "^/admin/teachers(?:/)?$", "routeKeys": {}, "namedRegex": "^/admin/teachers(?:/)?$" }, { "page": "/favicon.ico", "regex": "^/favicon\\.ico(?:/)?$", "routeKeys": {}, "namedRegex": "^/favicon\\.ico(?:/)?$" }, { "page": "/sign-in", "regex": "^/sign\\-in(?:/)?$", "routeKeys": {}, "namedRegex": "^/sign\\-in(?:/)?$" }, { "page": "/sign-up", "regex": "^/sign\\-up(?:/)?$", "routeKeys": {}, "namedRegex": "^/sign\\-up(?:/)?$" }, { "page": "/sso-callback", "regex": "^/sso\\-callback(?:/)?$", "routeKeys": {}, "namedRegex": "^/sso\\-callback(?:/)?$" }, { "page": "/student", "regex": "^/student(?:/)?$", "routeKeys": {}, "namedRegex": "^/student(?:/)?$" }, { "page": "/teacher", "regex": "^/teacher(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher(?:/)?$" }, { "page": "/teacher/content-management", "regex": "^/teacher/content\\-management(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/content\\-management(?:/)?$" }, { "page": "/teacher/exam-optimization", "regex": "^/teacher/exam\\-optimization(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/exam\\-optimization(?:/)?$" }, { "page": "/teacher/score-calculation", "regex": "^/teacher/score\\-calculation(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/score\\-calculation(?:/)?$" }, { "page": "/teacher/score-calculation/angi", "regex": "^/teacher/score\\-calculation/angi(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/score\\-calculation/angi(?:/)?$" }, { "page": "/teacher/statistic", "regex": "^/teacher/statistic(?:/)?$", "routeKeys": {}, "namedRegex": "^/teacher/statistic(?:/)?$" }], "dynamic": [{ "page": "/admin/classes/[id]", "regex": "^/admin/classes/([^/]+?)(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/admin/classes/(?<nxtPid>[^/]+?)(?:/)?$" }, { "page": "/admin/teachers/[id]", "regex": "^/admin/teachers/([^/]+?)(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/admin/teachers/(?<nxtPid>[^/]+?)(?:/)?$" }], "data": { "static": [], "dynamic": [] } }, "locales": [] };
 var ConfigHeaders = [];
-var PrerenderManifest = { "version": 4, "routes": { "/": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/", "dataRoute": "/index.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/_global-error": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/_global-error", "dataRoute": "/_global-error.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/_not-found": { "initialStatus": 404, "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/_not-found", "dataRoute": "/_not-found.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/favicon.ico": { "initialHeaders": { "cache-control": "public, max-age=0, must-revalidate", "content-type": "image/x-icon", "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico" }, "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/favicon.ico", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/teacher": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/teacher", "dataRoute": "/teacher.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/teacher/angi": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/teacher/angi", "dataRoute": "/teacher/angi.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/teacher/shalgalt": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/teacher/shalgalt", "dataRoute": "/teacher/shalgalt.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/teacher/statistic": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/teacher/statistic", "dataRoute": "/teacher/statistic.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] } }, "dynamicRoutes": {}, "notFoundRoutes": [], "preview": { "previewModeId": "b43f9d812a51c47fedf52d43738e12ae", "previewModeSigningKey": "cccbf2a3c279603199c10227caed84f791ff4ab12342541549607acbda7d3e62", "previewModeEncryptionKey": "620a736c2c971ed03def8cf46c8e376b4f89010479980bd4a2ab75c8b5e87cba" } };
-var MiddlewareManifest = { "version": 3, "middleware": {}, "sortedMiddleware": [], "functions": {} };
-var AppPathRoutesManifest = { "/_global-error/page": "/_global-error", "/_not-found/page": "/_not-found", "/favicon.ico/route": "/favicon.ico", "/page": "/", "/teacher/angi/page": "/teacher/angi", "/teacher/page": "/teacher", "/teacher/shalgalt/page": "/teacher/shalgalt", "/teacher/statistic/page": "/teacher/statistic" };
+var PrerenderManifest = { "version": 4, "routes": { "/_global-error": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/_global-error", "dataRoute": "/_global-error.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/_not-found": { "initialStatus": 404, "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/_not-found", "dataRoute": "/_not-found.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/favicon.ico": { "initialHeaders": { "cache-control": "public, max-age=0, must-revalidate", "content-type": "image/x-icon", "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico" }, "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/favicon.ico", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/sign-in": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/sign-in", "dataRoute": "/sign-in.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/sign-up": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/sign-up", "dataRoute": "/sign-up.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/sso-callback": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/sso-callback", "dataRoute": "/sso-callback.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/student": { "experimentalBypassFor": [{ "type": "header", "key": "next-action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/student", "dataRoute": "/student.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] } }, "dynamicRoutes": {}, "notFoundRoutes": [], "preview": { "previewModeId": "47c40f525b976e5542e45cd9bcb7ec46", "previewModeSigningKey": "67bafdf70bdac46f1ad8fe75b0a821bed1e97da444d7d58f2834d460573bbd2c", "previewModeEncryptionKey": "ea5d13ecdd8305f2d487d5052ccb8124b0abd3ea3226dcb5eef5a4484c61d12d" } };
+var MiddlewareManifest = { "version": 3, "middleware": { "/": { "files": ["server/edge-runtime-webpack.js", "server/src/middleware.js"], "entrypoint": "server/src/middleware.js", "name": "src/middleware", "page": "/", "matchers": [{ "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*))(\\.json)?[\\/#\\?]?$", "originalSource": "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)" }, { "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/(api|trpc))(.*)(\\.json)?[\\/#\\?]?$", "originalSource": "/(api|trpc)(.*)" }], "wasm": [], "assets": [], "env": { "__NEXT_BUILD_ID": "HY1_AxPaScU6STV1BnE-8", "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "AlsU0DfCWCrCbp91U5YLF/0iAWQWUeKvH0MgiBMt55g=", "__NEXT_PREVIEW_MODE_ID": "47c40f525b976e5542e45cd9bcb7ec46", "__NEXT_PREVIEW_MODE_SIGNING_KEY": "67bafdf70bdac46f1ad8fe75b0a821bed1e97da444d7d58f2834d460573bbd2c", "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "ea5d13ecdd8305f2d487d5052ccb8124b0abd3ea3226dcb5eef5a4484c61d12d" } } }, "functions": {}, "sortedMiddleware": ["/"] };
+var AppPathRoutesManifest = { "/_not-found/page": "/_not-found", "/_global-error/page": "/_global-error", "/favicon.ico/route": "/favicon.ico", "/page": "/", "/sign-in/page": "/sign-in", "/sign-up/page": "/sign-up", "/sso-callback/page": "/sso-callback", "/student/page": "/student", "/admin/classes/[id]/page": "/admin/classes/[id]", "/admin/classes/page": "/admin/classes", "/admin/page": "/admin", "/admin/school/page": "/admin/school", "/admin/teachers/[id]/page": "/admin/teachers/[id]", "/admin/teachers/page": "/admin/teachers", "/teacher/content-management/page": "/teacher/content-management", "/teacher/exam-optimization/page": "/teacher/exam-optimization", "/teacher/page": "/teacher", "/teacher/score-calculation/angi/page": "/teacher/score-calculation/angi", "/teacher/score-calculation/page": "/teacher/score-calculation", "/teacher/statistic/page": "/teacher/statistic" };
 var FunctionsConfigManifest = { "version": 1, "functions": {} };
 var PagesManifest = { "/404": "pages/404.html", "/500": "pages/500.html" };
 process.env.NEXT_BUILD_ID = BuildId;
@@ -897,7 +8807,7 @@ import { Transform } from "node:stream";
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/core/routing/util.js
 init_util();
 init_logger();
-import { ReadableStream as ReadableStream2 } from "node:stream/web";
+import { ReadableStream as ReadableStream3 } from "node:stream/web";
 
 // ../../node_modules/.pnpm/@opennextjs+aws@3.9.16_next@16.2.1_@babel+core@7.29.0_babel-plugin-react-compiler@1.0.0_cc7cb043d28a72c995faeb1dc95d4633/node_modules/@opennextjs/aws/dist/utils/binary.js
 var commonBinaryMimeTypes = /* @__PURE__ */ new Set([
@@ -1287,7 +9197,7 @@ function convertBodyToReadableStream(method, body) {
     return void 0;
   if (!body)
     return void 0;
-  return new ReadableStream2({
+  return new ReadableStream3({
     start(controller) {
       controller.enqueue(body);
       controller.close();
