@@ -88,16 +88,16 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
 
       <dl className="mt-5 grid gap-3 rounded-2xl bg-[#f8fbff] p-4 text-sm text-[#5f7394]">
         <div className="flex items-center justify-between gap-3">
-          <dt>Хичээл</dt>
-          <dd className="font-semibold text-[#183153]">{question.subject}</dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
           <dt>Анги</dt>
           <dd className="font-semibold text-[#183153]">{question.grade}</dd>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <dt>Дэд сэдэв</dt>
-          <dd className="font-semibold text-[#183153]">{question.subtopic || "-"}</dd>
+          <dt>Хичээл</dt>
+          <dd className="font-semibold text-[#183153]">{question.subject}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Сэдэв</dt>
+          <dd className="font-semibold text-[#183153]">{question.topic}</dd>
         </div>
         <div className="flex items-center justify-between gap-3">
           <dt>Оноо</dt>

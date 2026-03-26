@@ -60,8 +60,14 @@ export function QuestionCard({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[#6d7f9c]">
+        <span className="rounded-full bg-[#f5f1ff] px-2.5 py-1 font-medium text-[#6242a7]">
+          {question.grade}
+        </span>
         <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 font-medium text-[#3b5a8f]">
           {question.subject}
+        </span>
+        <span className="rounded-full bg-[#eef9f2] px-2.5 py-1 font-medium text-[#246b4f]">
+          {question.topic}
         </span>
         <GradingTypeBadge gradingType={question.gradingType} />
         <span>{question.points} оноо</span>

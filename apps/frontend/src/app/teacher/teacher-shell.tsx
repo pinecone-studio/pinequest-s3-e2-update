@@ -28,18 +28,27 @@ export function useTeacher() {
 }
 
 const menuItems = [
-	{ href: "/teacher", label: "Нүүр хуудас", icon: Home },
-	{
-		href: "/teacher/question-bank",
-		label: "Асуултын сан",
-		icon: BookText,
-	},
-
-	{
-		href: "/teacher/exam-optimization",
-		label: "Шалгалтын хяналт",
-		icon: Cog,
-	},
+  { href: "/teacher", label: "Нүүр хуудас", icon: Home },
+  {
+    href: "/teacher/question-bank",
+    label: "Асуултын сан",
+    icon: BookText,
+  },
+  {
+    href: "/teacher/exam",
+    label: "Шалгалт",
+    icon: BookText,
+  },
+  {
+    href: "/teacher/exam-optimization",
+    label: "Шалгалтын хяналт",
+    icon: Cog,
+  },
+  {
+    href: "/teacher/score-calculation",
+    label: "Шалгалтын дүн",
+    icon: Calculator,
+  },
 ];
 
 export default function TeacherShell({

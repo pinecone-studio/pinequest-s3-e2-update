@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GRADE_OPTIONS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/mock-data";
+import { GRADE_OPTIONS, SUBJECT_OPTIONS } from "../_lib/mock-data";
 import { QUESTION_DIFFICULTIES, QUESTION_STATUSES, type QuestionBuilderValues, type QuestionValidationErrors, type QuestionType } from "../_lib/types";
 import { createEmptyOption, createQuestionBuilderValues, DIFFICULTY_LABELS, QUESTION_TYPE_LABELS, STATUS_LABELS } from "../_lib/utils";
 import { FormulaEditor } from "./formula-editor";
@@ -121,7 +121,21 @@ export function QuestionBuilderForm({
           </section>
 
           <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
-            <div className="grid gap-4 xl:grid-cols-3">
+            <div className="grid gap-4 xl:grid-cols-2">
+              <Field label="Анги" error={validationErrors?.grade}>
+                <input
+                  className={inputClassName}
+                  list="question-bank-grades"
+                  onChange={(event) => updateValue("grade", event.target.value)}
+                  placeholder="4-р анги"
+                  value={values.grade}
+                />
+                <datalist id="question-bank-grades">
+                  {GRADE_OPTIONS.map((grade) => (
+                    <option key={grade} value={grade} />
+                  ))}
+                </datalist>
+              </Field>
               <Field label="Асуултын гарчиг" error={validationErrors?.title}>
                 <input
                   className={inputClassName}
@@ -177,6 +191,17 @@ export function QuestionBuilderForm({
                 placeholder="Хичээлээ сонгоно уу."
                 value={values.subtopic}
               />
+            </div>
+
+            <div className="mt-4">
+              <Field label="Сэдэв" error={validationErrors?.topic}>
+                <input
+                  className={inputClassName}
+                  onChange={(event) => updateValue("topic", event.target.value)}
+                  placeholder="Жишээ: Бутархай"
+                  value={values.topic}
+                />
+              </Field>
             </div>
 
             <div className="mt-4">

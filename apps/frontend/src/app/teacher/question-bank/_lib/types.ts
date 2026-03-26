@@ -48,9 +48,9 @@ export type Question = {
   formulaPreview: string;
   imageUrl: string;
   fileUploadConfig: QuestionFileUploadConfig;
-  subject: string;
   grade: string;
-  subtopic: string;
+  subject: string;
+  topic: string;
   difficulty: QuestionDifficulty;
   points: number;
   status: QuestionStatus;
@@ -84,9 +84,9 @@ export type QuestionBuilderValues = {
   formulaRaw: string;
   imageUrl: string;
   fileUploadConfig: QuestionFileUploadConfig;
-  subject: string;
   grade: string;
-  subtopic: string;
+  subject: string;
+  topic: string;
   difficulty: QuestionDifficulty;
   points: number;
   status: QuestionStatus;
@@ -96,7 +96,9 @@ export type QuestionValidationErrors = Partial<
   Record<
     | "title"
     | "prompt"
+    | "grade"
     | "subject"
+    | "topic"
     | "grade"
     | "points"
     | "options"
