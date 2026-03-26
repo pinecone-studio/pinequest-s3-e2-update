@@ -33,8 +33,8 @@ export default function TeacherDashboard() {
               Миний ангиуд
             </h2>
             <p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#64748b]">
-              Таны заадаг ангиудын жагсаалт. Зөвхөн жишээ ангийг дарж тусад
-              хуудас руу орж болно.
+              Таны заадаг ангиудын жагсаалт. Анги дээр дарж сурагчид, статистик,
+              өмнөх шалгалтын хайлт руу орно.
             </p>
             <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#f6faff] px-3 py-1.5 text-3 font-semibold text-[#4a5875]">
               <span className="text-[#4f9dff]">◆</span>
@@ -84,38 +84,22 @@ export default function TeacherDashboard() {
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
               {filteredClasses.map((cls) => {
                 const isDemo = cls.id === TEACHER_DEMO_CLASS_ID;
-                const goDemo = () => router.push("/teacher/demo-class");
+                const openClass = () =>
+                  router.push(`/teacher/class/${encodeURIComponent(cls.id)}`);
                 return (
-                  <li
-                    key={cls.id}
-                    className={isDemo ? "sm:col-span-2" : undefined}
-                  >
+                  <li key={cls.id}>
                     <article
-                      role={isDemo ? "button" : undefined}
-                      tabIndex={isDemo ? 0 : undefined}
-                      onClick={isDemo ? goDemo : undefined}
-                      onKeyDown={
-                        isDemo
-                          ? (e) => {
-                              if (e.key !== "Enter" && e.key !== " ") return;
-                              e.preventDefault();
-                              goDemo();
-                            }
-                          : undefined
-                      }
-                      className={`group flex min-h-[5.5rem] items-center gap-4 rounded-2xl border p-5 text-left shadow-sm ${
-                        isDemo
-                          ? "cursor-pointer transition hover:border-[#4f9dff]/50 hover:bg-[#f0f7ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f9dff] focus-visible:ring-offset-2 border-dashed border-[#94a3b8] bg-[#f8fafc]"
-                          : "cursor-default border-[#e8ecf2] bg-[#fafbfd]"
-                      }`}
+                      role="button"
+                      tabIndex={0}
+                      onClick={openClass}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        openClass();
+                      }}
+                      className="group flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl border border-[#e8ecf2] bg-[#fafbfd] p-5 text-left shadow-sm transition hover:border-[#4f9dff]/45 hover:bg-[#f6faff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f9dff] focus-visible:ring-offset-2"
                     >
-                      <div
-                        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#4f9dff] ${
-                          isDemo
-                            ? ""
-                            : "opacity-80"
-                        } ${isDemo ? "transition group-hover:bg-[#4f9dff] group-hover:text-white" : ""}`}
-                      >
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#4f9dff] transition group-hover:bg-[#4f9dff] group-hover:text-white">
                         <Users className="h-7 w-7" aria-hidden />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -127,24 +111,14 @@ export default function TeacherDashboard() {
                             {cls.studentIds.length} сурагч
                           </span>
                           {isDemo ? (
-                            <span className="text-[#4f9dff]">
-                              {" "}
-                              · жишээ хуудас — дарж нээнэ
-                            </span>
-                          ) : (
-                            <span className="text-[#94a3b8]">
-                              {" "}
-                              · зөвхөн мэдээлэл
-                            </span>
-                          )}
+                            <span className="text-[#4f9dff]"> · жишээ анги</span>
+                          ) : null}
                         </p>
                       </div>
-                      {isDemo ? (
-                        <ChevronRight
-                          className="h-6 w-6 shrink-0 text-[#b8c4d6] transition group-hover:translate-x-0.5 group-hover:text-[#4f9dff]"
-                          aria-hidden
-                        />
-                      ) : null}
+                      <ChevronRight
+                        className="h-6 w-6 shrink-0 text-[#b8c4d6] transition group-hover:translate-x-0.5 group-hover:text-[#4f9dff]"
+                        aria-hidden
+                      />
                     </article>
                   </li>
                 );
