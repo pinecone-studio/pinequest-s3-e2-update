@@ -22,7 +22,7 @@ export default function ExamOptimizationPage() {
 		startedAt: number;
 	};
 
-	const MONITOR_TOTAL_STUDENTS = 245;
+	const MONITOR_TOTAL_STUDENTS = 0;
 	const [isMonitoring, setIsMonitoring] = useState(false);
 	const [activeStudents, setActiveStudents] = useState<ActiveStudentEntry[]>(
 		[],
@@ -138,7 +138,7 @@ export default function ExamOptimizationPage() {
 								<button
 									type="button"
 									onClick={startMonitoring}
-									className="rounded-xl bg-teal-600 px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-45"
+									className="rounded-xl bg-[#2563eb] px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-45"
 								>
 									Хяналт эхлүүлэх
 								</button>
@@ -162,10 +162,10 @@ export default function ExamOptimizationPage() {
 							icon={<Users className="h-5 w-5" />}
 						/>
 						<StatCard
-							tone="green"
-							title="Идэвхтэй"
-							value={String(activeStudents.length)}
-							icon={<span className="text-teal-700">●</span>}
+              tone="green"
+              title="Идэвхтэй"
+              value={String(activeStudents.length)}
+              icon={<span className="text-[#2f66b9]">●</span>}
 						/>
 						<StatCard
 							tone="amber"
@@ -233,11 +233,11 @@ function StatCard({
 			border: "border-[#cfe6ff]",
 			iconWrap: "text-[#0b78d1]",
 		},
-		green: {
-			bg: "bg-[#e8f5ee]",
-			value: "text-[#12b650]",
-			border: "border-[#cdecd7]",
-			iconWrap: "text-[#11a44c]",
+      green: {
+        bg: "bg-[#edf5ff]",
+        value: "text-[#2f66b9]",
+        border: "border-[#cfe0fb]",
+        iconWrap: "text-[#2f66b9]",
 		},
 		amber: {
 			bg: "bg-[#fff4e5]",
@@ -279,9 +279,9 @@ function ActiveStudentRow({
 }) {
 	const initial = (student.fullName?.trim()?.charAt(0) || "?").toUpperCase();
 	return (
-		<div className="flex items-center justify-between gap-4 rounded-2xl border border-[#35c354] bg-[#e8f5ee] px-5 py-4">
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#cfe0fb] bg-[#eef6ff] px-5 py-4">
 			<div className="flex min-w-0 items-center gap-4">
-				<div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#11a44c] text-white">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4f9dff] text-white">
 					<span className="text-4 font-extrabold">{initial}</span>
 				</div>
 				<div className="min-w-0">
@@ -296,7 +296,7 @@ function ActiveStudentRow({
 			</div>
 
 			<div className="flex items-center gap-3">
-				<span className="rounded-full bg-[#12b650] px-4 py-1.5 text-3 font-semibold text-white">
+        <span className="rounded-full bg-[#4f9dff] px-4 py-1.5 text-3 font-semibold text-white">
 					Идэвхтэй
 				</span>
 			</div>

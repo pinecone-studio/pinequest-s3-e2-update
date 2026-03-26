@@ -66,7 +66,7 @@ export function QuestionCard({
         <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 font-medium text-[#3b5a8f]">
           {question.subject}
         </span>
-        <span className="rounded-full bg-[#eef9f2] px-2.5 py-1 font-medium text-[#246b4f]">
+        <span className="rounded-full bg-[#eef6ff] px-2.5 py-1 font-medium text-[#2f66b9]">
           {question.topic}
         </span>
         <GradingTypeBadge gradingType={question.gradingType} />

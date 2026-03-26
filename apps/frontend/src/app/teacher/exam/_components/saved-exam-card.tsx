@@ -34,7 +34,7 @@ export function SavedExamCard({
   return (
     <article
       className={`rounded-3xl border p-5 transition ${
-        isActive ? "border-[#7fb3ff] bg-[#f8fbff] shadow-[0_14px_30px_rgba(79,157,255,0.12)]" : "border-[#d8e2f0] bg-[#fbfdff]"
+        isActive ? "border-[#7fb3ff] bg-[#edf5ff] shadow-[0_14px_30px_rgba(79,157,255,0.12)]" : "border-[#d8e2f0] bg-[#f9fcff]"
       }`}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -75,12 +75,12 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
   return (
     <>
       <div className="flex flex-wrap items-center gap-2">
-        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${savedExam.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${savedExam.status === "published" ? "bg-[#deeeff] text-[#2f66b9]" : "bg-amber-100 text-amber-700"}`}>
           {savedExam.status === "published" ? "Нийтэлсэн" : "Ноорог"}
         </span>
         <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#3b5a8f]">{savedExam.grade}</span>
         <span className="rounded-full bg-[#f8f1ff] px-3 py-1 text-xs font-semibold text-[#7047a9]">{savedExam.subject}</span>
-        <span className="rounded-full bg-[#eef9f2] px-3 py-1 text-xs font-semibold text-[#236847]">{savedExam.topic}</span>
+        <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]">{savedExam.topic}</span>
       </div>
       <h3 className="mt-3 text-lg font-semibold text-[#183153]">{savedExam.title}</h3>
       <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[#60728f]">
@@ -97,11 +97,11 @@ function SavedExamSendState({ sentClassIds }: { sentClassIds: string[] }) {
   if (sentClassIds.length === 0) return null;
   return (
     <div className="mt-3 space-y-3">
-      <div className="flex items-start gap-3 rounded-2xl border border-[#bde7ce] bg-[#eefaf3] px-4 py-3 text-sm text-[#236847]">
+      <div className="flex items-start gap-3 rounded-2xl border border-[#cfe0fb] bg-[#eef6ff] px-4 py-3 text-sm text-[#2f66b9]">
         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
         <div>
           <p className="font-semibold">Шалгалт амжилттай илгээгдлээ.</p>
-          <p className="mt-1 text-[#3d7a5d]">Сонгосон ангид энэ шалгалтыг илгээсэн байна.</p>
+          <p className="mt-1 text-[#54739f]">Сонгосон ангид энэ шалгалтыг илгээсэн байна.</p>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
