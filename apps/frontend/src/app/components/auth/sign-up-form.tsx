@@ -25,6 +25,10 @@ import {
   safeAuthRedirect,
 } from "@/app/lib/auth-redirect";
 import { clerkTryReloadSessionResource } from "@/app/lib/clerk-try-reload";
+import {
+  hasAnyOrganizationSignupField,
+  mergeOrganizationFieldsIntoUnsafeMetadata,
+} from "@/app/lib/sign-up-org-metadata";
 
 type Step = "credentials" | "verify";
 
@@ -74,7 +78,7 @@ export function SignUpForm() {
   const isOrganizationSignup = afterAuthUrl === "/admin";
 
   const { isLoaded, isSignedIn } = useAuth();
-  const { setActive } = useClerk();
+  const clerk = useClerk();
   const { signUp, errors } = useSignUp();
   const [step, setStep] = useState<Step>("credentials");
   const [fetching, setFetching] = useState(false);
@@ -149,17 +153,44 @@ export function SignUpForm() {
       const d = orgDetail.trim();
       const r = orgReg.trim();
 
-      await setActive({ session: sessionId });
-      try {
-        if (a || h || s || d || r) {
-          await saveSignUpProfileExtras(a, h, s, d, r);
+      await clerk.setActive({ session: sessionId });
+
+      if (hasAnyOrganizationSignupField(a, h, s, d, r)) {
+        const sleep = (ms: number) =>
+          new Promise<void>((resolve) => {
+            setTimeout(resolve, ms);
+          });
+        let saved = false;
+        for (let i = 0; i < 30 && !saved; i++) {
+          const u = clerk.user;
+          if (u) {
+            await u.update({
+              unsafeMetadata: mergeOrganizationFieldsIntoUnsafeMetadata(
+                u.unsafeMetadata as Record<string, unknown>,
+                a,
+                h,
+                s,
+                d,
+                r,
+              ),
+            });
+            saved = true;
+            break;
+          }
+          await sleep(50);
         }
-      } catch {
-        // Профайл алдаатай ч самбар руу орно
+        if (!saved) {
+          try {
+            await saveSignUpProfileExtras(a, h, s, d, r);
+          } catch {
+            // Сервер талд session харагдахгүй үлдвэл алгасна
+          }
+        }
       }
+
       hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
     },
-    [afterAuthUrl, setActive, signUp],
+    [afterAuthUrl, clerk, signUp],
   );
 
   async function onCredentials(e: React.FormEvent<HTMLFormElement>) {
