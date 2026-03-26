@@ -49,6 +49,8 @@ export type Question = {
   imageUrl: string;
   fileUploadConfig: QuestionFileUploadConfig;
   subject: string;
+  grade: string;
+  subtopic: string;
   difficulty: QuestionDifficulty;
   points: number;
   status: QuestionStatus;
@@ -63,6 +65,8 @@ export type QuestionFilters = {
   questionType: "all" | QuestionType;
   difficulty: "all" | QuestionDifficulty;
   subject: "all" | string;
+  grade: "all" | string;
+  subtopic: "all" | string;
   status: "all" | QuestionStatus;
   sortBy: QuestionSortOption;
 };
@@ -81,6 +85,8 @@ export type QuestionBuilderValues = {
   imageUrl: string;
   fileUploadConfig: QuestionFileUploadConfig;
   subject: string;
+  grade: string;
+  subtopic: string;
   difficulty: QuestionDifficulty;
   points: number;
   status: QuestionStatus;
@@ -91,6 +97,7 @@ export type QuestionValidationErrors = Partial<
     | "title"
     | "prompt"
     | "subject"
+    | "grade"
     | "points"
     | "options"
     | "correctAnswer"

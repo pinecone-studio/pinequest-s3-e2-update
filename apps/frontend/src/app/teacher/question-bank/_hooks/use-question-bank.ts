@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { EXAM_DESTINATIONS, MOCK_QUESTIONS, QUESTION_BANK_FILTER_DEFAULTS } from "../_lib/mock-data";
+import { EXAM_DESTINATIONS, MOCK_QUESTIONS, QUESTION_BANK_FILTER_DEFAULTS, SUBTOPIC_OPTIONS } from "../_lib/mock-data";
 import type { Question, QuestionBuilderValues, QuestionFilters, QuestionValidationErrors } from "../_lib/types";
 import {
   buildQuestionPayload,
@@ -45,6 +45,18 @@ export function useQuestionBank() {
     () => Array.from(new Set(questions.map((question) => question.subject))).sort(),
     [questions],
   );
+
+  const gradeOptions = useMemo(
+    () => Array.from(new Set(questions.map((question) => question.grade))).sort(),
+    [questions],
+  );
+
+  const subtopicOptions = useMemo(() => {
+    if (filters.subject !== "all") {
+      return SUBTOPIC_OPTIONS[filters.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [];
+    }
+    return [];
+  }, [filters.subject]);
 
   const summary = useMemo(() => {
     const publishedCount = questions.filter((question) => question.status === "published").length;
@@ -174,6 +186,8 @@ export function useQuestionBank() {
     selectedQuestions,
     setActiveQuestionId,
     setReuseTarget,
+    gradeOptions,
+    subtopicOptions,
     subjectOptions,
     summary,
     toastMessage,

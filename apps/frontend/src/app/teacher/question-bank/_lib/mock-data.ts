@@ -6,6 +6,8 @@ export const QUESTION_BANK_FILTER_DEFAULTS: QuestionFilters = {
   questionType: "all",
   difficulty: "all",
   subject: "all",
+  grade: "all",
+  subtopic: "all",
   status: "all",
   sortBy: "newest",
 };
@@ -17,6 +19,25 @@ export const SUBJECT_OPTIONS = [
   "Биологи",
   "Англи хэл",
   "Бусад хичээл",
+] as const;
+
+export const SUBTOPIC_OPTIONS: Record<(typeof SUBJECT_OPTIONS)[number], string[]> = {
+  "Математик": ["Алгебр", "Геометр", "Тригонометр", "Магадлал", "Статистик"],
+  "Хими": ["Ерөнхий хими", "Органик хими", "Аналитик хими", "Физик хими"],
+  "Физик": ["Кинематик", "Динамик", "Дулаан", "Цахилгаан", "Оптик"],
+  "Биологи": ["Эс судлал", "Генетик", "Экологи", "Хүний биологи"],
+  "Англи хэл": ["Грамматик", "Уншлага", "Сонсгол", "Бичгийн чадвар"],
+  "Бусад хичээл": ["Ерөнхий"],
+};
+
+export const GRADE_OPTIONS = [
+  "6-р анги",
+  "7-р анги",
+  "8-р анги",
+  "9-р анги",
+  "10-р анги",
+  "11-р анги",
+  "12-р анги",
 ] as const;
 
 export const EXAM_DESTINATIONS = [
@@ -53,6 +74,8 @@ export const MOCK_QUESTIONS: Question[] = [
       maxFiles: 0,
     },
     subject: "Математик",
+    grade: "9-р анги",
+    subtopic: "Алгебр",
     difficulty: "easy",
     points: 2,
     status: "published",
@@ -82,6 +105,8 @@ export const MOCK_QUESTIONS: Question[] = [
       maxFiles: 0,
     },
     subject: "Биологи",
+    grade: "8-р анги",
+    subtopic: "Эс судлал",
     difficulty: "easy",
     points: 1,
     status: "published",
@@ -111,6 +136,8 @@ export const MOCK_QUESTIONS: Question[] = [
       maxFiles: 0,
     },
     subject: "Физик",
+    grade: "10-р анги",
+    subtopic: "Кинематик",
     difficulty: "medium",
     points: 8,
     status: "draft",
@@ -140,6 +167,8 @@ export const MOCK_QUESTIONS: Question[] = [
       maxFiles: 0,
     },
     subject: "Математик",
+    grade: "11-р анги",
+    subtopic: "Тригонометр",
     difficulty: "hard",
     points: 5,
     status: "published",
@@ -170,6 +199,8 @@ export const MOCK_QUESTIONS: Question[] = [
       maxFiles: 0,
     },
     subject: "Биологи",
+    grade: "7-р анги",
+    subtopic: "Хүний биологи",
     difficulty: "medium",
     points: 4,
     status: "published",
@@ -199,6 +230,8 @@ export const MOCK_QUESTIONS: Question[] = [
       maxFiles: 1,
     },
     subject: "Англи хэл",
+    grade: "12-р анги",
+    subtopic: "Бичгийн чадвар",
     difficulty: "hard",
     points: 10,
     status: "draft",

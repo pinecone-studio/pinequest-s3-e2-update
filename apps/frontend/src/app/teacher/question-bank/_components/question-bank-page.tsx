@@ -16,6 +16,7 @@ export function QuestionBankPage() {
     editingValues,
     filters,
     filteredQuestions,
+    gradeOptions,
     isBuilderOpen,
     lastValidationErrors,
     openCreateBuilder,
@@ -25,6 +26,7 @@ export function QuestionBankPage() {
     selectedQuestionIds,
     setActiveQuestionId,
     setReuseTarget,
+    subtopicOptions,
     subjectOptions,
     submitQuestion,
     summary,
@@ -52,9 +54,11 @@ export function QuestionBankPage() {
 
       <QuestionFilters
         filters={filters}
+        gradeOptions={gradeOptions}
         onChange={updateFilters}
         onClear={clearFilters}
         subjectOptions={subjectOptions}
+        subtopicOptions={subtopicOptions}
       />
 
       <ReuseToolbar
