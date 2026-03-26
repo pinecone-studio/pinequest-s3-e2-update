@@ -46,11 +46,6 @@ const menuItems = [
     label: "Шалгалтын хяналт",
     icon: Cog,
   },
-  {
-    href: "/teacher/score-calculation",
-    label: "Шалгалтын дүн",
-    icon: Calculator,
-  },
 ];
 
 export default function TeacherShell({
@@ -100,7 +95,7 @@ export default function TeacherShell({
                 </div>
               </div>
               <div>
-                <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-3 overflow-x-auto pb-1">
+                <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-8 overflow-x-auto pb-1">
                   {menuItems.map((item) => {
                     const isActive =
                       pathname === item.href ||
