@@ -126,6 +126,8 @@ export function filterAndSortQuestions(questions: Question[], filters: QuestionF
     if (filters.questionType !== "all" && question.questionType !== filters.questionType) return false;
     if (filters.difficulty !== "all" && question.difficulty !== filters.difficulty) return false;
     if (filters.subject !== "all" && question.subject !== filters.subject) return false;
+    if (filters.grade !== "all" && question.grade !== filters.grade) return false;
+    if (filters.subtopic !== "all" && question.subtopic !== filters.subtopic) return false;
     if (filters.status !== "all" && question.status !== filters.status) return false;
     return true;
   });
@@ -252,9 +254,26 @@ export function mapQuestionToBuilderValues(question: Question): QuestionBuilderV
 }
 
 export function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat("mn-MN", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(dateString));
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString;
+  }
+
+  const months = [
+    "1-р сар",
+    "2-р сар",
+    "3-р сар",
+    "4-р сар",
+    "5-р сар",
+    "6-р сар",
+    "7-р сар",
+    "8-р сар",
+    "9-р сар",
+    "10-р сар",
+    "11-р сар",
+    "12-р сар",
+  ];
+
+  return `${date.getUTCFullYear()} оны ${months[date.getUTCMonth()]} ${date.getUTCDate()}`;
 }

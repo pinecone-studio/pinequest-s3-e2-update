@@ -148,7 +148,14 @@ export function QuestionBuilderForm({
                 <input
                   className={inputClassName}
                   list="question-bank-subjects"
-                  onChange={(event) => updateValue("subject", event.target.value)}
+                  onChange={(event) => {
+                    const nextSubject = event.target.value;
+                    setValues((current) => ({
+                      ...current,
+                      subject: nextSubject,
+                      subtopic: "",
+                    }));
+                  }}
                   placeholder="Математик"
                   value={values.subject}
                 />
@@ -158,6 +165,32 @@ export function QuestionBuilderForm({
                   ))}
                 </datalist>
               </Field>
+              <SelectField
+                error={validationErrors?.grade}
+                label="Анги"
+                onValueChange={(value) => updateValue("grade", value)}
+                options={GRADE_OPTIONS.map((grade) => ({
+                  label: grade,
+                  value: grade,
+                }))}
+                value={values.grade}
+              />
+            </div>
+
+            <div className="mt-4">
+              <SelectField
+                disabled={!SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS]?.length}
+                label="Дэд сэдэв"
+                onValueChange={(value) => updateValue("subtopic", value)}
+                options={
+                  SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS]?.map((subtopic) => ({
+                    label: subtopic,
+                    value: subtopic,
+                  })) ?? []
+                }
+                placeholder="Хичээлээ сонгоно уу."
+                value={values.subtopic}
+              />
             </div>
 
             <div className="mt-4">
@@ -495,18 +528,24 @@ function SelectField({
   value,
   options,
   onValueChange,
+  error,
+  disabled,
+  placeholder,
 }: {
   label: string;
   value: string;
   options: { value: string; label: string }[];
   onValueChange: (value: string) => void;
+  error?: string;
+  disabled?: boolean;
+  placeholder?: string;
 }) {
   return (
     <label className="space-y-2">
       <span className="text-sm font-semibold text-[#183153]">{label}</span>
-      <Select onValueChange={onValueChange} value={value}>
+      <Select disabled={disabled} onValueChange={onValueChange} value={value}>
         <SelectTrigger className="h-12 rounded-2xl border-[#d3deef]">
-          <SelectValue />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
@@ -516,6 +555,7 @@ function SelectField({
           ))}
         </SelectContent>
       </Select>
+      {error ? <p className="text-sm font-medium text-[#d34f4f]">{error}</p> : null}
     </label>
   );
 }

@@ -1,106 +1,131 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Calendar, Users } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ChevronRight, Search, Users } from "lucide-react";
 import { store } from "@/app/lib/store";
+import { TEACHER_DEMO_CLASS_ID } from "@/app/lib/teacher-demo-class";
 import { useTeacher } from "../teacher-shell";
 
 export default function TeacherDashboard() {
   const router = useRouter();
   const teacher = useTeacher();
-  const classes = store.getClassesForTeacher(teacher.id);
+  const classes = store.getClassesForTeacherWithDemo(teacher.id);
+  const [query, setQuery] = useState("");
+
+  const filteredClasses = useMemo(() => {
+    const sorted = [...classes].sort((a, b) =>
+      a.name.localeCompare(b.name, "mn", { sensitivity: "base" }),
+    );
+    const q = query.trim().toLowerCase();
+    if (!q) return sorted;
+    return sorted.filter((c) => c.name.toLowerCase().includes(q));
+  }, [classes, query]);
+
+  const showSearch = classes.length > 1;
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
-      {/* Top 3 summary cards */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      </section>
+      <section>
+        <article className="rounded-2xl border border-[#d9dee8] bg-white p-6 shadow-[0_2px_12px_rgba(31,42,68,0.06)] sm:p-8">
+          <header className="mb-6 border-b border-[#eef2f6] pb-6">
+            <h2 className="text-5 font-extrabold tracking-tight text-[#1f2a44]">
+              Миний ангиуд
+            </h2>
+            <p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#64748b]">
+              Таны заадаг ангиудын жагсаалт. Анги дээр дарж сурагчид, статистик,
+              өмнөх шалгалтын хайлт руу орно.
+            </p>
+            <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#f6faff] px-3 py-1.5 text-3 font-semibold text-[#4a5875]">
+              <span className="text-[#4f9dff]">◆</span>
+              Нийт{" "}
+              <span className="font-extrabold text-[#1f2a44]">
+                {classes.length}
+              </span>{" "}
+              анги
+            </p>
+          </header>
 
-      {/* Main content: Миний ангиуд + Sidebar */}
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:grid-rows-[auto_auto]">
-        {/* Миний ангиуд */}
-        <article className="rounded-xl border border-[#d9dee8] bg-white p-5 lg:col-span-2">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-4 font-bold text-[#1f2a44]">Миний ангиуд</h2>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {classes.map((cls) => (
-              <article
-                key={cls.id}
-                onClick={() =>
-                  router.push(`/teacher/score-calculation/angi?class=${cls.id}`)
-                }
-                className="flex cursor-pointer flex-col gap-3 rounded-xl border border-[#e2e8f0] p-4 transition hover:border-teal-600/40 hover:bg-[#f8fafc]"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
-                    <Users className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-4 font-extrabold text-[#1f2a44]">
-                      {cls.name}
-                    </p>
-                    <p className="text-4 text-[#64748b]">
-                      {cls.studentIds.length} сурагч
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </article>
-
-        {/* Сүүлийн хийсэн ажил */}
-        <article className="rounded-xl border border-[#d9dee8] bg-white p-5 lg:col-span-2">
-          <h2 className="mb-4 text-4 font-bold text-[#1f2a44]">Сүүлийн хийсэн ажил</h2>
-          <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-4">
-            <p className="text-4 font-bold text-[#1f2a44]">Нийгэм — 3-р сар</p>
-            <p className="text-4 text-[#64748b]">10А · Нийгэм</p>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="h-2 flex-1 max-w-[180px] rounded-full bg-[#e2e8f0]">
-                <div
-                  className="h-2 rounded-full bg-teal-600"
-                  style={{ width: `${(14 / 32) * 100}%` }}
-                />
-              </div>
-              <span className="text-4 font-semibold text-[#334261]">14 хуудас</span>
+          {showSearch ? (
+            <div className="relative mb-6">
+              <Search
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8a96ac]"
+                aria-hidden
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Ангийн нэрээр хайх..."
+                className="w-full rounded-xl border border-[#d9dee8] bg-[#fafbfd] py-3 pl-11 pr-4 text-4 text-[#1f2a44] shadow-inner outline-none transition placeholder:text-[#94a3b8] focus:border-[#4f9dff] focus:bg-white focus:ring-4 focus:ring-[#4f9dff]/15"
+                aria-label="Ангийн нэрээр хайх"
+              />
             </div>
-            <button
-              onClick={() => router.push("/teacher/shalgalt")}
-              className="mt-4 rounded-xl bg-teal-600 px-5 py-2.5 text-4 font-semibold text-white transition hover:bg-teal-700"
-              type="button"
-            >
-              Үргэлжлүүлэх
-            </button>
-          </div>
-        </article>
+          ) : null}
 
-        {/* Гүйцэтгэлийн тойм sidebar - spans both rows */}
-        <aside className="lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:self-start">
-          <article className="sticky top-24 rounded-xl border border-[#d9dee8] bg-white p-5">
-            <h2 className="mb-4 text-4 font-bold text-[#1f2a44]">Гүйцэтгэлийн тойм</h2>
-            <div className="space-y-4">
-              <div>
-                <div className="mb-1 flex items-center justify-between">
-                  <p className="text-4 font-semibold text-[#1f2a44]">10А</p>
-                  <p className="text-4 font-bold text-[#12b650]">82%</p>
-                </div>
-                <div className="h-2 w-full rounded-full bg-[#e2e8f0]">
-                  <div className="h-2 w-[82%] rounded-full bg-[#12b650]" />
-                </div>
-              </div>
-              <div>
-                <div className="mb-1 flex items-center justify-between">
-                  <p className="text-4 font-semibold text-[#1f2a44]">9Б</p>
-                  <p className="text-4 font-bold text-[#f59e0b]">74%</p>
-                </div>
-                <div className="h-2 w-full rounded-full bg-[#e2e8f0]">
-                  <div className="h-2 w-[74%] rounded-full bg-[#f59e0b]" />
-                </div>
-              </div>
+          {filteredClasses.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-6 py-14 text-center">
+              <p className="text-4 font-semibold text-[#475569]">
+                {query.trim()
+                  ? "Хайлтад тохирох анги олдсонгүй."
+                  : "Одоогоор танд харагдах анги алга."}
+              </p>
+              {query.trim() ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="mt-4 text-4 font-semibold text-[#4f9dff] hover:underline"
+                >
+                  Хайлт цэвэрлэх
+                </button>
+              ) : null}
             </div>
-          </article>
-        </aside>
+          ) : (
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+              {filteredClasses.map((cls) => {
+                const isDemo = cls.id === TEACHER_DEMO_CLASS_ID;
+                const openClass = () =>
+                  router.push(`/teacher/class/${encodeURIComponent(cls.id)}`);
+                return (
+                  <li key={cls.id}>
+                    <article
+                      role="button"
+                      tabIndex={0}
+                      onClick={openClass}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        openClass();
+                      }}
+                      className="group flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl border border-[#e8ecf2] bg-[#fafbfd] p-5 text-left shadow-sm transition hover:border-[#4f9dff]/45 hover:bg-[#f6faff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f9dff] focus-visible:ring-offset-2"
+                    >
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#4f9dff] transition group-hover:bg-[#4f9dff] group-hover:text-white">
+                        <Users className="h-7 w-7" aria-hidden />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-5 font-extrabold leading-snug text-[#1f2a44]">
+                          {cls.name}
+                        </p>
+                        <p className="mt-1 text-4 leading-normal text-[#64748b]">
+                          <span className="font-medium text-[#4a5875]">
+                            {cls.studentIds.length} сурагч
+                          </span>
+                          {isDemo ? (
+                            <span className="text-[#4f9dff]"> · жишээ анги</span>
+                          ) : null}
+                        </p>
+                      </div>
+                      <ChevronRight
+                        className="h-6 w-6 shrink-0 text-[#b8c4d6] transition group-hover:translate-x-0.5 group-hover:text-[#4f9dff]"
+                        aria-hidden
+                      />
+                    </article>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </article>
       </section>
     </main>
   );

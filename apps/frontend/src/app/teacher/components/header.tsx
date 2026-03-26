@@ -36,7 +36,7 @@ export default function Header({
       return;
     }
     if (view === "review") {
-      router.push("/teacher/score-calculation/angi");
+      router.push("/teacher");
       return;
     }
     router.push("/teacher/statistic");

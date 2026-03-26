@@ -65,6 +65,8 @@ export type QuestionFilters = {
   questionType: "all" | QuestionType;
   difficulty: "all" | QuestionDifficulty;
   subject: "all" | string;
+  grade: "all" | string;
+  subtopic: "all" | string;
   status: "all" | QuestionStatus;
   sortBy: QuestionSortOption;
 };
@@ -97,6 +99,7 @@ export type QuestionValidationErrors = Partial<
     | "grade"
     | "subject"
     | "topic"
+    | "grade"
     | "points"
     | "options"
     | "correctAnswer"
