@@ -14,11 +14,20 @@ import { QuestionSearchBar } from "./question-search-bar";
 type QuestionFiltersProps = {
   filters: QuestionFilters;
   subjectOptions: string[];
+  gradeOptions: string[];
+  subtopicOptions: string[];
   onChange: (partial: Partial<QuestionFilters>) => void;
   onClear: () => void;
 };
 
-export function QuestionFilters({ filters, subjectOptions, onChange, onClear }: QuestionFiltersProps) {
+export function QuestionFilters({
+  filters,
+  subjectOptions,
+  gradeOptions,
+  subtopicOptions,
+  onChange,
+  onClear,
+}: QuestionFiltersProps) {
   return (
     <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-4">
@@ -38,7 +47,7 @@ export function QuestionFilters({ filters, subjectOptions, onChange, onClear }: 
 
         <QuestionSearchBar value={filters.search} onChange={(value) => onChange({ search: value })} />
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
           <FilterSelect
             label="Асуултын төрөл"
             value={filters.questionType}
@@ -66,10 +75,29 @@ export function QuestionFilters({ filters, subjectOptions, onChange, onClear }: 
           <FilterSelect
             label="Хичээл"
             value={filters.subject}
-            onValueChange={(value) => onChange({ subject: value })}
+            onValueChange={(value) => onChange({ subject: value, subtopic: "all" })}
             options={[
               { value: "all", label: "Бүх хичээл" },
               ...subjectOptions.map((subject) => ({ value: subject, label: subject })),
+            ]}
+          />
+          <FilterSelect
+            label="Анги"
+            value={filters.grade}
+            onValueChange={(value) => onChange({ grade: value })}
+            options={[
+              { value: "all", label: "Бүх анги" },
+              ...gradeOptions.map((grade) => ({ value: grade, label: grade })),
+            ]}
+          />
+          <FilterSelect
+            disabled={filters.subject === "all" || subtopicOptions.length === 0}
+            label="Дэд сэдэв"
+            value={filters.subtopic}
+            onValueChange={(value) => onChange({ subtopic: value })}
+            options={[
+              { value: "all", label: "Бүх дэд сэдэв" },
+              ...subtopicOptions.map((subtopic) => ({ value: subtopic, label: subtopic })),
             ]}
           />
           <FilterSelect
@@ -104,16 +132,18 @@ function FilterSelect({
   value,
   onValueChange,
   options,
+  disabled,
 }: {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
   options: { value: string; label: string }[];
+  disabled?: boolean;
 }) {
   return (
     <label className="space-y-2">
       <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">{label}</span>
-      <Select onValueChange={onValueChange} value={value}>
+      <Select disabled={disabled} onValueChange={onValueChange} value={value}>
         <SelectTrigger className="h-12 rounded-2xl border-[#d3deef]">
           <SelectValue />
         </SelectTrigger>

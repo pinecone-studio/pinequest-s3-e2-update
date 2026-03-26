@@ -66,6 +66,8 @@ export function createQuestionBuilderValues(
     imageUrl: "",
     fileUploadConfig: DEFAULT_FILE_UPLOAD_CONFIG,
     subject: "Математик",
+    grade: "9-р анги",
+    subtopic: "",
     difficulty: "medium",
     points: 5,
     status: "draft",
@@ -108,6 +110,8 @@ export function questionMatchesSearch(question: Question, search: string) {
     question.content.prompt,
     question.content.guidance,
     question.subject,
+    question.grade,
+    question.subtopic,
     QUESTION_TYPE_LABELS[question.questionType],
   ]
     .join(" ")
@@ -122,6 +126,8 @@ export function filterAndSortQuestions(questions: Question[], filters: QuestionF
     if (filters.questionType !== "all" && question.questionType !== filters.questionType) return false;
     if (filters.difficulty !== "all" && question.difficulty !== filters.difficulty) return false;
     if (filters.subject !== "all" && question.subject !== filters.subject) return false;
+    if (filters.grade !== "all" && question.grade !== filters.grade) return false;
+    if (filters.subtopic !== "all" && question.subtopic !== filters.subtopic) return false;
     if (filters.status !== "all" && question.status !== filters.status) return false;
     return true;
   });
@@ -145,6 +151,7 @@ export function validateQuestion(values: QuestionBuilderValues): QuestionValidat
   if (!values.title.trim()) errors.title = "Асуултын гарчиг оруулна уу.";
   if (!values.prompt.trim()) errors.prompt = "Сурагчид харагдах асуулгын текстийг оруулна уу.";
   if (!values.subject.trim()) errors.subject = "Хичээлийн төрлийг сонгох эсвэл бичнэ үү.";
+  if (!values.grade.trim()) errors.grade = "Анги сонгоно уу.";
   if (!Number.isFinite(values.points) || values.points <= 0) errors.points = "Оноо 0-ээс их байх ёстой.";
 
   if (values.questionType === "multiple_choice") {
@@ -207,6 +214,8 @@ export function buildQuestionPayload(values: QuestionBuilderValues, existingQues
     imageUrl: values.imageUrl.trim(),
     fileUploadConfig: values.fileUploadConfig,
     subject: values.subject.trim(),
+    grade: values.grade.trim(),
+    subtopic: values.subtopic.trim(),
     difficulty: values.difficulty,
     points: values.points,
     status: values.status,
@@ -235,6 +244,8 @@ export function mapQuestionToBuilderValues(question: Question): QuestionBuilderV
     imageUrl: question.imageUrl,
     fileUploadConfig: question.fileUploadConfig,
     subject: question.subject,
+    grade: question.grade,
+    subtopic: question.subtopic,
     difficulty: question.difficulty,
     points: question.points,
     status: question.status,
