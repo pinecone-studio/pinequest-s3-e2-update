@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import FaceDetection from "../components/faceDetection";
 export default function StudentPage() {
   const choices = [
     { id: "A", label: "x = 3" },
@@ -238,6 +239,9 @@ export default function StudentPage() {
           </div>
         </div>
       )}
+      <div>
+        <FaceDetection/>
+      </div>
     </main>
   );
 }
