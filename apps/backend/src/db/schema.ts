@@ -17,17 +17,10 @@ export const subjectTable = sqliteTable("subject", {
   updatedAt: text("updatedAt").notNull(),
 });
 
-export const gradeTable = sqliteTable("grade", {
-  id: text("id").primaryKey(),
-  grade: integer("grade"),
-  createdAt: text("createdAt").notNull(),
-  updatedAt: text("updatedAt").notNull(),
-});
-
 export const studentTable = sqliteTable("student", {
   id: text("id").primaryKey(),
   schoolId: text("schoolId").references(() => schoolTable.id).notNull(),
-  gradeId: text("gradeId").references(() => gradeTable.id).notNull(),
+  grade: integer("grade"),
   name: text("name").notNull(),
   studentCode: text("studentCode").notNull(),
   createdAt: text("createdAt").notNull(),
@@ -50,17 +43,24 @@ export const classTable = sqliteTable("class", {
 
 export const testTable = sqliteTable("test", {
   id: text("id").primaryKey(),
-  gradeId: text("gradeId").references(() => gradeTable.id).notNull(),
+  grade: integer("grade"),
   subjectId: text("subjectId").references(() => subjectTable.id).notNull(),
   topic: text("topic").notNull(),
   title: text("title"),
+  questionType: text("questionType"),
   question: text("question").notNull(),
+  subtopic: text("subtopic"),
+  rubric: text("rubric"),
+  formulaRaw: text("formulaRaw"),
+  imageUrl: text("imageUrl"),
+  fileUploadConfig: text("fileUploadConfig"),
   answers: text("answers").notNull(),
   rightAnswer: text("rightAnswer").notNull(),
   notes: text("notes"),
   questionNote: text("questionNote"),
   difficulty: text("difficulty"),
   score: integer("score").notNull(),
+  usageCount: integer("usageCount").notNull().default(0),
   isActive: integer("isActive").notNull().default(1),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
@@ -100,4 +100,3 @@ export const studentExamResultTable = sqliteTable("studentExamResult", {
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
-

@@ -91,6 +91,7 @@ export function QuestionBankPage() {
           key={editingValues?.id ?? "new-question"}
           onClose={closeBuilder}
           onSubmit={submitQuestion}
+          subjectOptions={subjectOptions}
           validationErrors={lastValidationErrors}
         />
       ) : null}

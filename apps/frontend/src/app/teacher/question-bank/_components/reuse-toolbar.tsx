@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXAM_DESTINATIONS } from "../_lib/mock-data";
+import { EXAM_DESTINATIONS } from "../_lib/constants";
 
 type ReuseToolbarProps = {
   selectedCount: number;

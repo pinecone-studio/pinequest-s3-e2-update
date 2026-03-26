@@ -1,170 +1,123 @@
 "use client";
 
+import { useQuery } from "@apollo/client/react";
 import { useMemo, useState } from "react";
-import { EXAM_DESTINATIONS, MOCK_QUESTIONS, QUESTION_BANK_FILTER_DEFAULTS, SUBTOPIC_OPTIONS } from "../_lib/mock-data";
-import type { Question, QuestionBuilderValues, QuestionFilters, QuestionValidationErrors } from "../_lib/types";
-import {
-  buildQuestionPayload,
-  filterAndSortQuestions,
-  mapQuestionToBuilderValues,
-  validateQuestion,
-} from "../_lib/utils";
+import { EXAM_DESTINATIONS, GRADE_OPTIONS, QUESTION_BANK_FILTER_DEFAULTS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/constants";
+import { mapBackendTestsToQuestions } from "../_lib/backend-question-mappers";
+import { GET_ALL_SUBJECTS_QUERY, type GetAllSubjectsResponse } from "../_lib/get-subjects";
+import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../_lib/get-tests";
+import type { QuestionBuilderValues, QuestionFilters, QuestionValidationErrors } from "../_lib/types";
+import { filterAndSortQuestions, mapQuestionToBuilderValues, validateQuestion } from "../_lib/utils";
+import { useCreateTestSync } from "./use-create-test-sync";
 
 export function useQuestionBank() {
-  const [questions, setQuestions] = useState<Question[]>(MOCK_QUESTIONS);
+  const { createQuestionInBackend, incrementUsageInBackend, updateQuestionInBackend } = useCreateTestSync();
+  const { data: subjectsData } = useQuery<GetAllSubjectsResponse>(GET_ALL_SUBJECTS_QUERY);
+  const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const [filters, setFilters] = useState<QuestionFilters>(QUESTION_BANK_FILTER_DEFAULTS);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
-  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(MOCK_QUESTIONS[0]?.id ?? null);
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const [lastValidationErrors, setLastValidationErrors] = useState<QuestionValidationErrors>({});
   const [reuseTarget, setReuseTarget] = useState<(typeof EXAM_DESTINATIONS)[number]>(EXAM_DESTINATIONS[0]);
 
-  const filteredQuestions = useMemo(
-    () => filterAndSortQuestions(questions, filters),
-    [filters, questions],
-  );
-
-  const selectedQuestions = useMemo(
-    () => questions.filter((question) => selectedQuestionIds.includes(question.id)),
-    [questions, selectedQuestionIds],
-  );
-
-  const activeQuestion = useMemo(
-    () => questions.find((question) => question.id === activeQuestionId) ?? filteredQuestions[0] ?? null,
-    [activeQuestionId, filteredQuestions, questions],
-  );
-
-  const editingQuestion = useMemo(
-    () => questions.find((question) => question.id === editingQuestionId) ?? null,
-    [editingQuestionId, questions],
-  );
-
+  const questions = useMemo(() => mapBackendTestsToQuestions(testsData?.getAllTests ?? []), [testsData?.getAllTests]);
+  const filteredQuestions = useMemo(() => filterAndSortQuestions(questions, filters), [filters, questions]);
+  const selectedQuestions = useMemo(() => questions.filter((question) => selectedQuestionIds.includes(question.id)), [questions, selectedQuestionIds]);
+  const activeQuestion = useMemo(() => questions.find((question) => question.id === activeQuestionId) ?? filteredQuestions[0] ?? null, [activeQuestionId, filteredQuestions, questions]);
+  const editingQuestion = useMemo(() => questions.find((question) => question.id === editingQuestionId) ?? null, [editingQuestionId, questions]);
   const subjectOptions = useMemo(
-    () => Array.from(new Set(questions.map((question) => question.subject))).sort(),
-    [questions],
+    () => Array.from(new Set([
+      ...questions.map((question) => question.subject),
+      ...SUBJECT_OPTIONS,
+      ...(subjectsData?.getAllSubjects ?? []).map((subject) => subject.name.trim()).filter(Boolean),
+    ])).sort(),
+    [questions, subjectsData?.getAllSubjects],
   );
-
-  const gradeOptions = useMemo(
-    () => Array.from(new Set(questions.map((question) => question.grade))).sort(),
-    [questions],
-  );
-
-  const subtopicOptions = useMemo(() => {
-    if (filters.subject !== "all") {
-      return SUBTOPIC_OPTIONS[filters.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [];
-    }
-    return [];
-  }, [filters.subject]);
-
-  const summary = useMemo(() => {
-    const publishedCount = questions.filter((question) => question.status === "published").length;
-    const draftCount = questions.filter((question) => question.status === "draft").length;
-    const manualCount = questions.filter((question) => question.gradingType === "manual").length;
-    return {
-      total: questions.length,
-      published: publishedCount,
-      draft: draftCount,
-      manual: manualCount,
-    };
-  }, [questions]);
+  const gradeOptions = useMemo(() => Array.from(new Set([...GRADE_OPTIONS, ...questions.map((question) => question.grade)])).sort(), [questions]);
+  const subtopicOptions = useMemo(() => filters.subject !== "all" ? SUBTOPIC_OPTIONS[filters.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [] : [], [filters.subject]);
+  const summary = useMemo(() => ({
+    total: questions.length,
+    published: questions.filter((question) => question.status === "published").length,
+    draft: questions.filter((question) => question.status === "draft").length,
+    manual: questions.filter((question) => question.gradingType === "manual").length,
+  }), [questions]);
 
   const showToast = (message: string) => {
     setToastMessage(message);
     window.clearTimeout((showToast as unknown as { timeout?: number }).timeout);
-    (showToast as unknown as { timeout?: number }).timeout = window.setTimeout(() => {
-      setToastMessage("");
-    }, 2400);
+    (showToast as unknown as { timeout?: number }).timeout = window.setTimeout(() => setToastMessage(""), 2400);
   };
 
-  const updateFilters = (partial: Partial<QuestionFilters>) => {
-    setFilters((current) => ({ ...current, ...partial }));
-  };
-
-  const clearFilters = () => {
-    setFilters(QUESTION_BANK_FILTER_DEFAULTS);
-  };
-
+  const updateFilters = (partial: Partial<QuestionFilters>) => setFilters((current) => ({ ...current, ...partial }));
+  const clearFilters = () => setFilters(QUESTION_BANK_FILTER_DEFAULTS);
   const openCreateBuilder = () => {
     setEditingQuestionId(null);
     setLastValidationErrors({});
     setIsBuilderOpen(true);
   };
-
   const openEditBuilder = (questionId: string) => {
     setEditingQuestionId(questionId);
     setActiveQuestionId(questionId);
     setLastValidationErrors({});
     setIsBuilderOpen(true);
   };
-
   const closeBuilder = () => {
     setIsBuilderOpen(false);
     setEditingQuestionId(null);
     setLastValidationErrors({});
   };
-
-  const toggleQuestionSelection = (questionId: string) => {
-    setSelectedQuestionIds((current) =>
-      current.includes(questionId)
-        ? current.filter((id) => id !== questionId)
-        : [...current, questionId],
-    );
-  };
+  const toggleQuestionSelection = (questionId: string) => setSelectedQuestionIds((current) => current.includes(questionId) ? current.filter((id) => id !== questionId) : [...current, questionId]);
 
   const toggleVisibleSelection = () => {
     const visibleIds = filteredQuestions.map((question) => question.id);
     const allSelected = visibleIds.every((id) => selectedQuestionIds.includes(id));
-
-    setSelectedQuestionIds((current) =>
-      allSelected
-        ? current.filter((id) => !visibleIds.includes(id))
-        : Array.from(new Set([...current, ...visibleIds])),
-    );
+    setSelectedQuestionIds((current) => allSelected ? current.filter((id) => !visibleIds.includes(id)) : Array.from(new Set([...current, ...visibleIds])));
   };
 
-  const submitQuestion = (values: QuestionBuilderValues) => {
+  const submitQuestion = async (values: QuestionBuilderValues) => {
     const errors = validateQuestion(values);
     setLastValidationErrors(errors);
-
     if (Object.keys(errors).length > 0) {
       showToast("Хадгалахаас өмнө шаардлагатай талбаруудыг бүрэн бөглөнө үү.");
       return false;
     }
 
-    const existing = editingQuestion ?? undefined;
-    const nextQuestion = buildQuestionPayload(values, existing);
-
-    setQuestions((current) => {
-      if (existing) {
-        return current.map((question) => (question.id === existing.id ? nextQuestion : question));
+    try {
+      if (editingQuestion) {
+        await updateQuestionInBackend(editingQuestion.id, values, editingQuestion.usageCount);
+        setActiveQuestionId(editingQuestion.id);
+        showToast("Асуултын мэдээлэл шинэчлэгдлээ.");
+      } else {
+        const createdId = await createQuestionInBackend(values);
+        if (createdId) {
+          setActiveQuestionId(createdId);
+        }
+        showToast("Асуулт санд амжилттай үүслээ.");
       }
-      return [nextQuestion, ...current];
-    });
 
-    setActiveQuestionId(nextQuestion.id);
-    setIsBuilderOpen(false);
-    setEditingQuestionId(null);
-    showToast(existing ? "Асуултын мэдээлэл шинэчлэгдлээ." : "Асуулт санд амжилттай үүслээ.");
-    return true;
+      setIsBuilderOpen(false);
+      setEditingQuestionId(null);
+      return true;
+    } catch {
+      showToast("Backend рүү хадгалах үед алдаа гарлаа.");
+      return false;
+    }
   };
 
-  const reuseQuestions = (ids: string[]) => {
-    if (ids.length === 0) {
-      showToast("Дахин ашиглахын тулд дор хаяж нэг асуулт сонгоно уу.");
-      return;
-    }
+  const reuseQuestions = async (ids: string[]) => {
+    if (ids.length === 0) return showToast("Дахин ашиглахын тулд дор хаяж нэг асуулт сонгоно уу.");
 
-    setQuestions((current) =>
-      current.map((question) =>
-        ids.includes(question.id)
-          ? { ...question, usageCount: question.usageCount + 1, updatedAt: new Date().toISOString() }
-          : question,
-      ),
-    );
-    setSelectedQuestionIds((current) => current.filter((id) => !ids.includes(id)));
-    showToast(`${ids.length} асуултыг ${reuseTarget} руу нэмлээ.`);
+    try {
+      const nextQuestions = questions.filter((question) => ids.includes(question.id));
+      await incrementUsageInBackend(nextQuestions);
+      setSelectedQuestionIds((current) => current.filter((id) => !ids.includes(id)));
+      showToast(`${ids.length} асуултыг ${reuseTarget} руу нэмлээ.`);
+    } catch {
+      showToast("Асуултын ашиглалтын мэдээллийг шинэчлэх үед алдаа гарлаа.");
+    }
   };
 
   return {
@@ -175,6 +128,7 @@ export function useQuestionBank() {
     editingValues: editingQuestion ? mapQuestionToBuilderValues(editingQuestion) : null,
     filters,
     filteredQuestions,
+    gradeOptions,
     isBuilderOpen,
     lastValidationErrors,
     openCreateBuilder,
@@ -186,14 +140,13 @@ export function useQuestionBank() {
     selectedQuestions,
     setActiveQuestionId,
     setReuseTarget,
-    gradeOptions,
     subtopicOptions,
     subjectOptions,
+    submitQuestion,
     summary,
     toastMessage,
     toggleQuestionSelection,
     toggleVisibleSelection,
     updateFilters,
-    submitQuestion,
   };
 }

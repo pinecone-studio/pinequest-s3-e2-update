@@ -3,6 +3,7 @@ export const queryTypeDefs = /* GraphQL */ `
     hello: String!
     schools: [School!]!
     subjects: [Subject!]!
+    getAllSubjects: [Subject!]!
     exams: [Exam!]!
     exam(id: String!): Exam
     getAllTests: [Test!]!
