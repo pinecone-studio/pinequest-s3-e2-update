@@ -37,7 +37,13 @@ export function useQuestionBank() {
     [questions, subjectsData?.getAllSubjects],
   );
   const gradeOptions = useMemo(() => Array.from(new Set([...GRADE_OPTIONS, ...questions.map((question) => question.grade)])).sort(), [questions]);
-  const subtopicOptions = useMemo(() => filters.subject !== "all" ? SUBTOPIC_OPTIONS[filters.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [] : [], [filters.subject]);
+  const subtopicOptions = useMemo(
+    () =>
+      filters.subject !== "all"
+        ? Array.from(SUBTOPIC_OPTIONS[filters.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [])
+        : [],
+    [filters.subject],
+  );
   const summary = useMemo(() => ({
     total: questions.length,
     published: questions.filter((question) => question.status === "published").length,
