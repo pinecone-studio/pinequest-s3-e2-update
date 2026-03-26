@@ -50,6 +50,7 @@ export type Question = {
   fileUploadConfig: QuestionFileUploadConfig;
   grade: string;
   subject: string;
+  /** Дэд сэдэв — optional on legacy mock rows */
   subtopic?: string;
   topic: string;
   difficulty: QuestionDifficulty;
@@ -100,6 +101,7 @@ export type QuestionValidationErrors = Partial<
     | "prompt"
     | "grade"
     | "subject"
+    | "subtopic"
     | "topic"
     | "grade"
     | "points"

@@ -112,6 +112,7 @@ export function questionMatchesSearch(question: Question, search: string) {
     question.content.guidance,
     question.grade,
     question.subject,
+    question.subtopic,
     question.topic,
     QUESTION_TYPE_LABELS[question.questionType],
   ]
@@ -128,7 +129,7 @@ export function filterAndSortQuestions(questions: Question[], filters: QuestionF
     if (filters.difficulty !== "all" && question.difficulty !== filters.difficulty) return false;
     if (filters.subject !== "all" && question.subject !== filters.subject) return false;
     if (filters.grade !== "all" && question.grade !== filters.grade) return false;
-    if (filters.subtopic !== "all" && question.subtopic !== filters.subtopic) return false;
+    if (filters.subtopic !== "all" && (question.subtopic ?? "") !== filters.subtopic) return false;
     if (filters.status !== "all" && question.status !== filters.status) return false;
     return true;
   });
@@ -217,7 +218,7 @@ export function buildQuestionPayload(values: QuestionBuilderValues, existingQues
     fileUploadConfig: values.fileUploadConfig,
     grade: values.grade.trim(),
     subject: values.subject.trim(),
-    subtopic: values.subtopic.trim(),
+    subtopic: values.subtopic.trim() || undefined,
     topic: values.topic.trim(),
     difficulty: values.difficulty,
     points: values.points,

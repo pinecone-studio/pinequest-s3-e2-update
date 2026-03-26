@@ -13,7 +13,14 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { BookText, Calculator, Cog, Home, LogOut, Mail, User as UserIcon } from "lucide-react";
+import {
+	BookText,
+	Cog,
+	Home,
+	LogOut,
+	Mail,
+	User as UserIcon,
+} from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import type { User } from "@/app/lib/types";
 
@@ -43,11 +50,6 @@ const menuItems = [
     href: "/teacher/exam-optimization",
     label: "Шалгалтын хяналт",
     icon: Cog,
-  },
-  {
-    href: "/teacher/score-calculation",
-    label: "Шалгалтын дүн",
-    icon: Calculator,
   },
 ];
 
