@@ -40,7 +40,11 @@ const menuItems = [
     label: "Асуултын сан",
     icon: BookText,
   },
-
+  {
+    href: "/teacher/exam",
+    label: "Шалгалт",
+    icon: BookText,
+  },
   {
     href: "/teacher/exam-optimization",
     label: "Шалгалтын хяналт",

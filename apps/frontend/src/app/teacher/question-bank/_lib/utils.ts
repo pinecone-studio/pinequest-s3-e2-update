@@ -65,7 +65,9 @@ export function createQuestionBuilderValues(
     formulaRaw: "",
     imageUrl: "",
     fileUploadConfig: DEFAULT_FILE_UPLOAD_CONFIG,
+    grade: "Grade 4",
     subject: "Математик",
+    topic: "",
     difficulty: "medium",
     points: 5,
     status: "draft",
@@ -107,7 +109,9 @@ export function questionMatchesSearch(question: Question, search: string) {
     question.title,
     question.content.prompt,
     question.content.guidance,
+    question.grade,
     question.subject,
+    question.topic,
     QUESTION_TYPE_LABELS[question.questionType],
   ]
     .join(" ")
@@ -144,7 +148,9 @@ export function validateQuestion(values: QuestionBuilderValues): QuestionValidat
 
   if (!values.title.trim()) errors.title = "Асуултын гарчиг оруулна уу.";
   if (!values.prompt.trim()) errors.prompt = "Сурагчид харагдах асуулгын текстийг оруулна уу.";
+  if (!values.grade.trim()) errors.grade = "Анги сонгох эсвэл бичнэ үү.";
   if (!values.subject.trim()) errors.subject = "Хичээлийн төрлийг сонгох эсвэл бичнэ үү.";
+  if (!values.topic.trim()) errors.topic = "Сэдэв оруулна уу.";
   if (!Number.isFinite(values.points) || values.points <= 0) errors.points = "Оноо 0-ээс их байх ёстой.";
 
   if (values.questionType === "multiple_choice") {
@@ -206,7 +212,9 @@ export function buildQuestionPayload(values: QuestionBuilderValues, existingQues
     formulaPreview: renderFormulaPreview(values.formulaRaw),
     imageUrl: values.imageUrl.trim(),
     fileUploadConfig: values.fileUploadConfig,
+    grade: values.grade.trim(),
     subject: values.subject.trim(),
+    topic: values.topic.trim(),
     difficulty: values.difficulty,
     points: values.points,
     status: values.status,
@@ -234,7 +242,9 @@ export function mapQuestionToBuilderValues(question: Question): QuestionBuilderV
     formulaRaw: question.formulaRaw,
     imageUrl: question.imageUrl,
     fileUploadConfig: question.fileUploadConfig,
+    grade: question.grade,
     subject: question.subject,
+    topic: question.topic,
     difficulty: question.difficulty,
     points: question.points,
     status: question.status,
