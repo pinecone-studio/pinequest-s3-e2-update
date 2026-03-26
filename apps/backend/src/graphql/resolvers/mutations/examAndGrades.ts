@@ -35,14 +35,12 @@ export type StoredOpenQuestion = {
 
 export type CreateExamArgs = {
   notes: string;
+  title: string;
   duration: string;
   isActive: number
   variation: string
-  tests: ExamClosedQuestionInput[];
+  testIds: string[];
   openExercises: ExamOpenQuestionInput[];
-  gradeId?: string | null;
-  date?: string | null;
-  location?: string | null;
 };
 
 function buildTestsPayload(
@@ -96,22 +94,18 @@ export async function createExam(
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
 
-  const testsPayload = buildTestsPayload(args.tests);
   const openPayload = buildOpenExercisesPayload(args.openExercises);
-  const testsJson = JSON.stringify(testsPayload);
   const openExercisesJson = JSON.stringify(openPayload);
 
   await ctx.db.insert(examTable).values({
     id,
     notes: args.notes,
-    duration: args.duration,
+    title: args.title,
+    duration: args.duration ?? "0",
     isActive: args.isActive ?? 0,
     variation: args.variation,
-    tests: testsJson, 
+    testIds: args.testIds.join(","), 
     openExercises: openExercisesJson,
-    gradeId: args.gradeId ?? null,
-    date: args.date ?? null,
-    location: args.location,
     createdAt: now,
     updatedAt: now, 
   });
@@ -119,14 +113,12 @@ export async function createExam(
   return {
     id,
     notes: args.notes,
+    title: args.title,
     duration: args.duration,
     isActive: args.isActive ?? 0,
     variation: args.variation,
-    tests: testsJson,
+    testIds: args.testIds,
     openExercises: openExercisesJson,
-    gradeId: args.gradeId ?? null,
-    date: args.date ?? null,
-    location: args.location,
     createdAt: now,
     updatedAt: now,
   };
