@@ -1,4 +1,5 @@
 import type { School, SchoolClass, Student, User } from "./types";
+import { TEACHER_DEMO_CLASS_ID } from "./teacher-demo-class";
 
 const SCHOOL_ID = "school-1";
 
@@ -64,6 +65,18 @@ let classes: SchoolClass[] = [
     teacherIds: ["user-teacher-1", "user-teacher-3"],
     studentIds: ["stu-7", "stu-8"],
   },
+  {
+    id: TEACHER_DEMO_CLASS_ID,
+    name: "10А (жишээ)",
+    teacherIds: ["user-teacher-1", "user-teacher-2", "user-teacher-3"],
+    studentIds: [
+      "stu-mock-10a-1",
+      "stu-mock-10a-2",
+      "stu-mock-10a-3",
+      "stu-mock-10a-4",
+      "stu-mock-10a-5",
+    ],
+  },
 ];
 
 let students: Student[] = [
@@ -122,6 +135,41 @@ let students: Student[] = [
     firstName: "Энхжин",
     lastName: "Сүхбаатар",
     classId: "class-4",
+  },
+  {
+    id: "stu-mock-10a-1",
+    studentNumber: "10A-001",
+    firstName: "Батбаяр",
+    lastName: "Доржсүрэн",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-2",
+    studentNumber: "10A-002",
+    firstName: "Сарнай",
+    lastName: "Батмөнх",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-3",
+    studentNumber: "10A-003",
+    firstName: "Ганболд",
+    lastName: "Эрдэнэ",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-4",
+    studentNumber: "10A-004",
+    firstName: "Нандин",
+    lastName: "Эрдэнэ",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-5",
+    studentNumber: "10A-005",
+    firstName: "Эрдэнэбат",
+    lastName: "Болд",
+    classId: TEACHER_DEMO_CLASS_ID,
   },
 ];
 
@@ -319,6 +367,23 @@ export const store = {
         teacherIds: [...c.teacherIds],
         studentIds: [...c.studentIds],
       }));
+  },
+
+  /** Нүүр болон angi-д хэрэглэгч бүрт жишээ ангийг нэмж харуулах */
+  getClassesForTeacherWithDemo(teacherId: string): SchoolClass[] {
+    const base = this.getClassesForTeacher(teacherId);
+    const demoId = TEACHER_DEMO_CLASS_ID;
+    if (base.some((c) => c.id === demoId)) return base;
+    const demo = classes.find((c) => c.id === demoId);
+    if (!demo) return base;
+    return [
+      ...base,
+      {
+        ...demo,
+        teacherIds: [...demo.teacherIds],
+        studentIds: [...demo.studentIds],
+      },
+    ];
   },
 
   teacherAssignedToClass(teacherId: string, classId: string): boolean {

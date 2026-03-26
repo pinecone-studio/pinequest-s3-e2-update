@@ -25,7 +25,7 @@ export default function ClassListScreen() {
           {classes.map((cls) => (
             <article
               key={cls.id}
-              onClick={() => router.push(`/teacher/score-calculation/angi?class=${cls.id}`)}
+              onClick={() => router.push("/teacher")}
               className="flex cursor-pointer flex-col gap-3 rounded-xl border border-[#e2e8f0] p-4 transition hover:border-teal-600/40 hover:bg-[#f8fafc]"
             >
               <div className="flex items-center gap-3">

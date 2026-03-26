@@ -46,26 +46,8 @@ function clerkDisplayNameFromEmail(emailAddr: string): {
       .replace(/_+/g, "_")
       .replace(/^_|_$/g, "")
       .slice(0, 40) || "user";
-  return { firstName: safe, lastName: "-" };
-}
-
-/**
- * Clerk username заавал тохиолдолд талбаргүйгээр имэйлээс автоматаар (өвөрмөц) үүсгэнэ.
- */
-function autoUsernameFromEmail(emailAddr: string): string {
-  const local = emailAddr.split("@")[0]?.toLowerCase() ?? "user";
-  const alnum = local.replace(/[^a-z0-9]/g, "");
-  const base =
-    alnum.length >= 4
-      ? alnum.slice(0, 24)
-      : `user${alnum}`.replace(/[^a-z0-9]/g, "").padEnd(4, "x").slice(0, 24);
-  const uniq = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`.replace(
-    /[^a-z0-9]/g,
-    "",
-  );
-  let out = `${base}_${uniq}`.replace(/_+/g, "_").slice(0, 50);
-  if (out.length < 4) out = `user_${uniq}`;
-  return out;
+  // Clerk name validators often reject placeholder punctuation (e.g. "-").
+  return { firstName: safe, lastName: safe };
 }
 
 export function SignUpForm() {
@@ -233,13 +215,13 @@ export function SignUpForm() {
     try {
       const { firstName: fnClerk, lastName: lnClerk } =
         clerkDisplayNameFromEmail(email);
+      // Do not send `username` unless Username is enabled in Clerk — otherwise FAPI returns 422.
       const { error } = await signUp.password({
         emailAddress: email,
         password,
         firstName: fnClerk,
         lastName: lnClerk,
-        username: autoUsernameFromEmail(email),
-      } as Parameters<typeof signUp.password>[0]);
+      });
 
       if (error) {
         setFormError(error.message ?? "Бүртгэл амжилтгүй.");
