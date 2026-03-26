@@ -34,7 +34,6 @@ export type StoredOpenQuestion = {
 };
 
 export type CreateExamArgs = {
-  subjectId: string;
   duration: string;
   location: string;
   notes: string;
@@ -43,6 +42,8 @@ export type CreateExamArgs = {
   gradeId?: string | null;
   teacherId?: string | null;
   date?: string | null;
+  isActive: number
+  variation: number
 };
 
 function buildTestsPayload(
@@ -103,22 +104,21 @@ export async function createExam(
 
   await ctx.db.insert(examTable).values({
     id,
-    subjectId: args.subjectId,
-    gradeId: args.gradeId ?? null,
-    teacherId: args.teacherId ?? null,
-    tests: testsJson,
-    openExercises: openExercisesJson,
-    date: args.date ?? null,
-    duration: args.duration,
-    location: args.location,
     notes: args.notes,
+    duration: args.duration,
+    isActive: args.isActive ?? 0,
+    variation: args.variation,
+    tests: testsJson, 
+    openExercises: openExercisesJson,
+    gradeId: args.gradeId ?? null,
+    date: args.date ?? null,
+    location: args.location,
     createdAt: now,
-    updatedAt: now,
+    updatedAt: now, 
   });
 
   return {
     id,
-    subjectId: args.subjectId,
     gradeId: args.gradeId ?? null,
     teacherId: args.teacherId ?? null,
     tests: testsJson,
