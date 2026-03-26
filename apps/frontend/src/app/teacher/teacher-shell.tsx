@@ -11,7 +11,15 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { BookText, Calculator, Cog, Home, LogOut, Mail, User as UserIcon } from "lucide-react";
+import {
+  BookText,
+  Calculator,
+  Cog,
+  Home,
+  LogOut,
+  Mail,
+  User as UserIcon,
+} from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import type { User } from "@/app/lib/types";
 
@@ -32,15 +40,16 @@ const menuItems = [
     label: "Шалгалтын нэгдсэн сан",
     icon: BookText,
   },
-  {
-    href: "/teacher/score-calculation",
-    label: "Шалгалтын дүн",
-    icon: Calculator,
-  },
+
   {
     href: "/teacher/exam-optimization",
     label: "Шалгалтын хяналт",
     icon: Cog,
+  },
+  {
+    href: "/teacher/score-calculation",
+    label: "Шалгалтын дүн",
+    icon: Calculator,
   },
 ];
 
@@ -85,7 +94,9 @@ export default function TeacherShell({
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-5 font-extrabold leading-none tracking-tight">UPDATE</p>
+                  <p className="text-5 font-extrabold leading-none tracking-tight">
+                    UPDATE
+                  </p>
                 </div>
               </div>
               <div>
@@ -101,17 +112,13 @@ export default function TeacherShell({
                         key={item.href}
                         href={item.href}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`inline-flex items-center gap-2 rounded-full whitespace-nowrap transition ${
+                        className={`inline-flex items-center gap-2 border-b-2 whitespace-nowrap px-1 py-1.5 transition-colors ${
                           isActive
-                            ? "bg-[#4f9dff] px-4 py-1.5 text-white shadow-sm"
-                            : "px-2 py-0.5 text-[#2f3c59] hover:bg-transparent hover:text-[#4f9dff]"
+                            ? "border-[#4f9dff] text-[#4f9dff]"
+                            : "border-transparent text-[#2f3c59] hover:border-[#4f9dff] hover:text-[#4f9dff]"
                         }`}
                       >
-                        <Icon
-                          className={`h-5 w-5 ${
-                            isActive ? "text-white" : "text-[#4f9dff]"
-                          }`}
-                        />
+                        <Icon className="h-5 w-5 text-[#4f9dff]" />
                         <span className="text-3 font-semibold lg:text-4">
                           {item.label}
                         </span>
@@ -139,7 +146,9 @@ export default function TeacherShell({
                           <UserIcon className="h-7 w-7" />
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-4 font-bold text-[#1f2a44]">{user.name}</p>
+                          <p className="truncate text-4 font-bold text-[#1f2a44]">
+                            {user.name}
+                          </p>
                           <p className="mt-1 inline-flex items-center gap-1 truncate text-2 text-[#6b7891]">
                             <Mail className="h-4 w-4" />
                             {user.email || "И-мэйл бүртгэгдээгүй"}
