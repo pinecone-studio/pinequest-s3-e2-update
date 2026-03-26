@@ -1,17 +1,19 @@
+/** @format */
+
 "use client";
 
 import {
-  ArrowLeft,
-  BarChart3,
-  ChevronDown,
-  ChevronUp,
-  Download,
-  History,
-  Search,
-  Users,
+	ArrowLeft,
+	BarChart3,
+	ChevronDown,
+	ChevronUp,
+	Download,
+	Search,
+	Users,
+	X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { getPastExamsForClass } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
 import { TEACHER_DEMO_CLASS_ID } from "@/app/lib/teacher-demo-class";
@@ -19,55 +21,38 @@ import type { Student } from "@/app/lib/types";
 import ReviewScreen from "./review-screen";
 import { useTeacher } from "../teacher-shell";
 
-type ClassView = "students" | "stats" | "history";
-
-/** Жишээ шалгалтын тоо — нийт сурагч тоотой нийцэх (5) */
-const DEMO_EXAM = {
-  title: "Нийгмийн ухаан",
-  examLabel: "Шалгалт #1",
-  date: "2026-03-20",
-  passed: 4,
-  failed: 1,
-  notEvaluated: 0,
-  gradeCounts: [
-    { grade: "A", count: 2, color: "#26a69a" },
-    { grade: "B", count: 2, color: "#4f7fd8" },
-    { grade: "C", count: 1, color: "#f2c94c" },
-    { grade: "D", count: 0, color: "#8dd3c7" },
-    { grade: "F", count: 0, color: "#c3c9d6" },
-  ] as const,
-};
+type ClassView = "students" | "stats";
 
 function escapeHtml(s: string) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+	return s
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;");
 }
 
 function sanitizeFilename(s: string) {
-  const t = s.replace(/[^\w\u0400-\u04FF-]+/g, "_").replace(/^_+|_+$/g, "");
-  return t.slice(0, 80) || "export";
+	const t = s.replace(/[^\w\u0400-\u04FF-]+/g, "_").replace(/^_+|_+$/g, "");
+	return t.slice(0, 80) || "export";
 }
 
 function triggerExcelDownload(filename: string, tableHtml: string) {
-  const html = `
+	const html = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
       <head><meta charset="UTF-8" /></head>
       <body>${tableHtml}</body>
     </html>`;
-  const blob = new Blob([`\ufeff${html}`], {
-    type: "application/vnd.ms-excel;charset=utf-8;",
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+	const blob = new Blob([`\ufeff${html}`], {
+		type: "application/vnd.ms-excel;charset=utf-8;",
+	});
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement("a");
+	link.href = url;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
 }
 
 function triggerPdfDownload(title: string, bodyHtml: string) {
@@ -128,7 +113,7 @@ function downloadStudentListPdf(className: string, students: Student[]) {
 }
 
 function sortPastExamStudents(
-  scores: ReturnType<typeof getPastExamsForClass>[number]["studentScores"],
+	scores: ReturnType<typeof getPastExamsForClass>[number]["studentScores"],
 ) {
   return [...scores].sort(
     (a, b) =>
@@ -315,12 +300,10 @@ function polarToCartesian(
   };
 }
 
-function pieSlicePath(
-  cx: number,
-  cy: number,
-  radius: number,
-  startAngle: number,
-  endAngle: number,
+function downloadSingleStudentPastExamXls(
+	className: string,
+	exam: PastExamRowData,
+	student: PastExamRowData["studentScores"][number],
 ) {
   const start = polarToCartesian(cx, cy, radius, endAngle);
   const end = polarToCartesian(cx, cy, radius, startAngle);
