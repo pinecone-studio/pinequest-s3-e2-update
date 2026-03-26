@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GRADE_OPTIONS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/mock-data";
+import { GRADE_OPTIONS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/constants";
 import { QUESTION_DIFFICULTIES, QUESTION_STATUSES, type QuestionBuilderValues, type QuestionValidationErrors, type QuestionType } from "../_lib/types";
 import { createEmptyOption, createQuestionBuilderValues, DIFFICULTY_LABELS, QUESTION_TYPE_LABELS, STATUS_LABELS } from "../_lib/utils";
 import { FormulaEditor } from "./formula-editor";
@@ -18,6 +18,7 @@ import { QuestionTypeSelector } from "./question-type-selector";
 
 type QuestionBuilderFormProps = {
   initialValues?: QuestionBuilderValues | null;
+  subjectOptions?: string[];
   validationErrors?: QuestionValidationErrors;
   onClose: () => void;
   onSubmit: (values: QuestionBuilderValues) => void;
@@ -25,6 +26,7 @@ type QuestionBuilderFormProps = {
 
 export function QuestionBuilderForm({
   initialValues,
+  subjectOptions = SUBJECT_OPTIONS as unknown as string[],
   validationErrors,
   onClose,
   onSubmit,
@@ -160,7 +162,7 @@ export function QuestionBuilderForm({
                   value={values.subject}
                 />
                 <datalist id="question-bank-subjects">
-                  {SUBJECT_OPTIONS.map((subject) => (
+                  {subjectOptions.map((subject) => (
                     <option key={subject} value={subject} />
                   ))}
                 </datalist>

@@ -1,11 +1,12 @@
+import { eq } from "drizzle-orm";
 import type { GraphQLResolveInfo } from "graphql";
 import { testTable } from "../../../db/schema";
 import type { GraphQLUserContext } from "../../context";
 import { mapTestRow, normalizeTestInput, resolveSubject, type TestMutationInput } from "../test-utils";
 
-export async function createTest(
+export async function updateTest(
   _parent: unknown,
-  args: { input: TestMutationInput },
+  args: { id: string; input: TestMutationInput },
   ctx: GraphQLUserContext,
   _info: GraphQLResolveInfo,
 ) {
@@ -15,22 +16,31 @@ export async function createTest(
     throw new Error(`"${args.input.subjectId}" хичээлд тохирох subject олдсонгүй.`);
   }
 
-  const id = crypto.randomUUID();
-  const now = new Date().toISOString();
+  const existing = await ctx.db
+    .select()
+    .from(testTable)
+    .where(eq(testTable.id, args.id))
+    .limit(1);
+
+  if (!existing[0]) {
+    throw new Error("Шинэчлэх асуулт олдсонгүй.");
+  }
+
+  const updatedAt = new Date().toISOString();
   const values = normalizeTestInput(args.input, subject.id);
 
-  await ctx.db.insert(testTable).values({
-    id,
-    ...values,
-    createdAt: now,
-    updatedAt: now,
-  });
+  await ctx.db
+    .update(testTable)
+    .set({
+      ...values,
+      updatedAt,
+    })
+    .where(eq(testTable.id, args.id));
 
   return mapTestRow({
-    id,
+    ...existing[0],
     ...values,
-    createdAt: now,
-    updatedAt: now,
+    updatedAt,
     subjectName: subject.name,
   });
 }

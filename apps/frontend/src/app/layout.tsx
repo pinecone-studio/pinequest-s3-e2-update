@@ -3,6 +3,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import type { CSSProperties, ReactNode } from "react";
+import { AppApolloProvider } from "@/components/providers/apollo-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,7 +30,9 @@ export default function RootLayout({
 					} as CSSProperties
 				}
 			>
-				<body className="flex min-h-screen flex-col">{children}</body>
+				<body className="flex min-h-screen flex-col">
+					<AppApolloProvider>{children}</AppApolloProvider>
+				</body>
 			</html>
 		</ClerkProvider>
 	);

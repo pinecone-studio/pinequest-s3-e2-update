@@ -1,17 +1,46 @@
 export const mutationTypeDefs = /* GraphQL */ `
   input CreateTestInput {
-    gradeId: String!
+    grade: Int!
     subjectId: String!
+    questionType: String!
+    subtopic: String
     topic: String!
     title: String
     question: String!
-    answers: String!
+    guidance: String
+    explanation: String
+    answers: [String!]!
     rightAnswer: String!
-    notes: String
-    questionNote: String
+    rubric: String
+    formulaRaw: String
+    imageUrl: String
+    fileUploadConfig: String
     difficulty: String
     score: Int
     isActive: Int
+    usageCount: Int
+  }
+
+  input UpdateTestInput {
+    grade: Int!
+    subjectId: String!
+    questionType: String!
+    subtopic: String
+    topic: String!
+    title: String
+    question: String!
+    guidance: String
+    explanation: String
+    answers: [String!]!
+    rightAnswer: String!
+    rubric: String
+    formulaRaw: String
+    imageUrl: String
+    fileUploadConfig: String
+    difficulty: String
+    score: Int
+    isActive: Int
+    usageCount: Int
   }
 
   type Mutation {
@@ -29,5 +58,7 @@ export const mutationTypeDefs = /* GraphQL */ `
       location: String
     ): Exam!
     createTest(input: CreateTestInput!): Test!
+    updateTest(id: String!, input: UpdateTestInput!): Test!
+    incrementTestUsage(ids: [String!]!): Int!
   }
 `;
