@@ -1,4 +1,5 @@
 import { Check, Eye, Sparkles } from "lucide-react";
+import Image from "next/image";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
 
@@ -206,11 +207,15 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
               </div>
 
               {questionImage ? (
-                <img
-                  alt="Асуултын зураг"
-                  className="h-56 w-full rounded-2xl border border-[#d9dee8] object-cover"
-                  src={questionImage}
-                />
+                <div className="relative h-56 w-full overflow-hidden rounded-2xl border border-[#d9dee8]">
+                  <Image
+                    alt="Асуултын зураг"
+                    className="object-cover"
+                    fill
+                    src={questionImage}
+                    unoptimized
+                  />
+                </div>
               ) : (
                 <label className="flex h-10 w-full cursor-pointer items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-teal-50 text-4 text-[#6b7289]">
                   File upload
@@ -249,11 +254,15 @@ export default function OverviewScreen({ onOpenReview }: OverviewScreenProps) {
               </p>
 
               {studentAnswerImages[currentStudentIndex] ? (
-                <img
-                  alt="Сурагчийн хариултын зураг"
-                  className="h-64 w-full rounded-2xl border border-[#d9dee8] object-cover"
-                  src={studentAnswerImages[currentStudentIndex] || ""}
-                />
+                <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-[#d9dee8]">
+                  <Image
+                    alt="Сурагчийн хариултын зураг"
+                    className="object-cover"
+                    fill
+                    src={studentAnswerImages[currentStudentIndex] || ""}
+                    unoptimized
+                  />
+                </div>
               ) : (
                 <label className="flex h-10 w-full cursor-pointer items-center justify-center rounded-2xl border border-dashed border-[#c9d2e3] bg-teal-50 text-4 text-[#6b7289]">
                   File upload

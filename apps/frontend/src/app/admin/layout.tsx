@@ -1,19 +1,29 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { AdminShell } from "@/app/admin/_components/admin_shell";
-import { getSessionUser } from "@/app/lib/session";
-import { store } from "@/app/lib/store";
-
-const DEFAULT_ADMIN_ID = "user-admin";
+import { authSignInHref } from "@/app/lib/auth-redirect";
+import {
+  getAppUserFromClerk,
+  getAppUserFromUserId,
+} from "@/app/lib/clerk-app-user";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const sessionUser = await getSessionUser();
-  const user =
-    sessionUser?.role === "school_admin"
-      ? sessionUser
-      : store.getUser(DEFAULT_ADMIN_ID)!;
+  const { userId } = await auth();
+  const signInAdmin = authSignInHref("/admin");
+  if (!userId) {
+    redirect(signInAdmin);
+  }
+  let user = await getAppUserFromClerk("school_admin");
+  if (!user) {
+    user = await getAppUserFromUserId(userId, "school_admin");
+  }
+  if (!user) {
+    redirect(signInAdmin);
+  }
 
   return <AdminShell user={user}>{children}</AdminShell>;
 }

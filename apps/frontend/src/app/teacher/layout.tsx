@@ -1,5 +1,10 @@
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getSessionUser } from "@/app/lib/session";
+import { authSignInHref } from "@/app/lib/auth-redirect";
+import {
+  getAppUserFromClerk,
+  getAppUserFromUserId,
+} from "@/app/lib/clerk-app-user";
 import TeacherShell from "./teacher-shell";
 
 export default async function TeacherLayout({
@@ -7,9 +12,17 @@ export default async function TeacherLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getSessionUser();
-  if (!user || user.role !== "teacher") {
-    redirect("/?error=auth");
+  const { userId } = await auth();
+  const signInTeacher = authSignInHref("/teacher");
+  if (!userId) {
+    redirect(signInTeacher);
+  }
+  let user = await getAppUserFromClerk("teacher");
+  if (!user) {
+    user = await getAppUserFromUserId(userId, "teacher");
+  }
+  if (!user) {
+    redirect(signInTeacher);
   }
 
   return <TeacherShell user={user}>{children}</TeacherShell>;

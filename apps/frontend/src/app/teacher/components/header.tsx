@@ -18,7 +18,11 @@ const ALL_TABS: { view: TeacherView; label: string }[] = [
   { view: "stats", label: "Тоон үзүүлэлт" },
 ];
 
-export default function Header({ variant = "dashboard", activeView, onChangeView, hiddenTabs = [] }: HeaderProps) {
+export default function Header({
+  activeView,
+  onChangeView,
+  hiddenTabs = [],
+}: HeaderProps) {
   const router = useRouter();
   const TABS = ALL_TABS.filter((t) => !hiddenTabs.includes(t.view));
 
