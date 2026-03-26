@@ -5,5 +5,6 @@ export const queryTypeDefs = /* GraphQL */ `
     subjects: [Subject!]!
     exams: [Exam!]!
     exam(id: String!): Exam
+    getAllTests: [Test!]!
   }
 `;

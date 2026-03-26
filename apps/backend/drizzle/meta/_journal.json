@@ -29,6 +29,27 @@
       "when": 1774524078026,
       "tag": "0003_rainy_ironclad",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1774534386683,
+      "tag": "0004_silent_gideon",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1774535012506,
+      "tag": "0005_slim_justin_hammer",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1774535666507,
+      "tag": "0006_melted_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }
