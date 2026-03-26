@@ -8,12 +8,13 @@ import {
 	ChevronDown,
 	ChevronUp,
 	Download,
+	History,
 	Search,
 	Users,
 	X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getPastExamsForClass } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
 import { TEACHER_DEMO_CLASS_ID } from "@/app/lib/teacher-demo-class";
@@ -21,7 +22,23 @@ import type { Student } from "@/app/lib/types";
 import ReviewScreen from "./review-screen";
 import { useTeacher } from "../teacher-shell";
 
-type ClassView = "students" | "stats";
+type ClassView = "students" | "stats" | "history";
+
+const DEMO_EXAM = {
+  title: "Нийгмийн ухаан",
+  examLabel: "Шалгалт #1",
+  date: "2026-03-20",
+  passed: 4,
+  failed: 1,
+  notEvaluated: 0,
+  gradeCounts: [
+    { grade: "A", count: 2, color: "#26a69a" },
+    { grade: "B", count: 2, color: "#4f7fd8" },
+    { grade: "C", count: 1, color: "#f2c94c" },
+    { grade: "D", count: 0, color: "#8dd3c7" },
+    { grade: "F", count: 0, color: "#c3c9d6" },
+  ] as const,
+};
 
 function escapeHtml(s: string) {
 	return s
@@ -300,10 +317,12 @@ function polarToCartesian(
   };
 }
 
-function downloadSingleStudentPastExamXls(
-	className: string,
-	exam: PastExamRowData,
-	student: PastExamRowData["studentScores"][number],
+function pieSlicePath(
+  cx: number,
+  cy: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
 ) {
   const start = polarToCartesian(cx, cy, radius, endAngle);
   const end = polarToCartesian(cx, cy, radius, startAngle);
