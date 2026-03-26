@@ -84,8 +84,8 @@ export function QuestionBuilderForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-[#10233e]/30 backdrop-blur-[2px]">
-      <div className="flex h-full w-full max-w-4xl flex-col overflow-y-auto border-l border-[#d9e4f1] bg-[#f8fbff] shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#10233e]/30 p-4 backdrop-blur-[2px] sm:p-6">
+      <div className="flex w-full max-w-3xl max-h-[calc(100vh-3rem)] flex-col overflow-y-auto rounded-[28px] border border-[#d9e4f1] bg-[#f8fbff] shadow-2xl">
         <div className="sticky top-0 z-10 border-b border-[#dce5f2] bg-[#f8fbff]/95 px-6 py-5 backdrop-blur">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -199,8 +199,8 @@ export function QuestionBuilderForm({
 
           <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-[#183153]">Мета мэдээлэл ба нийтлэх</h3>
-              <p className="text-sm text-[#6d7f9c]">Түвшин, оноо, дахин ашиглах бэлэн байдлыг удирдана.</p>
+              <h3 className="text-lg font-semibold text-[#183153]">Үнэлгээ</h3>
+              <p className="text-sm text-[#6d7f9c]">Түвшин, оноо, төлөв зэрэг үнэлгээтэй холбоотой тохиргоо.</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -290,6 +290,8 @@ function DynamicQuestionFields({
   onFormulaChange: (value: string) => void;
   onImageChange: (value: string) => void;
 }) {
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+
   if (values.questionType === "multiple_choice") {
     return (
       <div className="space-y-4">
@@ -374,8 +376,28 @@ function DynamicQuestionFields({
     return <ImageUploader error={validationErrors?.imageUrl} imageUrl={values.imageUrl} onChange={onImageChange} />;
   }
 
+  const acceptValue = values.fileUploadConfig.acceptedFileTypes.join(", ");
+  const maxFiles = Math.max(1, values.fileUploadConfig.maxFiles || 1);
+
   return (
     <div className="grid gap-4 xl:grid-cols-2">
+      <Field label="Файл хавсаргах" error={validationErrors?.fileUploadConfig}>
+        <input
+          className={`${inputClassName} h-12 py-2`}
+          multiple={maxFiles > 1}
+          onChange={(event) => {
+            const files = Array.from(event.target.files ?? []);
+            setAttachedFiles(files.slice(0, maxFiles));
+          }}
+          type="file"
+          {...(acceptValue ? { accept: acceptValue } : {})}
+        />
+        {attachedFiles.length > 0 ? (
+          <p className="text-xs font-medium text-[#4f6b96]">
+            Сонгосон файл: {attachedFiles.map((file) => file.name).join(", ")}
+          </p>
+        ) : null}
+      </Field>
       <Field label="Зөвшөөрөх файлын төрөл" error={validationErrors?.fileUploadConfig}>
         <input
           className={inputClassName}
