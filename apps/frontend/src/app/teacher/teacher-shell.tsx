@@ -13,7 +13,7 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { BookText, Cog, Home, LogOut, Mail, User as UserIcon } from "lucide-react";
+import { BookText, Calculator, Cog, Home, LogOut, Mail, User as UserIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import type { User } from "@/app/lib/types";
 

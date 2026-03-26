@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GRADE_OPTIONS, SUBJECT_OPTIONS } from "../_lib/mock-data";
+import { GRADE_OPTIONS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/mock-data";
 import { QUESTION_DIFFICULTIES, QUESTION_STATUSES, type QuestionBuilderValues, type QuestionValidationErrors, type QuestionType } from "../_lib/types";
 import { createEmptyOption, createQuestionBuilderValues, DIFFICULTY_LABELS, QUESTION_TYPE_LABELS, STATUS_LABELS } from "../_lib/utils";
 import { FormulaEditor } from "./formula-editor";

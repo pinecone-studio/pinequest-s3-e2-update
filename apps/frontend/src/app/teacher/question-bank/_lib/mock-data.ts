@@ -21,9 +21,6 @@ export const SUBJECT_OPTIONS = [
   "Бусад хичээл",
 ] as const;
 
-export const GRADE_OPTIONS = [
-  "4-р анги",
-  "5-р анги",
 export const SUBTOPIC_OPTIONS: Record<(typeof SUBJECT_OPTIONS)[number], string[]> = {
   "Математик": ["Алгебр", "Геометр", "Тригонометр", "Магадлал", "Статистик"],
   "Хими": ["Ерөнхий хими", "Органик хими", "Аналитик хими", "Физик хими"],
