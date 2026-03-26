@@ -77,3 +77,13 @@ export const examCheatLogTable = sqliteTable("examCheatLog", {
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });
+
+export const studentExamResultTable = sqliteTable("studentExamResult", {
+  id: text("id").primaryKey(),
+  examId: text("examId").references(() => examTable.id).notNull(),
+  studentId: text("studentId").references(() => studentTable.id).notNull(),
+  status: text("status").notNull().default("pending"),
+  score: integer("score"),
+  createdAt: text("createdAt").notNull(),
+  updatedAt: text("updatedAt").notNull(),
+});

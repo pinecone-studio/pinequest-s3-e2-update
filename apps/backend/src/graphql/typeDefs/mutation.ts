@@ -3,15 +3,15 @@ export const mutationTypeDefs = /* GraphQL */ `
     addTeacher(schoolId: String!, name: String!): Teacher!
     createSubject(name: String!): Subject!
     createExam(
-      subjectId: String!
-      duration: String!
-      location: String!
-      notes: String!
-      tests: [ExamClosedQuestionInput!]!
-      openExercises: [ExamOpenQuestionInput!]!
-      gradeId: String
-      teacherId: String
+      notes: String
+      duration: String
+      isActive: Int
+      variation: String
+      tests: [ExamClosedQuestionInput!]
+      openExercises: [ExamOpenQuestionInput!]
+      gradeId: String  
       date: String
+      location: String
     ): Exam!
   }
 `;
