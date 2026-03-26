@@ -26,10 +26,10 @@ export default function ClassListScreen() {
             <article
               key={cls.id}
               onClick={() => router.push("/teacher")}
-              className="flex cursor-pointer flex-col gap-3 rounded-xl border border-[#e2e8f0] p-4 transition hover:border-teal-600/40 hover:bg-[#f8fafc]"
+              className="flex cursor-pointer flex-col gap-3 rounded-xl border border-[#e2e8f0] p-4 transition hover:border-[#4f9dff]/40 hover:bg-[#f8fafc]"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#edf4ff] text-[#4f9dff]">
                   <Users className="h-6 w-6" />
                 </div>
                 <div>

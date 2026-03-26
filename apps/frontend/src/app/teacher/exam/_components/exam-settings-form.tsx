@@ -25,7 +25,7 @@ export function ExamSettingsForm({
   onUpdateExam: <Key extends keyof ExamComposerState>(key: Key, value: ExamComposerState[Key]) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f7fbff] p-5 shadow-sm">
       <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
         Шалгалтын тохиргоо
       </div>

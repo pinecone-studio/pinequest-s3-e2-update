@@ -1,247 +1,150 @@
-import { ArrowRight, Shield, Sparkles, Users, Zap } from "lucide-react";
+import { CheckCircle2, Target } from "lucide-react";
 import Image from "next/image";
-import { TeacherLoginCard } from "./teacher-login-card";
-const SECOND_IMG =
-  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=80";
+import Link from "next/link";
+import { authSignInHref } from "@/app/lib/auth-redirect";
 
 type Props = {
   loginError?: string;
 };
 
-export function TeacherLanding({ loginError }: Props) {
-  const features = [
-    {
-      title: "Олон төрлийн асуулт",
-      desc: "Томьёо, зураг, видео болон холимог контент бүхий асуултууд",
-      icon: Sparkles,
-      iconClass: "bg-teal-600",
-    },
-    {
-      title: "Автомат дүн тооцоолох",
-      desc: "AI-д суурилсан автомат шалгалт болон багшийн хяналт",
-      icon: Zap,
-      iconClass: "bg-[#d946ef]",
-    },
-    {
-      title: "Олон хэрэглэгч",
-      desc: "Багш, сурагч, эцэг эх, админ - бүгдэд нэгдсэн платформ",
-      icon: Users,
-      iconClass: "bg-[#22c55e]",
-    },
-    {
-      title: "Найдвартай систем",
-      desc: "Өндөр найдвартай, аюулгүй, тогтвортой ажиллагаа",
-      icon: Shield,
-      iconClass: "bg-[#f59e0b]",
-    },
-  ];
+const milestones = [
+  "Асуултын сан болон шалгалтын үндсэн бүтэц бэлэн болсон",
+  "Багшийн орчинд шалгалт үүсгэх урсгал идэвхтэй хөгжүүлэлтэд байна",
+  "Автомат үнэлгээ, тайлан, дүн шинжилгээ дараагийн шатанд орно",
+];
 
+const summaryCards = [
+  {
+    title: "Зорилго",
+    description:
+      "Шалгалт бэлтгэх, авах, үнэлэх бүх процессыг нэг орчинд төвлөрүүлэх",
+    icon: Target,
+    accent: "text-teal-600",
+  },
+
+  {
+    title: "Үр дүн",
+    description:
+      "Нэвтэрсэн даруйд шууд ашиглаж болох ойлгомжтой exam module бүрдүүлж байна",
+    icon: CheckCircle2,
+    accent: "text-emerald-600",
+  },
+];
+
+function AuthButton({ label, href }: { label: string; href: string }) {
   return (
-    <section className="px-6 py-8 lg:px-10 lg:py-10">
-      <div className="mx-auto max-w-7xl space-y-10">
-        <div className="grid grid-cols-1 items-start gap-10 xl:grid-cols-2">
-          <div>
-            <span className="inline-flex items-center rounded-full border border-[#d9dee8] bg-teal-50 px-3 py-2 text-[#5e6a85]">
-              <span className="mr-2 text-[#22c55e]">●</span> Монголын
-              боловсролын шинэ түвшин
-            </span>
-            <h1 className="mt-6 text-[32px] font-extrabold leading-[1.05] text-[#1f2a44]">
-              UPDATE
-              <br />
-              <span className="text-teal-600">боловсролын</span>
-              <br />
-              нэгдсэн платформ
-            </h1>
-            <p className="mt-6 max-w-xl text-3 leading-relaxed text-[#50607f]">
-              Сургуулийн өдөр тутмын бүх үйл ажиллагааг автоматжуулж, хялбар
-              хэрэглээ бүхий технологийн дэвшилтэт шийдлээр дамжуулан багш, эцэг
-              эх, сурагчдыг холбох цогц систем.
-            </p>
+    <Link
+      href={href}
+      className="inline-flex items-center justify-center rounded-2xl border border-[#d8e2ee] bg-white px-5 py-3 text-2 font-semibold text-[#1f2a44] shadow-sm transition hover:border-teal-300 hover:text-teal-700"
+    >
+      {label}
+    </Link>
+  );
+}
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-2xl bg-teal-600 px-5 py-2 text-5 font-semibold text-white shadow-md transition hover:bg-teal-700"
-              >
-                Платформтой танилцах
-                <ArrowRight className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                className="rounded-2xl border border-[#d9dee8] bg-white px-5 py-2 text-5 font-semibold text-[#2f3c59] shadow-sm"
-              >
-                Дэмо үзэх
-              </button>
-            </div>
+export function TeacherLanding({ loginError }: Props) {
+  return (
+    <section className="relative min-h-screen overflow-hidden bg-[#f5fbf9]">
+      <div className="absolute inset-x-0 top-0 h-56 bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.12),_transparent_58%)]" />
 
-            <div className="mt-10 grid max-w-xl grid-cols-3 gap-6">
-              <div>
-                <p className="text-[26px] font-extrabold leading-none text-teal-600">
-                  500+
-                </p>
-                <p className="mt-2 text-3 text-[#5b6883]">Сургууль</p>
-              </div>
-              <div>
-                <p className="text-[26px] font-extrabold leading-none text-teal-600">
-                  50K+
-                </p>
-                <p className="mt-2 text-3 text-[#5b6883]">Сурагч</p>
-              </div>
-              <div>
-                <p className="text-[26px] font-extrabold leading-none text-teal-600">
-                  99.9%
-                </p>
-                <p className="mt-2 text-3 text-[#5b6883]">Uptime</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-5">
-            <div className="rounded-3xl border-4 border-white bg-white p-2 shadow-lg">
-              <div className="relative h-[420px] w-full overflow-hidden rounded-2xl">
+      <div className="relative mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-4xl">
+            <div className="flex flex-wrap items-end gap-4">
+              <h1 className="text-[28px] font-extrabold leading-[1.08] tracking-tight text-[#202833] sm:text-[26px] lg:text-[32px]">
+                UPDATE шалгалтын
+                <br />
+                нэгдсэн платформ
+              </h1>
+              <div className="relative h-20 w-20 shrink-0">
                 <Image
-                  alt="Багийн хамтын ажиллагаа"
-                  className="object-cover"
+                  alt="UPDATE logo"
+                  className="object-contain"
                   fill
-                  sizes="(max-width: 1280px) 100vw, 640px"
-                  src={SECOND_IMG}
+                  priority
+                  src="/logo.png"
                 />
               </div>
             </div>
-            <TeacherLoginCard error={loginError} />
+          </div>
+
+          <div className="flex items-center gap-3 self-start px-5 py-4 lg:px-8 lg:py-6">
+            <AuthButton label="Сургууль" href={authSignInHref("/admin")} />
+            <AuthButton label="Багш" href={authSignInHref("/teacher")} />
           </div>
         </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {features.map((item) => {
-            const Icon = item.icon;
-            return (
-              <article
-                key={item.title}
-                className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#d9dee8]"
-              >
-                <div
-                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl text-white ${item.iconClass}`}
-                >
-                  <Icon className="h-6 w-6" />
-                </div>
-                <p className="text-5 font-extrabold text-[#1f2a44]">
-                  {item.title}
-                </p>
-                <p className="mt-2 text-3 leading-relaxed text-[#5b6883]">
-                  {item.desc}
-                </p>
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="py-12 text-center">
-          <h2 className="text-[30px] font-extrabold leading-tight text-[#1f2a44]">
-            Яагаад UPDATE сонгох вэ?
-          </h2>
-          <p className=" text-5 text-[#5b6883]">
-            Боловсролын өнөөгийн шаардлагад нийцсэн, бүрэн цогц шийдэл
+        {loginError === "login" ? (
+          <p className="mt-6 max-w-xl rounded-2xl bg-red-50 px-4 py-3 text-2 text-red-700">
+            Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.
           </p>
+        ) : null}
+
+        {loginError === "auth" ? (
+          <p className="mt-6 max-w-xl rounded-2xl bg-amber-50 px-4 py-3 text-2 text-amber-900">
+            Үргэлжлүүлэхийн тулд эхлээд нэвтэрнэ үү.
+          </p>
+        ) : null}
+
+        <div className="mt-10 p-0">
+          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.4fr]">
+            <div className="grid gap-6">
+              {summaryCards.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <article
+                    key={item.title}
+                    className="rounded-[34px] bg-white p-8 shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
+                  >
+                    <Icon className={`h-8 w-8 ${item.accent}`} />
+                    <p className="mt-8 text-2 font-semibold uppercase tracking-[0.26em] text-[#7c8aa5]">
+                      {item.title}
+                    </p>
+                    <p className="mt-6 text-4 font-bold leading-9 text-[#183153]">
+                      {item.description}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="rounded-[34px] border border-[#2357aa] bg-[#f5f8ff] p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:p-8">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-2 font-semibold uppercase tracking-[0.2em] text-[#2563eb]">
+                    Төслийн явц
+                  </p>
+                  <p className="mt-2 text-4 font-extrabold text-[#183153]">
+                    Одоогийн хөгжүүлэлт
+                  </p>
+                  <p className="mt-6 max-w-3xl text-2 leading-8 text-[#5d7088]">
+                    Exam module-ийн үндсэн хэрэглээ, шалгалттай холбоотой гол
+                    урсгалуудыг шат дараатайгаар тогтвортой хөгжүүлж байна.
+                  </p>
+                </div>
+
+                <div className="w-fit rounded-[24px] bg-[#dff4ee] px-5 py-3 text-4 font-bold text-teal-700">
+                  Active
+                </div>
+              </div>
+
+              <div className="mt-10 h-4 overflow-hidden rounded-full bg-[#d7e3f4]">
+                <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600" />
+              </div>
+
+              <div className="mt-10 grid gap-5">
+                {milestones.map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-start gap-4 rounded-[26px] bg-white px-5 py-5 shadow-sm ring-1 ring-[#e2e8f0]"
+                  >
+                    <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-emerald-500" />
+                    <p className="text-2 leading-8 text-[#4f627b]">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="grid grid-cols-1 items-center gap-8 xl:grid-cols-2">
-          <div className="space-y-3">
-            <article className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#d9dee8]">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100 text-[32px] font-extrabold text-teal-600">
-                  1
-                </div>
-                <div>
-                  <p className="text-5 font-extrabold text-[#1f2a44]">
-                    Олон төрлийн асуулт
-                  </p>
-                  <p className="mt-2 text-3 leading-relaxed text-[#5b6883]">
-                    Томьёо, зураг, видео болон холимог контент бүхий асуултуудыг
-                    дэмждэг уян хатан асуултын систем.
-                  </p>
-                </div>
-              </div>
-            </article>
-
-            <article className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#d9dee8]">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff5de] text-[32px] font-extrabold text-[#f59e0b]">
-                  2
-                </div>
-                <div>
-                  <p className="text-5 font-extrabold text-[#1f2a44]">
-                    Ухаалаг дүн шинжилгээ
-                  </p>
-                  <p className="mt-2 text-3 leading-relaxed text-[#5b6883]">
-                    AI технологи ашигласан автомат шалгалт, багшийн хяналт болон
-                    дүн шинжилгээний систем.
-                  </p>
-                </div>
-              </div>
-            </article>
-
-            <article className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#d9dee8]">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9f8ee] text-[32px] font-extrabold text-[#22c55e]">
-                  3
-                </div>
-                <div>
-                  <p className="text-5 font-extrabold text-[#1f2a44]">
-                    Найдвартай үйлчилгээ
-                  </p>
-                  <p className="mt-2 text-3 leading-relaxed text-[#5b6883]">
-                    Хэдэн мянган хэрэглэгчийг нэгэн зэрэг дэмждэг, тогтвортой,
-                    аюулгүй платформ.
-                  </p>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div className="rounded-3xl border-4 border-white bg-white p-2 shadow-lg">
-            <div className="relative h-[420px] w-full overflow-hidden rounded-2xl">
-              <Image
-                alt="Багийн хамтын ажиллагаа"
-                className="object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 640px"
-                src={SECOND_IMG}
-              />
-            </div>
-          </div>
-        </div>
-
-        <footer className="mt-4 rounded-3xl px-8 py-10 text-white border">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div>
-              <p className="text-5 font-extrabold text-gray-500">UPDATE</p>
-              <p className="mt-3 text-3 text-[#787d87]">
-                Боловсролын нэгдсэн платформ. Сургууль, багш, сурагч, эцэг эхийг
-                нэг орчинд холбосон цогц шийдэл.
-              </p>
-            </div>
-            <div>
-              <p className="text-5 font-bold text-gray-500">Холбоо барих</p>
-              <ul className="mt-3 space-y-2 text-3 text-[#787d87]">
-                <li>И-мэйл: info@update.mn</li>
-                <li>Утас: +976 7000-0000</li>
-                <li>Хаяг: Улаанбаатар, Монгол Улс</li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-5 font-bold text-gray-500">Холбоос</p>
-              <ul className="mt-3 space-y-2 text-3 text-[#787d87]">
-                <li>Үйлчилгээний нөхцөл</li>
-                <li>Нууцлалын бодлого</li>
-                <li>Тусламж ба дэмжлэг</li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 border-t border-white/15 pt-4 text-3 text-[#787d87]">
-            © 2026 UPDATE. Бүх эрх хуулиар хамгаалагдсан.
-          </div>
-        </footer>
       </div>
     </section>
   );

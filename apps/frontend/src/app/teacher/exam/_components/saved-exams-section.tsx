@@ -24,7 +24,7 @@ export function SavedExamsSection({
   onSendSavedExam: (savedExam: SavedExamRecord) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f5faff] p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3 border-b border-[#ecf1f7] pb-4">
         <div>
           <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
@@ -41,7 +41,7 @@ export function SavedExamsSection({
 
       <div className="mt-5 grid gap-4">
         {hasLoadedSavedExams && savedExams.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[#cfd9e7] bg-[#f8fbff] px-5 py-8 text-center">
+          <div className="rounded-3xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
             <p className="text-lg font-semibold text-[#183153]">Хадгалсан шалгалт алга байна</p>
             <p className="mt-2 text-sm text-[#60728f]">Доорх бүтээгчээр шалгалтаа хадгалмагц энд шууд харагдана.</p>
           </div>

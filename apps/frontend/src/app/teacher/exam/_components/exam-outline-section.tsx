@@ -19,7 +19,7 @@ export function ExamOutlineSection({
   onUpdateAssignedPoints: (examQuestionId: string, assignedPoints: number) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section className="rounded-[28px] border border-[#cfe0fb] bg-[#eef6ff] p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3 border-b border-[#ecf1f7] pb-4">
         <div>
           <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
@@ -36,20 +36,20 @@ export function ExamOutlineSection({
 
       <div className="mt-5 space-y-4">
         {examQuestionDetails.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[#cfd9e7] bg-[#f8fbff] px-5 py-8 text-center">
+          <div className="rounded-3xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
             <p className="text-lg font-semibold text-[#183153]">Шалгалтад асуулт хараахан нэмэгдээгүй байна</p>
             <p className="mt-2 text-sm text-[#60728f]">Асуултын сангаас сонгоод энд нэмснээр шалгалтын эцсийн дарааллыг бүрдүүлнэ.</p>
           </div>
         ) : null}
 
         {examQuestionDetails.map((item, index) => (
-          <article className="rounded-3xl border border-[#d8e2f0] bg-[#fbfdff] p-4" key={item.examQuestionId}>
+          <article className="rounded-3xl border border-[#d2e1f7] bg-[#f8fbff] p-4" key={item.examQuestionId}>
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#e8f1ff] text-sm font-bold text-[#1f6feb]">{index + 1}</div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#3b5a8f]">{item.question.grade}</span>
-                  <span className="rounded-full bg-[#eef9f2] px-3 py-1 text-xs font-semibold text-[#236847]">{item.question.topic}</span>
+                  <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]">{item.question.topic}</span>
                 </div>
                 <h3 className="mt-2 text-base font-semibold text-[#183153]">{item.question.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[#566983]">{item.question.content.prompt}</p>

@@ -29,12 +29,12 @@ export default function TeacherDashboard() {
       <section>
         <article className="rounded-2xl border border-[#d9dee8] bg-white p-6 shadow-[0_2px_12px_rgba(31,42,68,0.06)] sm:p-8">
           <header className="mb-6 border-b border-[#eef2f6] pb-6">
-            <h2 className="text-5 font-extrabold tracking-tight text-[#1f2a44]">
+            <h2 className="text-[22px] font-extrabold tracking-tight text-[#1f2a44]">
               Миний ангиуд
             </h2>
             <p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#64748b]">
-              Таны заадаг ангиудын жагсаалт. Анги дээр дарж сурагчид, статистик,
-              өмнөх шалгалтын хайлт руу орно.
+              Анги дээр дарж сурагчид, статистик, өмнөх шалгалтын хайлт руу
+              орно.
             </p>
             <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#f6faff] px-3 py-1.5 text-3 font-semibold text-[#4a5875]">
               <span className="text-[#4f9dff]">◆</span>
@@ -111,7 +111,10 @@ export default function TeacherDashboard() {
                             {cls.studentIds.length} сурагч
                           </span>
                           {isDemo ? (
-                            <span className="text-[#4f9dff]"> · жишээ анги</span>
+                            <span className="text-[#4f9dff]">
+                              {" "}
+                              · жишээ анги
+                            </span>
                           ) : null}
                         </p>
                       </div>

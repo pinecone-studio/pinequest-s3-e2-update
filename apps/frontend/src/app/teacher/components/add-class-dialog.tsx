@@ -72,7 +72,7 @@ export default function AddClassDialog({ open, onClose, onSubmit }: AddClassDial
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Жишээ: 10А, 9Б"
-              className="w-full rounded-xl border border-[#d9dee8] px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#94a3b8] focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20"
+              className="w-full rounded-xl border border-[#d9dee8] px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4f9dff] focus:ring-2 focus:ring-[#4f9dff]/20"
               required
             />
           </div>
@@ -87,7 +87,7 @@ export default function AddClassDialog({ open, onClose, onSubmit }: AddClassDial
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Жишээ: Нийгэм, Математик"
-              className="w-full rounded-xl border border-[#d9dee8] px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#94a3b8] focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20"
+              className="w-full rounded-xl border border-[#d9dee8] px-4 py-3 text-4 text-[#1f2a44] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4f9dff] focus:ring-2 focus:ring-[#4f9dff]/20"
               required
             />
           </div>
@@ -102,7 +102,7 @@ export default function AddClassDialog({ open, onClose, onSubmit }: AddClassDial
             </button>
             <button
               type="submit"
-              className="flex-1 rounded-xl bg-teal-600 py-3 text-4 font-semibold text-white transition hover:bg-teal-700"
+              className="flex-1 rounded-xl bg-[#4f9dff] py-3 text-4 font-semibold text-white transition hover:bg-[#3f8ff5]"
             >
               Нэмэх
             </button>

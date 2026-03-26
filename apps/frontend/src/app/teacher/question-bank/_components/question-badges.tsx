@@ -15,7 +15,7 @@ export function QuestionStatusBadge({ status }: { status: QuestionStatus }) {
       className={cn(
         "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
         status === "published"
-          ? "bg-emerald-100 text-emerald-700"
+          ? "bg-[#deeeff] text-[#2f66b9]"
           : "bg-amber-100 text-amber-700",
       )}
     >

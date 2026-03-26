@@ -149,9 +149,9 @@ function pieSlicePath(
 }
 
 function toneClasses(tone: "blue" | "green" | "red") {
-  if (tone === "green") return "text-[#12b650]";
+  if (tone === "green") return "text-[#4f9dff]";
   if (tone === "red") return "text-[#f15f6a]";
-  return "text-teal-600";
+  return "text-[#4f9dff]";
 }
 
 export default function StatsScreen() {
@@ -346,7 +346,7 @@ export default function StatsScreen() {
             <button
               aria-expanded={isDownloadMenuOpen}
               aria-haspopup="menu"
-              className="rounded-lg bg-teal-600 px-4 py-2 text-4 font-semibold text-white hover:bg-teal-700"
+              className="rounded-lg bg-[#4f9dff] px-4 py-2 text-4 font-semibold text-white hover:bg-[#3f8ff5]"
               onClick={() => setIsDownloadMenuOpen((prev) => !prev)}
               type="button"
             >
@@ -386,7 +386,7 @@ export default function StatsScreen() {
             className="rounded-xl border border-[#d9dee8] bg-white p-4"
           >
             <div className="flex items-start justify-between">
-              <span className="text-4 text-teal-500">◉</span>
+              <span className="text-4 text-[#4f9dff]">◉</span>
               <span
                 className={`text-4 font-semibold ${toneClasses(item.tone)}`}
               >

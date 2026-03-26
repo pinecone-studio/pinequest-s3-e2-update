@@ -7,41 +7,47 @@ type Props = {
 
 export function TeacherLoginCard({ error }: Props) {
   return (
-    <div className="rounded-2xl border border-[#d9dee8] bg-white p-5 shadow-sm sm:p-6">
+    <div className="rounded-[28px] border border-white/80 bg-white/92 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-6">
       <div className="mb-4">
-        <p className="text-5 font-extrabold text-[#1f2a44]">Орчин сонгох</p>
-        <p className="mt-1 text-3 leading-snug text-[#5b6883]">
-          Багшийн хэсэгт шууд нэвтрэх эсвэл захиргаа руу шилжинэ.
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-600">
+          Нэвтрэх хэсэг
+        </p>
+        <p className="mt-2 text-2xl font-extrabold text-[#183153]">
+          Өөрийн орчноо сонгоод үргэлжлүүлнэ үү
+        </p>
+        <p className="mt-2 text-sm leading-6 text-[#5b6883] sm:text-base">
+          UPDATE-ийн exam module-д сургууль болон багшийн эрхээр шууд нэвтрэх
+          боломжтой.
         </p>
       </div>
 
       {error === "login" ? (
-        <p className="mb-4 rounded-xl bg-red-50 px-3 py-2.5 text-3 text-red-700">
+        <p className="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
           Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.
         </p>
       ) : null}
       {error === "auth" ? (
-        <p className="mb-4 rounded-xl bg-amber-50 px-3 py-2.5 text-3 text-amber-900">
+        <p className="mb-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Багшийн хэсэгт орохын тулд эхлээд нэвтэрнэ үү.
         </p>
       ) : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Link
           href={authSignInHref("/admin")}
-          className="flex min-h-[3.25rem] flex-1 items-center justify-center rounded-2xl border border-[#d9dee8] bg-[#f8fafc] px-4 py-3 text-center text-4 font-semibold text-[#2f3c59] shadow-sm transition hover:border-teal-300 hover:bg-teal-50 sm:min-h-[3.5rem] sm:text-5"
+          className="flex min-h-[3.5rem] items-center justify-center rounded-2xl border border-[#cfe3df] bg-[#f4fbf9] px-4 py-3 text-center text-base font-semibold text-[#1f3b58] shadow-sm transition hover:border-teal-400 hover:bg-teal-50"
         >
-          Захиргааны хэсэг
+          Сургууль нэвтрэх
         </Link>
         <Link
           href={authSignInHref("/teacher")}
-          className="flex min-h-[3.25rem] flex-1 items-center justify-center rounded-2xl bg-teal-600 px-4 py-3 text-center text-4 font-semibold text-white shadow-md transition hover:bg-teal-700 sm:min-h-[3.5rem] sm:text-5"
+          className="flex min-h-[3.5rem] items-center justify-center rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-3 text-center text-base font-semibold text-white shadow-md transition hover:from-teal-700 hover:to-cyan-700"
         >
-          Багшийн хэсэгт нэвтрэх
+          Багш нэвтрэх
         </Link>
       </div>
 
-      <p className="mt-3 text-center text-3 text-[#6b7894]">
+      <p className="mt-4 text-center text-sm text-[#6b7894]">
         Шинэ хэрэглэгч?{" "}
         <Link
           href={authSignUpHref("/teacher")}
@@ -54,12 +60,12 @@ export function TeacherLoginCard({ error }: Props) {
           href={authSignUpHref("/admin")}
           className="font-semibold text-[#5b6883] underline-offset-2 hover:underline"
         >
-          захиргаа
+          сургууль
         </Link>
       </p>
 
-      <p className="mt-2 text-center text-3 text-[#6b7894]">
-        Student орчин удахгүй нээгдэнэ.
+      <p className="mt-2 text-center text-sm text-[#6b7894]">
+        Сурагчийн орчин дараагийн шатанд нэмэгдэнэ.
       </p>
     </div>
   );

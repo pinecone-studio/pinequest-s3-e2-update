@@ -26,7 +26,7 @@ export function QuestionBankSection({
   onToggleSelectQuestion: (questionId: string) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f6faff] p-5 shadow-sm">
       <div className="flex flex-col gap-4 border-b border-[#ecf1f7] pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
@@ -93,11 +93,11 @@ function QuestionBankCard({
     question.topic.toLowerCase() === exam.topic.toLowerCase();
 
   return (
-    <article className={`rounded-3xl border p-5 transition ${exactMatch ? "border-[#9dd1b7] bg-[#f3fbf6] shadow-[0_14px_30px_rgba(42,123,84,0.08)]" : "border-[#d8e2f0] bg-[#fbfdff] hover:border-[#aac8f8]"}`}>
+    <article className={`rounded-3xl border p-5 transition ${exactMatch ? "border-[#9fc8ff] bg-[#eaf4ff] shadow-[0_14px_30px_rgba(79,157,255,0.10)]" : "border-[#d8e2f0] bg-[#fafdff] hover:border-[#aac8f8]"}`}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            {exactMatch ? <span className="rounded-full bg-[#dff4e8] px-3 py-1 text-xs font-semibold text-[#236847]">Хамгийн тохиромжтой</span> : null}
+            {exactMatch ? <span className="rounded-full bg-[#deeeff] px-3 py-1 text-xs font-semibold text-[#2f66b9]">Хамгийн тохиромжтой</span> : null}
             <Badge>{question.grade}</Badge><Badge tone="subject">{question.subject}</Badge><Badge tone="topic">{question.topic}</Badge>
             <Badge tone="difficulty">{DIFFICULTY_LABELS[question.difficulty]}</Badge><Badge tone="neutral">{QUESTION_TYPE_LABELS[question.questionType]}</Badge>
           </div>
@@ -122,6 +122,6 @@ function QuestionBankCard({
 }
 
 function Badge({ children, tone = "grade" }: { children: React.ReactNode; tone?: "grade" | "subject" | "topic" | "difficulty" | "neutral" }) {
-  const styles = tone === "subject" ? "bg-[#f8f1ff] text-[#7047a9]" : tone === "topic" ? "bg-[#eef9f2] text-[#236847]" : tone === "difficulty" ? "bg-[#fff6e7] text-[#9a6423]" : tone === "neutral" ? "bg-[#f1f5f9] text-[#48617f]" : "bg-[#eef4ff] text-[#3b5a8f]";
+  const styles = tone === "subject" ? "bg-[#f8f1ff] text-[#7047a9]" : tone === "topic" ? "bg-[#eef6ff] text-[#2f66b9]" : tone === "difficulty" ? "bg-[#fff6e7] text-[#9a6423]" : tone === "neutral" ? "bg-[#f1f5f9] text-[#48617f]" : "bg-[#eef4ff] text-[#3b5a8f]";
   return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${styles}`}>{children}</span>;
 }

@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { getPastExamsForClass } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
 import { TEACHER_DEMO_CLASS_ID } from "@/app/lib/teacher-demo-class";
@@ -70,20 +70,61 @@ function triggerExcelDownload(filename: string, tableHtml: string) {
   URL.revokeObjectURL(url);
 }
 
-function downloadStudentListXls(className: string, students: Student[]) {
+function triggerPdfDownload(title: string, bodyHtml: string) {
+  const printWindow = window.open("", "_blank", "noopener,noreferrer");
+  if (!printWindow) return;
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <title>${escapeHtml(title)}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 24px; color: #1f2a44; }
+          h1 { margin-bottom: 16px; font-size: 24px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+          th, td { border: 1px solid #d9dee8; padding: 8px 10px; text-align: left; }
+          th { background: #f6faff; }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeHtml(title)}</h1>
+        ${bodyHtml}
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
+  };
+  printWindow.onafterprint = () => {
+    printWindow.close();
+  };
+}
+
+function buildStudentListTable(className: string, students: Student[]) {
   const rows = students
     .map(
       (s, i) =>
         `<tr><td>${i + 1}</td><td>${escapeHtml(`${s.firstName} ${s.lastName}`)}</td></tr>`,
     )
     .join("");
-  const table = `
+  return `
     <table border="1">
       <tr><th colspan="2">Анги: ${escapeHtml(className)}</th></tr>
       <tr><th>№</th><th>Овог нэр</th></tr>
       ${rows}
     </table>`;
+}
+
+function downloadStudentListXls(className: string, students: Student[]) {
+  const table = buildStudentListTable(className, students);
   triggerExcelDownload(`${sanitizeFilename(className)}-suragchid.xls`, table);
+}
+
+function downloadStudentListPdf(className: string, students: Student[]) {
+  triggerPdfDownload(`${className} - Сурагчдын жагсаалт`, buildStudentListTable(className, students));
 }
 
 function sortPastExamStudents(
@@ -96,7 +137,7 @@ function sortPastExamStudents(
   );
 }
 
-function downloadPastExamsXls(
+function buildPastExamsTable(
   className: string,
   exams: ReturnType<typeof getPastExamsForClass>,
 ) {
@@ -123,20 +164,34 @@ function downloadPastExamsXls(
     </table>`;
     })
     .join("");
-  const table = `
+  return `
     <table border="1">
       <tr><th colspan="5">Өмнөх шалгалт — ${escapeHtml(className)} (нийлбэр)</th></tr>
       <tr><th>Огноо</th><th>Хичээл</th><th>Шалгалт</th><th>Дундаж</th><th>Тэнцсэн</th></tr>
       ${summaryRows}
     </table>
     ${detailTables}`;
+}
+
+function downloadPastExamsXls(
+  className: string,
+  exams: ReturnType<typeof getPastExamsForClass>,
+) {
+  const table = buildPastExamsTable(className, exams);
   triggerExcelDownload(
     `${sanitizeFilename(className)}-umnuh-shalgalt.xls`,
     table,
   );
 }
 
-function downloadExamStatsXls(className: string) {
+function downloadPastExamsPdf(
+  className: string,
+  exams: ReturnType<typeof getPastExamsForClass>,
+) {
+  triggerPdfDownload(`${className} - Өмнөх шалгалт`, buildPastExamsTable(className, exams));
+}
+
+function buildExamStatsTable(className: string) {
   const examTotal =
     DEMO_EXAM.passed + DEMO_EXAM.failed + DEMO_EXAM.notEvaluated;
   const passPct = examTotal
@@ -145,7 +200,7 @@ function downloadExamStatsXls(className: string) {
   const gradeRows = DEMO_EXAM.gradeCounts.map(
     (g) => `<tr><td>${g.grade}</td><td>${g.count}</td></tr>`,
   ).join("");
-  const table = `
+  return `
     <table border="1">
       <tr><th colspan="2">Шалгалтын статистик — ${escapeHtml(className)}</th></tr>
       <tr><td>Хичээл</td><td>${escapeHtml(DEMO_EXAM.title)}</td></tr>
@@ -160,9 +215,90 @@ function downloadExamStatsXls(className: string) {
       <tr><th>Үнэлгээ</th><th>Сурагчийн тоо</th></tr>
       ${gradeRows}
     </table>`;
+}
+
+function downloadExamStatsXls(className: string) {
+  const table = buildExamStatsTable(className);
   triggerExcelDownload(
     `${sanitizeFilename(className)}-shalgalt-statistik.xls`,
     table,
+  );
+}
+
+function downloadExamStatsPdf(className: string) {
+  triggerPdfDownload(`${className} - Шалгалтын статистик`, buildExamStatsTable(className));
+}
+
+function DownloadMenu({
+  onExcel,
+  onPdf,
+  disabled,
+  label = "Татах",
+}: {
+  onExcel: () => void;
+  onPdf: () => void;
+  disabled?: boolean;
+  label?: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleOutside = (event: MouseEvent) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        type="button"
+        disabled={disabled}
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#4f9dff] px-4 py-2.5 text-3 font-semibold text-white shadow-sm transition hover:bg-[#3f8ff5] disabled:cursor-not-allowed disabled:opacity-50 sm:text-4"
+      >
+        <Download className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+        {label}
+      </button>
+
+      {isOpen ? (
+        <div
+          className="absolute right-0 z-20 mt-2 min-w-40 rounded-xl border border-[#d9dee8] bg-white p-1 shadow-md"
+          role="menu"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              onExcel();
+              setIsOpen(false);
+            }}
+            className="w-full rounded-lg px-3 py-2 text-left text-3 font-semibold text-[#1f2a44] hover:bg-[#f1f6ff]"
+          >
+            Excel татах
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              onPdf();
+              setIsOpen(false);
+            }}
+            className="w-full rounded-lg px-3 py-2 text-left text-3 font-semibold text-[#1f2a44] hover:bg-[#f1f6ff]"
+          >
+            PDF татах
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -242,7 +378,7 @@ function DemoExamStatsChart({
           ),
         };
       });
-  }, [gradeCounts, total]);
+  }, [chartCenter, chartRadius, gradeCounts, total]);
 
   return (
     <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start sm:justify-center">
@@ -430,7 +566,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
         </div>
 
         <div
-          className="flex flex-wrap gap-2 rounded-2xl border border-[#d9dee8] bg-white p-2 shadow-sm"
+          className="flex flex-wrap justify-center gap-6 rounded-2xl border border-[#d9dee8] bg-white p-2 shadow-sm"
           role="tablist"
           aria-label="Ангийн хэсгүүд"
         >
@@ -496,14 +632,10 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                   Мөр дарахад сонгогдож, ангийн нийт тоо харагдана.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => downloadStudentListXls(cls.name, students)}
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#4f9dff] px-4 py-2.5 text-3 font-semibold text-white shadow-sm transition hover:bg-[#3f8ff5] sm:text-4"
-              >
-                <Download className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
-                Татах
-              </button>
+              <DownloadMenu
+                onExcel={() => downloadStudentListXls(cls.name, students)}
+                onPdf={() => downloadStudentListPdf(cls.name, students)}
+              />
             </div>
 
             {selectedStudent ? (
@@ -546,15 +678,15 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                 <thead>
                   <tr className="border-b border-[#e2e8f0] bg-[#f8fafc]">
                     <th className="px-4 py-3 text-left text-4 font-semibold text-[#64748b]">
-                      Нэр
+                      № / Нэр
                     </th>
-                    <th className="px-4 py-3 text-right text-4 font-semibold text-[#64748b]">
+                    <th className="px-8 py-3 text-right text-4 font-semibold text-[#64748b]">
                       Дэлгэрэнгүй
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {students.map((student) => (
+                  {students.map((student, index) => (
                     <tr
                       key={student.id}
                       role="button"
@@ -572,10 +704,22 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                           : ""
                       }`}
                     >
-                      <td className="px-4 py-3 text-4 font-semibold text-[#1f2a44]">
-                        {student.firstName} {student.lastName}
+                      <td className="px-4 py-3 text-[#1f2a44]">
+                        <div className="flex items-start gap-3">
+                          <span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#64748b]">
+                            {index + 1}.
+                          </span>
+                          <div>
+                            <p className="text-4 font-semibold text-[#1f2a44]">
+                              {student.firstName} {student.lastName}
+                            </p>
+                            <p className="mt-1 text-3 text-[#7b8aa3]">
+                              {student.studentNumber.toLowerCase()}@gmail.com
+                            </p>
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-8 py-3 text-right">
                         <button
                           type="button"
                           onClick={(e) => {
@@ -609,17 +753,16 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                   Мөр дарахад сурагч тус бүрийн оноо гарна.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() =>
+              <DownloadMenu
+                label="Татах"
+                disabled={filteredPastExams.length === 0}
+                onExcel={() =>
                   downloadPastExamsXls(cls.name, filteredPastExams)
                 }
-                disabled={filteredPastExams.length === 0}
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#4f9dff] px-4 py-2.5 text-3 font-semibold text-white shadow-sm transition hover:bg-[#3f8ff5] disabled:cursor-not-allowed disabled:opacity-50 sm:text-4"
-              >
-                <Download className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
-                Татах (харагдаж буй)
-              </button>
+                onPdf={() =>
+                  downloadPastExamsPdf(cls.name, filteredPastExams)
+                }
+              />
             </div>
 
             <div className="relative mt-5">
@@ -761,7 +904,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                                               <span
                                                 className={
                                                   s.passed
-                                                    ? "font-semibold text-[#047857]"
+                                                    ? "font-semibold text-[#2f66b9]"
                                                     : "font-semibold text-[#b91c1c]"
                                                 }
                                               >
@@ -797,21 +940,17 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                   {DEMO_EXAM.title} · {DEMO_EXAM.examLabel} · {DEMO_EXAM.date}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => downloadExamStatsXls(cls.name)}
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#4f9dff] px-4 py-2.5 text-3 font-semibold text-white shadow-sm transition hover:bg-[#3f8ff5] sm:text-4"
-              >
-                <Download className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
-                Татах
-              </button>
+              <DownloadMenu
+                onExcel={() => downloadExamStatsXls(cls.name)}
+                onPdf={() => downloadExamStatsPdf(cls.name)}
+              />
             </div>
 
             <div className="mt-6 space-y-6">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border border-[#cde4d8] bg-[#ecfdf5] p-4">
-                  <p className="text-3 font-semibold text-[#047857]">Тэнцсэн</p>
-                  <p className="mt-1 text-5 font-extrabold text-[#047857]">
+                <div className="rounded-xl border border-[#cfe0fb] bg-[#eef6ff] p-4">
+                  <p className="text-3 font-semibold text-[#2f66b9]">Тэнцсэн</p>
+                  <p className="mt-1 text-5 font-extrabold text-[#2f66b9]">
                     {DEMO_EXAM.passed}
                     <span className="text-4 font-semibold text-[#64748b]">
                       {" "}
