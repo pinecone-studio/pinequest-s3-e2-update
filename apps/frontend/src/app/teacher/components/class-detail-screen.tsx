@@ -24,7 +24,7 @@ export default function ClassDetailScreen({
 			<main className="mx-auto max-w-4xl px-4 py-8">
 				<p className="text-4 text-[#64748b]">Анги олдсонгүй.</p>
 				<button
-					onClick={() => router.push("/teacher/score-calculation/angi")}
+					onClick={() => router.push("/teacher")}
 					className="mt-4 text-4 font-semibold text-teal-600 hover:underline"
 				>
 					Буцах
@@ -36,7 +36,7 @@ export default function ClassDetailScreen({
 	return (
 		<main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-8">
 			<button
-				onClick={() => (onBack ? onBack() : router.push("/teacher/angi"))}
+				onClick={() => (onBack ? onBack() : router.push("/teacher"))}
 				className="inline-flex items-center gap-2 text-4 font-semibold text-teal-600 hover:underline"
 				type="button"
 			>
