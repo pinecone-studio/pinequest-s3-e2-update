@@ -36,8 +36,8 @@ export function useTeacher() {
 const menuItems = [
   { href: "/teacher", label: "Нүүр хуудас", icon: Home },
   {
-    href: "/teacher/exam-management",
-    label: "Шалгалтын менежмент",
+    href: "/teacher/question-bank",
+    label: "Асуултын сан",
     icon: BookText,
   },
 
