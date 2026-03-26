@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AdminShell } from "@/app/admin/_components/admin_shell";
 import { authSignInHref } from "@/app/lib/auth-redirect";
 import {
+  fallbackAppUser,
   getAppUserFromClerk,
   getAppUserFromUserId,
 } from "@/app/lib/clerk-app-user";
@@ -22,7 +23,7 @@ export default async function AdminLayout({
     user = await getAppUserFromUserId(userId, "school_admin");
   }
   if (!user) {
-    redirect(signInAdmin);
+    user = fallbackAppUser(userId, "school_admin");
   }
 
   return <AdminShell user={user}>{children}</AdminShell>;

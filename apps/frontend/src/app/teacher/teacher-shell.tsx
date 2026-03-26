@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { BookText, Calculator, Cog, Home, LogOut, Mail, User as UserIcon } from "lucide-react";
-import { logout } from "@/app/admin/action";
+import { useClerk } from "@clerk/nextjs";
 import type { User } from "@/app/lib/types";
 
 const TeacherContext = createContext<User | null>(null);
@@ -52,6 +52,7 @@ export default function TeacherShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
+  const { signOut } = useClerk();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -149,15 +150,14 @@ export default function TeacherShell({
                     </div>
 
                     <div className="p-3">
-                      <form action={logout}>
-                        <button
-                          className="inline-flex w-full items-center gap-2 rounded-xl border border-[#ff6b6b]/50 bg-[#ff6b6b]/10 px-3 py-2 text-2 font-semibold text-[#d84e4e] transition hover:bg-[#ff6b6b]/20"
-                          type="submit"
-                        >
-                          <LogOut className="h-4 w-4" />
-                          Гарах
-                        </button>
-                      </form>
+                      <button
+                        className="inline-flex w-full items-center gap-2 rounded-xl border border-[#ff6b6b]/50 bg-[#ff6b6b]/10 px-3 py-2 text-2 font-semibold text-[#d84e4e] transition hover:bg-[#ff6b6b]/20"
+                        type="button"
+                        onClick={() => signOut({ redirectUrl: "/" })}
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Гарах
+                      </button>
                     </div>
                   </div>
                 ) : null}
