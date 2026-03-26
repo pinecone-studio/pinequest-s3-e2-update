@@ -34,16 +34,15 @@ export type StoredOpenQuestion = {
 };
 
 export type CreateExamArgs = {
-  duration: string;
-  location: string;
   notes: string;
+  duration: string;
+  isActive: number
+  variation: string
   tests: ExamClosedQuestionInput[];
   openExercises: ExamOpenQuestionInput[];
   gradeId?: string | null;
-  teacherId?: string | null;
   date?: string | null;
-  isActive: number
-  variation: number
+  location?: string | null;
 };
 
 function buildTestsPayload(
@@ -119,14 +118,15 @@ export async function createExam(
 
   return {
     id,
-    gradeId: args.gradeId ?? null,
-    teacherId: args.teacherId ?? null,
+    notes: args.notes,
+    duration: args.duration,
+    isActive: args.isActive ?? 0,
+    variation: args.variation,
     tests: testsJson,
     openExercises: openExercisesJson,
+    gradeId: args.gradeId ?? null,
     date: args.date ?? null,
-    duration: args.duration,
     location: args.location,
-    notes: args.notes,
     createdAt: now,
     updatedAt: now,
   };

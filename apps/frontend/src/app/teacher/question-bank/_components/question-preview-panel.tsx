@@ -92,6 +92,14 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
           <dd className="font-semibold text-[#183153]">{question.subject}</dd>
         </div>
         <div className="flex items-center justify-between gap-3">
+          <dt>Анги</dt>
+          <dd className="font-semibold text-[#183153]">{question.grade}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Дэд сэдэв</dt>
+          <dd className="font-semibold text-[#183153]">{question.subtopic || "-"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
           <dt>Оноо</dt>
           <dd className="font-semibold text-[#183153]">{question.points}</dd>
         </div>
