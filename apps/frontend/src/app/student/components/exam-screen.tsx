@@ -1,9 +1,11 @@
+import { FaceCam } from "@/app/components/faceDetection";
 import type { OptionId, ExamData } from "../types";
 import { ExamActions } from "./exam-actions";
 import { ExamHeader } from "./exam-header";
 import { ProgressSummary } from "./progress-summary";
 import { QuestionCard } from "./question-card";
 import { QuestionNavigator } from "./question-navigator";
+
 
 type ExamScreenProps = {
   examData: ExamData;
@@ -39,6 +41,7 @@ export function ExamScreen({
 
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-4 py-6 text-[#1f2a44] md:px-6 lg:px-8">
+      <FaceCam/>
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
         <ExamHeader
           title={examData.title}
