@@ -1,5 +1,8 @@
 import type { School, SchoolClass, Student, User } from "./types";
-import { TEACHER_DEMO_CLASS_ID } from "./teacher-demo-class";
+import {
+  TEACHER_DEMO_CLASS_ID,
+  TEACHER_DEMO_CLASS_IDS,
+} from "./teacher-demo-class";
 
 const SCHOOL_ID = "school-1";
 
@@ -66,8 +69,27 @@ let classes: SchoolClass[] = [
     studentIds: ["stu-7", "stu-8"],
   },
   {
+    id: "class-mock-9b",
+    name: "9Б",
+    teacherIds: ["user-teacher-1", "user-teacher-2", "user-teacher-3"],
+    studentIds: [
+      "stu-mock-9b-1",
+      "stu-mock-9b-2",
+      "stu-mock-9b-3",
+      "stu-mock-9b-4",
+      "stu-mock-9b-5",
+      "stu-mock-9b-6",
+      "stu-mock-9b-7",
+      "stu-mock-9b-8",
+      "stu-mock-9b-9",
+      "stu-mock-9b-10",
+      "stu-mock-9b-11",
+      "stu-mock-9b-12",
+    ],
+  },
+  {
     id: TEACHER_DEMO_CLASS_ID,
-    name: "10А (жишээ)",
+    name: "10А",
     teacherIds: ["user-teacher-1", "user-teacher-2", "user-teacher-3"],
     studentIds: [
       "stu-mock-10a-1",
@@ -75,6 +97,32 @@ let classes: SchoolClass[] = [
       "stu-mock-10a-3",
       "stu-mock-10a-4",
       "stu-mock-10a-5",
+      "stu-mock-10a-6",
+      "stu-mock-10a-7",
+      "stu-mock-10a-8",
+      "stu-mock-10a-9",
+      "stu-mock-10a-10",
+      "stu-mock-10a-11",
+      "stu-mock-10a-12",
+    ],
+  },
+  {
+    id: "class-mock-11a",
+    name: "11А",
+    teacherIds: ["user-teacher-1", "user-teacher-2", "user-teacher-3"],
+    studentIds: [
+      "stu-mock-11a-1",
+      "stu-mock-11a-2",
+      "stu-mock-11a-3",
+      "stu-mock-11a-4",
+      "stu-mock-11a-5",
+      "stu-mock-11a-6",
+      "stu-mock-11a-7",
+      "stu-mock-11a-8",
+      "stu-mock-11a-9",
+      "stu-mock-11a-10",
+      "stu-mock-11a-11",
+      "stu-mock-11a-12",
     ],
   },
 ];
@@ -137,6 +185,90 @@ let students: Student[] = [
     classId: "class-4",
   },
   {
+    id: "stu-mock-9b-1",
+    studentNumber: "9B-001",
+    firstName: "Тэмүүлэн",
+    lastName: "Батболд",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-2",
+    studentNumber: "9B-002",
+    firstName: "Ануужин",
+    lastName: "Ганзориг",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-3",
+    studentNumber: "9B-003",
+    firstName: "Энх-Амгалан",
+    lastName: "Чинбат",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-4",
+    studentNumber: "9B-004",
+    firstName: "Мишээл",
+    lastName: "Доржсүрэн",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-5",
+    studentNumber: "9B-005",
+    firstName: "Золбаяр",
+    lastName: "Төмөрсүх",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-6",
+    studentNumber: "9B-006",
+    firstName: "Уянга",
+    lastName: "Бат-Эрдэнэ",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-7",
+    studentNumber: "9B-007",
+    firstName: "Ринчино",
+    lastName: "Дамдин",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-8",
+    studentNumber: "9B-008",
+    firstName: "Түмэннаст",
+    lastName: "Ганбаатар",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-9",
+    studentNumber: "9B-009",
+    firstName: "Алтаншагай",
+    lastName: "Мөнх-Очир",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-10",
+    studentNumber: "9B-010",
+    firstName: "Энэрэл",
+    lastName: "Баттулга",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-11",
+    studentNumber: "9B-011",
+    firstName: "Бямбацогт",
+    lastName: "Норовсүрэн",
+    classId: "class-mock-9b",
+  },
+  {
+    id: "stu-mock-9b-12",
+    studentNumber: "9B-012",
+    firstName: "Дөлгөөн",
+    lastName: "Алтангэрэл",
+    classId: "class-mock-9b",
+  },
+  {
     id: "stu-mock-10a-1",
     studentNumber: "10A-001",
     firstName: "Батбаяр",
@@ -170,6 +302,139 @@ let students: Student[] = [
     firstName: "Эрдэнэбат",
     lastName: "Болд",
     classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-6",
+    studentNumber: "10A-006",
+    firstName: "Цогзолмаа",
+    lastName: "Батзаяа",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-7",
+    studentNumber: "10A-007",
+    firstName: "Мөнхзул",
+    lastName: "Ганхуяг",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-8",
+    studentNumber: "10A-008",
+    firstName: "Одбаяр",
+    lastName: "Жаргалсайхан",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-9",
+    studentNumber: "10A-009",
+    firstName: "Энхмэнд",
+    lastName: "Цэнд-Аюуш",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-10",
+    studentNumber: "10A-010",
+    firstName: "Номин-Эрдэнэ",
+    lastName: "Бадамхатан",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-11",
+    studentNumber: "10A-011",
+    firstName: "Хонгорзул",
+    lastName: "Дашцэрэн",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-10a-12",
+    studentNumber: "10A-012",
+    firstName: "Тэргэл",
+    lastName: "Батнасан",
+    classId: TEACHER_DEMO_CLASS_ID,
+  },
+  {
+    id: "stu-mock-11a-1",
+    studentNumber: "11A-001",
+    firstName: "Ариунболд",
+    lastName: "Нарангэрэл",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-2",
+    studentNumber: "11A-002",
+    firstName: "Оюунэрдэнэ",
+    lastName: "Сүхбаатар",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-3",
+    studentNumber: "11A-003",
+    firstName: "Билэгт",
+    lastName: "Энхтайван",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-4",
+    studentNumber: "11A-004",
+    firstName: "Энхцэцэг",
+    lastName: "Мөнхбат",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-5",
+    studentNumber: "11A-005",
+    firstName: "Ганзориг",
+    lastName: "Батсуурь",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-6",
+    studentNumber: "11A-006",
+    firstName: "Саруул",
+    lastName: "Чулуунбат",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-7",
+    studentNumber: "11A-007",
+    firstName: "Мишээл",
+    lastName: "Доржоо",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-8",
+    studentNumber: "11A-008",
+    firstName: "Төгөлдөр",
+    lastName: "Энхбат",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-9",
+    studentNumber: "11A-009",
+    firstName: "Чинзориг",
+    lastName: "Лувсан",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-10",
+    studentNumber: "11A-010",
+    firstName: "Азжаргал",
+    lastName: "Галбадрах",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-11",
+    studentNumber: "11A-011",
+    firstName: "Батцэцэг",
+    lastName: "Дарьсүрэн",
+    classId: "class-mock-11a",
+  },
+  {
+    id: "stu-mock-11a-12",
+    studentNumber: "11A-012",
+    firstName: "Намуун",
+    lastName: "Шаравням",
+    classId: "class-mock-11a",
   },
 ];
 
@@ -369,21 +634,23 @@ export const store = {
       }));
   },
 
-  /** Нүүр болон angi-д хэрэглэгч бүрт жишээ ангийг нэмж харуулах */
+  /** Нүүр болон анги-д нэмэлт ангийг (store-д бүртгээгүй багшид) нэмж харуулах */
   getClassesForTeacherWithDemo(teacherId: string): SchoolClass[] {
     const base = this.getClassesForTeacher(teacherId);
-    const demoId = TEACHER_DEMO_CLASS_ID;
-    if (base.some((c) => c.id === demoId)) return base;
-    const demo = classes.find((c) => c.id === demoId);
-    if (!demo) return base;
-    return [
-      ...base,
-      {
+    const have = new Set(base.map((c) => c.id));
+    const extras: SchoolClass[] = [];
+    for (const demoId of TEACHER_DEMO_CLASS_IDS) {
+      if (have.has(demoId)) continue;
+      const demo = classes.find((c) => c.id === demoId);
+      if (!demo) continue;
+      extras.push({
         ...demo,
         teacherIds: [...demo.teacherIds],
         studentIds: [...demo.studentIds],
-      },
-    ];
+      });
+      have.add(demoId);
+    }
+    return extras.length === 0 ? base : [...base, ...extras];
   },
 
   teacherAssignedToClass(teacherId: string, classId: string): boolean {

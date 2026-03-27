@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ChevronRight, Search, Users } from "lucide-react";
 import { store } from "@/app/lib/store";
-import { TEACHER_DEMO_CLASS_ID } from "@/app/lib/teacher-demo-class";
 import { useTeacher } from "../teacher-shell";
 
 export default function TeacherDashboard() {
@@ -82,7 +81,6 @@ export default function TeacherDashboard() {
           ) : (
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
               {filteredClasses.map((cls) => {
-                const isDemo = cls.id === TEACHER_DEMO_CLASS_ID;
                 const openClass = () =>
                   router.push(`/teacher/class/${encodeURIComponent(cls.id)}`);
                 return (
@@ -109,12 +107,6 @@ export default function TeacherDashboard() {
                           <span className="font-medium text-[#4a5875]">
                             {cls.studentIds.length} сурагч
                           </span>
-                          {isDemo ? (
-                            <span className="text-[#4f9dff]">
-                              {" "}
-                              · жишээ анги
-                            </span>
-                          ) : null}
                         </p>
                       </div>
                       <ChevronRight
