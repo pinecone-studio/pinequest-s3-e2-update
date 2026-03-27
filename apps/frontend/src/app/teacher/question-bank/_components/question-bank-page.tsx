@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckCircle2 } from "lucide-react";
 import { QuestionBuilderForm } from "./question-builder-form";
 import { QuestionFilters } from "./question-filters";
 import { QuestionHeader } from "./question-header";
@@ -19,12 +20,14 @@ export function QuestionBankPage() {
     gradeOptions,
     isBuilderOpen,
     lastValidationErrors,
+    publishSuccessDialogOpen,
     openCreateBuilder,
     openEditBuilder,
     reuseQuestions,
     reuseTarget,
     selectedQuestionIds,
     setActiveQuestionId,
+    setPublishSuccessDialogOpen,
     setReuseTarget,
     subtopicOptions,
     subjectOptions,
@@ -94,6 +97,29 @@ export function QuestionBankPage() {
           subjectOptions={subjectOptions}
           validationErrors={lastValidationErrors}
         />
+      ) : null}
+
+      {publishSuccessDialogOpen ? (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#10233e]/40 p-4 backdrop-blur-[2px]">
+          <div className="w-full max-w-md rounded-[28px] border border-[#d9e4f1] bg-white p-6 text-center shadow-2xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#eaf4ff] text-[#1f6feb]">
+              <CheckCircle2 className="h-8 w-8" />
+            </div>
+            <h3 className="mt-4 text-2xl font-bold text-[#183153]">
+              Амжилттай нийтэллээ
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-[#5f7394]">
+              Асуулт асуултын санд амжилттай нийтлэгдэж, шалгалтад ашиглахад бэлэн боллоо.
+            </p>
+            <button
+              className="mt-6 inline-flex h-11 items-center justify-center rounded-2xl bg-[#1f6feb] px-5 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
+              onClick={() => setPublishSuccessDialogOpen(false)}
+              type="button"
+            >
+              Ойлголоо
+            </button>
+          </div>
+        </div>
       ) : null}
     </div>
   );
