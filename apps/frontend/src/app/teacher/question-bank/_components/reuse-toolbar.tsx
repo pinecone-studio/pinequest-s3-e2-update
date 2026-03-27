@@ -25,7 +25,7 @@ export function ReuseToolbar({
   onReuseTargetChange,
 }: ReuseToolbarProps) {
   return (
-    <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-4 shadow-sm">
+    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="mt-1 text-lg font-semibold text-[#183153]">

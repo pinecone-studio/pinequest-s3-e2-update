@@ -22,7 +22,10 @@ export function ExamSettingsForm({
   gradeOptions: readonly string[];
   subjectOptions: string[];
   topicSuggestions: string[];
-  onUpdateExam: <Key extends keyof ExamComposerState>(key: Key, value: ExamComposerState[Key]) => void;
+  onUpdateExam: <Key extends keyof ExamComposerState>(
+    key: Key,
+    value: ExamComposerState[Key],
+  ) => void;
 }) {
   return (
     <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f7fbff] p-5 shadow-sm">
@@ -41,7 +44,10 @@ export function ExamSettingsForm({
         </Field>
 
         <Field label="Анги">
-          <Select onValueChange={(value) => onUpdateExam("grade", value)} value={exam.grade}>
+          <Select
+            onValueChange={(value) => onUpdateExam("grade", value)}
+            value={exam.grade}
+          >
             <SelectTrigger className={inputClassName}>
               <SelectValue placeholder="Анги сонгох" />
             </SelectTrigger>
@@ -91,7 +97,8 @@ export function ExamSettingsForm({
               onChange={(event) =>
                 onUpdateExam(
                   "durationInMinutes",
-                  Number.isFinite(Number(event.target.value)) && Number(event.target.value) > 0
+                  Number.isFinite(Number(event.target.value)) &&
+                    Number(event.target.value) > 0
                     ? Number(event.target.value)
                     : 1,
                 )

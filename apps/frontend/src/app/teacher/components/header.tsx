@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-type TeacherView = "overview" | "review" | "stats";
+type TeacherView = "overview" | "review";
 
 type HeaderProps = {
   variant?: "dashboard" | "tabs";
@@ -15,7 +15,6 @@ type HeaderProps = {
 const ALL_TABS: { view: TeacherView; label: string }[] = [
   { view: "overview", label: "Шалгалт" },
   { view: "review", label: "Анги" },
-  { view: "stats", label: "Тоон үзүүлэлт" },
 ];
 
 export default function Header({
@@ -39,7 +38,6 @@ export default function Header({
       router.push("/teacher");
       return;
     }
-    router.push("/teacher/statistic");
   };
 
   return (

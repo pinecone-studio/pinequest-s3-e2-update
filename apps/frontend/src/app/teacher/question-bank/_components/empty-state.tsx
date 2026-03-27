@@ -6,7 +6,7 @@ export function EmptyState({
   onCreateQuestion: () => void;
 }) {
   return (
-    <div className="rounded-[24px] border border-dashed border-[#c7d8ef] bg-[#f8fbff] p-10 text-center">
+    <div className="rounded-3xl border border-dashed border-[#c7d8ef] bg-[#f8fbff] p-10 text-center">
       <div className="mx-auto max-w-md">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#7d8ca5]">
           Илэрц олдсонгүй
