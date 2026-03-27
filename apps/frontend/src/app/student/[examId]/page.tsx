@@ -58,33 +58,35 @@ console.log("examId", examId)
 
   const [showConfirm, setShowConfirm] = useState(false);
 
-//   useEffect(() => {
-//     if (step !== "exam") return;
-//     const timer = setInterval(() => setRemainingSeconds((p) => (p > 0 ? p - 1 : 0)), 1000);
-//     const preventCopy = (e: ClipboardEvent) => e.preventDefault();
-//     const preventKeys = (e: KeyboardEvent) => (e.ctrlKey || e.metaKey) && ["c", "x", "v", "a"].includes(e.key.toLowerCase()) && e.preventDefault();
-//     const disableRightClick = (e: MouseEvent) => e.preventDefault();
-//     const onVis = () => document.hidden && alert("Tab switch detected!");
-//     const onBlur = () => alert("You left the exam window!");
-//     document.addEventListener("copy", preventCopy);
-//     document.addEventListener("cut", preventCopy);
-//     document.addEventListener("paste", preventCopy);
-//     document.addEventListener("keydown", preventKeys);
-//     document.addEventListener("contextmenu", disableRightClick);
-//     document.addEventListener("visibilitychange", onVis);
-//     window.addEventListener("blur", onBlur);
-//     return () => {
-//       clearInterval(timer);
-//       document.removeEventListener("copy", preventCopy);
-//       document.removeEventListener("cut", preventCopy);
-//       document.removeEventListener("paste", preventCopy);
-//       document.removeEventListener("keydown", preventKeys);
-//       document.removeEventListener("contextmenu", disableRightClick);
-//       document.removeEventListener("visibilitychange", onVis);
-//       window.removeEventListener("blur", onBlur);
-//     };
-//   }, [step]);
-//   const minutes = String(Math.floor(remainingSeconds / 60)).padStart(2, "0"), seconds = String(remainingSeconds % 60).padStart(2, "0");
+  useEffect(() => {
+  if (step !== "exam") return;
+
+  const blockShortcuts = (e: KeyboardEvent) => {
+    const key = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && ["c", "x", "v"].includes(key)) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  };
+
+  const preventContextMenu = (e: MouseEvent) => e.preventDefault();
+
+  const preventClipboard = (e: ClipboardEvent) => e.preventDefault();
+
+  document.addEventListener("keydown", blockShortcuts, true);
+  document.addEventListener("contextmenu", preventContextMenu, true);
+  document.addEventListener("copy", preventClipboard, true);
+  document.addEventListener("cut", preventClipboard, true);
+  document.addEventListener("paste", preventClipboard, true);
+
+  return () => {
+    document.removeEventListener("keydown", blockShortcuts, true);
+    document.removeEventListener("contextmenu", preventContextMenu, true);
+    document.removeEventListener("copy", preventClipboard, true);
+    document.removeEventListener("cut", preventClipboard, true);
+    document.removeEventListener("paste", preventClipboard, true);
+  };
+}, [step]);
 
 
   const q = questions[current - 1];

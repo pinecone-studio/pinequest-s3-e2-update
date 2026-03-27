@@ -16,7 +16,7 @@ export function QuestionCard({
       <p className="text-3 font-semibold text-[#61739a]">
         Асуулт {question.questionNumber}
       </p>
-      <h2 className="mt-2 text-5 font-bold leading-snug text-[#1f2a44]">
+      <h2 className="mt-2 text-5 font-bold leading-snug text-[#1f2a44] select-none">
         {question.text}
       </h2>
 

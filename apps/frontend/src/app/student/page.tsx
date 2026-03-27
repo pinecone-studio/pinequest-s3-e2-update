@@ -1,6 +1,4 @@
-"use client";
-import { useRouter } from "next/navigation";
-
+"use client"
 
 import { useEffect, useMemo, useState } from "react";
 import { CompletedScreen } from "./components/completed-screen";
