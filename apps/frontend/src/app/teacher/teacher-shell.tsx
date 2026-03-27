@@ -187,6 +187,24 @@ export default function TeacherShell({
                     </div>
 
                     <div className="p-3">
+                      <div className="mb-2 grid gap-2">
+                        <Link
+                          className="inline-flex w-full items-center justify-between rounded-xl border border-[#d9e4f1] bg-white px-3 py-2 text-2 font-semibold text-[#314365] transition hover:border-[#9fbef5] hover:text-[#1f6feb]"
+                          href="/student"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Сурагчийн хэсэг
+                          <span className="text-[#8fa3bf]">/student</span>
+                        </Link>
+                        <Link
+                          className="inline-flex w-full items-center justify-between rounded-xl border border-[#d9e4f1] bg-white px-3 py-2 text-2 font-semibold text-[#314365] transition hover:border-[#9fbef5] hover:text-[#1f6feb]"
+                          href="/teacher"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Багшийн хэсэг
+                          <span className="text-[#8fa3bf]">/teacher</span>
+                        </Link>
+                      </div>
                       <button
                         className="inline-flex w-full items-center gap-2 rounded-xl border border-[#ff6b6b]/50 bg-[#ff6b6b]/10 px-3 py-2 text-2 font-semibold text-[#d84e4e] transition hover:bg-[#ff6b6b]/20"
                         type="button"

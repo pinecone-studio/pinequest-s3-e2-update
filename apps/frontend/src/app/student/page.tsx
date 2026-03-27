@@ -74,6 +74,12 @@ export default function StudentExamPage() {
         onChangeFirstName={setStudentFirstName}
         onChangeEmail={setStudentEmail}
         onChangeClassCode={setClassCode}
+        onApplyDemo={() => {
+          setStudentLastName("Түвшин");
+          setStudentFirstName("Элзий-Орших");
+          setStudentEmail("student@school.mn");
+          setClassCode("10A");
+        }}
         onProceed={() => setPhase("precheck")}
       />
     );

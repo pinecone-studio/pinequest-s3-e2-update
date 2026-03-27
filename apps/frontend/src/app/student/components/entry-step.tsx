@@ -8,6 +8,7 @@ type EntryStepProps = {
   onChangeFirstName: (value: string) => void;
   onChangeEmail: (value: string) => void;
   onChangeClassCode: (value: string) => void;
+  onApplyDemo: () => void;
   onProceed: () => void;
 };
 
@@ -21,6 +22,7 @@ export function EntryStep({
   onChangeFirstName,
   onChangeEmail,
   onChangeClassCode,
+  onApplyDemo,
   onProceed,
 }: EntryStepProps) {
   return (
@@ -74,7 +76,22 @@ export function EntryStep({
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={onApplyDemo}
+              className="rounded-xl border border-[#dbe3f0] bg-white px-4 py-2.5 text-3 font-semibold text-[#365077] transition hover:border-[#b7c8e6] hover:text-[#1d4ed8]"
+            >
+              Demo
+            </button>
+            <a
+              href="/teacher"
+              className="rounded-xl border border-[#dbe3f0] bg-white px-4 py-2.5 text-3 font-semibold text-[#365077] transition hover:border-[#b7c8e6] hover:text-[#1d4ed8]"
+            >
+              Багшийн хэсэг
+            </a>
+          </div>
           <button
             type="button"
             disabled={!canProceed}

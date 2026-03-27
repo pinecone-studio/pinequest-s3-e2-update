@@ -114,6 +114,38 @@ export function QuestionBuilderForm({
     }));
   };
 
+  const applyDemoValues = () => {
+    setValues((current) => ({
+      ...current,
+      title: "Тригонометрийн уламжлал бодох",
+      questionType: "multiple_choice",
+      prompt: "y = sin(x^2) функцийг дифференциалдаж хариуг сонгоно уу.",
+      guidance: "Гинжин дүрмийг ашиглана уу.",
+      explanation: "11-р ангийн тригонометрийн жишиг даалгавар.",
+      options: [
+        { id: "option-1", text: "2xcos(x^2)", isCorrect: true },
+        { id: "option-2", text: "cos(x^2)", isCorrect: false },
+        { id: "option-3", text: "2sin(x^2)", isCorrect: false },
+        { id: "option-4", text: "xsin(x)", isCorrect: false },
+      ],
+      correctAnswer: "2xcos(x^2)",
+      rubric: "Зөв хариултыг сонгосон бол бүтэн оноо.",
+      formulaRaw: "\\frac{d}{dx} \\sin(x^2) = 2x\\cos(x^2)",
+      imageUrl: "",
+      fileUploadConfig: {
+        acceptedFileTypes: [".pdf"],
+        instructions: "Хэрэв бодолтоо хавсаргах бол PDF файл байхаар.",
+        maxFiles: 1,
+      },
+      subject: "Математик",
+      grade: "10-р анги",
+      subtopic: "Тригонометр",
+      difficulty: "medium",
+      points: 5,
+      status: "draft",
+    }));
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#10233e]/30 p-4 backdrop-blur-[2px] sm:p-6">
       <div className="flex w-full max-w-3xl max-h-[calc(100vh-3rem)] flex-col overflow-y-auto rounded-[28px] border border-[#d9e4f1] bg-[#f8fbff] shadow-2xl">
@@ -133,13 +165,22 @@ export function QuestionBuilderForm({
                 үнэлгээ, мета мэдээллээ тохируулна уу.
               </p>
             </div>
-            <button
-              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#d7e2f1] bg-white text-[#4f6b96] transition hover:text-[#1f6feb]"
-              onClick={onClose}
-              type="button"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-[#d7e2f1] bg-white px-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#4f6b96] transition hover:text-[#1f6feb]"
+                onClick={applyDemoValues}
+                type="button"
+              >
+                Demo
+              </button>
+              <button
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#d7e2f1] bg-white text-[#4f6b96] transition hover:text-[#1f6feb]"
+                onClick={onClose}
+                type="button"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
 
