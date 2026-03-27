@@ -1,5 +1,6 @@
 "use client";
 
+import { Sparkles } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -27,10 +28,39 @@ export function ExamSettingsForm({
     value: ExamComposerState[Key],
   ) => void;
 }) {
+  const suggestExamSettings = () => {
+    const suggestedGrade = "10-р анги";
+    const suggestedSubject = exam.subject.trim() || "Математик";
+    const suggestedTopic = exam.topic.trim() || "Бутархай";
+    const suggestedDuration =
+      Number.isFinite(exam.durationInMinutes) && exam.durationInMinutes > 0
+        ? exam.durationInMinutes
+        : 40;
+
+    onUpdateExam("grade", suggestedGrade);
+    onUpdateExam("subject", suggestedSubject);
+    onUpdateExam("topic", suggestedTopic);
+    onUpdateExam("durationInMinutes", suggestedDuration);
+    onUpdateExam(
+      "title",
+      `${suggestedSubject} ${suggestedTopic} шалгалт`,
+    );
+  };
+
   return (
     <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f7fbff] p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
-        Шалгалтын тохиргоо
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
+          Шалгалтын тохиргоо
+        </div>
+        <button
+          className="inline-flex h-10 items-center justify-center self-start rounded-2xl border border-[#d7e2f1] bg-white px-4 text-sm font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
+          onClick={suggestExamSettings}
+          type="button"
+        >
+          <Sparkles className="mr-2 h-4 w-4" />
+          Suggest
+        </button>
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-5">

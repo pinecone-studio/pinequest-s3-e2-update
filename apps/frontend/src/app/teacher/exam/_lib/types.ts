@@ -33,3 +33,8 @@ export type SavedExamRecord = {
 };
 
 export type ExamQuestionDetail = ExamQuestionItem & { question: Question };
+
+export type PendingExamTransfer = {
+  questionIds: string[];
+  exam?: Partial<Pick<ExamComposerState, "grade" | "subject" | "topic">>;
+};

@@ -59,7 +59,7 @@ export function SavedExamCard({
               onValueChange={onSelectClass}
               value={selectedClassId ?? undefined}
             >
-              <SelectTrigger className="h-11 w-full rounded-2xl border border-[#d7e2f1] bg-white px-4 text-sm font-semibold text-[#365077]">
+              <SelectTrigger className="h-11 w-full rounded-2xl border border-[#d7e2f1] bg-white px-4 text-sm font-semibold text-[#365077] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10 focus-visible:border-[#4f9dff] focus-visible:ring-4 focus-visible:ring-[#4f9dff]/10">
                 <SelectValue placeholder="Анги сонгож илгээх" />
               </SelectTrigger>
               <SelectContent>

@@ -11,23 +11,50 @@ import {
 } from "react";
 import { AlertTriangle, Camera, Users } from "lucide-react";
 
+type ActiveStudentEntry = {
+	id: string;
+	fullName: string;
+	email: string;
+	grade: string;
+	school: string;
+	startedAt: number;
+	status: "active" | "disconnected";
+};
+
+const MOCK_ACTIVE_STUDENTS: ActiveStudentEntry[] = [
+	{ id: "s-10a-01", fullName: "А. Тэмүүлэн", email: "temuulen10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 2, status: "active" },
+	{ id: "s-10a-02", fullName: "Б. Номин", email: "nomin10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 3, status: "active" },
+	{ id: "s-10a-03", fullName: "В. Анударь", email: "anudari10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 4, status: "active" },
+	{ id: "s-10a-04", fullName: "Г. Билгүүн", email: "bilguun10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 5, status: "active" },
+	{ id: "s-10a-05", fullName: "Д. Энэрэл", email: "enerel10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 6, status: "active" },
+	{ id: "s-10a-06", fullName: "Е. Марал", email: "maral10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 7, status: "active" },
+	{ id: "s-10a-07", fullName: "Ж. Төгөлдөр", email: "tuguldur10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 8, status: "active" },
+	{ id: "s-10a-08", fullName: "З. Хүслэн", email: "huslen10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 9, status: "active" },
+	{ id: "s-10a-09", fullName: "И. Содон", email: "sodon10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 10, status: "active" },
+	{ id: "s-10a-10", fullName: "Й. Мөнхжин", email: "munkhjin10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 11, status: "active" },
+	{ id: "s-10a-11", fullName: "К. Нандин", email: "nandin10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 12, status: "disconnected" },
+	{ id: "s-10a-12", fullName: "Л. Тэнүүн", email: "tenuun10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 13, status: "disconnected" },
+];
+
 export default function ExamOptimizationPage() {
 	const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
-	type ActiveStudentEntry = {
-		id: string;
-		fullName: string;
-		email: string;
-		grade: string;
-		school: string;
-		startedAt: number;
-	};
 
-	const MONITOR_TOTAL_STUDENTS = 0;
+	const MONITOR_TOTAL_STUDENTS = 12;
 	const [isMonitoring, setIsMonitoring] = useState(false);
 	const [activeStudents, setActiveStudents] = useState<ActiveStudentEntry[]>(
 		[],
 	);
 	const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
+	const activeCount = useMemo(
+		() => activeStudents.filter((student) => student.status === "active").length,
+		[activeStudents],
+	);
+	const disconnectedCount = useMemo(
+		() =>
+			activeStudents.filter((student) => student.status === "disconnected")
+				.length,
+		[activeStudents],
+	);
 
 	const currentClassName = useMemo(() => {
 		const grades = activeStudents
@@ -60,20 +87,21 @@ export default function ExamOptimizationPage() {
 	const readActiveStudents = useCallback((): ActiveStudentEntry[] => {
 		try {
 			const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
-			const parsed = raw ? JSON.parse(raw) : [];
-			if (!Array.isArray(parsed)) return [];
+			const parsed = raw ? JSON.parse(raw) : MOCK_ACTIVE_STUDENTS;
+			if (!Array.isArray(parsed) || parsed.length === 0) return MOCK_ACTIVE_STUDENTS;
 			return parsed
 				.filter((x) => x && typeof x === "object")
 				.map((x) => x as ActiveStudentEntry)
-				.filter(
-					(x) =>
-						typeof x.id === "string" &&
-						typeof x.fullName === "string" &&
-						typeof x.email === "string" &&
-						typeof x.startedAt === "number",
-				);
+					.filter(
+						(x) =>
+							typeof x.id === "string" &&
+							typeof x.fullName === "string" &&
+							typeof x.email === "string" &&
+							typeof x.startedAt === "number" &&
+							(x.status === "active" || x.status === "disconnected"),
+					);
 		} catch {
-			return [];
+			return MOCK_ACTIVE_STUDENTS;
 		}
 	}, []);
 
@@ -161,24 +189,24 @@ export default function ExamOptimizationPage() {
 							value={String(MONITOR_TOTAL_STUDENTS)}
 							icon={<Users className="h-5 w-5" />}
 						/>
-						<StatCard
+							<StatCard
               tone="green"
               title="Идэвхтэй"
-              value={String(activeStudents.length)}
+              value={String(activeCount)}
               icon={<span className="text-[#2f66b9]">●</span>}
-						/>
+							/>
 						<StatCard
 							tone="amber"
 							title="Анхааруулах"
 							value={"0"}
 							icon={<AlertTriangle className="h-5 w-5" />}
 						/>
-						<StatCard
-							tone="red"
-							title="Салсан"
-							value={"0"}
-							icon={<Camera className="h-5 w-5" />}
-						/>
+							<StatCard
+								tone="red"
+								title="Салсан"
+								value={String(disconnectedCount)}
+								icon={<Camera className="h-5 w-5" />}
+							/>
 					</div>
 
 					<div className="mt-6">
@@ -188,10 +216,21 @@ export default function ExamOptimizationPage() {
 
 						<div className="mt-4 space-y-4">
 							{activeStudents.length ? (
-								[...activeStudents]
-									.sort((a, b) => b.startedAt - a.startedAt)
-									.slice(0, 10)
-									.map((s) => <ActiveStudentRow key={s.id} student={s} />)
+								<div className="overflow-hidden rounded-2xl border border-[#d9dee8] bg-white">
+									<div className="grid grid-cols-[minmax(0,1fr)_140px] items-center border-b border-[#e7edf5] px-6 py-4 text-[#66789f]">
+										<p className="text-4 font-bold">№ / Нэр</p>
+										<p className="text-right text-4 font-bold">Төлөв</p>
+									</div>
+									{[...activeStudents]
+										.sort((a, b) => b.startedAt - a.startedAt)
+										.map((student, index) => (
+											<ActiveStudentRow
+												index={index}
+												key={student.id}
+												student={student}
+											/>
+										))}
+								</div>
 							) : (
 								<div className="rounded-2xl border border-[#d9dee8] bg-[#f8fafc] px-5 py-4 text-4 text-[#66789f]">
 									Одоогоор линкээр орсон сурагч алга байна.
@@ -267,38 +306,45 @@ function StatCard({
 }
 
 function ActiveStudentRow({
+	index,
 	student,
 }: {
-	student: {
-		fullName: string;
-		email: string;
-		grade: string;
-		school: string;
-		startedAt: number;
-	};
-}) {
-	const initial = (student.fullName?.trim()?.charAt(0) || "?").toUpperCase();
+	index: number;
+		student: {
+			fullName: string;
+			email: string;
+			grade: string;
+			school: string;
+			startedAt: number;
+			status: "active" | "disconnected";
+		};
+	}) {
 	return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#cfe0fb] bg-[#eef6ff] px-5 py-4">
-			<div className="flex min-w-0 items-center gap-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4f9dff] text-white">
-					<span className="text-4 font-extrabold">{initial}</span>
+		<div
+			className={`grid grid-cols-[minmax(0,1fr)_140px] items-center border-b border-[#eef2f7] px-6 py-5 last:border-b-0 ${
+				index % 2 === 1 ? "bg-[#f8fbff]" : "bg-white"
+			}`}
+		>
+			<div className="flex min-w-0 items-start gap-4">
+				<div className="w-12 shrink-0 text-5 font-extrabold text-[#66789f]">
+					{index + 1}.
 				</div>
 				<div className="min-w-0">
-					<p className="truncate text-4 font-extrabold text-[#1f2a44]">
+					<p className="truncate text-5 font-extrabold text-[#1f2a44]">
 						{student.fullName}
 					</p>
-					<p className="truncate text-3 text-[#66789f]">
-						{student.grade} · {student.school}
+					<p className="mt-2 truncate text-4 text-[#7c8fb1]">
+						{student.email}
 					</p>
-					<p className="truncate text-3 text-[#66789f]">{student.email}</p>
 				</div>
 			</div>
 
-			<div className="flex items-center gap-3">
-        <span className="rounded-full bg-[#4f9dff] px-4 py-1.5 text-3 font-semibold text-white">
-					Идэвхтэй
-				</span>
+			<div
+				className={`text-right text-4 font-semibold ${
+					student.status === "active" ? "text-[#4f9dff]" : "text-[#f15f6a]"
+				}`}
+			>
+				{student.status === "active" ? "Идэвхтэй" : "Салсан"}
 			</div>
 		</div>
 	);

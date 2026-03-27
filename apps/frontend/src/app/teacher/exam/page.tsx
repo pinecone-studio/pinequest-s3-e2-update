@@ -2,7 +2,6 @@
 
 import { ExamOutlineSection } from "./_components/exam-outline-section";
 import { ExamSettingsForm } from "./_components/exam-settings-form";
-import { QuestionBankSection } from "./_components/question-bank-section";
 import { SavedExamsSection } from "./_components/saved-exams-section";
 import { useTeacherExamPage } from "./_hooks/use-teacher-exam-page";
 
@@ -36,18 +35,7 @@ export default function TeacherExamPage() {
         onSendSavedExam={examPage.sendSavedExamToClass}
       />
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <QuestionBankSection
-          exam={examPage.exam}
-          examQuestions={examPage.examQuestions}
-          filteredQuestions={examPage.filteredQuestions}
-          search={examPage.search}
-          selectedBankIds={examPage.selectedBankIds}
-          onAddQuestions={examPage.addQuestionsToExam}
-          onSearchChange={examPage.setSearch}
-          onToggleSelectQuestion={examPage.toggleSelectQuestion}
-        />
-
+      <div className="grid gap-6">
         <ExamOutlineSection
           examQuestionDetails={examPage.examQuestionDetails}
           totalPoints={examPage.totalPoints}

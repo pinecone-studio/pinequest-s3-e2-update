@@ -183,7 +183,7 @@ function FilterSelect({
         {label}
       </span>
       <Select disabled={disabled} onValueChange={onValueChange} value={value}>
-        <SelectTrigger className="h-12 rounded-2xl border-[#d3deef]">
+        <SelectTrigger className="h-12 rounded-2xl border-[#d3deef] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10 focus-visible:border-[#4f9dff] focus-visible:ring-4 focus-visible:ring-[#4f9dff]/10">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
