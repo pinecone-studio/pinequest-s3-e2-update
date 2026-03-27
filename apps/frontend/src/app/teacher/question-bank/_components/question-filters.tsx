@@ -7,8 +7,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { QUESTION_DIFFICULTIES, QUESTION_SORT_OPTIONS, QUESTION_STATUSES, QUESTION_TYPES, type QuestionFilters } from "../_lib/types";
-import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS, STATUS_LABELS } from "../_lib/utils";
+import {
+  QUESTION_DIFFICULTIES,
+  QUESTION_SORT_OPTIONS,
+  QUESTION_STATUSES,
+  QUESTION_TYPES,
+  type QuestionFilters,
+} from "../_lib/types";
+import {
+  DIFFICULTY_LABELS,
+  QUESTION_TYPE_LABELS,
+  STATUS_LABELS,
+} from "../_lib/utils";
 import { QuestionSearchBar } from "./question-search-bar";
 
 type QuestionFiltersProps = {
@@ -33,8 +43,9 @@ export function QuestionFilters({
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-[#183153]">Хайлт ба шүүлтүүр</h2>
-            <p className="text-sm text-[#6d7f9c]">Хэрэгтэй асуултаа хурдан олоорой.</p>
+            <h2 className="text-lg font-semibold text-[#183153]">
+              Хайлтын хэсэг
+            </h2>
           </div>
           <button
             className="text-sm font-semibold text-[#3d6fc5] transition hover:text-[#1f4f9e]"
@@ -45,13 +56,20 @@ export function QuestionFilters({
           </button>
         </div>
 
-        <QuestionSearchBar value={filters.search} onChange={(value) => onChange({ search: value })} />
+        <QuestionSearchBar
+          value={filters.search}
+          onChange={(value) => onChange({ search: value })}
+        />
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
           <FilterSelect
             label="Асуултын төрөл"
             value={filters.questionType}
-            onValueChange={(value) => onChange({ questionType: value as QuestionFilters["questionType"] })}
+            onValueChange={(value) =>
+              onChange({
+                questionType: value as QuestionFilters["questionType"],
+              })
+            }
             options={[
               { value: "all", label: "Бүх төрөл" },
               ...QUESTION_TYPES.map((type) => ({
@@ -63,7 +81,9 @@ export function QuestionFilters({
           <FilterSelect
             label="Түвшин"
             value={filters.difficulty}
-            onValueChange={(value) => onChange({ difficulty: value as QuestionFilters["difficulty"] })}
+            onValueChange={(value) =>
+              onChange({ difficulty: value as QuestionFilters["difficulty"] })
+            }
             options={[
               { value: "all", label: "Бүх түвшин" },
               ...QUESTION_DIFFICULTIES.map((difficulty) => ({
@@ -75,10 +95,15 @@ export function QuestionFilters({
           <FilterSelect
             label="Хичээл"
             value={filters.subject}
-            onValueChange={(value) => onChange({ subject: value, subtopic: "all" })}
+            onValueChange={(value) =>
+              onChange({ subject: value, subtopic: "all" })
+            }
             options={[
               { value: "all", label: "Бүх хичээл" },
-              ...subjectOptions.map((subject) => ({ value: subject, label: subject })),
+              ...subjectOptions.map((subject) => ({
+                value: subject,
+                label: subject,
+              })),
             ]}
           />
           <FilterSelect
@@ -97,13 +122,18 @@ export function QuestionFilters({
             onValueChange={(value) => onChange({ subtopic: value })}
             options={[
               { value: "all", label: "Бүх дэд сэдэв" },
-              ...subtopicOptions.map((subtopic) => ({ value: subtopic, label: subtopic })),
+              ...subtopicOptions.map((subtopic) => ({
+                value: subtopic,
+                label: subtopic,
+              })),
             ]}
           />
           <FilterSelect
             label="Төлөв"
             value={filters.status}
-            onValueChange={(value) => onChange({ status: value as QuestionFilters["status"] })}
+            onValueChange={(value) =>
+              onChange({ status: value as QuestionFilters["status"] })
+            }
             options={[
               { value: "all", label: "Бүх төлөв" },
               ...QUESTION_STATUSES.map((status) => ({
@@ -115,10 +145,17 @@ export function QuestionFilters({
           <FilterSelect
             label="Эрэмбэлэх"
             value={filters.sortBy}
-            onValueChange={(value) => onChange({ sortBy: value as QuestionFilters["sortBy"] })}
+            onValueChange={(value) =>
+              onChange({ sortBy: value as QuestionFilters["sortBy"] })
+            }
             options={QUESTION_SORT_OPTIONS.map((sort) => ({
               value: sort,
-              label: sort === "most_used" ? "Хамгийн их ашигласан" : sort === "newest" ? "Шинэ эхэндээ" : "Хуучин эхэндээ",
+              label:
+                sort === "most_used"
+                  ? "Хамгийн их ашигласан"
+                  : sort === "newest"
+                    ? "Шинэ эхэндээ"
+                    : "Хуучин эхэндээ",
             }))}
           />
         </div>
@@ -142,7 +179,9 @@ function FilterSelect({
 }) {
   return (
     <label className="space-y-2">
-      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
+        {label}
+      </span>
       <Select disabled={disabled} onValueChange={onValueChange} value={value}>
         <SelectTrigger className="h-12 rounded-2xl border-[#d3deef]">
           <SelectValue />

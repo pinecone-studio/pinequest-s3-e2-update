@@ -35,8 +35,20 @@ export function useTeacher() {
   return teacher;
 }
 
-const menuItems = [
-  { href: "/teacher", label: "Нүүр хуудас", icon: Home },
+type MenuItem = {
+  href: string;
+  label: string;
+  icon: typeof Home;
+  activePrefixes?: string[];
+};
+
+const menuItems: MenuItem[] = [
+  {
+    href: "/teacher",
+    label: "Нүүр хуудас",
+    icon: Home,
+    activePrefixes: ["/teacher/class", "/teacher/demo-class"],
+  },
   {
     href: "/teacher/question-bank",
     label: "Асуултын сан",
@@ -46,6 +58,7 @@ const menuItems = [
     href: "/teacher/exam",
     label: "Шалгалт",
     icon: Calculator,
+    activePrefixes: ["/teacher/exam", "/teacher/exam-management"],
   },
   {
     href: "/teacher/exam-optimization",
@@ -53,6 +66,10 @@ const menuItems = [
     icon: Cog,
   },
 ];
+
+function matchesPathPrefix(pathname: string, prefix: string) {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
 
 export default function TeacherShell({
   user,
@@ -109,8 +126,9 @@ export default function TeacherShell({
                   {menuItems.map((item) => {
                     const isActive =
                       pathname === item.href ||
-                      (item.href !== "/teacher" &&
-                        pathname.startsWith(item.href));
+                      (item.activePrefixes ?? []).some((prefix) =>
+                        matchesPathPrefix(pathname, prefix),
+                      );
                     const Icon = item.icon;
                     return (
                       <Link
@@ -185,9 +203,6 @@ export default function TeacherShell({
         <main className="mx-auto w-full max-w-[1400px] px-4 py-6 lg:px-6">
           {children}
         </main>
-        <div className="pb-6 text-center text-3 font-semibold text-[#606c84]">
-          Сургуулийн автоматжуулалтын шийдэл
-        </div>
       </div>
     </TeacherContext.Provider>
   );

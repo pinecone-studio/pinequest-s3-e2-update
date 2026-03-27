@@ -16,10 +16,22 @@ export function QuestionHeader({
   onCreateQuestion,
 }: QuestionHeaderProps) {
   const stats = [
-    { label: "Нийт асуулт", value: total, hint: "Олон шалгалтад дахин ашиглана" },
+    {
+      label: "Нийт асуулт",
+      value: total,
+      hint: "Олон шалгалтад дахин ашиглана",
+    },
     { label: "Нийтэлсэн", value: published, hint: "Шалгалтад нэмэхэд бэлэн" },
-    { label: "Ноорог", value: draft, hint: "Ашиглахаас өмнө хянах шаардлагатай" },
-    { label: "Гараар үнэлэх", value: manual, hint: "Багшийн үнэлгээ шаардлагатай" },
+    {
+      label: "Ноорог",
+      value: draft,
+      hint: "Ашиглахаас өмнө хянах шаардлагатай",
+    },
+    {
+      label: "Гараар үнэлэх",
+      value: manual,
+      hint: "Багшийн үнэлгээ шаардлагатай",
+    },
   ];
 
   return (
@@ -30,13 +42,9 @@ export function QuestionHeader({
             Багшийн асуултын сан
           </span>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-[#183153] sm:text-4xl">
+            <h1 className="text-xl font-bold tracking-tight text-[#183153] sm:text-2xl">
               Нэг удаа үүсгээд, олон дахин ашигла.
             </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#5f7394] sm:text-base">
-              Чанартай асуулт үүсгэж, ноорог болон нийтэлсэн төлөвийг удирдаж, хичээл,
-              түвшин, үнэлгээний мэдээллээ алдалгүйгээр шалгалтын урсгалд ашиглаарай.
-            </p>
           </div>
         </div>
 
@@ -58,7 +66,9 @@ export function QuestionHeader({
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7b8ba5]">
               {item.label}
             </p>
-            <p className="mt-2 text-3xl font-bold text-[#183153]">{item.value}</p>
+            <p className="mt-2 text-3xl font-bold text-[#183153]">
+              {item.value}
+            </p>
             <p className="mt-1 text-sm text-[#6d7f9c]">{item.hint}</p>
           </div>
         ))}
