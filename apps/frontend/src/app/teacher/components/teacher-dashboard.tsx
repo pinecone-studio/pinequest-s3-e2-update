@@ -33,8 +33,7 @@ export default function TeacherDashboard() {
               Миний ангиуд
             </h2>
             <p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#64748b]">
-              Анги дээр дарж сурагчид, статистик, өмнөх шалгалтын хайлт руу
-              орно.
+              Анги дээр дарж сурагчид, шалгалтын статистик руу орно.
             </p>
             <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#f6faff] px-3 py-1.5 text-3 font-semibold text-[#4a5875]">
               <span className="text-[#4f9dff]">◆</span>

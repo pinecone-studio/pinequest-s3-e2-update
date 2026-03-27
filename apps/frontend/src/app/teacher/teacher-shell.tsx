@@ -115,7 +115,10 @@ export default function TeacherShell({
               <div>
                 <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-6 overflow-x-auto pb-1">
                   {menuItems.map((item) => {
-                    const isActive = isMenuItemActive(pathname, item.href);
+                    const isActive =
+                      pathname === item.href ||
+                      (item.href !== "/teacher" &&
+                        pathname.startsWith(`${item.href}/`));
                     const Icon = item.icon;
                     return (
                       <Link
