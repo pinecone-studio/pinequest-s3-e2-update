@@ -9,7 +9,7 @@ export async function createTest(
   ctx: GraphQLUserContext,
   _info: GraphQLResolveInfo,
 ) {
-  const subject = await resolveSubject(ctx, args.input.subjectId);
+  const subject: { id: string; name: string } | null = await resolveSubject(ctx, args.input.subjectId) as { id: string; name: string } | null;
 
   if (!subject) {
     throw new Error(`"${args.input.subjectId}" хичээлд тохирох subject олдсонгүй.`);

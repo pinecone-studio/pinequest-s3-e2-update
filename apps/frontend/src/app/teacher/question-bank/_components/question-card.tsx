@@ -20,6 +20,7 @@ type QuestionCardProps = {
   onReuse: () => void;
 };
 
+
 export function QuestionCard({
   question,
   isActive,
@@ -29,6 +30,7 @@ export function QuestionCard({
   onEdit,
   onReuse,
 }: QuestionCardProps) {
+  console.log("question:", question);
   return (
     <article
       className={`rounded-3xl border p-5 shadow-sm transition ${
