@@ -22,6 +22,7 @@ function UploadForm() {
 
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
+  const [subtopic, setSubtopic] = useState("");
   const [instructions, setInstructions] = useState("");
   const [durationMinutes, setDurationMinutes] = useState(40);
   const [totalMarks, setTotalMarks] = useState(20);
@@ -50,6 +51,7 @@ function UploadForm() {
       id,
       title: title.trim(),
       subject: subject.trim(),
+      subtopic: subtopic.trim() || undefined,
       instructions: instructions.trim(),
       durationMinutes,
       totalMarks,
@@ -157,7 +159,7 @@ function UploadForm() {
               {fileError ? <p className="mt-3 text-sm font-extrabold text-[#b64747]">{fileError}</p> : null}
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div>
                 <label className="text-sm font-extrabold text-[#1f2a44]">Шалгалтын нэр</label>
                 <input
@@ -173,6 +175,15 @@ function UploadForm() {
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Ж: Математик"
+                  className="mt-2 h-10 w-full rounded-xl border border-[#d9e6fb] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-extrabold text-[#1f2a44]">Дэд сэдэв</label>
+                <input
+                  value={subtopic}
+                  onChange={(e) => setSubtopic(e.target.value)}
+                  placeholder="Ж: Тригонометр"
                   className="mt-2 h-10 w-full rounded-xl border border-[#d9e6fb] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>

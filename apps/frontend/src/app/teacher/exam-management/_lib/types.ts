@@ -38,6 +38,7 @@ export type ExamTemplate = {
   id: string;
   title: string;
   subject: string;
+  subtopic?: string;
   instructions: string;
   durationMinutes: number;
   totalMarks: number;
@@ -154,4 +155,3 @@ export type StudentSubmission = {
   teacherStatus: "pending" | "graded" | "published";
   teacherNote?: string;
 };
-
