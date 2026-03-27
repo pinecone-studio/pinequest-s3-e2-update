@@ -20,7 +20,6 @@ import {
 	type PastExamStudentScore,
 } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
-import { TEACHER_DEMO_CLASS_ID } from "@/app/lib/teacher-demo-class";
 import type { Student } from "@/app/lib/types";
 import ReviewScreen from "./review-screen";
 import { useTeacher } from "../teacher-shell";
@@ -126,6 +125,125 @@ function sortPastExamStudents(
 		(a, b) =>
 			a.lastName.localeCompare(b.lastName, "mn", { sensitivity: "base" }) ||
 			a.firstName.localeCompare(b.firstName, "mn", { sensitivity: "base" }),
+	);
+}
+
+type LetterGrade = "A" | "B" | "C" | "D" | "F";
+
+const LETTER_GRADE_ORDER: LetterGrade[] = ["A", "B", "C", "D", "F"];
+
+const LETTER_GRADE_STYLES: Record<
+	LetterGrade,
+	{ fill: string; labelMn: string }
+> = {
+	A: { fill: "#16a34a", labelMn: "Маш сайн (A)" },
+	B: { fill: "#4f9dff", labelMn: "Сайн (B)" },
+	C: { fill: "#ca8a04", labelMn: "Дунд (C)" },
+	D: { fill: "#ea580c", labelMn: "Муу (D)" },
+	F: { fill: "#dc2626", labelMn: "Тэнцээгүй (F)" },
+};
+
+function letterGradeFromPercent(percent: number): LetterGrade {
+	if (percent >= 90) return "A";
+	if (percent >= 80) return "B";
+	if (percent >= 70) return "C";
+	if (percent >= 60) return "D";
+	return "F";
+}
+
+function pastExamGradeBuckets(row: PastExamRow): Record<LetterGrade, number> {
+	const empty: Record<LetterGrade, number> = {
+		A: 0,
+		B: 0,
+		C: 0,
+		D: 0,
+		F: 0,
+	};
+	if (row.maxScore <= 0 || row.studentScores.length === 0) return empty;
+	for (const s of row.studentScores) {
+		const pct = (s.score / row.maxScore) * 100;
+		const g = letterGradeFromPercent(pct);
+		empty[g] += 1;
+	}
+	return empty;
+}
+
+function PastExamClassGradeChart({ row }: { row: PastExamRow }) {
+	const buckets = useMemo(() => pastExamGradeBuckets(row), [row]);
+	const total = row.studentScores.length;
+	if (total === 0) return null;
+
+	const segments = LETTER_GRADE_ORDER.filter((g) => buckets[g] > 0).map(
+		(grade) => ({
+			grade,
+			count: buckets[grade],
+			pct: (buckets[grade] / total) * 100,
+			fill: LETTER_GRADE_STYLES[grade].fill,
+		}),
+	);
+
+	const ariaSummary = LETTER_GRADE_ORDER.map(
+		(g) =>
+			`${g} ${buckets[g]} сурагч, ${Math.round((buckets[g] / total) * 100)} хувь`,
+	).join("; ");
+
+	return (
+		<div className="mb-6 rounded-xl border border-[#e2e8f0] bg-white p-4 shadow-sm sm:p-5">
+			<h3 className="text-4 font-extrabold text-[#1f2a44]">
+				Ангийн үнэлгээ (A–F)
+			</h3>
+			<p className="mt-1 text-3 leading-normal text-[#64748b]">
+				Нийт онооны хувиар: A — 90%+; B — 80%+; C — 70%+; D — 60%+; F — 60%-аас
+				доош.
+			</p>
+
+			<div
+				className="mt-4 flex h-10 w-full overflow-hidden rounded-xl ring-1 ring-[#e2e8f0]"
+				role="img"
+				aria-label={`Үнэлгээний хуваарилалт. ${ariaSummary}`}
+			>
+				{segments.map((s) => (
+					<div
+						key={s.grade}
+						style={{
+							width: `${s.pct}%`,
+							backgroundColor: s.fill,
+							minWidth: s.count > 0 ? "4px" : undefined,
+						}}
+						className="min-h-[2.5rem] transition-[width] duration-300"
+						title={`${s.grade}: ${s.count} (${Math.round(s.pct)}%)`}
+					/>
+				))}
+			</div>
+
+			<ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-3">
+				{LETTER_GRADE_ORDER.map((grade) => {
+					const n = buckets[grade];
+					const p = total > 0 ? Math.round((n / total) * 100) : 0;
+					const { fill, labelMn } = LETTER_GRADE_STYLES[grade];
+					return (
+						<li
+							key={grade}
+							className="flex min-w-[8.5rem] items-center gap-2 font-medium text-[#334261]"
+						>
+							<span
+								className="h-3.5 w-3.5 shrink-0 rounded-sm shadow-sm ring-1 ring-black/5"
+								style={{ backgroundColor: fill }}
+								aria-hidden
+							/>
+							<span className="font-extrabold tabular-nums text-[#1f2a44]">
+								{grade}
+							</span>
+							<span className="text-[#64748b]">
+								{n}{" "}
+								<span className="tabular-nums text-[#94a3b8]">({p}%)</span>
+							</span>
+							<span className="sr-only">{labelMn}</span>
+						</li>
+					);
+				})}
+			</ul>
+		</div>
 	);
 }
 
@@ -445,11 +563,6 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 		};
 	}, [examStudentPopover, filteredPastExams]);
 
-	const selectedStudent = useMemo(
-		() => students.find((s) => s.id === selectedId) ?? null,
-		[students, selectedId],
-	);
-
 	const classTotal = students.length;
 
 	const classPath = `/teacher/class/${encodeURIComponent(classId)}`;
@@ -483,8 +596,6 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 		);
 	}
 
-	const isDemoClass = cls.id === TEACHER_DEMO_CLASS_ID;
-
 	return (
 		<section className="px-4 py-10 sm:px-10">
 			<div className="mx-auto max-w-6xl space-y-6">
@@ -508,7 +619,6 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 							</h1>
 							<p className="mt-2 text-3 text-[#66789f]">
 								Сурагчид, шалгалтын статистик хайх.
-								{isDemoClass ? " (Жишээ анги.)" : ""}
 							</p>
 						</div>
 					</div>
@@ -565,7 +675,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 									Сурагчид
 								</h2>
 								<p className="mt-2 text-4 text-[#64748b]">
-									Мөр дарахад сонгогдож, ангийн нийт тоо харагдана.
+									Мөр дарахад сонгогдоно. «Үр дүн» товчоор дэлгэрэнгүй руу орно.
 								</p>
 							</div>
 							<DownloadMenu
@@ -574,40 +684,14 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 							/>
 						</div>
 
-						{selectedStudent ? (
-							<div className="mt-5 rounded-xl border border-[#c8d6ea] bg-[#f6faff] p-4">
-								<p className="text-3 font-semibold uppercase tracking-wide text-[#4f9dff]">
-									Сонгогдсон сурагч
-								</p>
-								<p className="mt-2 text-5 font-extrabold text-[#1f2a44]">
-									{selectedStudent.firstName} {selectedStudent.lastName}
-								</p>
-								<div className="mt-4 rounded-lg bg-white/80 px-4 py-3 text-4 text-[#1f2a44]">
-									<span className="font-semibold text-[#4f9dff]">
-										Энэ ангид нийт {classTotal} сурагч
-									</span>{" "}
-									бүртгэлтэй.
-								</div>
-								<button
-									type="button"
-									onClick={() =>
-										router.push(
-											`${classPath}?student=${encodeURIComponent(selectedStudent.studentNumber)}`,
-										)
-									}
-									className="mt-4 w-full rounded-xl bg-[#4f9dff] py-2.5 text-4 font-semibold text-white transition hover:bg-[#3f8ff5] sm:w-auto sm:px-6"
-								>
-									Үр дүн дэлгэрэнгүй харах
-								</button>
-							</div>
-						) : (
+						{!selectedId ? (
 							<div className="mt-5 rounded-xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-4 py-6 text-center text-4 text-[#64748b]">
 								Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай.
 								<p className="mt-2 font-semibold text-[#334261]">
 									Ангид одоогоор {classTotal} сурагч байна.
 								</p>
 							</div>
-						)}
+						) : null}
 
 						<div className="mt-6 overflow-x-auto rounded-xl border border-[#e2e8f0]">
 							<table className="w-full min-w-[320px]">
@@ -685,8 +769,8 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 							</h2>
 							<p className="mt-2 text-4 text-[#64748b]">
 								Хичээл, шалгалт, огноо, дүн эсвэл сурагчийн нэрээр хайна уу.
-								Шалгалтын мөр дарахад сурагчдын жагсаалт нээгдэнэ; сурагчийн мөр
-								дарахад тухайн шалгалтын статистик цонхонд гарна.
+								Шалгалтын мөр дарахад A–F үнэлгээний график болон сурагчдын жагсаалт
+								гарна; сурагчийн мөр дарахад тухайн шалгалтын статистик цонх нээгдэнэ.
 							</p>
 						</div>
 
@@ -802,6 +886,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 													{open ? (
 														<tr className="border-b border-[#e8ecf2] bg-[#fafbfd]">
 															<td colSpan={6} className="px-4 py-4">
+																<PastExamClassGradeChart row={row} />
 																<p className="mb-3 text-3 font-bold text-[#334261]">
 																	Сурагч бүрийн оноо (дээд {row.maxScore})
 																</p>
