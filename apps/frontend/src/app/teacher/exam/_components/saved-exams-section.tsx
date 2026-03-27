@@ -31,9 +31,6 @@ export function SavedExamsSection({
             <History className="h-4 w-4" />
             Хадгалсан шалгалтууд
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-[#183153]">
-            Өмнө хадгалсан шалгалтын жагсаалт
-          </h2>
         </div>
         <div className="text-right">
           <p className="text-sm font-semibold text-[#183153]">
@@ -47,7 +44,7 @@ export function SavedExamsSection({
 
       <div className="mt-5 grid gap-4">
         {hasLoadedSavedExams && savedExams.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
+          <div className="rounded-xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
             <p className="text-lg font-semibold text-[#183153]">
               Хадгалсан шалгалт алга байна
             </p>

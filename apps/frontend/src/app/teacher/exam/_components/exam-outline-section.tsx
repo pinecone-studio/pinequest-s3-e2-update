@@ -36,7 +36,7 @@ export function ExamOutlineSection({
             <GripVertical className="h-4 w-4" />
             Шалгалтын бүтэц
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-[#183153]">
+          <h2 className="mt-2 text-xl font-bold text-[#183153]">
             Сонгосон асуултууд
           </h2>
         </div>
@@ -51,7 +51,7 @@ export function ExamOutlineSection({
       <div className="mt-5 space-y-4">
         {examQuestionDetails.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
-            <p className="text-lg font-semibold text-[#183153]">
+            <p className="text-l font-semibold text-[#183153]">
               Шалгалтад асуулт хараахан нэмэгдээгүй байна
             </p>
             <p className="mt-2 text-sm text-[#60728f]">

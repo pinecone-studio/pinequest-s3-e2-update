@@ -35,8 +35,20 @@ export function useTeacher() {
   return teacher;
 }
 
-const menuItems = [
-  { href: "/teacher", label: "Нүүр хуудас", icon: Home },
+type MenuItem = {
+  href: string;
+  label: string;
+  icon: typeof Home;
+  activePrefixes?: string[];
+};
+
+const menuItems: MenuItem[] = [
+  {
+    href: "/teacher",
+    label: "Нүүр хуудас",
+    icon: Home,
+    activePrefixes: ["/teacher/class", "/teacher/demo-class"],
+  },
   {
     href: "/teacher/question-bank",
     label: "Асуултын сан",
@@ -46,6 +58,7 @@ const menuItems = [
     href: "/teacher/exam",
     label: "Шалгалт",
     icon: Calculator,
+    activePrefixes: ["/teacher/exam", "/teacher/exam-management"],
   },
   {
     href: "/teacher/exam-optimization",

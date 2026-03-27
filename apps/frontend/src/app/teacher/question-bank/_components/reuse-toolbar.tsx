@@ -28,9 +28,6 @@ export function ReuseToolbar({
     <section className="rounded-3xl border border-[#d8e2f0] bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7c8ba4]">
-            Шалгалтад ашиглах
-          </p>
           <h2 className="mt-1 text-lg font-semibold text-[#183153]">
             {selectedCount === 0
               ? "Шалгалтын багц үүсгэхийн тулд асуултаа сонгоно уу"
@@ -74,7 +71,7 @@ export function ReuseToolbar({
             onClick={onReuseSelected}
             type="button"
           >
-            Шалгалтын бүтээгч рүү нэмэх
+            Шалгалт руу нэмэх
           </button>
         </div>
       </div>

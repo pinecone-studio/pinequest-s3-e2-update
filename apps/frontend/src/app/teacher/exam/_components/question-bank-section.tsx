@@ -42,7 +42,7 @@ export function QuestionBankSection({
             <BookOpen className="h-4 w-4" />
             Асуултын сан
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-[#183153]">
+          <h2 className="mt-2 text-l font-bold text-[#183153]">
             Хамгийн тохирох асуултууд эхэндээ
           </h2>
           <p className="mt-2 text-sm text-[#5f7394]">
@@ -72,7 +72,7 @@ export function QuestionBankSection({
             type="button"
           >
             <CirclePlus className="mr-2 h-4 w-4" />
-            Сонгосныг нэмэх
+            Нэмэх
           </button>
         </div>
       </div>
