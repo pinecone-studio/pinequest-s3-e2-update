@@ -110,7 +110,7 @@ export default function TeacherShell({
                     const isActive =
                       pathname === item.href ||
                       (item.href !== "/teacher" &&
-                        pathname.startsWith(item.href));
+                        pathname.startsWith(`${item.href}/`));
                     const Icon = item.icon;
                     return (
                       <Link
