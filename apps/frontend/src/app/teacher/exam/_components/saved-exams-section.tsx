@@ -31,19 +31,29 @@ export function SavedExamsSection({
             <History className="h-4 w-4" />
             Хадгалсан шалгалтууд
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-[#183153]">Өмнө хадгалсан шалгалтын жагсаалт</h2>
+          <h2 className="mt-2 text-2xl font-bold text-[#183153]">
+            Өмнө хадгалсан шалгалтын жагсаалт
+          </h2>
         </div>
         <div className="text-right">
-          <p className="text-sm font-semibold text-[#183153]">{savedExams.length} шалгалт</p>
-          <p className="text-sm text-[#5f7394]">Ноорог болон нийтэлсэн төлөвүүд</p>
+          <p className="text-sm font-semibold text-[#183153]">
+            {savedExams.length} шалгалт
+          </p>
+          <p className="text-sm text-[#5f7394]">
+            Ноорог болон нийтэлсэн төлөвүүд
+          </p>
         </div>
       </div>
 
       <div className="mt-5 grid gap-4">
         {hasLoadedSavedExams && savedExams.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
-            <p className="text-lg font-semibold text-[#183153]">Хадгалсан шалгалт алга байна</p>
-            <p className="mt-2 text-sm text-[#60728f]">Доорх бүтээгчээр шалгалтаа хадгалмагц энд шууд харагдана.</p>
+            <p className="text-lg font-semibold text-[#183153]">
+              Хадгалсан шалгалт алга байна
+            </p>
+            <p className="mt-2 text-sm text-[#60728f]">
+              Доорх бүтээгчээр шалгалтаа хадгалмагц энд шууд харагдана.
+            </p>
           </div>
         ) : null}
 

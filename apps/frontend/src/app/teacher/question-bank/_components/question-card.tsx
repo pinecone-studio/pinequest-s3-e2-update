@@ -31,7 +31,7 @@ export function QuestionCard({
 }: QuestionCardProps) {
   return (
     <article
-      className={`rounded-[24px] border p-5 shadow-sm transition ${
+      className={`rounded-3xl border p-5 shadow-sm transition ${
         isActive
           ? "border-[#7fb3ff] bg-[#f8fbff] shadow-[0_14px_30px_rgba(79,157,255,0.12)]"
           : "border-[#d8e2f0] bg-white hover:border-[#9fc2f4]"
@@ -43,16 +43,26 @@ export function QuestionCard({
           onClick={onSelect}
           type="button"
         >
-          {isSelected ? <CheckSquare className="h-5 w-5" /> : <Square className="h-5 w-5" />}
+          {isSelected ? (
+            <CheckSquare className="h-5 w-5" />
+          ) : (
+            <Square className="h-5 w-5" />
+          )}
         </button>
 
-        <button className="min-w-0 flex-1 text-left" onClick={onOpen} type="button">
+        <button
+          className="min-w-0 flex-1 text-left"
+          onClick={onOpen}
+          type="button"
+        >
           <div className="flex flex-wrap items-center gap-2">
             <QuestionStatusBadge status={question.status} />
             <QuestionTypeBadge type={question.questionType} />
             <DifficultyBadge difficulty={question.difficulty} />
           </div>
-          <h3 className="mt-3 line-clamp-2 text-lg font-semibold text-[#183153]">{question.title}</h3>
+          <h3 className="mt-3 line-clamp-2 text-lg font-semibold text-[#183153]">
+            {question.title}
+          </h3>
           <p className="mt-2 line-clamp-3 text-sm leading-6 text-[#5f7394]">
             {question.content.prompt}
           </p>

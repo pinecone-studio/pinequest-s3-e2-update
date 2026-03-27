@@ -9,9 +9,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GRADE_OPTIONS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/constants";
-import { QUESTION_DIFFICULTIES, QUESTION_STATUSES, type QuestionBuilderValues, type QuestionValidationErrors, type QuestionType } from "../_lib/types";
-import { createEmptyOption, createQuestionBuilderValues, DIFFICULTY_LABELS, QUESTION_TYPE_LABELS, STATUS_LABELS } from "../_lib/utils";
+import {
+  GRADE_OPTIONS,
+  SUBJECT_OPTIONS,
+  SUBTOPIC_OPTIONS,
+} from "../_lib/constants";
+import {
+  QUESTION_DIFFICULTIES,
+  QUESTION_STATUSES,
+  type QuestionBuilderValues,
+  type QuestionValidationErrors,
+  type QuestionType,
+} from "../_lib/types";
+import {
+  createEmptyOption,
+  createQuestionBuilderValues,
+  DIFFICULTY_LABELS,
+  QUESTION_TYPE_LABELS,
+  STATUS_LABELS,
+} from "../_lib/utils";
 import { FormulaEditor } from "./formula-editor";
 import { ImageUploader } from "./image-uploader";
 import { QuestionTypeSelector } from "./question-type-selector";
@@ -31,11 +47,19 @@ export function QuestionBuilderForm({
   onClose,
   onSubmit,
 }: QuestionBuilderFormProps) {
+  const builderGradeOptions = GRADE_OPTIONS.filter((grade) => {
+    const gradeNumber = Number.parseInt(grade, 10);
+    return gradeNumber >= 6 && gradeNumber <= 12;
+  });
+
   const [values, setValues] = useState<QuestionBuilderValues>(
     initialValues ?? createQuestionBuilderValues(),
   );
 
-  const updateValue = <Key extends keyof QuestionBuilderValues>(key: Key, value: QuestionBuilderValues[Key]) => {
+  const updateValue = <Key extends keyof QuestionBuilderValues>(
+    key: Key,
+    value: QuestionBuilderValues[Key],
+  ) => {
     setValues((current) => ({ ...current, [key]: value }));
   };
 
@@ -47,7 +71,12 @@ export function QuestionBuilderForm({
         questionType === "multiple_choice"
           ? current.options.length > 0
             ? current.options
-            : [createEmptyOption(0), createEmptyOption(1), createEmptyOption(2), createEmptyOption(3)]
+            : [
+                createEmptyOption(0),
+                createEmptyOption(1),
+                createEmptyOption(2),
+                createEmptyOption(3),
+              ]
           : [],
     }));
   };
@@ -95,10 +124,13 @@ export function QuestionBuilderForm({
                 {initialValues ? "Асуулт засах" : "Асуулт үүсгэх"}
               </p>
               <h2 className="mt-2 text-2xl font-bold text-[#183153]">
-                {initialValues ? "Асуултын агуулгыг сайжруулах" : "Дахин ашиглах асуулт зохиох"}
+                {initialValues
+                  ? "Асуултын агуулгыг сайжруулах"
+                  : "Дахин ашиглах асуулт зохиох"}
               </h2>
               <p className="mt-2 text-sm text-[#5f7394]">
-                Ноорог эсвэл нийтэлсэн төлөвөөр хадгалахаас өмнө асуулт, үнэлгээ, мета мэдээллээ тохируулна уу.
+                Ноорог эсвэл нийтэлсэн төлөвөөр хадгалахаас өмнө асуулт,
+                үнэлгээ, мета мэдээллээ тохируулна уу.
               </p>
             </div>
             <button
@@ -112,32 +144,36 @@ export function QuestionBuilderForm({
         </div>
 
         <div className="space-y-8 px-6 py-6">
-          <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+          <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-[#183153]">Асуултын төрөл</h3>
-                <p className="text-sm text-[#6d7f9c]">Агуулга оруулахаас өмнө асуултын хэлбэрээ сонгоно уу.</p>
+                <h3 className="text-lg font-semibold text-[#183153]">
+                  Асуултын төрөл
+                </h3>
+                <p className="text-sm text-[#6d7f9c]">
+                  Агуулга оруулахаас өмнө асуултын хэлбэрээ сонгоно уу.
+                </p>
               </div>
-              <QuestionTypeSelector value={values.questionType} onChange={handleQuestionTypeChange} />
+              <QuestionTypeSelector
+                value={values.questionType}
+                onChange={handleQuestionTypeChange}
+              />
             </div>
           </section>
 
-          <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+          <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
             <div className="grid gap-4 xl:grid-cols-2">
-              <Field label="Анги" error={validationErrors?.grade}>
-                <input
-                  className={inputClassName}
-                  list="question-bank-grades"
-                  onChange={(event) => updateValue("grade", event.target.value)}
-                  placeholder="4-р анги"
-                  value={values.grade}
-                />
-                <datalist id="question-bank-grades">
-                  {GRADE_OPTIONS.map((grade) => (
-                    <option key={grade} value={grade} />
-                  ))}
-                </datalist>
-              </Field>
+              <SelectField
+                label="Анги"
+                error={validationErrors?.grade}
+                onValueChange={(value) => updateValue("grade", value)}
+                options={builderGradeOptions.map((grade) => ({
+                  label: grade,
+                  value: grade,
+                }))}
+                placeholder="Анги сонгоно уу."
+                value={values.grade}
+              />
               <Field label="Асуултын гарчиг" error={validationErrors?.title}>
                 <input
                   className={inputClassName}
@@ -167,25 +203,21 @@ export function QuestionBuilderForm({
                   ))}
                 </datalist>
               </Field>
-              <SelectField
-                error={validationErrors?.grade}
-                label="Анги"
-                onValueChange={(value) => updateValue("grade", value)}
-                options={GRADE_OPTIONS.map((grade) => ({
-                  label: grade,
-                  value: grade,
-                }))}
-                value={values.grade}
-              />
             </div>
 
             <div className="mt-4">
               <SelectField
-                disabled={!SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS]?.length}
+                disabled={
+                  !SUBTOPIC_OPTIONS[
+                    values.subject as keyof typeof SUBTOPIC_OPTIONS
+                  ]?.length
+                }
                 label="Дэд сэдэв"
                 onValueChange={(value) => updateValue("subtopic", value)}
                 options={
-                  SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS]?.map((subtopic) => ({
+                  SUBTOPIC_OPTIONS[
+                    values.subject as keyof typeof SUBTOPIC_OPTIONS
+                  ]?.map((subtopic) => ({
                     label: subtopic,
                     value: subtopic,
                   })) ?? []
@@ -210,7 +242,9 @@ export function QuestionBuilderForm({
               <Field label="Асуулгын текст" error={validationErrors?.prompt}>
                 <textarea
                   className={`${inputClassName} min-h-36 py-3`}
-                  onChange={(event) => updateValue("prompt", event.target.value)}
+                  onChange={(event) =>
+                    updateValue("prompt", event.target.value)
+                  }
                   placeholder="Сурагчид харагдах асуулгын текстээ энд бичнэ үү."
                   value={values.prompt}
                 />
@@ -221,7 +255,9 @@ export function QuestionBuilderForm({
               <Field label="Багшийн тайлбар">
                 <textarea
                   className={`${inputClassName} min-h-28 py-3`}
-                  onChange={(event) => updateValue("guidance", event.target.value)}
+                  onChange={(event) =>
+                    updateValue("guidance", event.target.value)
+                  }
                   placeholder="Нэмэлт тэмдэглэл, санамж, эсвэл нөхцөлийн тайлбар."
                   value={values.guidance}
                 />
@@ -229,7 +265,9 @@ export function QuestionBuilderForm({
               <Field label="Дотоод тэмдэглэл">
                 <textarea
                   className={`${inputClassName} min-h-28 py-3`}
-                  onChange={(event) => updateValue("explanation", event.target.value)}
+                  onChange={(event) =>
+                    updateValue("explanation", event.target.value)
+                  }
                   placeholder="Энэ асуултыг дахин ашиглах бусад багшид зориулсан тайлбар."
                   value={values.explanation}
                 />
@@ -237,11 +275,14 @@ export function QuestionBuilderForm({
             </div>
           </section>
 
-          <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+          <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-[#183153]">Хариултын тохиргоо</h3>
+              <h3 className="text-lg font-semibold text-[#183153]">
+                Хариултын тохиргоо
+              </h3>
               <p className="text-sm text-[#6d7f9c]">
-                {QUESTION_TYPE_LABELS[values.questionType]} төрлөөс хамааран талбарууд автоматаар өөрчлөгдөнө.
+                {QUESTION_TYPE_LABELS[values.questionType]} төрлөөс хамааран
+                талбарууд автоматаар өөрчлөгдөнө.
               </p>
             </div>
             <DynamicQuestionFields
@@ -257,16 +298,23 @@ export function QuestionBuilderForm({
             />
           </section>
 
-          <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+          <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[#183153]">Үнэлгээ</h3>
-              <p className="text-sm text-[#6d7f9c]">Түвшин, оноо, төлөв зэрэг үнэлгээтэй холбоотой тохиргоо.</p>
+              <p className="text-sm text-[#6d7f9c]">
+                Түвшин, оноо, төлөв зэрэг үнэлгээтэй холбоотой тохиргоо.
+              </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <SelectField
                 label="Түвшин"
-                onValueChange={(value) => updateValue("difficulty", value as QuestionBuilderValues["difficulty"])}
+                onValueChange={(value) =>
+                  updateValue(
+                    "difficulty",
+                    value as QuestionBuilderValues["difficulty"],
+                  )
+                }
                 options={QUESTION_DIFFICULTIES.map((difficulty) => ({
                   label: DIFFICULTY_LABELS[difficulty],
                   value: difficulty,
@@ -277,14 +325,21 @@ export function QuestionBuilderForm({
                 <input
                   className={inputClassName}
                   min={1}
-                  onChange={(event) => updateValue("points", Number(event.target.value))}
+                  onChange={(event) =>
+                    updateValue("points", Number(event.target.value))
+                  }
                   type="number"
                   value={values.points}
                 />
               </Field>
               <SelectField
                 label="Төлөв"
-                onValueChange={(value) => updateValue("status", value as QuestionBuilderValues["status"])}
+                onValueChange={(value) =>
+                  updateValue(
+                    "status",
+                    value as QuestionBuilderValues["status"],
+                  )
+                }
                 options={QUESTION_STATUSES.map((status) => ({
                   label: STATUS_LABELS[status],
                   value: status,
@@ -293,9 +348,11 @@ export function QuestionBuilderForm({
               />
               <Field label="Үнэлгээний хэлбэр">
                 <div className="flex h-12 items-center rounded-2xl border border-[#d3deef] bg-[#f8fbff] px-4 text-sm font-medium text-[#365077]">
-                  {values.questionType === "multiple_choice" && "Автомат үнэлгээ"}
+                  {values.questionType === "multiple_choice" &&
+                    "Автомат үнэлгээ"}
                   {values.questionType === "short_answer" && "Хосолмол үнэлгээ"}
-                  {values.questionType === "formula_input" && "Хосолмол үнэлгээ"}
+                  {values.questionType === "formula_input" &&
+                    "Хосолмол үнэлгээ"}
                   {(values.questionType === "long_answer" ||
                     values.questionType === "image_based" ||
                     values.questionType === "file_upload") &&
@@ -342,7 +399,10 @@ function DynamicQuestionFields({
 }: {
   values: QuestionBuilderValues;
   validationErrors?: QuestionValidationErrors;
-  onSimpleChange: <Key extends keyof QuestionBuilderValues>(key: Key, value: QuestionBuilderValues[Key]) => void;
+  onSimpleChange: <Key extends keyof QuestionBuilderValues>(
+    key: Key,
+    value: QuestionBuilderValues[Key],
+  ) => void;
   onOptionChange: (optionId: string, value: string) => void;
   onMarkCorrectOption: (optionId: string) => void;
   onAddOption: () => void;
@@ -360,16 +420,20 @@ function DynamicQuestionFields({
             <div className="flex gap-3" key={option.id}>
               <button
                 className={`mt-3 h-5 w-5 rounded-full border-2 ${
-                  option.isCorrect ? "border-[#1f6feb] bg-[#1f6feb]" : "border-[#b8c8dc] bg-white"
+                  option.isCorrect
+                    ? "border-[#1f6feb] bg-[#1f6feb]"
+                    : "border-[#b8c8dc] bg-white"
                 }`}
                 onClick={() => onMarkCorrectOption(option.id)}
                 type="button"
               />
               <div className="flex-1">
-                  <Field label={`Сонголт ${index + 1}`}>
+                <Field label={`Сонголт ${index + 1}`}>
                   <input
                     className={inputClassName}
-                    onChange={(event) => onOptionChange(option.id, event.target.value)}
+                    onChange={(event) =>
+                      onOptionChange(option.id, event.target.value)
+                    }
                     placeholder={`Хариултын сонголт ${index + 1}`}
                     value={option.text}
                   />
@@ -388,7 +452,9 @@ function DynamicQuestionFields({
           ))}
         </div>
         {validationErrors?.options ? (
-          <p className="text-sm font-medium text-[#d34f4f]">{validationErrors.options}</p>
+          <p className="text-sm font-medium text-[#d34f4f]">
+            {validationErrors.options}
+          </p>
         ) : null}
         <button
           className="inline-flex h-11 items-center rounded-2xl border border-[#d7e2f1] px-4 text-sm font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
@@ -407,7 +473,9 @@ function DynamicQuestionFields({
       <Field label="Хүлээгдэх хариулт" error={validationErrors?.correctAnswer}>
         <input
           className={inputClassName}
-          onChange={(event) => onSimpleChange("correctAnswer", event.target.value)}
+          onChange={(event) =>
+            onSimpleChange("correctAnswer", event.target.value)
+          }
           placeholder="Жишээ: Хлорофилл"
           value={values.correctAnswer}
         />
@@ -417,7 +485,10 @@ function DynamicQuestionFields({
 
   if (values.questionType === "long_answer") {
     return (
-      <Field label="Рубрик эсвэл үнэлгээний тэмдэглэл" error={validationErrors?.rubric}>
+      <Field
+        label="Рубрик эсвэл үнэлгээний тэмдэглэл"
+        error={validationErrors?.rubric}
+      >
         <textarea
           className={`${inputClassName} min-h-32 py-3`}
           onChange={(event) => onSimpleChange("rubric", event.target.value)}
@@ -429,11 +500,23 @@ function DynamicQuestionFields({
   }
 
   if (values.questionType === "formula_input") {
-    return <FormulaEditor error={validationErrors?.formulaRaw} onChange={onFormulaChange} value={values.formulaRaw} />;
+    return (
+      <FormulaEditor
+        error={validationErrors?.formulaRaw}
+        onChange={onFormulaChange}
+        value={values.formulaRaw}
+      />
+    );
   }
 
   if (values.questionType === "image_based") {
-    return <ImageUploader error={validationErrors?.imageUrl} imageUrl={values.imageUrl} onChange={onImageChange} />;
+    return (
+      <ImageUploader
+        error={validationErrors?.imageUrl}
+        imageUrl={values.imageUrl}
+        onChange={onImageChange}
+      />
+    );
   }
 
   const acceptValue = values.fileUploadConfig.acceptedFileTypes.join(", ");
@@ -458,7 +541,10 @@ function DynamicQuestionFields({
           </p>
         ) : null}
       </Field>
-      <Field label="Зөвшөөрөх файлын төрөл" error={validationErrors?.fileUploadConfig}>
+      <Field
+        label="Зөвшөөрөх файлын төрөл"
+        error={validationErrors?.fileUploadConfig}
+      >
         <input
           className={inputClassName}
           onChange={(event) =>
@@ -489,7 +575,10 @@ function DynamicQuestionFields({
         />
       </Field>
       <div className="xl:col-span-2">
-        <Field label="Хавсаргах заавар" error={validationErrors?.fileUploadConfig}>
+        <Field
+          label="Хавсаргах заавар"
+          error={validationErrors?.fileUploadConfig}
+        >
           <textarea
             className={`${inputClassName} min-h-32 py-3`}
             onChange={(event) =>
@@ -520,7 +609,9 @@ function Field({
     <label className="block space-y-2">
       <span className="text-sm font-semibold text-[#183153]">{label}</span>
       {children}
-      {error ? <p className="text-sm font-medium text-[#d34f4f]">{error}</p> : null}
+      {error ? (
+        <p className="text-sm font-medium text-[#d34f4f]">{error}</p>
+      ) : null}
     </label>
   );
 }
@@ -546,7 +637,7 @@ function SelectField({
     <label className="space-y-2">
       <span className="text-sm font-semibold text-[#183153]">{label}</span>
       <Select disabled={disabled} onValueChange={onValueChange} value={value}>
-        <SelectTrigger className="h-12 rounded-2xl border-[#d3deef]">
+        <SelectTrigger className="h-12 rounded-2xl border-[#d3deef] focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -557,7 +648,9 @@ function SelectField({
           ))}
         </SelectContent>
       </Select>
-      {error ? <p className="text-sm font-medium text-[#d34f4f]">{error}</p> : null}
+      {error ? (
+        <p className="text-sm font-medium text-[#d34f4f]">{error}</p>
+      ) : null}
     </label>
   );
 }
