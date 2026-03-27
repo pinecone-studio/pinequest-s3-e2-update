@@ -54,6 +54,14 @@ const menuItems = [
   },
 ];
 
+function isMenuItemActive(pathname: string, href: string) {
+  if (href === "/teacher") {
+    return pathname === href;
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function TeacherShell({
   user,
   children,
@@ -82,7 +90,7 @@ export default function TeacherShell({
     <TeacherContext.Provider value={user}>
       <div className="min-h-screen bg-[#f6faff] text-[#1f2a44]">
         <header className="sticky top-0 z-40 border-b border-[#d9dee8] bg-white/95 backdrop-blur">
-          <div className="mx-auto max-w-[1400px] px-4 py-3 lg:px-6">
+          <div className="mx-auto max-w-378 px-4 py-3 lg:px-6">
             <div className="flex items-center gap-8 justify-between">
               <div className="flex min-w-0 items-center gap-4">
                 <Link
@@ -107,10 +115,7 @@ export default function TeacherShell({
               <div>
                 <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-6 overflow-x-auto pb-1">
                   {menuItems.map((item) => {
-                    const isActive =
-                      pathname === item.href ||
-                      (item.href !== "/teacher" &&
-                        pathname.startsWith(item.href));
+                    const isActive = isMenuItemActive(pathname, item.href);
                     const Icon = item.icon;
                     return (
                       <Link
@@ -132,7 +137,7 @@ export default function TeacherShell({
                   })}
                 </nav>
               </div>
-              <div className="relative flex-shrink-0" ref={menuRef}>
+              <div className="relative shrink-0" ref={menuRef}>
                 <button
                   aria-expanded={isMenuOpen}
                   aria-label="Хэрэглэгчийн цэс"
@@ -155,7 +160,7 @@ export default function TeacherShell({
                             {user.name}
                           </p>
                           <p className="mt-1 flex min-w-0 items-center gap-1 text-2 text-[#6b7891]">
-                            <Mail className="h-4 w-4 flex-shrink-0" />
+                            <Mail className="h-4 w-4 shrink-0" />
                             <span className="block min-w-0 flex-1 truncate">
                               {user.email || "И-мэйл бүртгэгдээгүй"}
                             </span>
@@ -182,12 +187,9 @@ export default function TeacherShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1400px] px-4 py-6 lg:px-6">
+        <main className="mx-auto w-full max-w-378 px-4 py-6 lg:px-6">
           {children}
         </main>
-        <div className="pb-6 text-center text-3 font-semibold text-[#606c84]">
-          Сургуулийн автоматжуулалтын шийдэл
-        </div>
       </div>
     </TeacherContext.Provider>
   );

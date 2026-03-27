@@ -20,6 +20,7 @@ export function useQuestionBank() {
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
+  const [publishSuccessDialogOpen, setPublishSuccessDialogOpen] = useState(false);
   const [lastValidationErrors, setLastValidationErrors] = useState<QuestionValidationErrors>({});
   const [reuseTarget, setReuseTarget] = useState<(typeof EXAM_DESTINATIONS)[number]>(EXAM_DESTINATIONS[0]);
 
@@ -95,13 +96,21 @@ export function useQuestionBank() {
       if (editingQuestion) {
         await updateQuestionInBackend(editingQuestion.id, values, editingQuestion.usageCount);
         setActiveQuestionId(editingQuestion.id);
-        showToast("Асуултын мэдээлэл шинэчлэгдлээ.");
+        if (values.status === "published") {
+          setPublishSuccessDialogOpen(true);
+        } else {
+          showToast("Асуултын мэдээлэл шинэчлэгдлээ.");
+        }
       } else {
         const createdId = await createQuestionInBackend(values);
         if (createdId) {
           setActiveQuestionId(createdId);
         }
-        showToast("Асуулт санд амжилттай үүслээ.");
+        if (values.status === "published") {
+          setPublishSuccessDialogOpen(true);
+        } else {
+          showToast("Асуулт санд амжилттай үүслээ.");
+        }
       }
 
       setIsBuilderOpen(false);
@@ -137,6 +146,7 @@ export function useQuestionBank() {
     gradeOptions,
     isBuilderOpen,
     lastValidationErrors,
+    publishSuccessDialogOpen,
     openCreateBuilder,
     openEditBuilder,
     questions,
@@ -145,6 +155,7 @@ export function useQuestionBank() {
     selectedQuestionIds,
     selectedQuestions,
     setActiveQuestionId,
+    setPublishSuccessDialogOpen,
     setReuseTarget,
     subtopicOptions,
     subjectOptions,
