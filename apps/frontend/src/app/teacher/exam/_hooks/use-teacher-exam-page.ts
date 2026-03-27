@@ -1,15 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@apollo/client/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { teacherClasses } from "../_lib/class-data";
+import { mapBackendTestsToQuestions } from "../../question-bank/_lib/backend-question-mappers";
+import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../../question-bank/_lib/get-tests";
 import { MOCK_QUESTIONS } from "../../question-bank/_lib/mock-data";
 import type { Question } from "../../question-bank/_lib/types";
 import { QUESTION_TYPE_LABELS } from "../../question-bank/_lib/utils";
-import { EXAM_GRADE_OPTIONS, INITIAL_FORM, SAVED_EXAMS_STORAGE_KEY } from "../_lib/constants";
+import { EXAM_GRADE_OPTIONS, INITIAL_FORM, PENDING_EXAM_TRANSFER_STORAGE_KEY, SAVED_EXAMS_STORAGE_KEY } from "../_lib/constants";
 import { normalizeSavedExamRecord } from "../_lib/utils";
-import type { ExamComposerState, ExamQuestionDetail, ExamQuestionItem, ExamStatus, SavedExamRecord } from "../_lib/types";
+import type { ExamComposerState, ExamQuestionDetail, ExamQuestionItem, ExamStatus, PendingExamTransfer, SavedExamRecord } from "../_lib/types";
 
 export function useTeacherExamPage() {
+  const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const [exam, setExam] = useState<ExamComposerState>(INITIAL_FORM);
   const [selectedBankIds, setSelectedBankIds] = useState<string[]>([]);
   const [examQuestions, setExamQuestions] = useState<ExamQuestionItem[]>([]);
@@ -20,10 +24,14 @@ export function useTeacherExamPage() {
   const [activeSavedExamId, setActiveSavedExamId] = useState<string | null>(null);
   const [selectedClassByExamId, setSelectedClassByExamId] = useState<Record<string, string>>({});
 
-  const subjectOptions = useMemo(() => Array.from(new Set(MOCK_QUESTIONS.map((question) => question.subject))).sort(), []);
-  const topicSuggestions = useMemo(() => Array.from(new Set(MOCK_QUESTIONS.filter((question) => (exam.subject ? question.subject.toLowerCase() === exam.subject.toLowerCase() : true)).map((question) => question.topic))).sort(), [exam.subject]);
-  const filteredQuestions = useMemo(() => [...MOCK_QUESTIONS].filter((question) => matchesSearch(question, search)).sort((left, right) => scoreQuestion(right, exam) - scoreQuestion(left, exam) || right.usageCount - left.usageCount), [exam, search]);
-  const examQuestionDetails = useMemo(() => examQuestions.slice().sort((left, right) => left.order - right.order).map((item) => ({ ...item, question: MOCK_QUESTIONS.find((question) => question.id === item.questionId) })).filter((item): item is ExamQuestionDetail => Boolean(item.question)), [examQuestions]);
+  const questionBank = useMemo(() => {
+    const backendQuestions = mapBackendTestsToQuestions(testsData?.getAllTests ?? []);
+    return backendQuestions.length > 0 ? backendQuestions : MOCK_QUESTIONS;
+  }, [testsData?.getAllTests]);
+  const subjectOptions = useMemo(() => Array.from(new Set(questionBank.map((question) => question.subject))).sort(), [questionBank]);
+  const topicSuggestions = useMemo(() => Array.from(new Set(questionBank.filter((question) => (exam.subject ? question.subject.toLowerCase() === exam.subject.toLowerCase() : true)).map((question) => question.topic))).sort(), [exam.subject, questionBank]);
+  const filteredQuestions = useMemo(() => [...questionBank].filter((question) => matchesSearch(question, search)).sort((left, right) => scoreQuestion(right, exam) - scoreQuestion(left, exam) || right.usageCount - left.usageCount), [exam, questionBank, search]);
+  const examQuestionDetails = useMemo(() => examQuestions.slice().sort((left, right) => left.order - right.order).map((item) => ({ ...item, question: questionBank.find((question) => question.id === item.questionId) })).filter((item): item is ExamQuestionDetail => Boolean(item.question)), [examQuestions, questionBank]);
   const totalPoints = examQuestionDetails.reduce((sum, item) => sum + item.assignedPoints, 0);
 
   useEffect(() => {
@@ -42,11 +50,51 @@ export function useTeacherExamPage() {
     if (hasLoadedSavedExams) window.localStorage.setItem(SAVED_EXAMS_STORAGE_KEY, JSON.stringify(savedExams));
   }, [hasLoadedSavedExams, savedExams]);
 
-  const showToast = (message: string) => {
+  const showToast = useCallback((message: string) => {
     setToastMessage(message);
     window.clearTimeout((showToast as unknown as { timeout?: number }).timeout);
     (showToast as unknown as { timeout?: number }).timeout = window.setTimeout(() => setToastMessage(""), 2600);
-  };
+  }, []);
+
+  useEffect(() => {
+    const raw = window.sessionStorage.getItem(PENDING_EXAM_TRANSFER_STORAGE_KEY);
+    if (!raw) return;
+
+    try {
+      const pending = JSON.parse(raw) as PendingExamTransfer;
+      const pendingIds = Array.isArray(pending.questionIds) ? pending.questionIds : [];
+      const pendingQuestions = questionBank.filter((question) => pendingIds.includes(question.id));
+      if (pendingQuestions.length === 0) return;
+
+      const firstQuestion = pendingQuestions[0];
+      setExam((current) => ({
+        ...current,
+        grade: pending.exam?.grade || firstQuestion.grade || current.grade,
+        subject: pending.exam?.subject || firstQuestion.subject || current.subject,
+        topic: pending.exam?.topic || firstQuestion.topic || current.topic,
+      }));
+      setExamQuestions((current) => {
+        const existingIds = new Set(current.map((item) => item.questionId));
+        const appended = pendingQuestions
+          .filter((question) => !existingIds.has(question.id))
+          .map((question, index) => ({
+            examQuestionId: `exam-question-${question.id}`,
+            questionId: question.id,
+            assignedPoints: question.points,
+            order: current.length + index,
+          }));
+
+        return appended.length > 0 ? [...current, ...appended] : current;
+      });
+      setActiveSavedExamId(null);
+      showToast(`${pendingQuestions.length} асуултыг шалгалт руу орууллаа.`);
+    } catch {
+      window.sessionStorage.removeItem(PENDING_EXAM_TRANSFER_STORAGE_KEY);
+      return;
+    }
+
+    window.sessionStorage.removeItem(PENDING_EXAM_TRANSFER_STORAGE_KEY);
+  }, [questionBank, showToast]);
 
   const updateExam = <Key extends keyof ExamComposerState>(key: Key, value: ExamComposerState[Key]) => setExam((current) => ({ ...current, [key]: value }));
   const toggleSelectQuestion = (questionId: string) => setSelectedBankIds((current) => current.includes(questionId) ? current.filter((id) => id !== questionId) : [...current, questionId]);
@@ -56,7 +104,7 @@ export function useTeacherExamPage() {
     const newQuestionCount = questionIds.filter((questionId) => !examQuestions.some((item) => item.questionId === questionId)).length;
     setExamQuestions((current) => {
       const existingIds = new Set(current.map((item) => item.questionId));
-      return [...current, ...questionIds.filter((questionId) => !existingIds.has(questionId)).map((questionId, index) => ({ examQuestionId: `exam-question-${questionId}`, questionId, assignedPoints: MOCK_QUESTIONS.find((item) => item.id === questionId)?.points ?? 1, order: current.length + index }))];
+      return [...current, ...questionIds.filter((questionId) => !existingIds.has(questionId)).map((questionId, index) => ({ examQuestionId: `exam-question-${questionId}`, questionId, assignedPoints: questionBank.find((item) => item.id === questionId)?.points ?? 1, order: current.length + index }))];
     });
     setSelectedBankIds((current) => current.filter((id) => !questionIds.includes(id)));
     showToast(newQuestionCount > 0 ? `${newQuestionCount} асуултыг шалгалтад нэмлээ.` : "Эдгээр асуултууд шалгалтад аль хэдийн орсон байна.");

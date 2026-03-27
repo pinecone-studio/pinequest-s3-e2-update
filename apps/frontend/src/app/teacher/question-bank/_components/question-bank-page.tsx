@@ -23,12 +23,10 @@ export function QuestionBankPage() {
     publishSuccessDialogOpen,
     openCreateBuilder,
     openEditBuilder,
-    reuseQuestions,
-    reuseTarget,
+    sendQuestionsToExam,
     selectedQuestionIds,
     setActiveQuestionId,
     setPublishSuccessDialogOpen,
-    setReuseTarget,
     subtopicOptions,
     subjectOptions,
     submitQuestion,
@@ -65,10 +63,8 @@ export function QuestionBankPage() {
       />
 
       <ReuseToolbar
-        onReuseSelected={() => reuseQuestions(selectedQuestionIds)}
-        onReuseTargetChange={setReuseTarget}
+        onAddToExam={() => sendQuestionsToExam(selectedQuestionIds)}
         onSelectAllVisible={toggleVisibleSelection}
-        reuseTarget={reuseTarget}
         selectedCount={selectedQuestionIds.length}
       />
 
@@ -78,7 +74,7 @@ export function QuestionBankPage() {
           onCreateQuestion={openCreateBuilder}
           onEditQuestion={openEditBuilder}
           onOpenQuestion={setActiveQuestionId}
-          onReuseQuestion={(questionId) => reuseQuestions([questionId])}
+          onReuseQuestion={(questionId) => sendQuestionsToExam([questionId])}
           onSelectQuestion={toggleQuestionSelection}
           questions={filteredQuestions}
           selectedQuestionIds={selectedQuestionIds}
@@ -100,7 +96,7 @@ export function QuestionBankPage() {
       ) : null}
 
       {publishSuccessDialogOpen ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#10233e]/40 p-4 backdrop-blur-[2px]">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-[#10233e]/40 p-4 backdrop-blur-[2px]">
           <div className="w-full max-w-md rounded-[28px] border border-[#d9e4f1] bg-white p-6 text-center shadow-2xl">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#eaf4ff] text-[#1f6feb]">
               <CheckCircle2 className="h-8 w-8" />
@@ -124,3 +120,4 @@ export function QuestionBankPage() {
     </div>
   );
 }
+

@@ -1,16 +1,21 @@
 "use client";
 
 import { useQuery } from "@apollo/client/react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { EXAM_DESTINATIONS, GRADE_OPTIONS, QUESTION_BANK_FILTER_DEFAULTS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/constants";
+import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../../exam/_lib/constants";
+import type { PendingExamTransfer } from "../../exam/_lib/types";
+import { GRADE_OPTIONS, QUESTION_BANK_FILTER_DEFAULTS, SUBJECT_OPTIONS, SUBTOPIC_OPTIONS } from "../_lib/constants";
 import { mapBackendTestsToQuestions } from "../_lib/backend-question-mappers";
 import { GET_ALL_SUBJECTS_QUERY, type GetAllSubjectsResponse } from "../_lib/get-subjects";
 import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../_lib/get-tests";
+import { MOCK_QUESTIONS } from "../_lib/mock-data";
 import type { QuestionBuilderValues, QuestionFilters, QuestionValidationErrors } from "../_lib/types";
 import { filterAndSortQuestions, mapQuestionToBuilderValues, validateQuestion } from "../_lib/utils";
 import { useCreateTestSync } from "./use-create-test-sync";
 
 export function useQuestionBank() {
+  const router = useRouter();
   const { createQuestionInBackend, incrementUsageInBackend, updateQuestionInBackend } = useCreateTestSync();
   const { data: subjectsData } = useQuery<GetAllSubjectsResponse>(GET_ALL_SUBJECTS_QUERY);
   const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
@@ -22,9 +27,12 @@ export function useQuestionBank() {
   const [toastMessage, setToastMessage] = useState("");
   const [publishSuccessDialogOpen, setPublishSuccessDialogOpen] = useState(false);
   const [lastValidationErrors, setLastValidationErrors] = useState<QuestionValidationErrors>({});
-  const [reuseTarget, setReuseTarget] = useState<(typeof EXAM_DESTINATIONS)[number]>(EXAM_DESTINATIONS[0]);
 
-  const questions = useMemo(() => mapBackendTestsToQuestions(testsData?.getAllTests ?? []), [testsData?.getAllTests]);
+  const questions = useMemo(() => {
+    const backendQuestions = mapBackendTestsToQuestions(testsData?.getAllTests ?? []);
+
+    return backendQuestions.length > 0 ? backendQuestions : MOCK_QUESTIONS;
+  }, [testsData?.getAllTests]);
   const filteredQuestions = useMemo(() => filterAndSortQuestions(questions, filters), [filters, questions]);
   const selectedQuestions = useMemo(() => questions.filter((question) => selectedQuestionIds.includes(question.id)), [questions, selectedQuestionIds]);
   const activeQuestion = useMemo(() => questions.find((question) => question.id === activeQuestionId) ?? filteredQuestions[0] ?? null, [activeQuestionId, filteredQuestions, questions]);
@@ -122,17 +130,32 @@ export function useQuestionBank() {
     }
   };
 
-  const reuseQuestions = async (ids: string[]) => {
+  const sendQuestionsToExam = async (ids: string[]) => {
     if (ids.length === 0) return showToast("Дахин ашиглахын тулд дор хаяж нэг асуулт сонгоно уу.");
 
+    const nextQuestions = questions.filter((question) => ids.includes(question.id));
+    const firstQuestion = nextQuestions[0];
+
     try {
-      const nextQuestions = questions.filter((question) => ids.includes(question.id));
       await incrementUsageInBackend(nextQuestions);
-      setSelectedQuestionIds((current) => current.filter((id) => !ids.includes(id)));
-      showToast(`${ids.length} асуултыг ${reuseTarget} руу нэмлээ.`);
     } catch {
-      showToast("Асуултын ашиглалтын мэдээллийг шинэчлэх үед алдаа гарлаа.");
+      // Usage update should not block moving the selected questions into the exam flow.
     }
+
+    const payload: PendingExamTransfer = {
+      questionIds: ids,
+      exam: firstQuestion
+        ? {
+            grade: firstQuestion.grade,
+            subject: firstQuestion.subject,
+            topic: firstQuestion.topic,
+          }
+        : undefined,
+    };
+
+    window.sessionStorage.setItem(PENDING_EXAM_TRANSFER_STORAGE_KEY, JSON.stringify(payload));
+    setSelectedQuestionIds((current) => current.filter((id) => !ids.includes(id)));
+    router.push("/teacher/exam");
   };
 
   return {
@@ -150,13 +173,11 @@ export function useQuestionBank() {
     openCreateBuilder,
     openEditBuilder,
     questions,
-    reuseQuestions,
-    reuseTarget,
+    sendQuestionsToExam,
     selectedQuestionIds,
     selectedQuestions,
     setActiveQuestionId,
     setPublishSuccessDialogOpen,
-    setReuseTarget,
     subtopicOptions,
     subjectOptions,
     submitQuestion,

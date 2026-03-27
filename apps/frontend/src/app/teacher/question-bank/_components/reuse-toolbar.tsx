@@ -1,28 +1,15 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { EXAM_DESTINATIONS } from "../_lib/constants";
-
 type ReuseToolbarProps = {
   selectedCount: number;
   onSelectAllVisible: () => void;
-  onReuseSelected: () => void;
-  reuseTarget: string;
-  onReuseTargetChange: (value: (typeof EXAM_DESTINATIONS)[number]) => void;
+  onAddToExam: () => void;
 };
 
 export function ReuseToolbar({
   selectedCount,
   onSelectAllVisible,
-  onReuseSelected,
-  reuseTarget,
-  onReuseTargetChange,
+  onAddToExam,
 }: ReuseToolbarProps) {
   return (
     <section className="rounded-3xl border border-[#d8e2f0] bg-white p-4 shadow-sm">
@@ -47,28 +34,9 @@ export function ReuseToolbar({
           >
             Харагдаж буйг сонгох
           </button>
-          <div className="min-w-56">
-            <Select
-              onValueChange={(value) =>
-                onReuseTargetChange(value as (typeof EXAM_DESTINATIONS)[number])
-              }
-              value={reuseTarget}
-            >
-              <SelectTrigger className="h-11 rounded-2xl border-[#d3deef]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {EXAM_DESTINATIONS.map((destination) => (
-                  <SelectItem key={destination} value={destination}>
-                    {destination}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
           <button
             className="inline-flex h-11 items-center justify-center rounded-2xl bg-[#163b69] px-4 text-sm font-semibold text-white transition hover:bg-[#122f55]"
-            onClick={onReuseSelected}
+            onClick={onAddToExam}
             type="button"
           >
             Шалгалт руу нэмэх
