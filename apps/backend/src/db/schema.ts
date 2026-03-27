@@ -35,8 +35,11 @@ export const teacherTable = sqliteTable("teacher", {
 
 export const classTable = sqliteTable("class", {
   id: text("id").primaryKey(),
-  schoolId: text("schoolId").references(() => schoolTable.id).notNull(),
-  studentIds: text("studentIds").notNull(),
+  schoolId: text("schoolId"),
+  class: integer("grade"),
+  grade: text("grade"),
+  teacherId: text("teacherId"),
+  studentIds: text("studentIds"),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
 });

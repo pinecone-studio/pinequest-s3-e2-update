@@ -5,6 +5,8 @@ import type { GraphQLUserContext } from "../context";
 type TestRow = typeof testTable.$inferSelect;
 type ResolvedTestRow = TestRow & {
   subjectName?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 };
 
 export type TestMutationInput = {
