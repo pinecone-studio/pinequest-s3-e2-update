@@ -1,7 +1,8 @@
 import type { GraphQLResolveInfo } from "graphql";
-import { testTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
-import { mapTestRow, normalizeTestInput, resolveSubject, type TestMutationInput } from "../test-utils";
+
+import type { GraphQLUserContext } from "../../../context";
+import { mapTestRow, normalizeTestInput, resolveSubject, type TestMutationInput } from "../../queries/testAndOpenExircices/test-utils";
+import { testTable } from "../../../../db/schema/testTable";
 
 export async function createTest(
   _parent: unknown,

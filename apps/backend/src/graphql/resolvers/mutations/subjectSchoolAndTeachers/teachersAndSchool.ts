@@ -1,6 +1,6 @@
 import type { GraphQLResolveInfo } from "graphql";
-import { teacherTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
+import { teacherTable } from "../../../../db/schema/teacherTable";
+import type { GraphQLUserContext } from "../../../context";
 
 export async function addTeacher(
   _parent: unknown,

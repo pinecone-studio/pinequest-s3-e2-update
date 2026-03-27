@@ -1,5 +1,6 @@
-import { studentExamResultTable } from "../../../db/schema";
-import { GraphQLUserContext } from "../../context";
+
+import { studentExamResultTable } from "../../../../db/schema/studentExamResultTable";
+import { GraphQLUserContext } from "../../../context";
 import type { GraphQLResolveInfo } from "graphql";
 
 export async function startExam(_: unknown, args: {examId: string, studentId: string} , ctx: GraphQLUserContext, _info: GraphQLResolveInfo) {
