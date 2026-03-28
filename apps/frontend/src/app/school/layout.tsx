@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { AdminShell } from "@/app/admin/_components/admin_shell";
+import { SchoolShell } from "@/app/school/_components/school_shell";
 import { authSignInHref } from "@/app/lib/auth-redirect";
 import {
   fallbackAppUser,
@@ -8,15 +8,15 @@ import {
   getAppUserFromUserId,
 } from "@/app/lib/clerk-app-user";
 
-export default async function AdminLayout({
+export default async function SchoolLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { userId } = await auth();
-  const signInAdmin = authSignInHref("/admin");
+  const signInSchool = authSignInHref("/school");
   if (!userId) {
-    redirect(signInAdmin);
+    redirect(signInSchool);
   }
   let user = await getAppUserFromClerk("school_admin");
   if (!user) {
@@ -26,5 +26,5 @@ export default async function AdminLayout({
     user = fallbackAppUser(userId, "school_admin");
   }
 
-  return <AdminShell user={user}>{children}</AdminShell>;
+  return <SchoolShell user={user}>{children}</SchoolShell>;
 }

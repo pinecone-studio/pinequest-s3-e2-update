@@ -4,9 +4,9 @@ import Link from "next/link";
 import { ProfileMenu } from "./profile-menu";
 import type { User } from "@/app/lib/types";
 const links = [
-	{ href: "/admin", label: "Самбар" },
-	{ href: "/admin/teachers", label: "Багш нар" },
-	{ href: "/admin/classes", label: "Ангиуд" },
+	{ href: "/school", label: "Самбар" },
+	{ href: "/school/teachers", label: "Багш нар" },
+	{ href: "/school/classes", label: "Ангиуд" },
 ] as const;
 
 export function AdminShell({

@@ -57,7 +57,7 @@ export function SignUpForm() {
     [searchParams],
   );
   /** Захиргаа / байгууллагын эхний бүртгэл — хаяг, бүртгэлийн дугаар заавал. */
-  const isOrganizationSignup = afterAuthUrl === "/admin";
+  const isOrganizationSignup = afterAuthUrl === "/school";
 
   const { isLoaded, isSignedIn } = useAuth();
   const clerk = useClerk();

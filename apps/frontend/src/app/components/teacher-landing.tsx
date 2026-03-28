@@ -69,7 +69,7 @@ export function TeacherLanding({ loginError }: Props) {
           </div>
 
           <div className="flex items-center gap-3 self-start px-5 py-4 lg:px-8 lg:py-6">
-            <AuthButton label="Сургууль" href={authSignInHref("/admin")} />
+            <AuthButton label="Сургууль" href={authSignInHref("/school")} />
             <AuthButton label="Багш" href={authSignInHref("/teacher")} />
           </div>
         </div>
