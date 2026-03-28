@@ -8,6 +8,9 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "d1:apply:remote": "wrangler d1 migrations apply exam-grade-db --remote",
+    "d1:apply:local": "wrangler d1 migrations apply exam-grade-db --local",
+    "d1:migrations:list": "wrangler d1 execute exam-grade-db --remote --command \"SELECT id, name, applied_at FROM d1_migrations ORDER BY id\"",
+    "d1:migrations:list:local": "wrangler d1 execute exam-grade-db --local --command \"SELECT id, name, applied_at FROM d1_migrations ORDER BY id\"",
     "build": "wrangler deploy --dry-run"
   },
   "dependencies": {

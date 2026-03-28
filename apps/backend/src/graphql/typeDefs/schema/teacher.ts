@@ -1,7 +1,7 @@
 export const teacherTypeDefs = /* GraphQL */ `
   type Teacher {
     id: ID!
-    clerkId: String!
+    clerkId: String
     email: String!
     classId: String
     firstName: String!

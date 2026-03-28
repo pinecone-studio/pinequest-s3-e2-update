@@ -6,7 +6,7 @@ export const studentTypeDefs = /* GraphQL */ `
     firstName: String!
     lastName: String!
     studentCode: String
-    studentExamResultIds: [String!]
+    studentExamResultIds: [String]
     createdAt: String!
     updatedAt: String!
   }

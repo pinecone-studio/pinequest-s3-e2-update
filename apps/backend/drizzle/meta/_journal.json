@@ -5,78 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1774327363104,
-      "tag": "0000_parched_scourge",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1774427073397,
-      "tag": "0001_purple_wind_dancer",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1774517169868,
-      "tag": "0002_lonely_natasha_romanoff",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1774524078026,
-      "tag": "0003_rainy_ironclad",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1774534386683,
-      "tag": "0004_silent_gideon",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1774535012506,
-      "tag": "0005_slim_justin_hammer",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1774535666507,
-      "tag": "0006_melted_edwin_jarvis",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1774553529975,
-      "tag": "0007_hot_alex_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "6",
-      "when": 1774556811644,
-      "tag": "0008_noisy_gambit",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "6",
-      "when": 1774581721503,
-      "tag": "0009_eminent_crystal",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "6",
-      "when": 1774675845542,
-      "tag": "0010_tidy_makkari",
+      "when": 1774691897953,
+      "tag": "0000_past_vermin",
       "breakpoints": true
     }
   ]

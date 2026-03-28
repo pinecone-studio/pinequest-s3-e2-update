@@ -9,15 +9,28 @@ import { subjectTable } from "./schema/subjectTable";
 import { teacherTable } from "./schema/teacherTable";
 import { testTable } from "./schema/testTable";
 
+export {
+  openExerciesTable,
+  studentTable,
+  teacherTable,
+  classTable,
+  testTable,
+  examTable,
+  examCheatLogTable,
+  studentExamResultTable,
+  schoolTable,
+  subjectTable,
+};
+
 export const schema = {
-    openExerciesTable,
-    studentTable,
-    teacherTable,
-    classTable,
-    testTable,
-    examTable,
-    examCheatLogTable,
-    studentExamResultTable,
-    schoolTable,
-    subjectTable
-}
+  openExerciesTable,
+  studentTable,
+  teacherTable,
+  classTable,
+  testTable,
+  examTable,
+  examCheatLogTable,
+  studentExamResultTable,
+  schoolTable,
+  subjectTable,
+};
