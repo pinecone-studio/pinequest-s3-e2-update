@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { ChevronRight, Search, Users } from "lucide-react";
+import { useMemo } from "react";
+import { ChevronRight, Users } from "lucide-react";
 import { store } from "@/app/lib/store";
 import { useTeacher } from "../teacher-shell";
 
@@ -10,18 +10,14 @@ export default function TeacherDashboard() {
   const router = useRouter();
   const teacher = useTeacher();
   const classes = store.getClassesForTeacherWithDemo(teacher.id);
-  const [query, setQuery] = useState("");
 
-  const filteredClasses = useMemo(() => {
-    const sorted = [...classes].sort((a, b) =>
-      a.name.localeCompare(b.name, "mn", { sensitivity: "base" }),
-    );
-    const q = query.trim().toLowerCase();
-    if (!q) return sorted;
-    return sorted.filter((c) => c.name.toLowerCase().includes(q));
-  }, [classes, query]);
-
-  const showSearch = classes.length > 1;
+  const sortedClasses = useMemo(
+    () =>
+      [...classes].sort((a, b) =>
+        a.name.localeCompare(b.name, "mn", { sensitivity: "base" }),
+      ),
+    [classes],
+  );
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
@@ -44,43 +40,15 @@ export default function TeacherDashboard() {
             </p>
           </header>
 
-          {showSearch ? (
-            <div className="relative mb-6">
-              <Search
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8a96ac]"
-                aria-hidden
-              />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Ангийн нэрээр хайх..."
-                className="w-full rounded-xl border border-[#d9dee8] bg-[#fafbfd] py-3 pl-11 pr-4 text-4 text-[#1f2a44] shadow-inner outline-none transition placeholder:text-[#94a3b8] focus:border-[#4f9dff] focus:bg-white focus:ring-4 focus:ring-[#4f9dff]/15"
-                aria-label="Ангийн нэрээр хайх"
-              />
-            </div>
-          ) : null}
-
-          {filteredClasses.length === 0 ? (
+          {sortedClasses.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-6 py-14 text-center">
               <p className="text-4 font-semibold text-[#475569]">
-                {query.trim()
-                  ? "Хайлтад тохирох анги олдсонгүй."
-                  : "Одоогоор танд харагдах анги алга."}
+                Одоогоор танд харагдах анги алга.
               </p>
-              {query.trim() ? (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  className="mt-4 text-4 font-semibold text-[#4f9dff] hover:underline"
-                >
-                  Хайлт цэвэрлэх
-                </button>
-              ) : null}
             </div>
           ) : (
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
-              {filteredClasses.map((cls) => {
+              {sortedClasses.map((cls) => {
                 const openClass = () =>
                   router.push(`/teacher/class/${encodeURIComponent(cls.id)}`);
                 return (
