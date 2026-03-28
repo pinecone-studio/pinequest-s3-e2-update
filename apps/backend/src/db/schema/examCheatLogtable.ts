@@ -1,7 +1,7 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { examTable } from "./examtable";
 import { studentTable } from "./studentTable";
 import { teacherTable } from "./teacherTable";
+import { examTable } from "./examTable";
 
 export const examCheatLogTable = sqliteTable("examCheatLog", {
     id: text("id").primaryKey(),

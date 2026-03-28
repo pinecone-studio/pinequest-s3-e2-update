@@ -1,10 +1,10 @@
-import { examTypeDefs } from "./exam";
-import { mutationTypeDefs } from "./mutation";
-import { queryTypeDefs } from "./query";
-import { schoolTypeDefs } from "./school";
-import { subjectTypeDefs } from "./subject";
-import { teacherTypeDefs } from "./teacher";
-import { testTypeDefs } from "./tests";
+import { examTypeDefs } from "./schema/exam";
+import { mutationTypeDefs } from "./mutations/mutation";
+import { queryTypeDefs } from "./queris/query";
+import { schoolTypeDefs } from "./schema/school";
+import { subjectTypeDefs } from "./schema/subject";
+import { teacherTypeDefs } from "./schema/teacher";
+import { testTypeDefs } from "./schema/tests";
 
 export const typeDefs = [
   schoolTypeDefs,

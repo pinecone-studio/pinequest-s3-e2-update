@@ -1,6 +1,6 @@
 import { classTable } from "./schema/classTable";
 import { examCheatLogTable } from "./schema/examCheatLogtable";
-import { examTable } from "./schema/examtable";
+import { examTable } from "./schema/examTable";
 import { schoolTable } from "./schema/schoolTable";
 import { studentExamResultTable } from "./schema/studentExamResultTable";
 import { studentTable } from "./schema/studentTable";
