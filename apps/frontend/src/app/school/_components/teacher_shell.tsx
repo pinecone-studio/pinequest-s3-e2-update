@@ -18,7 +18,7 @@ export function TeacherShell({
 			<header className="border-b border-zinc-200 bg-white">
 				<div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
 					<div>
-						<p className="text-xs font-medium uppercase tracking-wide text-teal-600">
+						<p className="text-xs font-medium uppercase tracking-wide text-blue-600">
 							Багш
 						</p>
 						<h1 className="text-lg font-semibold text-zinc-900">
@@ -28,7 +28,7 @@ export function TeacherShell({
 							{user.name} · {user.email}
 						</p>
 						{user.specialty?.trim() ? (
-							<p className="mt-1 text-sm font-medium text-teal-700">
+							<p className="mt-1 text-sm font-medium text-blue-700">
 								Мэргэжил: {user.specialty}
 							</p>
 						) : null}

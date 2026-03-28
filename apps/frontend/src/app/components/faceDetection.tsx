@@ -12,16 +12,7 @@ export function FaceCam() {
       videoRef.current.srcObject = stream;
     };
 
-    startCamera().catch(() => {
-      // Camera permission/device errors are non-blocking for exam UI rendering.
-    });
-
-    return () => {
-      const stream = videoRef.current?.srcObject;
-      if (stream instanceof MediaStream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
+    startCamera();
   }, []);
 
   return (

@@ -10,7 +10,7 @@ import {
 import type { TeacherExamScheduleFormValues } from "../_types/exam-schedule";
 
 const inputClass =
-	"mt-1 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 disabled:cursor-not-allowed disabled:bg-zinc-100";
+	"mt-1 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-zinc-100";
 
 const labelClass =
 	"block text-xs font-semibold uppercase tracking-wide text-zinc-500";
@@ -173,7 +173,7 @@ export function TeacherExamScheduleForm({
 					<button
 						type="submit"
 						disabled={isPending || classOptions.length === 0}
-						className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-zinc-400"
+						className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-zinc-400"
 					>
 						{isPending
 							? "Хадгалж байна..."

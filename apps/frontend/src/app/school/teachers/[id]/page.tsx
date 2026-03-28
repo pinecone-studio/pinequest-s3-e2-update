@@ -22,7 +22,7 @@ export default async function AdminTeacherDetailPage({
 	return (
 		<div className="space-y-8">
 			<div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-				<Link href="/school/teachers" className="hover:text-teal-600">
+				<Link href="/school/teachers" className="hover:text-blue-600">
 					Багш нар
 				</Link>
 				<span aria-hidden>/</span>
@@ -33,7 +33,7 @@ export default async function AdminTeacherDetailPage({
 				<h1 className="text-2xl font-semibold text-zinc-900">{user.name}</h1>
 				<p className="mt-1 text-sm text-zinc-600">{user.email}</p>
 				{user.specialty?.trim() ? (
-					<p className="mt-2 text-sm font-medium text-teal-700">
+					<p className="mt-2 text-sm font-medium text-blue-700">
 						Мэргэжил / хичээл: {user.specialty}
 					</p>
 				) : null}
@@ -68,7 +68,7 @@ export default async function AdminTeacherDetailPage({
 										<div>
 											<Link
 												href={`/school/classes/${c.id}`}
-												className="font-medium text-zinc-900 hover:text-teal-600"
+												className="font-medium text-zinc-900 hover:text-blue-600"
 											>
 												{c.name}
 											</Link>
@@ -78,7 +78,7 @@ export default async function AdminTeacherDetailPage({
 										</div>
 										<Link
 											href={`/school/classes/${c.id}`}
-											className="shrink-0 text-sm font-medium text-teal-600 hover:text-teal-700"
+											className="shrink-0 text-sm font-medium text-blue-600 hover:text-blue-700"
 										>
 											Анги нээх →
 										</Link>
