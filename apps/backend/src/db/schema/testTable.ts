@@ -1,0 +1,26 @@
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
+export const testTable = sqliteTable("test", {
+    id: text("id").primaryKey(),
+    grade: integer("grade"),
+    subjectId: text("subjectId"),
+      topic: text("topic").notNull(),
+    title: text("title"),
+    questionType: text("questionType"),
+    question: text("question").notNull(),
+    subtopic: text("subtopic"),
+    rubric: text("rubric"),
+    formulaRaw: text("formulaRaw"),
+    imageUrl: text("imageUrl"),
+    fileUploadConfig: text("fileUploadConfig"),
+    answers: text("answers").notNull(),
+    rightAnswer: text("rightAnswer").notNull(),
+    notes: text("notes"),
+    questionNote: text("questionNote"),
+    difficulty: text("difficulty"),
+    score: integer("score").notNull(),
+    usageCount: integer("usageCount").notNull().default(0),
+    isActive: integer("isActive").notNull().default(1),
+    createdAt: text("createdAt").notNull(),
+    updatedAt: text("updatedAt").notNull(),
+  });

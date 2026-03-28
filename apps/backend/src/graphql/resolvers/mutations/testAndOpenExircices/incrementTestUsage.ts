@@ -1,7 +1,7 @@
 import { eq, inArray } from "drizzle-orm";
 import type { GraphQLResolveInfo } from "graphql";
-import { testTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
+import { testTable } from "../../../../db/schema/testTable";
+import type { GraphQLUserContext } from "../../../context";
 
 export async function incrementTestUsage(
   _parent: unknown,

@@ -1,9 +1,10 @@
 import { asc } from "drizzle-orm";
 import type { GraphQLResolveInfo } from "graphql";
-import { subjectTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
+import { GraphQLUserContext } from "../../../context";
+import { subjectTable } from "../../../../db/schema/subjectTable";
 
-export async function subjects(
+
+export async function getAllSubjects(
   _parent: unknown,
   _args: Record<string, never>,
   ctx: GraphQLUserContext,

@@ -1,8 +1,9 @@
 import { desc, eq } from "drizzle-orm";
 import type { GraphQLResolveInfo } from "graphql";
-import { subjectTable, testTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
-import { mapTestRow } from "../test-utils";
+import { subjectTable } from "../../../../db/schema/subjectTable";
+import { testTable } from "../../../../db/schema/testTable";
+import type { GraphQLUserContext } from "../../../context";
+import { mapTestRow } from "./test-utils";
 
 export async function getAllTests(_: unknown, __: unknown, ctx: GraphQLUserContext, _info: GraphQLResolveInfo) {
   const rows = await ctx.db

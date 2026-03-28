@@ -1,7 +1,8 @@
 import { desc, eq } from "drizzle-orm";
 import type { GraphQLResolveInfo } from "graphql";
-import { examTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
+
+import type { GraphQLUserContext } from "../../../context";
+import { examTable } from "../../../../db/schema/examTable";
 
 export async function exams(
   _parent: unknown,

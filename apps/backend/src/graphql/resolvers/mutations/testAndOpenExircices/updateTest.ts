@@ -1,8 +1,9 @@
+import { GraphQLResolveInfo } from "graphql";
+import { GraphQLUserContext } from "../../../context";
+import { mapTestRow, normalizeTestInput, resolveSubject, TestMutationInput } from "../../queries/testAndOpenExircices/test-utils";
+import { testTable } from "../../../../db/schema/testTable";
 import { eq } from "drizzle-orm";
-import type { GraphQLResolveInfo } from "graphql";
-import { testTable } from "../../../db/schema";
-import type { GraphQLUserContext } from "../../context";
-import { mapTestRow, normalizeTestInput, resolveSubject, type TestMutationInput } from "../test-utils";
+
 
 export async function updateTest(
   _parent: unknown,

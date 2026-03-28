@@ -1,6 +1,6 @@
-import { GraphQLUserContext } from "../../context";
+import { GraphQLUserContext } from "../../../context";
 import { GraphQLResolveInfo } from "graphql";
-import { studentTable } from "../../../db/schema";
+import { studentTable } from "../../../../db/schema/studentTable";
 import { eq } from "drizzle-orm";
 
 export default async function getStudentById(
