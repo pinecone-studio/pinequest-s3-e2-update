@@ -6,7 +6,7 @@ export const queryTypeDefs = /* GraphQL */ `
     getStudentByClassId(classId: String!): [Student!]
     getSchoolByClerkId(clerkId: String!): School!
     getTeachersBySchoolId(schoolId: String!): [Teacher!]
-    getAllExam: [Exam!]
+    getAllExams: [Exam!]
     getExamById(examId: String!): Exam
   }
 `;
