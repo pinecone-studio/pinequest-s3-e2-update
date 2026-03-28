@@ -30,11 +30,11 @@ export function ProfileMenu({ user }: { user: User }) {
       <button
         aria-expanded={open}
         aria-label="Хэрэглэгчийн цэс"
-        className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#c8d6ea] bg-white text-[#8a96ac] transition hover:border-[#4f9dff] hover:text-[#4f9dff]"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#c8d6ea] bg-white text-[#8a96ac] transition hover:border-[#4f9dff] hover:text-[#4f9dff]"
         onClick={() => setOpen((prev) => !prev)}
         type="button"
       >
-        <UserIcon className="h-6 w-6" />
+        <UserIcon className="h-5 w-5" />
       </button>
 
       {open ? (

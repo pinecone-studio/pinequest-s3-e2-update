@@ -1,11 +1,8 @@
 /** @format */
 
 import Link from "next/link";
-import {
-  createTeacher,
-  removeTeacher,
-  updateTeacher,
-} from "@/app/school/action";
+import { Pencil, Trash2 } from "lucide-react";
+import { createTeacher, removeTeacher } from "@/app/school/action";
 import { store } from "@/app/lib/store";
 
 const inputClass =
@@ -62,7 +59,7 @@ export default function AdminTeachersPage() {
           <div className="flex items-end xl:col-span-1">
             <button
               type="submit"
-              className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
+              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto"
             >
               Нэмэх
             </button>
@@ -78,78 +75,45 @@ export default function AdminTeachersPage() {
         </div>
         <ul className="divide-y divide-zinc-100">
           {teachers.map((t) => (
-            <li key={t.id} className="px-6 py-6">
-              <div className="mb-5 border-b border-zinc-100 pb-4">
+            <li key={t.id} className="px-6 py-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-sm font-semibold text-zinc-900">
+                      {t.name}
+                    </p>
+                    <Link
+                      href={`/school/teachers/${t.id}`}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                      title="Засах"
+                      aria-label={`${t.name} засах`}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                    <form action={removeTeacher}>
+                      <input type="hidden" name="id" value={t.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-red-200 text-red-600 transition hover:bg-red-50"
+                        title="Устгах"
+                        aria-label={`${t.name} устгах`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </form>
+                  </div>
+                  <p className="mt-1 text-sm text-zinc-600">{t.email || "-"}</p>
+                  <p className="text-sm text-zinc-500">
+                    {t.specialty?.trim() || "Мэргэжил оруулаагүй"}
+                  </p>
+                </div>
+
                 <Link
                   href={`/school/teachers/${t.id}`}
-                  className="inline-flex flex-wrap items-center gap-x-2 text-sm font-medium text-teal-600 hover:text-teal-700"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700"
                 >
-                  <span>Орох ангиуд харах</span>
-                  <span aria-hidden>→</span>
-                  <span className="font-normal text-zinc-500">
-                    ({store.getClassesForTeacher(t.id).length} анги)
-                  </span>
+                  Орох ангиуд харах ({store.getClassesForTeacher(t.id).length})
                 </Link>
-              </div>
-
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <form
-                  action={updateTeacher}
-                  className="min-w-0 flex-1 space-y-4"
-                >
-                  <input type="hidden" name="id" value={t.id} />
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <label className={labelClass}>
-                      Нэр
-                      <input
-                        name="name"
-                        defaultValue={t.name}
-                        className={inputClass}
-                      />
-                    </label>
-                    <label className={labelClass}>
-                      Цахим шуудан
-                      <input
-                        name="email"
-                        type="email"
-                        defaultValue={t.email}
-                        className={inputClass}
-                      />
-                    </label>
-                    <label
-                      className={`${labelClass} md:col-span-2 lg:col-span-1`}
-                    >
-                      Мэргэжил / хичээл
-                      <input
-                        name="specialty"
-                        defaultValue={t.specialty ?? ""}
-                        placeholder="Нийгэм, Математик…"
-                        className={inputClass}
-                      />
-                    </label>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-4 border-t border-zinc-100 pt-4">
-                    <button
-                      type="submit"
-                      className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
-                    >
-                      Өөрчлөлт хадгалах
-                    </button>
-                  </div>
-                </form>
-
-                <form
-                  action={removeTeacher}
-                  className="shrink-0 border-t border-zinc-100 pt-4 lg:border-t-0 lg:border-l lg:pl-6 lg:pt-0"
-                >
-                  <input type="hidden" name="id" value={t.id} />
-                  <button
-                    type="submit"
-                    className="w-full rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 lg:w-auto"
-                  >
-                    Хасах
-                  </button>
-                </form>
               </div>
             </li>
           ))}

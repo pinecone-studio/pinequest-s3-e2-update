@@ -22,7 +22,7 @@ export function AdminShell({
 				<div className="mx-auto flex max-w-6xl flex-row flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
 					<div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-10">
 						<div className="min-w-0 shrink-0">
-							<p className="text-xs font-medium uppercase tracking-wide text-teal-600">
+							<p className="text-xs font-medium uppercase tracking-wide text-blue-600">
 								Сургуулийн захиргаа
 							</p>
 							<h1 className="truncate text-base font-semibold text-zinc-900 sm:text-lg">

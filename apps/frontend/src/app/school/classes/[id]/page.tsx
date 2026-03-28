@@ -31,7 +31,7 @@ export default async function AdminClassDetailPage({
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-        <Link href="/school/classes" className="hover:text-teal-600">
+        <Link href="/school/classes" className="hover:text-blue-600">
           Ангиуд
         </Link>
         <span aria-hidden>/</span>
@@ -107,7 +107,7 @@ export default async function AdminClassDetailPage({
                       <span className="text-sm text-zinc-800">
                         {t.name}
                         {t.specialty?.trim() ? (
-                          <span className="ml-1.5 font-normal text-teal-700">
+                          <span className="ml-1.5 font-normal text-blue-700">
                             ({t.specialty})
                           </span>
                         ) : null}
@@ -119,7 +119,7 @@ export default async function AdminClassDetailPage({
               </ul>
               <button
                 type="submit"
-                className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
               >
                 Хуваарилалт хадгалах
               </button>
@@ -157,7 +157,7 @@ export default async function AdminClassDetailPage({
           <div className="sm:col-span-2 lg:col-span-4">
             <button
               type="submit"
-              className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
             >
               Ангид нэмэх
             </button>
@@ -234,7 +234,7 @@ export default async function AdminClassDetailPage({
                     <div className="sm:col-span-2 lg:col-span-4">
                       <button
                         type="submit"
-                        className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-700"
+                        className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                       >
                         Сурагч хадгалах
                       </button>
