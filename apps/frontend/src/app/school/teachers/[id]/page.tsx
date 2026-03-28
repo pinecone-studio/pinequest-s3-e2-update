@@ -22,7 +22,7 @@ export default async function AdminTeacherDetailPage({
 	return (
 		<div className="space-y-8">
 			<div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-				<Link href="/admin/teachers" className="hover:text-teal-600">
+				<Link href="/school/teachers" className="hover:text-teal-600">
 					Багш нар
 				</Link>
 				<span aria-hidden>/</span>
@@ -67,7 +67,7 @@ export default async function AdminTeacherDetailPage({
 									<div className="flex flex-wrap items-center justify-between gap-3">
 										<div>
 											<Link
-												href={`/admin/classes/${c.id}`}
+												href={`/school/classes/${c.id}`}
 												className="font-medium text-zinc-900 hover:text-teal-600"
 											>
 												{c.name}
@@ -77,7 +77,7 @@ export default async function AdminTeacherDetailPage({
 											</p>
 										</div>
 										<Link
-											href={`/admin/classes/${c.id}`}
+											href={`/school/classes/${c.id}`}
 											className="shrink-0 text-sm font-medium text-teal-600 hover:text-teal-700"
 										>
 											Анги нээх →

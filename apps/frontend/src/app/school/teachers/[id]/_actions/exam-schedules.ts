@@ -33,8 +33,8 @@ export async function saveTeacherExamScheduleAction(
     examSchedulesMock.create(values);
   }
 
-  revalidatePath("/admin/teachers");
-  revalidatePath(`/admin/teachers/${values.teacherId}`);
+  revalidatePath("/school/teachers");
+  revalidatePath(`/school/teachers/${values.teacherId}`);
   return { ok: true };
 }
 
@@ -46,7 +46,7 @@ export async function deleteTeacherExamScheduleAction(input: {
   if (!input.id) return { ok: false, error: "Устгах хуваарь олдсонгүй." };
   const removed = examSchedulesMock.remove(input.id);
   if (!removed) return { ok: false, error: "Шалгалтын хуваарь устгагдсан байна." };
-  revalidatePath("/admin/teachers");
-  revalidatePath(`/admin/teachers/${input.teacherId}`);
+  revalidatePath("/school/teachers");
+  revalidatePath(`/school/teachers/${input.teacherId}`);
   return { ok: true };
 }

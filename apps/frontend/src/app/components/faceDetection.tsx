@@ -1,22 +1,27 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as faceapi from "face-api.js";
 
 export function FaceCam() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const loadModelsAndStart = async () => {
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-
-      if (videoRef.current) {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoRef.current.srcObject = stream;
-      }
+    const startCamera = async () => {
+      if (!videoRef.current) return;
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
     };
 
-    loadModelsAndStart();
+    startCamera().catch(() => {
+      // Camera permission/device errors are non-blocking for exam UI rendering.
+    });
+
+    return () => {
+      const stream = videoRef.current?.srcObject;
+      if (stream instanceof MediaStream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, []);
 
   return (

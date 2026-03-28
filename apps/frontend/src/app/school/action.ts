@@ -8,7 +8,7 @@ import { store } from "@/app/lib/store";
 
 async function requireAdmin() {
   const { userId } = await auth();
-  if (!userId) redirect(authSignInHref("/admin"));
+  if (!userId) redirect(authSignInHref("/school"));
 }
 
 export async function createTeacher(formData: FormData): Promise<void> {
@@ -18,8 +18,8 @@ export async function createTeacher(formData: FormData): Promise<void> {
   const specialty = String(formData.get("specialty") ?? "").trim();
   if (!name) return;
   store.createTeacher(name, email || undefined, specialty || undefined);
-  revalidatePath("/admin");
-  revalidatePath("/admin/teachers");
+  revalidatePath("/school");
+  revalidatePath("/school/teachers");
 }
 
 export async function updateTeacher(formData: FormData): Promise<void> {
@@ -30,8 +30,8 @@ export async function updateTeacher(formData: FormData): Promise<void> {
   const specialty = String(formData.get("specialty") ?? "");
   if (!id || !name || !email) return;
   store.updateTeacher(id, name, email, specialty);
-  revalidatePath("/admin");
-  revalidatePath("/admin/teachers");
+  revalidatePath("/school");
+  revalidatePath("/school/teachers");
 }
 
 export async function removeTeacher(formData: FormData): Promise<void> {
@@ -39,9 +39,9 @@ export async function removeTeacher(formData: FormData): Promise<void> {
   const id = String(formData.get("id") ?? "");
   if (!id) return;
   store.deleteTeacher(id);
-  revalidatePath("/admin");
-  revalidatePath("/admin/teachers");
-  revalidatePath("/admin/classes");
+  revalidatePath("/school");
+  revalidatePath("/school/teachers");
+  revalidatePath("/school/classes");
 }
 
 export async function createClass(formData: FormData): Promise<void> {
@@ -49,8 +49,8 @@ export async function createClass(formData: FormData): Promise<void> {
   const name = String(formData.get("name") ?? "").trim();
   if (!name) return;
   store.createClass(name);
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
 }
 
 export async function updateClass(formData: FormData): Promise<void> {
@@ -59,18 +59,18 @@ export async function updateClass(formData: FormData): Promise<void> {
   const name = String(formData.get("name") ?? "").trim();
   if (!id || !name) return;
   if (!store.updateClassName(id, name)) return;
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
-  revalidatePath(`/admin/classes/${id}`);
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  revalidatePath(`/school/classes/${id}`);
 }
 
 export async function deleteClass(formData: FormData): Promise<void> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (id) store.deleteClass(id);
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
-  redirect("/admin/classes");
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  redirect("/school/classes");
 }
 
 export async function assignTeachersToClass(formData: FormData): Promise<void> {
@@ -82,9 +82,9 @@ export async function assignTeachersToClass(formData: FormData): Promise<void> {
     .filter(Boolean);
   if (!classId) return;
   store.setClassTeachers(classId, teacherIds);
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
-  revalidatePath(`/admin/classes/${classId}`);
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  revalidatePath(`/school/classes/${classId}`);
   revalidatePath("/teacher");
 }
 
@@ -101,9 +101,9 @@ export async function addStudent(formData: FormData): Promise<void> {
     lastName,
   });
   if (!newId) return;
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
-  revalidatePath(`/admin/classes/${classId}`);
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  revalidatePath(`/school/classes/${classId}`);
   revalidatePath("/teacher");
   revalidatePath(`/teacher/classes/${classId}`);
 }
@@ -117,9 +117,9 @@ export async function updateStudent(formData: FormData): Promise<void> {
   const classId = String(formData.get("classId") ?? "");
   if (!id) return;
   store.updateStudent(id, { studentNumber, firstName, lastName, classId });
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
-  revalidatePath(`/admin/classes/${classId}`);
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  revalidatePath(`/school/classes/${classId}`);
   revalidatePath("/teacher");
 }
 
@@ -129,8 +129,8 @@ export async function removeStudent(formData: FormData): Promise<void> {
   const classId = String(formData.get("classId") ?? "");
   if (!id) return;
   store.removeStudent(id);
-  revalidatePath("/admin");
-  revalidatePath("/admin/classes");
-  if (classId) revalidatePath(`/admin/classes/${classId}`);
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  if (classId) revalidatePath(`/school/classes/${classId}`);
   revalidatePath("/teacher");
 }

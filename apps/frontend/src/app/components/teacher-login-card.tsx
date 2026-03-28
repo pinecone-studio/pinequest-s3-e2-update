@@ -34,7 +34,7 @@ export function TeacherLoginCard({ error }: Props) {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <Link
-          href={authSignInHref("/admin")}
+          href={authSignInHref("/school")}
           className="flex min-h-[3.5rem] items-center justify-center rounded-2xl border border-[#cfe3df] bg-[#f4fbf9] px-4 py-3 text-center text-base font-semibold text-[#1f3b58] shadow-sm transition hover:border-teal-400 hover:bg-teal-50"
         >
           Сургууль нэвтрэх
@@ -57,7 +57,7 @@ export function TeacherLoginCard({ error }: Props) {
         </Link>
         {" · "}
         <Link
-          href={authSignUpHref("/admin")}
+          href={authSignUpHref("/school")}
           className="font-semibold text-[#5b6883] underline-offset-2 hover:underline"
         >
           сургууль

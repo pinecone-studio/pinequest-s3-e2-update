@@ -19,7 +19,7 @@ function trimTrailingSlash(path: string): string {
 
 /**
  * Query-аас уншсан утгыг аюулгүй дотоод path болгоно (open redirect хориглоно).
- * Зөвшөөрөгдсөн самбар: `/`, `/teacher`, `/admin` (бусад → `/`).
+ * Зөвшөөрөгдсөн самбар: `/`, `/teacher`, `/school` (бусад → `/`).
  */
 export function safeAuthRedirect(
   raw: string | string[] | null | undefined,
@@ -37,13 +37,13 @@ export function safeAuthRedirect(
   if (v.includes("://") || v.startsWith("//")) return "/";
   if (!v.startsWith("/")) v = `/${v}`;
   v = trimTrailingSlash(v);
-  if (v === "/teacher" || v === "/admin") return v;
+  if (v === "/teacher" || v === "/school") return v;
   return "/";
 }
 
 /**
  * Session бэлэн болсны дараа очих pathname.
- * - Query-д `/teacher` | `/admin` өгсөн бол түүнийг;
+ * - Query-д `/teacher` | `/school` өгсөн бол түүнийг;
  * - Үгүй бол Clerk `publicMetadata.role`;
  * - Default: `/teacher`.
  */
@@ -51,7 +51,7 @@ export function resolvePostAuthDashboard(
   queryIntent: string,
   clerkPublicMetadataRole: unknown,
 ): string {
-  if (queryIntent === "/teacher" || queryIntent === "/admin") {
+  if (queryIntent === "/teacher" || queryIntent === "/school") {
     return queryIntent;
   }
   if (clerkPublicMetadataRole === "teacher") return "/teacher";
@@ -59,7 +59,7 @@ export function resolvePostAuthDashboard(
     clerkPublicMetadataRole === "school_admin" ||
     clerkPublicMetadataRole === "admin"
   ) {
-    return "/admin";
+    return "/school";
   }
   return "/teacher";
 }
@@ -75,7 +75,7 @@ function intentForAuthHref(redirectTarget: string): string {
   return safeAuthRedirect(redirectTarget);
 }
 
-/** Жишээ: `authSignInHref(\"/admin\")` → `/sign-in?redirect_url=%2Fadmin` */
+/** Жишээ: `authSignInHref(\"/school\")` → `/sign-in?redirect_url=%2Fadmin` */
 export function authSignInHref(redirectTarget: string): string {
   const intent = intentForAuthHref(redirectTarget);
   return `${AUTH_ROUTES.signIn}?${LOGIN_INTENT_QUERY_KEY}=${encodeURIComponent(intent)}`;
