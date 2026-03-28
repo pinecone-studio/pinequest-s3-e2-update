@@ -17,6 +17,8 @@ export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number];
 export type QuestionStatus = (typeof QUESTION_STATUSES)[number];
 export type QuestionGradingType = (typeof QUESTION_GRADING_TYPES)[number];
 export type QuestionSortOption = (typeof QUESTION_SORT_OPTIONS)[number];
+export type QuestionSource = "global" | "school";
+export type QuestionBankTab = QuestionSource;
 
 export type QuestionOption = {
   id: string;
@@ -40,6 +42,9 @@ export type Question = {
   id: string;
   title: string;
   questionType: QuestionType;
+  source?: QuestionSource;
+  teacherName?: string;
+  isLocalOnly?: boolean;
   content: QuestionContent;
   options: QuestionOption[];
   correctAnswer: string;
@@ -68,6 +73,7 @@ export type QuestionFilters = {
   difficulty: "all" | QuestionDifficulty;
   subject: "all" | string;
   grade: "all" | string;
+  topic: "all" | string;
   subtopic: "all" | string;
   status: "all" | QuestionStatus;
   sortBy: QuestionSortOption;

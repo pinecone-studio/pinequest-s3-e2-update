@@ -114,6 +114,7 @@ export function questionMatchesSearch(question: Question, search: string) {
     question.subject,
     question.subtopic,
     question.topic,
+    question.teacherName,
     QUESTION_TYPE_LABELS[question.questionType],
   ]
     .join(" ")
@@ -129,6 +130,13 @@ export function filterAndSortQuestions(questions: Question[], filters: QuestionF
     if (filters.difficulty !== "all" && question.difficulty !== filters.difficulty) return false;
     if (filters.subject !== "all" && question.subject !== filters.subject) return false;
     if (filters.grade !== "all" && question.grade !== filters.grade) return false;
+    if (
+      filters.topic !== "all"
+      && question.topic !== filters.topic
+      && (question.subtopic ?? "") !== filters.topic
+    ) {
+      return false;
+    }
     if (filters.subtopic !== "all" && (question.subtopic ?? "") !== filters.subtopic) return false;
     if (filters.status !== "all" && question.status !== filters.status) return false;
     return true;
@@ -201,6 +209,9 @@ export function buildQuestionPayload(values: QuestionBuilderValues, existingQues
     id: existingQuestion?.id ?? `question-${Math.random().toString(36).slice(2, 10)}`,
     title: values.title.trim(),
     questionType: values.questionType,
+    source: existingQuestion?.source ?? "school",
+    teacherName: existingQuestion?.teacherName,
+    isLocalOnly: existingQuestion?.isLocalOnly ?? false,
     content: {
       prompt: values.prompt.trim(),
       guidance: values.guidance.trim(),

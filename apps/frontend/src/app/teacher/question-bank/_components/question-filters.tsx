@@ -7,25 +7,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import {
   QUESTION_DIFFICULTIES,
-  QUESTION_SORT_OPTIONS,
-  QUESTION_STATUSES,
   QUESTION_TYPES,
+  type QuestionBankTab,
   type QuestionFilters,
 } from "../_lib/types";
-import {
-  DIFFICULTY_LABELS,
-  QUESTION_TYPE_LABELS,
-  STATUS_LABELS,
-} from "../_lib/utils";
+import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from "../_lib/utils";
 import { QuestionSearchBar } from "./question-search-bar";
 
 type QuestionFiltersProps = {
   filters: QuestionFilters;
   subjectOptions: string[];
   gradeOptions: string[];
-  subtopicOptions: string[];
+  topicOptions: string[];
+  tab: QuestionBankTab;
   onChange: (partial: Partial<QuestionFilters>) => void;
   onClear: () => void;
 };
@@ -34,21 +31,32 @@ export function QuestionFilters({
   filters,
   subjectOptions,
   gradeOptions,
-  subtopicOptions,
+  topicOptions,
+  tab,
   onChange,
   onClear,
 }: QuestionFiltersProps) {
+  const isGlobal = tab === "global";
+
   return (
-    <section className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-3">
+    <section
+      className={cn(
+        "rounded-[28px] border bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-6",
+        isGlobal ? "border-[#e3e8ef]" : "border-[#efe6dc]",
+      )}
+    >
+      <div className="space-y-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[#183153]">
-              Хайлтын хэсэг
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+              {isGlobal ? "Улсын сан" : "Сургуулийн сан"}
+            </p>
+            <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[#111827]">
+              Хурдан хайлт ба шүүлтүүр
             </h2>
           </div>
           <button
-            className="text-sm font-semibold text-[#3d6fc5] transition hover:text-[#1f4f9e]"
+            className="text-sm font-medium text-[#6b7280] transition hover:text-[#111827]"
             onClick={onClear}
             type="button"
           >
@@ -57,33 +65,45 @@ export function QuestionFilters({
         </div>
 
         <QuestionSearchBar
-          value={filters.search}
           onChange={(value) => onChange({ search: value })}
+          placeholder={
+            isGlobal
+              ? "Улсын сангаас асуулт, сэдэв, хичээлээр хайх"
+              : "Сургуулийн сангаас асуулт, багш, сэдвээр хайх"
+          }
+          value={filters.search}
         />
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           <FilterSelect
-            label="Асуултын төрөл"
-            value={filters.questionType}
-            onValueChange={(value) =>
-              onChange({
-                questionType: value as QuestionFilters["questionType"],
-              })
-            }
+            label="Анги"
             options={[
-              { value: "all", label: "Бүх төрөл" },
-              ...QUESTION_TYPES.map((type) => ({
-                value: type,
-                label: QUESTION_TYPE_LABELS[type],
-              })),
+              { value: "all", label: "Бүх анги" },
+              ...gradeOptions.map((grade) => ({ value: grade, label: grade })),
             ]}
+            onValueChange={(value) => onChange({ grade: value })}
+            value={filters.grade}
+          />
+          <FilterSelect
+            label="Хичээл"
+            options={[
+              { value: "all", label: "Бүх хичээл" },
+              ...subjectOptions.map((subject) => ({ value: subject, label: subject })),
+            ]}
+            onValueChange={(value) => onChange({ subject: value })}
+            value={filters.subject}
+          />
+          <FilterSelect
+            label="Сэдэв"
+            options={[
+              { value: "all", label: "Бүх сэдэв" },
+              ...topicOptions.map((topic) => ({ value: topic, label: topic })),
+            ]}
+            onValueChange={(value) => onChange({ topic: value })}
+            value={filters.topic}
           />
           <FilterSelect
             label="Түвшин"
-            value={filters.difficulty}
-            onValueChange={(value) =>
-              onChange({ difficulty: value as QuestionFilters["difficulty"] })
-            }
             options={[
               { value: "all", label: "Бүх түвшин" },
               ...QUESTION_DIFFICULTIES.map((difficulty) => ({
@@ -91,72 +111,24 @@ export function QuestionFilters({
                 label: DIFFICULTY_LABELS[difficulty],
               })),
             ]}
+            onValueChange={(value) =>
+              onChange({ difficulty: value as QuestionFilters["difficulty"] })
+            }
+            value={filters.difficulty}
           />
           <FilterSelect
-            label="Хичээл"
-            value={filters.subject}
-            onValueChange={(value) =>
-              onChange({ subject: value, subtopic: "all" })
-            }
+            label="Төрөл"
             options={[
-              { value: "all", label: "Бүх хичээл" },
-              ...subjectOptions.map((subject) => ({
-                value: subject,
-                label: subject,
+              { value: "all", label: "Бүх төрөл" },
+              ...QUESTION_TYPES.map((type) => ({
+                value: type,
+                label: QUESTION_TYPE_LABELS[type],
               })),
             ]}
-          />
-          <FilterSelect
-            label="Анги"
-            value={filters.grade}
-            onValueChange={(value) => onChange({ grade: value })}
-            options={[
-              { value: "all", label: "Бүх анги" },
-              ...gradeOptions.map((grade) => ({ value: grade, label: grade })),
-            ]}
-          />
-          <FilterSelect
-            disabled={filters.subject === "all" || subtopicOptions.length === 0}
-            label="Дэд сэдэв"
-            value={filters.subtopic}
-            onValueChange={(value) => onChange({ subtopic: value })}
-            options={[
-              { value: "all", label: "Бүх дэд сэдэв" },
-              ...subtopicOptions.map((subtopic) => ({
-                value: subtopic,
-                label: subtopic,
-              })),
-            ]}
-          />
-          <FilterSelect
-            label="Төлөв"
-            value={filters.status}
             onValueChange={(value) =>
-              onChange({ status: value as QuestionFilters["status"] })
+              onChange({ questionType: value as QuestionFilters["questionType"] })
             }
-            options={[
-              { value: "all", label: "Бүх төлөв" },
-              ...QUESTION_STATUSES.map((status) => ({
-                value: status,
-                label: STATUS_LABELS[status],
-              })),
-            ]}
-          />
-          <FilterSelect
-            label="Эрэмбэлэх"
-            value={filters.sortBy}
-            onValueChange={(value) =>
-              onChange({ sortBy: value as QuestionFilters["sortBy"] })
-            }
-            options={QUESTION_SORT_OPTIONS.map((sort) => ({
-              value: sort,
-              label:
-                sort === "most_used"
-                  ? "Хамгийн их ашигласан"
-                  : sort === "newest"
-                    ? "Шинэ эхэндээ"
-                    : "Хуучин эхэндээ",
-            }))}
+            value={filters.questionType}
           />
         </div>
       </div>
@@ -169,21 +141,19 @@ function FilterSelect({
   value,
   onValueChange,
   options,
-  disabled,
 }: {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
   options: { value: string; label: string }[];
-  disabled?: boolean;
 }) {
   return (
     <label className="space-y-2">
-      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
         {label}
       </span>
-      <Select disabled={disabled} onValueChange={onValueChange} value={value}>
-        <SelectTrigger className="h-12 rounded-2xl border-[#d3deef] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10 focus-visible:border-[#4f9dff] focus-visible:ring-4 focus-visible:ring-[#4f9dff]/10">
+      <Select onValueChange={onValueChange} value={value}>
+        <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

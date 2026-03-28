@@ -1,78 +1,75 @@
 "use client";
 
 type QuestionHeaderProps = {
-  total: number;
-  published: number;
-  draft: number;
-  manual: number;
-  onCreateQuestion: () => void;
+  globalCount: number;
+  schoolCount: number;
+  isSchoolTab: boolean;
 };
 
 export function QuestionHeader({
-  total,
-  published,
-  draft,
-  manual,
-  onCreateQuestion,
+  globalCount,
+  schoolCount,
+  isSchoolTab,
 }: QuestionHeaderProps) {
-  const stats = [
-    {
-      label: "Нийт асуулт",
-      value: total,
-      hint: "Олон шалгалтад дахин ашиглана",
-    },
-    { label: "Нийтэлсэн", value: published, hint: "Шалгалтад нэмэхэд бэлэн" },
-    {
-      label: "Ноорог",
-      value: draft,
-      hint: "Ашиглахаас өмнө хянах шаардлагатай",
-    },
-    {
-      label: "Гараар үнэлэх",
-      value: manual,
-      hint: "Багшийн үнэлгээ шаардлагатай",
-    },
-  ];
+  const activeMetric = isSchoolTab
+    ? {
+        label: "Сургуулийн сан",
+        value: schoolCount,
+        hint: "Засварлах боломжтой асуултууд",
+      }
+    : {
+        label: "Улсын сан",
+        value: globalCount,
+        hint: "Баталгаажсан асуултууд",
+      };
 
   return (
-    <section className="rounded-[28px] border border-[#d8e6fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_58%,#f7fbff_100%)] p-6 shadow-[0_16px_40px_rgba(79,157,255,0.12)]">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-3xl space-y-3">
-          <span className="inline-flex rounded-full border border-[#bfd8ff] bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[#4f6b96]">
-            Багшийн асуултын сан
-          </span>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight text-[#183153] sm:text-2xl">
-              Нэг удаа үүсгээд, олон дахин ашигла.
+    <section className="max-w-[980px] rounded-[28px] border border-[#e7e9ee] bg-white px-6 py-6 shadow-[0_18px_48px_rgba(15,23,42,0.06)] sm:px-8">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#e8ebf0] bg-[#fbfbfc] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6b7280]">
+            Question Bank
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-[#111827] sm:text-[2.2rem]">
+              Асуултын сан
             </h1>
+            <p className="max-w-2xl text-sm leading-6 text-[#6b7280] sm:text-base">
+              Асуултуудыг удирдах, шалгалтанд ашиглах
+            </p>
           </div>
         </div>
-
-        <button
-          className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#1f6feb] px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(31,111,235,0.24)] transition hover:bg-[#195fcc]"
-          onClick={onCreateQuestion}
-          type="button"
-        >
-          Асуулт үүсгэх
-        </button>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((item) => (
-          <div
-            className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm"
-            key={item.label}
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7b8ba5]">
-              {item.label}
-            </p>
-            <p className="mt-2 text-3xl font-bold text-[#183153]">
-              {item.value}
-            </p>
-            <p className="mt-1 text-sm text-[#6d7f9c]">{item.hint}</p>
-          </div>
-        ))}
+      <div className="mt-6">
+        <MetricCard
+          hint={activeMetric.hint}
+          label={activeMetric.label}
+          value={activeMetric.value}
+        />
       </div>
     </section>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: number;
+  hint: string;
+}) {
+  return (
+    <div className="min-w-[260px] max-w-[320px] rounded-2xl border border-[#eceef2] bg-[#fcfcfd] px-4 py-4">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+        {label}
+      </p>
+      <p className="mt-2 text-[1.75rem] font-semibold tracking-[-0.03em] text-[#111827]">
+        {value}
+      </p>
+      <p className="mt-1 text-sm text-[#6b7280]">{hint}</p>
+    </div>
   );
 }
