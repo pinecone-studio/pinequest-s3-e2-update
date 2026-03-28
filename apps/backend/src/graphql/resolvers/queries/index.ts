@@ -1,16 +1,13 @@
-import { exam, exams } from "./exams/exams";
-import { getAllSubjects } from "./subjectSchoolAndTeachers/getAllSubjects";
-import { getAllTests } from "./testAndOpenExircices/getAllTests";
+import { getClassBySchoolId } from "./classAndStudent/getClassBySchoold";
+import { getStudentByClassId } from "./classAndStudent/getStudentByClassId";
 import { hello } from "./hello";
-import { schools } from "./subjectSchoolAndTeachers/schools";
-import { subjects } from "./subjectSchoolAndTeachers/subjects";
+import { getSchoolByClerkId } from "./subjectSchoolAndTeachers/getSchoolByClerkId";
+import { getAllTests } from "./testAndOpenExircices/getAllTests";
 
 export const queryResolvers = {
   hello,
-  schools,
-  subjects,
-  getAllSubjects,
-  exams,
-  exam,
   getAllTests,
+  getStudentByClassId,
+  getClassBySchoolId,
+  getSchoolByClerkId,
 };

@@ -1,37 +1,59 @@
-import type { GraphQLResolveInfo } from "graphql";
-
-import type { GraphQLUserContext } from "../../../context";
-import { mapTestRow, normalizeTestInput, resolveSubject, type TestMutationInput } from "../../queries/testAndOpenExircices/test-utils";
+import { GraphQLUserContext } from "../../../context";
 import { testTable } from "../../../../db/schema/testTable";
 
-export async function createTest(
+type CreateTestsArgs = {
+  grade: number;
+  subjectId: string;
+  question: string;
+  answers: string[];
+  imageUrl: string;
+  rightAnswer: string;
+  difficulty: string;
+  score: number;
+  usageCount: number;
+  notes: string;
+};
+
+export const createTests = async (
   _parent: unknown,
-  args: { input: TestMutationInput },
+  args: { input: CreateTestsArgs },
   ctx: GraphQLUserContext,
-  _info: GraphQLResolveInfo,
-) {
-  const subject: { id: string; name: string } | null = await resolveSubject(ctx, args.input.subjectId) as { id: string; name: string } | null;
-
-  if (!subject) {
-    throw new Error(`"${args.input.subjectId}" хичээлд тохирох subject олдсонгүй.`);
-  }
-
+) => {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  const values = normalizeTestInput(args.input, subject.id);
-
-  await ctx.db.insert(testTable).values({
-    id,
-    ...values,
-    createdAt: now,
-    updatedAt: now,
-  });
-
-  return mapTestRow({
-    id,
-    ...values,
-    createdAt: now,
-    updatedAt: now,
-    subjectName: subject.name,
-  });
-}
+  try {
+    await ctx.db.insert(testTable).values({
+      id: id,
+      grade: args.input.grade,
+      subjectId: args.input.subjectId,
+      question: args.input.question,
+      answers: JSON.stringify(args.input.answers),
+      imageUrl: args.input.imageUrl,
+      rightAnswer: args.input.rightAnswer,
+      difficulty: args.input.difficulty,
+      score: args.input.score,
+      usageCount: args.input.usageCount,
+      notes: args.input.notes,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return {
+      id: id,
+      grade: args.input.grade,
+      subjectId: args.input.subjectId,
+      question: args.input.question,
+      answers: args.input.answers,
+      imageUrl: args.input.imageUrl,
+      rightAnswer: args.input.rightAnswer,
+      difficulty: args.input.difficulty,
+      score: args.input.score,
+      usageCount: args.input.usageCount,
+      notes: args.input.notes,
+      createdAt: now,
+      updatedAt: now,
+    };
+  } catch (err) {
+    console.error("Failed to create test:", err);
+    throw new Error(`Failed to create test: ${err}`);
+  }
+};

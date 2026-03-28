@@ -1,40 +1,37 @@
-import { desc, eq } from "drizzle-orm";
-import type { GraphQLResolveInfo } from "graphql";
-import { subjectTable } from "../../../../db/schema/subjectTable";
+import { GraphQLUserContext } from "../../../context";
 import { testTable } from "../../../../db/schema/testTable";
-import type { GraphQLUserContext } from "../../../context";
-import { mapTestRow } from "./test-utils";
 
-export async function getAllTests(_: unknown, __: unknown, ctx: GraphQLUserContext, _info: GraphQLResolveInfo) {
-  const rows = await ctx.db
-    .select({
-      id: testTable.id,
-      grade: testTable.grade,
-      subjectId: testTable.subjectId,
-      topic: testTable.topic,
-      title: testTable.title,
-      questionType: testTable.questionType,
-      question: testTable.question,
-      subtopic: testTable.subtopic,
-      rubric: testTable.rubric,
-      formulaRaw: testTable.formulaRaw,
-      imageUrl: testTable.imageUrl,
-      fileUploadConfig: testTable.fileUploadConfig,
-      answers: testTable.answers,
-      rightAnswer: testTable.rightAnswer,
-      notes: testTable.notes,
-      questionNote: testTable.questionNote,
-      difficulty: testTable.difficulty,
-      score: testTable.score,
-      usageCount: testTable.usageCount,
-      isActive: testTable.isActive,
-      createdAt: testTable.createdAt,
-      updatedAt: testTable.updatedAt,
-      subjectName: subjectTable.name,
-    })
-    .from(testTable)
-    .leftJoin(subjectTable, eq(testTable.subjectId, subjectTable.id))
-    .orderBy(desc(testTable.createdAt));
+function parseAnswers(value: string): string[] {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === "string")
+      : [];
+  } catch {
+    return value ? [value] : [];
+  }
+}
 
-  return rows.map(mapTestRow);
+export async function getAllTests(
+  _parent: unknown,
+  _args: Record<string, never>,
+  ctx: GraphQLUserContext,
+) {
+  const rows = await ctx.db.select().from(testTable);
+
+  return rows.map((row) => ({
+    id: row.id,
+    grade: row.grade ?? 0,
+    subjectId: row.subjectId ?? "",
+    question: row.question,
+    answers: parseAnswers(row.answers),
+    imageUrl: row.imageUrl ?? null,
+    rightAnswer: row.rightAnswer,
+    difficulty: row.difficulty,
+    score: row.score,
+    usageCount: row.usageCount ?? 0,
+    notes: row.notes ?? null,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  }));
 }

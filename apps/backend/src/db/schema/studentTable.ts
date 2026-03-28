@@ -2,10 +2,12 @@ import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const studentTable = sqliteTable("student", {
     id: text("id").primaryKey(),
-    schoolId: text("schoolId"),
-    classId: text("classId"),
-    name: text("name").notNull(),
-    studentCode: text("studentCode").notNull(),
+    email: text("email").notNull(),
+    classId: text("classId").notNull(),
+    firstName: text("firstName").notNull(),
+    lastName: text("lastName").notNull(),
+    studentCode: text("studentCode"),
+    studentExamResultId: text("studentExamResultIds"),
     createdAt: text("createdAt").notNull(),
     updatedAt: text("updatedAt").notNull(),
   });

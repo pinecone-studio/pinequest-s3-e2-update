@@ -1,11 +1,9 @@
 export const queryTypeDefs = /* GraphQL */ `
   type Query {
     hello: String!
-    schools: [School!]!
-    subjects: [Subject!]!
-    getAllSubjects: [Subject!]!
-    exams: [Exam!]!
-    exam(id: String!): Exam
     getAllTests: [Test!]!
+    getClassBySchoolId(schoolId: String!): [Class!]
+    getStudentByClassId(classId: String!): [Student!]
+    getSchoolByClerkId(clerkId: String!): School!
   }
 `;
