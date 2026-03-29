@@ -4,13 +4,14 @@ export const testTypeDefs = /* GraphQL */ `
     grade: Int!
     subjectId: String!
     question: String!
-    answers: [String]
+    answers: [JSON!]!
     rightAnswer: String
     imageUrl: String
     difficulty: String
     score: Int!
     usageCount: Int
     notes: String
+    teacherId: String!
     createdAt: String!
     updatedAt: String!
   }

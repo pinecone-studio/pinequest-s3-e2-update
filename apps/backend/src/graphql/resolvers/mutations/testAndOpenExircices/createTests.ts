@@ -12,6 +12,7 @@ type CreateTestsArgs = {
   score: number;
   usageCount: number;
   notes: string;
+  teacherId: string;
 };
 
 export const createTests = async (
@@ -27,13 +28,14 @@ export const createTests = async (
       grade: args.input.grade,
       subjectId: args.input.subjectId,
       question: args.input.question,
-      answers: JSON.stringify(args.input.answers),
+      answers: args.input.answers,
       imageUrl: args.input.imageUrl,
       rightAnswer: args.input.rightAnswer,
       difficulty: args.input.difficulty,
       score: args.input.score,
       usageCount: args.input.usageCount,
       notes: args.input.notes,
+      teacherId: args.input.teacherId,
       createdAt: now,
       updatedAt: now,
     });
@@ -49,6 +51,7 @@ export const createTests = async (
       score: args.input.score,
       usageCount: args.input.usageCount,
       notes: args.input.notes,
+      teacherId: args.input.teacherId,
       createdAt: now,
       updatedAt: now,
     };

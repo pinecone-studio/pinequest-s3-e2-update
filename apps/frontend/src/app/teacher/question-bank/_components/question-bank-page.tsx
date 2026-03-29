@@ -7,7 +7,6 @@ import { QuestionHeader } from "./question-header";
 import { QuestionList } from "./question-list";
 import { QuestionPreviewPanel } from "./question-preview-panel";
 import { ReuseToolbar } from "./reuse-toolbar";
-import { useQuestionBank } from "../_hooks/use-question-bank";
 
 export function QuestionBankPage() {
   const {
@@ -35,7 +34,7 @@ export function QuestionBankPage() {
     toggleQuestionSelection,
     toggleVisibleSelection,
     updateFilters,
-  } = useQuestionBank();
+  } = 
 
   return (
     <div className="space-y-6 pb-8">
@@ -105,7 +104,8 @@ export function QuestionBankPage() {
               Амжилттай нийтэллээ
             </h3>
             <p className="mt-2 text-sm leading-6 text-[#5f7394]">
-              Асуулт асуултын санд амжилттай нийтлэгдэж, шалгалтад ашиглахад бэлэн боллоо.
+              Асуулт асуултын санд амжилттай нийтлэгдэж, шалгалтад ашиглахад
+              бэлэн боллоо.
             </p>
             <button
               className="mt-6 inline-flex h-11 items-center justify-center rounded-2xl bg-[#1f6feb] px-5 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
@@ -120,4 +120,3 @@ export function QuestionBankPage() {
     </div>
   );
 }
-
