@@ -1,43 +1,52 @@
 "use client";
 
-import type { Question, QuestionBankTab } from "../_lib/types";
+import type { Question } from "../_lib/types";
 import { EmptyState } from "./empty-state";
 import { QuestionCard } from "./question-card";
 
 type QuestionListProps = {
+  activeQuestionId?: string | null;
   questions: Question[];
-  tab: QuestionBankTab;
+  likedQuestionIds: string[];
+  getQuestionHeartCount: (question: Question) => number;
   onAddToExam: (questionId: string) => void;
-  onCopyToSchool: (questionId: string) => void;
   onCreateQuestion: () => void;
   onDeleteQuestion: (questionId: string) => void;
   onEditQuestion: (questionId: string) => void;
+  onOpenQuestion?: (questionId: string) => void;
+  onToggleLike: (questionId: string) => void;
 };
 
 export function QuestionList({
+  activeQuestionId,
   questions,
-  tab,
+  likedQuestionIds,
+  getQuestionHeartCount,
   onAddToExam,
-  onCopyToSchool,
   onCreateQuestion,
   onDeleteQuestion,
   onEditQuestion,
+  onOpenQuestion,
+  onToggleLike,
 }: QuestionListProps) {
   if (questions.length === 0) {
-    return <EmptyState onCreateQuestion={onCreateQuestion} tab={tab} />;
+    return <EmptyState onCreateQuestion={onCreateQuestion} />;
   }
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {questions.map((question) => (
         <QuestionCard
+          heartCount={getQuestionHeartCount(question)}
+          isActive={question.id === activeQuestionId}
+          isLiked={likedQuestionIds.includes(question.id)}
           key={question.id}
           onAddToExam={() => onAddToExam(question.id)}
-          onCopyToSchool={() => onCopyToSchool(question.id)}
           onDelete={() => onDeleteQuestion(question.id)}
           onEdit={() => onEditQuestion(question.id)}
+          onOpen={() => onOpenQuestion?.(question.id)}
+          onToggleLike={() => onToggleLike(question.id)}
           question={question}
-          tab={tab}
         />
       ))}
     </div>

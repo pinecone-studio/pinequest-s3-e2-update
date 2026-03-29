@@ -7,24 +7,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import {
   QUESTION_DIFFICULTIES,
   QUESTION_TYPES,
-  type QuestionBankTab,
   type QuestionFilters,
 } from "../_lib/types";
 import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from "../_lib/utils";
-import { QuestionSearchBar } from "./question-search-bar";
 
 type QuestionFiltersProps = {
   filters: QuestionFilters;
   subjectOptions: string[];
   gradeOptions: string[];
   topicOptions: string[];
-  tab: QuestionBankTab;
   onChange: (partial: Partial<QuestionFilters>) => void;
   onClear: () => void;
+  embedded?: boolean;
 };
 
 export function QuestionFilters({
@@ -32,106 +29,97 @@ export function QuestionFilters({
   subjectOptions,
   gradeOptions,
   topicOptions,
-  tab,
   onChange,
   onClear,
+  embedded = false,
 }: QuestionFiltersProps) {
-  const isGlobal = tab === "global";
+  const content = (
+    <div className="space-y-5">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+            Системийн сан
+          </p>
+          <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[#111827]">
+            Хурдан хайлт ба шүүлтүүр
+          </h2>
+        </div>
+        <button
+          className="text-sm font-medium text-[#6b7280] transition hover:text-[#111827]"
+          onClick={onClear}
+          type="button"
+        >
+          Шүүлтүүр цэвэрлэх
+        </button>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <FilterSelect
+          label="Анги"
+          options={[
+            { value: "all", label: "Бүх анги" },
+            ...gradeOptions.map((grade) => ({ value: grade, label: grade })),
+          ]}
+          onValueChange={(value) => onChange({ grade: value })}
+          value={filters.grade}
+        />
+        <FilterSelect
+          label="Хичээл"
+          options={[
+            { value: "all", label: "Бүх хичээл" },
+            ...subjectOptions.map((subject) => ({ value: subject, label: subject })),
+          ]}
+          onValueChange={(value) => onChange({ subject: value })}
+          value={filters.subject}
+        />
+        <FilterSelect
+          label="Сэдэв"
+          options={[
+            { value: "all", label: "Бүх сэдэв" },
+            ...topicOptions.map((topic) => ({ value: topic, label: topic })),
+          ]}
+          onValueChange={(value) => onChange({ topic: value })}
+          value={filters.topic}
+        />
+        <FilterSelect
+          label="Түвшин"
+          options={[
+            { value: "all", label: "Бүх түвшин" },
+            ...QUESTION_DIFFICULTIES.map((difficulty) => ({
+              value: difficulty,
+              label: DIFFICULTY_LABELS[difficulty],
+            })),
+          ]}
+          onValueChange={(value) =>
+            onChange({ difficulty: value as QuestionFilters["difficulty"] })
+          }
+          value={filters.difficulty}
+        />
+        <FilterSelect
+          label="Төрөл"
+          options={[
+            { value: "all", label: "Бүх төрөл" },
+            ...QUESTION_TYPES.map((type) => ({
+              value: type,
+              label: QUESTION_TYPE_LABELS[type],
+            })),
+          ]}
+          onValueChange={(value) =>
+            onChange({ questionType: value as QuestionFilters["questionType"] })
+          }
+          value={filters.questionType}
+        />
+      </div>
+    </div>
+  );
+
+  if (embedded) {
+    return <div className="space-y-5">{content}</div>;
+  }
 
   return (
-    <section
-      className={cn(
-        "rounded-[28px] border bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-6",
-        isGlobal ? "border-[#e3e8ef]" : "border-[#efe6dc]",
-      )}
-    >
-      <div className="space-y-5">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
-              {isGlobal ? "Улсын сан" : "Сургуулийн сан"}
-            </p>
-            <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[#111827]">
-              Хурдан хайлт ба шүүлтүүр
-            </h2>
-          </div>
-          <button
-            className="text-sm font-medium text-[#6b7280] transition hover:text-[#111827]"
-            onClick={onClear}
-            type="button"
-          >
-            Шүүлтүүр цэвэрлэх
-          </button>
-        </div>
-
-        <QuestionSearchBar
-          onChange={(value) => onChange({ search: value })}
-          placeholder={
-            isGlobal
-              ? "Улсын сангаас асуулт, сэдэв, хичээлээр хайх"
-              : "Сургуулийн сангаас асуулт, багш, сэдвээр хайх"
-          }
-          value={filters.search}
-        />
-
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          <FilterSelect
-            label="Анги"
-            options={[
-              { value: "all", label: "Бүх анги" },
-              ...gradeOptions.map((grade) => ({ value: grade, label: grade })),
-            ]}
-            onValueChange={(value) => onChange({ grade: value })}
-            value={filters.grade}
-          />
-          <FilterSelect
-            label="Хичээл"
-            options={[
-              { value: "all", label: "Бүх хичээл" },
-              ...subjectOptions.map((subject) => ({ value: subject, label: subject })),
-            ]}
-            onValueChange={(value) => onChange({ subject: value })}
-            value={filters.subject}
-          />
-          <FilterSelect
-            label="Сэдэв"
-            options={[
-              { value: "all", label: "Бүх сэдэв" },
-              ...topicOptions.map((topic) => ({ value: topic, label: topic })),
-            ]}
-            onValueChange={(value) => onChange({ topic: value })}
-            value={filters.topic}
-          />
-          <FilterSelect
-            label="Түвшин"
-            options={[
-              { value: "all", label: "Бүх түвшин" },
-              ...QUESTION_DIFFICULTIES.map((difficulty) => ({
-                value: difficulty,
-                label: DIFFICULTY_LABELS[difficulty],
-              })),
-            ]}
-            onValueChange={(value) =>
-              onChange({ difficulty: value as QuestionFilters["difficulty"] })
-            }
-            value={filters.difficulty}
-          />
-          <FilterSelect
-            label="Төрөл"
-            options={[
-              { value: "all", label: "Бүх төрөл" },
-              ...QUESTION_TYPES.map((type) => ({
-                value: type,
-                label: QUESTION_TYPE_LABELS[type],
-              })),
-            ]}
-            onValueChange={(value) =>
-              onChange({ questionType: value as QuestionFilters["questionType"] })
-            }
-            value={filters.questionType}
-          />
-        </div>
-      </div>
+    <section className="rounded-[28px] border border-[#e3e8ef] bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-6">
+      {content}
     </section>
   );
 }

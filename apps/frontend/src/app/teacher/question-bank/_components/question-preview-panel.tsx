@@ -15,7 +15,9 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
   if (!question) {
     return (
       <aside className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
-        <p className="text-sm text-[#6d7f9c]">Сурагчид хэрхэн харагдахыг урьдчилан үзэхийн тулд асуулт сонгоно уу.</p>
+        <p className="text-sm text-[#6d7f9c]">
+          Сонгосон асуултын дэлгэрэнгүйг харахын тулд жагсаалтаас асуулт сонгоно уу.
+        </p>
       </aside>
     );
   }
@@ -64,14 +66,18 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
 
       {question.formulaRaw ? (
         <div className="mt-4 rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">Томьёоны харагдац</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
+            Томьёоны харагдац
+          </p>
           <p className="mt-2 font-mono text-sm text-[#183153]">{question.formulaPreview}</p>
         </div>
       ) : null}
 
       {question.fileUploadConfig.instructions ? (
         <div className="mt-4 rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">Хавсаргах заавар</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
+            Хавсаргах заавар
+          </p>
           <p className="mt-2 text-sm text-[#435770]">{question.fileUploadConfig.instructions}</p>
           <p className="mt-2 text-xs text-[#70809b]">
             Зөвшөөрөх төрөл: {question.fileUploadConfig.acceptedFileTypes.join(", ")}
@@ -81,12 +87,22 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
 
       {question.rubric ? (
         <div className="mt-4 rounded-2xl border border-[#f1e3b5] bg-[#fff9e8] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#92743a]">Рубрикийн тэмдэглэл</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#92743a]">
+            Рубрикийн тэмдэглэл
+          </p>
           <p className="mt-2 text-sm leading-6 text-[#6d5622]">{question.rubric}</p>
         </div>
       ) : null}
 
       <dl className="mt-5 grid gap-3 rounded-2xl bg-[#f8fbff] p-4 text-sm text-[#5f7394]">
+        <div className="flex items-center justify-between gap-3">
+          <dt>Нийтэлсэн багш</dt>
+          <dd className="font-semibold text-[#183153]">{question.teacherName ?? "Систем"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Нийтэлсэн</dt>
+          <dd className="font-semibold text-[#183153]">{formatDate(question.updatedAt)}</dd>
+        </div>
         <div className="flex items-center justify-between gap-3">
           <dt>Анги</dt>
           <dd className="font-semibold text-[#183153]">{question.grade}</dd>
@@ -106,10 +122,6 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
         <div className="flex items-center justify-between gap-3">
           <dt>Ашигласан тоо</dt>
           <dd className="font-semibold text-[#183153]">{question.usageCount}</dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Шинэчилсэн</dt>
-          <dd className="font-semibold text-[#183153]">{formatDate(question.updatedAt)}</dd>
         </div>
       </dl>
     </aside>

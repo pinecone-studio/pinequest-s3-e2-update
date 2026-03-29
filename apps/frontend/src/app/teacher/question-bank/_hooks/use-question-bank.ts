@@ -17,34 +17,30 @@ import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../_lib/get-tests
 import { MOCK_QUESTIONS } from "../_lib/mock-data";
 import type {
   Question,
-  QuestionBankTab,
   QuestionBuilderValues,
   QuestionFilters,
   QuestionValidationErrors,
 } from "../_lib/types";
 import {
   buildQuestionPayload,
+  createQuestionBuilderValues,
   filterAndSortQuestions,
   mapQuestionToBuilderValues,
   validateQuestion,
 } from "../_lib/utils";
 import { useCreateTestSync } from "./use-create-test-sync";
 
-const SEEDED_TEACHERS = [
-  "Оюунбилэг",
-  "Номин-Эрдэнэ",
-  "Батчимэг",
-] as const;
+const SEEDED_TEACHERS = ["Оюунбилэг", "Номин-Эрдэнэ", "Батчимэг"] as const;
 
 function createSeededQuestions() {
-  const globalCutoff = Math.max(4, Math.ceil(MOCK_QUESTIONS.length * 0.55));
+  const sharedCutoff = Math.max(4, Math.ceil(MOCK_QUESTIONS.length * 0.55));
 
   return MOCK_QUESTIONS.map((question, index) => ({
     ...question,
-    source: index < globalCutoff ? "global" : "school",
+    source: index < sharedCutoff ? "global" : "school",
     teacherName:
-      index < globalCutoff
-        ? undefined
+      index < sharedCutoff
+        ? SEEDED_TEACHERS[index % SEEDED_TEACHERS.length]
         : SEEDED_TEACHERS[index % SEEDED_TEACHERS.length],
   })) satisfies Question[];
 }
@@ -57,30 +53,33 @@ export function useQuestionBank() {
   const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const toastTimeoutRef = useRef<number | null>(null);
 
-  const [activeTab, setActiveTab] = useState<QuestionBankTab>("global");
-  const [filtersByTab, setFiltersByTab] = useState<Record<QuestionBankTab, QuestionFilters>>({
-    global: QUESTION_BANK_FILTER_DEFAULTS,
-    school: QUESTION_BANK_FILTER_DEFAULTS,
+  const [filters, setFilters] = useState<QuestionFilters>(QUESTION_BANK_FILTER_DEFAULTS);
+  const [entrySelection, setEntrySelection] = useState({
+    subject: "",
+    grade: "",
   });
-  const [localSchoolQuestions, setLocalSchoolQuestions] = useState<Question[]>([]);
-  const [schoolQuestionOverrides, setSchoolQuestionOverrides] = useState<Record<string, Question>>({});
-  const [deletedSchoolQuestionIds, setDeletedSchoolQuestionIds] = useState<string[]>([]);
+  const [hasEnteredBank, setHasEnteredBank] = useState(false);
+  const [likedQuestionIds, setLikedQuestionIds] = useState<string[]>([]);
+  const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
+  const [questionOverrides, setQuestionOverrides] = useState<Record<string, Question>>({});
+  const [deletedQuestionIds, setDeletedQuestionIds] = useState<string[]>([]);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const [publishSuccessDialogOpen, setPublishSuccessDialogOpen] = useState(false);
   const [lastValidationErrors, setLastValidationErrors] = useState<QuestionValidationErrors>({});
 
   const seededQuestions = useMemo(() => createSeededQuestions(), []);
-  const globalQuestions = useMemo(
+  const sharedSeedQuestions = useMemo(
     () => seededQuestions.filter((question) => question.source === "global"),
     [seededQuestions],
   );
-  const fallbackSchoolQuestions = useMemo(
+  const fallbackEditableQuestions = useMemo(
     () => seededQuestions.filter((question) => question.source === "school"),
     [seededQuestions],
   );
-  const backendSchoolQuestions = useMemo(
+  const backendEditableQuestions = useMemo(
     () =>
       mapBackendTestsToQuestions(testsData?.getAllTests ?? []).map((question) => ({
         ...question,
@@ -89,14 +88,15 @@ export function useQuestionBank() {
       })),
     [teacher.name, testsData?.getAllTests],
   );
-  const persistedSchoolQuestions = backendSchoolQuestions.length > 0 ? backendSchoolQuestions : fallbackSchoolQuestions;
-  const schoolQuestions = useMemo(() => {
-    const hiddenIds = new Set(deletedSchoolQuestionIds);
+  const persistedEditableQuestions =
+    backendEditableQuestions.length > 0 ? backendEditableQuestions : fallbackEditableQuestions;
+
+  const editableQuestions = useMemo(() => {
+    const hiddenIds = new Set(deletedQuestionIds);
     const merged = new Map<string, Question>();
 
-    for (const question of persistedSchoolQuestions) {
+    for (const question of persistedEditableQuestions) {
       if (hiddenIds.has(question.id)) continue;
-
       merged.set(question.id, {
         ...question,
         source: "school",
@@ -104,41 +104,60 @@ export function useQuestionBank() {
       });
     }
 
-    for (const question of Object.values(schoolQuestionOverrides)) {
+    for (const question of Object.values(questionOverrides)) {
       if (hiddenIds.has(question.id)) continue;
       merged.set(question.id, question);
     }
 
-    for (const question of localSchoolQuestions) {
+    for (const question of localQuestions) {
       if (hiddenIds.has(question.id)) continue;
       merged.set(question.id, question);
     }
 
     return Array.from(merged.values());
-  }, [
-    deletedSchoolQuestionIds,
-    localSchoolQuestions,
-    persistedSchoolQuestions,
-    schoolQuestionOverrides,
-    teacher.name,
-  ]);
+  }, [deletedQuestionIds, localQuestions, persistedEditableQuestions, questionOverrides, teacher.name]);
 
-  const filteredGlobalQuestions = useMemo(
-    () => filterAndSortQuestions(globalQuestions, filtersByTab.global),
-    [filtersByTab.global, globalQuestions],
+  const questions = useMemo(
+    () => [...sharedSeedQuestions, ...editableQuestions],
+    [editableQuestions, sharedSeedQuestions],
   );
-  const filteredSchoolQuestions = useMemo(
-    () => filterAndSortQuestions(schoolQuestions, filtersByTab.school),
-    [filtersByTab.school, schoolQuestions],
+  const filteredQuestions = useMemo(
+    () => filterAndSortQuestions(questions, filters),
+    [filters, questions],
   );
-  const questions = activeTab === "global" ? globalQuestions : schoolQuestions;
-  const filteredQuestions = activeTab === "global" ? filteredGlobalQuestions : filteredSchoolQuestions;
+  const activeQuestion = useMemo(
+    () =>
+      filteredQuestions.find((question) => question.id === activeQuestionId)
+      ?? filteredQuestions[0]
+      ?? null,
+    [activeQuestionId, filteredQuestions],
+  );
+  const myQuestions = useMemo(
+    () =>
+      questions.filter(
+        (question) =>
+          question.source === "school"
+          && question.teacherName === teacher.name
+          && (!entrySelection.subject || question.subject === entrySelection.subject)
+          && (!entrySelection.grade || question.grade === entrySelection.grade),
+      ),
+    [entrySelection.grade, entrySelection.subject, questions, teacher.name],
+  );
   const editingQuestion = useMemo(
-    () => schoolQuestions.find((question) => question.id === editingQuestionId) ?? null,
-    [editingQuestionId, schoolQuestions],
+    () => editableQuestions.find((question) => question.id === editingQuestionId) ?? null,
+    [editableQuestions, editingQuestionId],
   );
+  const createDefaults = useMemo(() => {
+    const values = createQuestionBuilderValues();
 
-  const currentFilters = filtersByTab[activeTab];
+    return {
+      ...values,
+      grade: entrySelection.grade || values.grade,
+      subject: entrySelection.subject || values.subject,
+      status: "published" as const,
+    };
+  }, [entrySelection.grade, entrySelection.subject]);
+
   const subjectOptions = useMemo(
     () =>
       Array.from(new Set([
@@ -166,11 +185,18 @@ export function useQuestionBank() {
 
   const summary = useMemo(
     () => ({
-      globalCount: globalQuestions.length,
-      schoolCount: schoolQuestions.length,
-      editableCount: schoolQuestions.length,
+      myQuestionCount: myQuestions.length,
+      systemCount: questions.length,
+      selectedScopeCount:
+        entrySelection.subject && entrySelection.grade
+          ? questions.filter(
+              (question) =>
+                question.subject === entrySelection.subject
+                && question.grade === entrySelection.grade,
+            ).length
+          : null,
     }),
-    [globalQuestions, schoolQuestions],
+    [entrySelection.grade, entrySelection.subject, myQuestions.length, questions],
   );
 
   const showToast = (message: string) => {
@@ -182,33 +208,56 @@ export function useQuestionBank() {
   };
 
   const updateFilters = (partial: Partial<QuestionFilters>) =>
-    setFiltersByTab((current) => ({
+    setFilters((current) => ({
       ...current,
-      [activeTab]: {
-        ...current[activeTab],
-        ...partial,
-      },
+      ...partial,
     }));
 
-  const clearFilters = () =>
-    setFiltersByTab((current) => ({
+  const clearFilters = () => {
+    setFilters({
+      ...QUESTION_BANK_FILTER_DEFAULTS,
+      subject: hasEnteredBank ? entrySelection.subject : QUESTION_BANK_FILTER_DEFAULTS.subject,
+      grade: hasEnteredBank ? entrySelection.grade : QUESTION_BANK_FILTER_DEFAULTS.grade,
+    });
+  };
+
+  const updateEntrySelection = (partial: Partial<typeof entrySelection>) =>
+    setEntrySelection((current) => ({
       ...current,
-      [activeTab]: QUESTION_BANK_FILTER_DEFAULTS,
+      ...partial,
     }));
 
-  const switchTab = (nextTab: QuestionBankTab) => {
-    setActiveTab(nextTab);
+  const enterBank = () => {
+    if (!entrySelection.subject || !entrySelection.grade) {
+      showToast("Системийн санд нэвтрэхийн тулд хичээл, ангиа сонгоно уу.");
+      return;
+    }
+
+    setFilters({
+      ...QUESTION_BANK_FILTER_DEFAULTS,
+      subject: entrySelection.subject,
+      grade: entrySelection.grade,
+    });
+    setHasEnteredBank(true);
+  };
+
+  const resetEntrySelection = () => {
+    setHasEnteredBank(false);
+    setEntrySelection({
+      subject: "",
+      grade: "",
+    });
+    setFilters(QUESTION_BANK_FILTER_DEFAULTS);
   };
 
   const openCreateBuilder = () => {
-    setActiveTab("school");
     setEditingQuestionId(null);
     setLastValidationErrors({});
     setIsBuilderOpen(true);
   };
 
   const openEditBuilder = (questionId: string) => {
-    setActiveTab("school");
+    setActiveQuestionId(questionId);
     setEditingQuestionId(questionId);
     setLastValidationErrors({});
     setIsBuilderOpen(true);
@@ -221,43 +270,34 @@ export function useQuestionBank() {
   };
 
   const openBulkImport = () => {
-    showToast("Bulk import хэсгийг дараагийн алхамаар холбоход бэлэн болголоо.");
+    showToast("Bulk import-ыг системийн сантай холбох дараагийн алхам бэлэн.");
   };
 
-  const copyQuestionToSchool = (questionId: string) => {
-    const question = globalQuestions.find((item) => item.id === questionId);
-    if (!question) return;
-
-    const timestamp = new Date().toISOString();
-    const copiedQuestion: Question = {
-      ...question,
-      id: `school-copy-${Math.random().toString(36).slice(2, 10)}`,
-      source: "school",
-      teacherName: teacher.name,
-      isLocalOnly: true,
-      status: "draft",
-      usageCount: 0,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    };
-
-    setLocalSchoolQuestions((current) => [copiedQuestion, ...current]);
-    setActiveTab("school");
-    showToast("Асуултыг сургуулийн санд хууллаа.");
+  const toggleQuestionLike = (questionId: string) => {
+    setLikedQuestionIds((current) =>
+      current.includes(questionId)
+        ? current.filter((id) => id !== questionId)
+        : [...current, questionId],
+    );
   };
 
-  const deleteSchoolQuestion = (questionId: string) => {
-    const question = schoolQuestions.find((item) => item.id === questionId);
-    if (!question) return;
-    if (!window.confirm(`"${question.title}" асуултыг жагсаалтаас устгах уу?`)) return;
+  const getQuestionHeartCount = (question: Question) => {
+    const baseCount = Math.max(0, Math.round(question.usageCount / 3));
+    return baseCount + (likedQuestionIds.includes(question.id) ? 1 : 0);
+  };
 
-    setLocalSchoolQuestions((current) => current.filter((item) => item.id !== questionId));
-    setSchoolQuestionOverrides((current) => {
+  const deleteQuestion = (questionId: string) => {
+    const question = editableQuestions.find((item) => item.id === questionId);
+    if (!question) return;
+    if (!window.confirm(`"${question.title}" асуултыг системийн сангаас нуух уу?`)) return;
+
+    setLocalQuestions((current) => current.filter((item) => item.id !== questionId));
+    setQuestionOverrides((current) => {
       const next = { ...current };
       delete next[questionId];
       return next;
     });
-    setDeletedSchoolQuestionIds((current) =>
+    setDeletedQuestionIds((current) =>
       current.includes(questionId) ? current : [...current, questionId],
     );
 
@@ -265,7 +305,7 @@ export function useQuestionBank() {
       closeBuilder();
     }
 
-    showToast("Асуултыг жагсаалтаас устгалаа.");
+    showToast("Асуултыг системийн сангаас нууллаа.");
   };
 
   const submitQuestion = async (values: QuestionBuilderValues) => {
@@ -277,7 +317,7 @@ export function useQuestionBank() {
     }
 
     const baseQuestion = buildQuestionPayload(values, editingQuestion ?? undefined);
-    const schoolQuestion: Question = {
+    const nextQuestion: Question = {
       ...baseQuestion,
       source: "school",
       teacherName: editingQuestion?.teacherName ?? teacher.name,
@@ -287,14 +327,14 @@ export function useQuestionBank() {
     try {
       if (editingQuestion) {
         if (editingQuestion.isLocalOnly) {
-          setLocalSchoolQuestions((current) =>
-            current.map((question) => (question.id === editingQuestion.id ? schoolQuestion : question)),
+          setLocalQuestions((current) =>
+            current.map((question) => (question.id === editingQuestion.id ? nextQuestion : question)),
           );
         } else {
           await updateQuestionInBackend(editingQuestion.id, values, editingQuestion.usageCount);
-          setSchoolQuestionOverrides((current) => ({
+          setQuestionOverrides((current) => ({
             ...current,
-            [editingQuestion.id]: schoolQuestion,
+            [editingQuestion.id]: nextQuestion,
           }));
         }
 
@@ -306,17 +346,17 @@ export function useQuestionBank() {
       } else {
         const createdId = await createQuestionInBackend(values);
         const createdQuestion: Question = {
-          ...schoolQuestion,
-          id: createdId ?? schoolQuestion.id,
+          ...nextQuestion,
+          id: createdId ?? nextQuestion.id,
           isLocalOnly: !createdId,
         };
 
-        setLocalSchoolQuestions((current) => [createdQuestion, ...current]);
+        setLocalQuestions((current) => [createdQuestion, ...current]);
 
         if (values.status === "published") {
           setPublishSuccessDialogOpen(true);
         } else {
-          showToast("Асуулт санд амжилттай үүслээ.");
+          showToast("Асуулт системийн санд амжилттай үүслээ.");
         }
       }
 
@@ -335,14 +375,13 @@ export function useQuestionBank() {
       return;
     }
 
-    const sourceQuestions = activeTab === "global" ? globalQuestions : schoolQuestions;
-    const nextQuestions = sourceQuestions.filter((question) => ids.includes(question.id));
+    const nextQuestions = questions.filter((question) => ids.includes(question.id));
     const firstQuestion = nextQuestions[0];
 
     try {
       await incrementUsageInBackend(nextQuestions);
     } catch {
-      // Mock or copied questions may not exist in the backend yet.
+      // Shared seed rows may not exist in the backend yet.
     }
 
     const payload: PendingExamTransfer = {
@@ -361,30 +400,37 @@ export function useQuestionBank() {
   };
 
   return {
-    activeTab,
     clearFilters,
     closeBuilder,
-    copyQuestionToSchool,
-    currentFilters,
-    deleteSchoolQuestion,
-    editingValues: editingQuestion ? mapQuestionToBuilderValues(editingQuestion) : null,
+    currentFilters: filters,
+    deleteQuestion,
+    enterBank,
+    entrySelection,
+    editingValues: editingQuestion ? mapQuestionToBuilderValues(editingQuestion) : createDefaults,
+    activeQuestion,
     filteredQuestions,
     gradeOptions,
+    hasEnteredBank,
     isBuilderOpen,
-    isSchoolTab: activeTab === "school",
     lastValidationErrors,
+    myQuestions,
     openBulkImport,
     openCreateBuilder,
     openEditBuilder,
     publishSuccessDialogOpen,
+    resetEntrySelection,
     sendQuestionsToExam,
     setPublishSuccessDialogOpen,
     subjectOptions,
     submitQuestion,
     summary,
-    switchTab,
+    setActiveQuestionId,
     toastMessage,
+    toggleQuestionLike,
     topicOptions,
+    updateEntrySelection,
     updateFilters,
+    likedQuestionIds,
+    getQuestionHeartCount,
   };
 }
