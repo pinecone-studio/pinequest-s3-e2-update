@@ -1,5 +1,11 @@
 import type { BackendTest } from "./get-tests";
-import type { Question, QuestionBuilderValues, QuestionDifficulty, QuestionFileUploadConfig, QuestionType } from "./types";
+import type {
+  Question,
+  QuestionBuilderValues,
+  QuestionDifficulty,
+  QuestionFileUploadConfig,
+  QuestionType,
+} from "./types";
 import { renderFormulaPreview } from "./utils";
 
 const DEFAULT_FILE_UPLOAD_CONFIG: QuestionFileUploadConfig = {
@@ -50,18 +56,22 @@ export function buildCreateTestInput(values: QuestionBuilderValues) {
   return buildTestInput(values, 0);
 }
 
-export function buildUpdateTestInput(values: QuestionBuilderValues, usageCount: number) {
+export function buildUpdateTestInput(
+  values: QuestionBuilderValues,
+  usageCount: number,
+) {
   return buildTestInput(values, usageCount);
 }
 
 function buildTestInput(values: QuestionBuilderValues, usageCount: number) {
-  const answers = values.questionType === "multiple_choice"
-    ? values.options.map((option) => option.text.trim()).filter(Boolean)
-    : values.questionType === "short_answer"
-      ? [values.correctAnswer.trim()].filter(Boolean)
-      : values.questionType === "formula_input"
-        ? [values.formulaRaw.trim()].filter(Boolean)
-        : [];
+  const answers =
+    values.questionType === "multiple_choice"
+      ? values.options.map((option) => option.text.trim()).filter(Boolean)
+      : values.questionType === "short_answer"
+        ? [values.correctAnswer.trim()].filter(Boolean)
+        : values.questionType === "formula_input"
+          ? [values.formulaRaw.trim()].filter(Boolean)
+          : [];
 
   return {
     grade: extractGradeNumber(values.grade),
@@ -87,25 +97,30 @@ function buildTestInput(values: QuestionBuilderValues, usageCount: number) {
 }
 
 function normalizeQuestionType(value: string): QuestionType {
-  return value === "multiple_choice"
-    || value === "short_answer"
-    || value === "long_answer"
-    || value === "formula_input"
-    || value === "image_based"
-    || value === "file_upload"
+  return value === "multiple_choice" ||
+    value === "short_answer" ||
+    value === "long_answer" ||
+    value === "formula_input" ||
+    value === "image_based" ||
+    value === "file_upload"
     ? value
     : "short_answer";
 }
 
 function normalizeDifficulty(value?: string | null): QuestionDifficulty {
-  return value === "easy" || value === "medium" || value === "hard" ? value : "medium";
+  return value === "easy" || value === "medium" || value === "hard"
+    ? value
+    : "medium";
 }
 
 function normalizeStatus(value?: string | null): Question["status"] {
   return value === "published" || value === "draft" ? value : "draft";
 }
 
-function normalizeGradingType(value: string | null | undefined, questionType: QuestionType): Question["gradingType"] {
+function normalizeGradingType(
+  value: string | null | undefined,
+  questionType: QuestionType,
+): Question["gradingType"] {
   return value === "auto" || value === "manual" || value === "hybrid"
     ? value
     : questionType === "multiple_choice"
@@ -115,7 +130,9 @@ function normalizeGradingType(value: string | null | undefined, questionType: Qu
         : "manual";
 }
 
-function parseFileUploadConfig(value?: string | null): QuestionFileUploadConfig {
+function parseFileUploadConfig(
+  value?: string | null,
+): QuestionFileUploadConfig {
   if (!value?.trim()) {
     return DEFAULT_FILE_UPLOAD_CONFIG;
   }
@@ -124,9 +141,12 @@ function parseFileUploadConfig(value?: string | null): QuestionFileUploadConfig 
     const parsed = JSON.parse(value);
     return {
       acceptedFileTypes: Array.isArray(parsed.acceptedFileTypes)
-        ? parsed.acceptedFileTypes.filter((item: unknown): item is string => typeof item === "string")
+        ? parsed.acceptedFileTypes.filter(
+            (item: unknown): item is string => typeof item === "string",
+          )
         : [],
-      instructions: typeof parsed.instructions === "string" ? parsed.instructions : "",
+      instructions:
+        typeof parsed.instructions === "string" ? parsed.instructions : "",
       maxFiles: Number.isFinite(parsed.maxFiles) ? Number(parsed.maxFiles) : 0,
     };
   } catch {
@@ -153,7 +173,7 @@ function buildFallbackTitle(prompt: string) {
 
 function buildRightAnswer(values: QuestionBuilderValues) {
   return values.questionType === "multiple_choice"
-    ? values.options.find((option) => option.isCorrect)?.text.trim() ?? ""
+    ? (values.options.find((option) => option.isCorrect)?.text.trim() ?? "")
     : values.questionType === "formula_input"
       ? values.formulaRaw.trim()
       : values.correctAnswer.trim() || "Гараар үнэлнэ";
