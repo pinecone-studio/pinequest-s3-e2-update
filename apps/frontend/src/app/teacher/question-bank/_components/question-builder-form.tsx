@@ -16,7 +16,6 @@ import {
 } from "../_lib/constants";
 import {
   QUESTION_DIFFICULTIES,
-  QUESTION_STATUSES,
   type QuestionBuilderValues,
   type QuestionValidationErrors,
   type QuestionType,
@@ -25,12 +24,34 @@ import {
   createEmptyOption,
   createQuestionBuilderValues,
   DIFFICULTY_LABELS,
-  QUESTION_TYPE_LABELS,
-  STATUS_LABELS,
 } from "../_lib/utils";
 import { FormulaEditor } from "./formula-editor";
 import { ImageUploader } from "./image-uploader";
 import { QuestionTypeSelector } from "./question-type-selector";
+
+const MATH_FORMULA_HELPERS = [
+  { label: "sin", value: "\\sin(x)" },
+  { label: "cos", value: "\\cos(x)" },
+  { label: "tan", value: "\\tan(x)" },
+  { label: "frac", value: "\\frac{a}{b}" },
+  { label: "sqrt", value: "\\sqrt{x}" },
+  { label: "pi", value: "\\pi" },
+  { label: "lim", value: "\\lim_{x \\to a}" },
+];
+
+const PHYSICS_FORMULA_HELPERS = [
+  { label: "v = s/t", value: "v = \\frac{s}{t}" },
+  { label: "F = ma", value: "F = ma" },
+  { label: "sqrt", value: "\\sqrt{x}" },
+  { label: "delta", value: "\\Delta x" },
+  { label: "lambda", value: "\\lambda" },
+];
+
+const GENERIC_FORMULA_HELPERS = [
+  { label: "frac", value: "\\frac{a}{b}" },
+  { label: "sqrt", value: "\\sqrt{x}" },
+  { label: "x^2", value: "x^{2}" },
+];
 
 type QuestionBuilderFormProps = {
   initialValues?: QuestionBuilderValues | null;
@@ -55,18 +76,44 @@ export function QuestionBuilderForm({
   const [values, setValues] = useState<QuestionBuilderValues>(
     initialValues ?? createQuestionBuilderValues(),
   );
+  const [featureErrors, setFeatureErrors] = useState<
+    Pick<QuestionValidationErrors, "formulaRaw" | "imageUrl">
+  >({});
+  const [includesImage, setIncludesImage] = useState(
+    Boolean(initialValues?.imageUrl),
+  );
+  const [includesFormula, setIncludesFormula] = useState(
+    Boolean(initialValues?.formulaRaw)
+      || initialValues?.questionType === "formula_input",
+  );
+
+  const selectedMode =
+    values.questionType === "multiple_choice" ? "multiple_choice" : "long_answer";
+  const formulaHelpers = getFormulaHelpers(values.subject);
+  const formulaHelperTitle = values.subject.trim()
+    ? `${values.subject} хичээлийн томьёоны туслах`
+    : "Томьёоны туслах";
 
   const updateValue = <Key extends keyof QuestionBuilderValues>(
     key: Key,
     value: QuestionBuilderValues[Key],
   ) => {
     setValues((current) => ({ ...current, [key]: value }));
+
+    if (key === "formulaRaw") {
+      setFeatureErrors((current) => ({ ...current, formulaRaw: undefined }));
+    }
+
+    if (key === "imageUrl") {
+      setFeatureErrors((current) => ({ ...current, imageUrl: undefined }));
+    }
   };
 
   const handleQuestionTypeChange = (questionType: QuestionType) => {
     setValues((current) => ({
       ...current,
-      questionType,
+      questionType:
+        questionType === "multiple_choice" ? "multiple_choice" : "long_answer",
       options:
         questionType === "multiple_choice"
           ? current.options.length > 0
@@ -79,6 +126,23 @@ export function QuestionBuilderForm({
               ]
           : [],
     }));
+  };
+
+  const handleFeatureToggle = (feature: "image" | "formula", checked: boolean) => {
+    if (feature === "image") {
+      setIncludesImage(checked);
+      setFeatureErrors((current) => ({ ...current, imageUrl: undefined }));
+      if (!checked) {
+        updateValue("imageUrl", "");
+      }
+      return;
+    }
+
+    setIncludesFormula(checked);
+    setFeatureErrors((current) => ({ ...current, formulaRaw: undefined }));
+    if (!checked) {
+      updateValue("formulaRaw", "");
+    }
   };
 
   const updateOption = (optionId: string, value: string) => {
@@ -115,6 +179,8 @@ export function QuestionBuilderForm({
   };
 
   const applyDemoValues = () => {
+    setIncludesFormula(true);
+    setFeatureErrors({});
     setValues((current) => ({
       ...current,
       title: "Тригонометрийн уламжлал бодох",
@@ -137,13 +203,51 @@ export function QuestionBuilderForm({
         instructions: "Хэрэв бодолтоо хавсаргах бол PDF файл байхаар.",
         maxFiles: 1,
       },
-      subject: "Математик",
-      grade: "10-р анги",
+      subject: current.subject,
+      grade: current.grade,
       subtopic: "Тригонометр",
       difficulty: "medium",
       points: 5,
-      status: "draft",
+      status: "published",
     }));
+  };
+
+  const handleSubmit = () => {
+    const nextFeatureErrors: Pick<
+      QuestionValidationErrors,
+      "formulaRaw" | "imageUrl"
+    > = {};
+
+    if (includesImage && !values.imageUrl.trim()) {
+      nextFeatureErrors.imageUrl = "Зураг оруулах эсвэл хавсаргана уу.";
+    }
+
+    if (includesFormula && !values.formulaRaw.trim()) {
+      nextFeatureErrors.formulaRaw = "Томьёоны оролтоо бөглөнө үү.";
+    }
+
+    if (nextFeatureErrors.imageUrl || nextFeatureErrors.formulaRaw) {
+      setFeatureErrors(nextFeatureErrors);
+      return;
+    }
+
+    setFeatureErrors({});
+
+    const nextQuestionType: QuestionType =
+      selectedMode === "multiple_choice"
+        ? "multiple_choice"
+        : includesFormula
+          ? "formula_input"
+          : includesImage
+            ? "image_based"
+            : "long_answer";
+
+    onSubmit({
+      ...values,
+      topic: values.subtopic.trim() || values.subject.trim(),
+      questionType: nextQuestionType,
+      status: "published",
+    });
   };
 
   return (
@@ -161,8 +265,8 @@ export function QuestionBuilderForm({
                   : "Дахин ашиглах асуулт зохиох"}
               </h2>
               <p className="mt-2 text-sm text-[#5f7394]">
-                Ноорог эсвэл нийтэлсэн төлөвөөр хадгалахаас өмнө асуулт,
-                үнэлгээ, мета мэдээллээ тохируулна уу.
+                Асуулт, үнэлгээ, мета мэдээллээ тохируулаад системийн санд
+                шууд нийтэлнэ.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -192,13 +296,34 @@ export function QuestionBuilderForm({
                   Асуултын төрөл
                 </h3>
                 <p className="text-sm text-[#6d7f9c]">
-                  Агуулга оруулахаас өмнө асуултын хэлбэрээ сонгоно уу.
+                  Эхлээд үндсэн төрлөө сонгоод, дараа нь нэмэлт хэрэгцээгээ
+                  тэмдэглэнэ үү.
                 </p>
               </div>
               <QuestionTypeSelector
                 value={values.questionType}
                 onChange={handleQuestionTypeChange}
               />
+              <div className="grid gap-3 md:grid-cols-2">
+                <FeatureToggleCard
+                  checked={includesImage}
+                  description="Диаграмм, дүрс, зураг хавсаргах шаардлагатай бол нээнэ."
+                  label="Зураг хэрэгтэй"
+                  onCheckedChange={(checked) =>
+                    handleFeatureToggle("image", checked)
+                  }
+                />
+                <FeatureToggleCard
+                  checked={includesFormula}
+                  description={`${
+                    values.subject || "Сонгосон хичээл"
+                  } дээр томьёоны shortcut panel гаргана.`}
+                  label="Томьёоны оролт хэрэгтэй"
+                  onCheckedChange={(checked) =>
+                    handleFeatureToggle("formula", checked)
+                  }
+                />
+              </div>
             </div>
           </section>
 
@@ -269,17 +394,6 @@ export function QuestionBuilderForm({
             </div>
 
             <div className="mt-4">
-              <Field label="Сэдэв" error={validationErrors?.topic}>
-                <input
-                  className={inputClassName}
-                  onChange={(event) => updateValue("topic", event.target.value)}
-                  placeholder="Жишээ: Бутархай"
-                  value={values.topic}
-                />
-              </Field>
-            </div>
-
-            <div className="mt-4">
               <Field label="Асуулгын текст" error={validationErrors?.prompt}>
                 <textarea
                   className={`${inputClassName} min-h-36 py-3`}
@@ -292,25 +406,17 @@ export function QuestionBuilderForm({
               </Field>
             </div>
 
-            <div className="mt-4 grid gap-4 xl:grid-cols-2">
-              <Field label="Багшийн тайлбар">
+            <div className="mt-4">
+              <Field label="Тэмдэглэл">
                 <textarea
                   className={`${inputClassName} min-h-28 py-3`}
-                  onChange={(event) =>
-                    updateValue("guidance", event.target.value)
-                  }
-                  placeholder="Нэмэлт тэмдэглэл, санамж, эсвэл нөхцөлийн тайлбар."
-                  value={values.guidance}
-                />
-              </Field>
-              <Field label="Дотоод тэмдэглэл">
-                <textarea
-                  className={`${inputClassName} min-h-28 py-3`}
-                  onChange={(event) =>
-                    updateValue("explanation", event.target.value)
-                  }
-                  placeholder="Энэ асуултыг дахин ашиглах бусад багшид зориулсан тайлбар."
-                  value={values.explanation}
+                  onChange={(event) => {
+                    const nextValue = event.target.value;
+                    updateValue("guidance", nextValue);
+                    updateValue("explanation", nextValue);
+                  }}
+                  placeholder="Нэмэлт тэмдэглэл, санамж, эсвэл энэ асуултыг дахин ашиглахтай холбоотой тайлбар."
+                  value={values.guidance || values.explanation}
                 />
               </Field>
             </div>
@@ -319,19 +425,82 @@ export function QuestionBuilderForm({
           <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[#183153]">
+                Нэмэлт оролт
+              </h3>
+              <p className="text-sm text-[#6d7f9c]">
+                Зураг эсвэл томьёо хэрэгтэй гэж сонгосон үед доорх хэсгүүд
+                автоматаар гарч ирнэ.
+              </p>
+            </div>
+
+            {includesImage || includesFormula ? (
+              <div className="space-y-6">
+                {includesImage ? (
+                  <div className="rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
+                    <div className="mb-3">
+                      <h3 className="text-base font-semibold text-[#183153]">
+                        Зургийн хэсэг
+                      </h3>
+                      <p className="text-sm text-[#6d7f9c]">
+                        Асуултад зураг нэмэх бол эндээс upload хийнэ.
+                      </p>
+                    </div>
+                    <ImageUploader
+                      error={featureErrors.imageUrl || validationErrors?.imageUrl}
+                      imageUrl={values.imageUrl}
+                      onChange={(value) => updateValue("imageUrl", value)}
+                    />
+                  </div>
+                ) : null}
+
+                {includesFormula ? (
+                  <div className="rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
+                    <div className="mb-3">
+                      <h3 className="text-base font-semibold text-[#183153]">
+                        Томьёоны хэсэг
+                      </h3>
+                      <p className="text-sm text-[#6d7f9c]">
+                        Сонгосон хичээлд тохирох тэмдэглэгээг ашиглаад
+                        томьёогоо нэмнэ үү.
+                      </p>
+                    </div>
+                    <FormulaEditor
+                      error={
+                        featureErrors.formulaRaw || validationErrors?.formulaRaw
+                      }
+                      helperDescription="Доорх товчлолууд дээр дарж томьёоны оролт руу шууд нэмнэ."
+                      helperTitle={formulaHelperTitle}
+                      helperTokens={formulaHelpers}
+                      onChange={(value) => updateValue("formulaRaw", value)}
+                      value={values.formulaRaw}
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] px-4 py-5 text-sm text-[#6d7f9c]">
+                Одоогоор нэмэлт зураг эсвэл томьёоны panel идэвхжээгүй байна.
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-[#183153]">
                 Хариултын тохиргоо
               </h3>
               <p className="text-sm text-[#6d7f9c]">
-                {QUESTION_TYPE_LABELS[values.questionType]} төрлөөс хамааран
-                талбарууд автоматаар өөрчлөгдөнө.
+                {selectedMode === "multiple_choice"
+                  ? "Сонгох асуултын"
+                  : "Задгай асуултын"}{" "}
+                үндсэн талбарууд энд харагдана.
               </p>
             </div>
             <DynamicQuestionFields
+              mode={selectedMode}
               validationErrors={validationErrors}
               values={values}
               onAddOption={addOption}
-              onFormulaChange={(value) => updateValue("formulaRaw", value)}
-              onImageChange={(value) => updateValue("imageUrl", value)}
               onMarkCorrectOption={markCorrectOption}
               onOptionChange={updateOption}
               onRemoveOption={removeOption}
@@ -343,11 +512,11 @@ export function QuestionBuilderForm({
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[#183153]">Үнэлгээ</h3>
               <p className="text-sm text-[#6d7f9c]">
-                Түвшин, оноо, төлөв зэрэг үнэлгээтэй холбоотой тохиргоо.
+                Түвшин, оноо зэрэг үнэлгээтэй холбоотой тохиргоо.
               </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <SelectField
                 label="Түвшин"
                 onValueChange={(value) =>
@@ -373,33 +542,6 @@ export function QuestionBuilderForm({
                   value={values.points}
                 />
               </Field>
-              <SelectField
-                label="Төлөв"
-                onValueChange={(value) =>
-                  updateValue(
-                    "status",
-                    value as QuestionBuilderValues["status"],
-                  )
-                }
-                options={QUESTION_STATUSES.map((status) => ({
-                  label: STATUS_LABELS[status],
-                  value: status,
-                }))}
-                value={values.status}
-              />
-              <Field label="Үнэлгээний хэлбэр">
-                <div className="flex h-12 items-center rounded-2xl border border-[#d3deef] bg-[#f8fbff] px-4 text-sm font-medium text-[#365077]">
-                  {values.questionType === "multiple_choice" &&
-                    "Автомат үнэлгээ"}
-                  {values.questionType === "short_answer" && "Хосолмол үнэлгээ"}
-                  {values.questionType === "formula_input" &&
-                    "Хосолмол үнэлгээ"}
-                  {(values.questionType === "long_answer" ||
-                    values.questionType === "image_based" ||
-                    values.questionType === "file_upload") &&
-                    "Гараар үнэлэх"}
-                </div>
-              </Field>
             </div>
           </section>
         </div>
@@ -407,18 +549,11 @@ export function QuestionBuilderForm({
         <div className="sticky bottom-0 mt-auto border-t border-[#dce5f2] bg-white px-6 py-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
             <button
-              className="inline-flex h-11 items-center justify-center rounded-2xl border border-[#d7e2f1] px-4 text-sm font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
-              onClick={() => onSubmit({ ...values, status: "draft" })}
-              type="button"
-            >
-              Ноорог хадгалах
-            </button>
-            <button
               className="inline-flex h-11 items-center justify-center rounded-2xl bg-[#1f6feb] px-4 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
-              onClick={() => onSubmit({ ...values, status: "published" })}
+              onClick={handleSubmit}
               type="button"
             >
-              Асуултыг нийтлэх
+              Асуултыг нэмэх
             </button>
           </div>
         </div>
@@ -428,6 +563,7 @@ export function QuestionBuilderForm({
 }
 
 function DynamicQuestionFields({
+  mode,
   values,
   validationErrors,
   onSimpleChange,
@@ -435,9 +571,8 @@ function DynamicQuestionFields({
   onMarkCorrectOption,
   onAddOption,
   onRemoveOption,
-  onFormulaChange,
-  onImageChange,
 }: {
+  mode: "multiple_choice" | "long_answer";
   values: QuestionBuilderValues;
   validationErrors?: QuestionValidationErrors;
   onSimpleChange: <Key extends keyof QuestionBuilderValues>(
@@ -448,12 +583,8 @@ function DynamicQuestionFields({
   onMarkCorrectOption: (optionId: string) => void;
   onAddOption: () => void;
   onRemoveOption: (optionId: string) => void;
-  onFormulaChange: (value: string) => void;
-  onImageChange: (value: string) => void;
 }) {
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-
-  if (values.questionType === "multiple_choice") {
+  if (mode === "multiple_choice") {
     return (
       <div className="space-y-4">
         <div className="space-y-3">
@@ -509,132 +640,66 @@ function DynamicQuestionFields({
     );
   }
 
-  if (values.questionType === "short_answer") {
-    return (
-      <Field label="Хүлээгдэх хариулт" error={validationErrors?.correctAnswer}>
-        <input
-          className={inputClassName}
-          onChange={(event) =>
-            onSimpleChange("correctAnswer", event.target.value)
-          }
-          placeholder="Жишээ: Хлорофилл"
-          value={values.correctAnswer}
-        />
-      </Field>
-    );
-  }
-
-  if (values.questionType === "long_answer") {
-    return (
-      <Field
-        label="Рубрик эсвэл үнэлгээний тэмдэглэл"
-        error={validationErrors?.rubric}
-      >
-        <textarea
-          className={`${inputClassName} min-h-32 py-3`}
-          onChange={(event) => onSimpleChange("rubric", event.target.value)}
-          placeholder="Сайн, дунд, сул хариултад ямар агуулга байхыг тайлбарлана уу."
-          value={values.rubric}
-        />
-      </Field>
-    );
-  }
-
-  if (values.questionType === "formula_input") {
-    return (
-      <FormulaEditor
-        error={validationErrors?.formulaRaw}
-        onChange={onFormulaChange}
-        value={values.formulaRaw}
-      />
-    );
-  }
-
-  if (values.questionType === "image_based") {
-    return (
-      <ImageUploader
-        error={validationErrors?.imageUrl}
-        imageUrl={values.imageUrl}
-        onChange={onImageChange}
-      />
-    );
-  }
-
-  const acceptValue = values.fileUploadConfig.acceptedFileTypes.join(", ");
-  const maxFiles = Math.max(1, values.fileUploadConfig.maxFiles || 1);
-
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
-      <Field label="Файл хавсаргах" error={validationErrors?.fileUploadConfig}>
-        <input
-          className={`${inputClassName} h-12 py-2`}
-          multiple={maxFiles > 1}
-          onChange={(event) => {
-            const files = Array.from(event.target.files ?? []);
-            setAttachedFiles(files.slice(0, maxFiles));
-          }}
-          type="file"
-          {...(acceptValue ? { accept: acceptValue } : {})}
-        />
-        {attachedFiles.length > 0 ? (
-          <p className="text-xs font-medium text-[#4f6b96]">
-            Сонгосон файл: {attachedFiles.map((file) => file.name).join(", ")}
-          </p>
-        ) : null}
-      </Field>
-      <Field
-        label="Зөвшөөрөх файлын төрөл"
-        error={validationErrors?.fileUploadConfig}
-      >
-        <input
-          className={inputClassName}
-          onChange={(event) =>
-            onSimpleChange("fileUploadConfig", {
-              ...values.fileUploadConfig,
-              acceptedFileTypes: event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean),
-            })
-          }
-          placeholder=".pdf, .docx, .png"
-          value={values.fileUploadConfig.acceptedFileTypes.join(", ")}
-        />
-      </Field>
-      <Field label="Файлын дээд тоо">
-        <input
-          className={inputClassName}
-          min={1}
-          onChange={(event) =>
-            onSimpleChange("fileUploadConfig", {
-              ...values.fileUploadConfig,
-              maxFiles: Number(event.target.value),
-            })
-          }
-          type="number"
-          value={values.fileUploadConfig.maxFiles}
-        />
-      </Field>
-      <div className="xl:col-span-2">
-        <Field
-          label="Хавсаргах заавар"
-          error={validationErrors?.fileUploadConfig}
-        >
-          <textarea
-            className={`${inputClassName} min-h-32 py-3`}
-            onChange={(event) =>
-              onSimpleChange("fileUploadConfig", {
-                ...values.fileUploadConfig,
-                instructions: event.target.value,
-              })
-            }
-            placeholder="Сурагчид юу хавсаргах, хэрхэн үнэлэгдэхийг тайлбарлана уу."
-            value={values.fileUploadConfig.instructions}
-          />
-        </Field>
-      </div>
-    </div>
+    <Field
+      label="Рубрик эсвэл үнэлгээний тэмдэглэл"
+      error={validationErrors?.rubric}
+    >
+      <textarea
+        className={`${inputClassName} min-h-32 py-3`}
+        onChange={(event) => onSimpleChange("rubric", event.target.value)}
+        placeholder="Сайн, дунд, сул хариултад ямар агуулга байхыг тайлбарлана уу."
+        value={values.rubric}
+      />
+    </Field>
   );
+}
+
+function FeatureToggleCard({
+  checked,
+  label,
+  description,
+  onCheckedChange,
+}: {
+  checked: boolean;
+  label: string;
+  description: string;
+  onCheckedChange: (checked: boolean) => void;
+}) {
+  return (
+    <label
+      className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
+        checked
+          ? "border-[#6caeff] bg-[#eef6ff]"
+          : "border-[#d8e2f0] bg-white hover:border-[#a9c8f6]"
+      }`}
+    >
+      <input
+        checked={checked}
+        className="mt-1 h-4 w-4 rounded border-[#b8c8dc] text-[#1f6feb] focus:ring-[#1f6feb]/20"
+        onChange={(event) => onCheckedChange(event.target.checked)}
+        type="checkbox"
+      />
+      <div>
+        <p className="text-sm font-semibold text-[#183153]">{label}</p>
+        <p className="mt-1 text-sm leading-6 text-[#607391]">{description}</p>
+      </div>
+    </label>
+  );
+}
+
+function getFormulaHelpers(subject: string) {
+  const normalized = subject.trim().toLowerCase();
+
+  if (normalized.includes("мат")) {
+    return MATH_FORMULA_HELPERS;
+  }
+
+  if (normalized.includes("физ")) {
+    return PHYSICS_FORMULA_HELPERS;
+  }
+
+  return GENERIC_FORMULA_HELPERS;
 }
 
 function Field({
