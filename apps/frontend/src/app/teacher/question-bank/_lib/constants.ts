@@ -6,6 +6,7 @@ export const QUESTION_BANK_FILTER_DEFAULTS: QuestionFilters = {
   difficulty: "all",
   subject: "all",
   grade: "all",
+  topic: "all",
   subtopic: "all",
   status: "all",
   sortBy: "newest",

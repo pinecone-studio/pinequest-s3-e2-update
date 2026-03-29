@@ -5,17 +5,19 @@ import { Search } from "lucide-react";
 export function QuestionSearchBar({
   value,
   onChange,
+  placeholder = "Асуулт, сэдэв, түлхүүр үгээр хайх",
 }: {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
 }) {
   return (
     <label className="relative block">
-      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7a8aa5]" />
+      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9ca3af]" />
       <input
-        className="h-12 w-full rounded-2xl border border-[#d3deef] bg-white pl-11 pr-4 text-sm text-[#183153] outline-none transition focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10"
+        className="h-12 w-full rounded-xl border border-[#e5e7eb] bg-[#fbfbfc] pl-11 pr-4 text-sm text-[#111827] outline-none transition focus:border-[#cbd5e1] focus:bg-white focus:ring-4 focus:ring-[#e5e7eb]"
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Гарчиг, асуулт, түлхүүр үг эсвэл хичээлээр хайх"
+        placeholder={placeholder}
         value={value}
       />
     </label>

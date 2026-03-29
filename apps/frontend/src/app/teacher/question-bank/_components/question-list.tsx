@@ -1,46 +1,43 @@
 "use client";
 
-import type { Question } from "../_lib/types";
+import type { Question, QuestionBankTab } from "../_lib/types";
 import { EmptyState } from "./empty-state";
 import { QuestionCard } from "./question-card";
 
 type QuestionListProps = {
   questions: Question[];
-  activeQuestionId: string | null;
-  selectedQuestionIds: string[];
+  tab: QuestionBankTab;
+  onAddToExam: (questionId: string) => void;
+  onCopyToSchool: (questionId: string) => void;
   onCreateQuestion: () => void;
-  onSelectQuestion: (questionId: string) => void;
-  onOpenQuestion: (questionId: string) => void;
+  onDeleteQuestion: (questionId: string) => void;
   onEditQuestion: (questionId: string) => void;
-  onReuseQuestion: (questionId: string) => void;
 };
 
 export function QuestionList({
   questions,
-  activeQuestionId,
-  selectedQuestionIds,
+  tab,
+  onAddToExam,
+  onCopyToSchool,
   onCreateQuestion,
-  onSelectQuestion,
-  onOpenQuestion,
+  onDeleteQuestion,
   onEditQuestion,
-  onReuseQuestion,
 }: QuestionListProps) {
   if (questions.length === 0) {
-    return <EmptyState onCreateQuestion={onCreateQuestion} />;
+    return <EmptyState onCreateQuestion={onCreateQuestion} tab={tab} />;
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 md:grid-cols-2">
       {questions.map((question) => (
         <QuestionCard
-          isActive={question.id === activeQuestionId}
-          isSelected={selectedQuestionIds.includes(question.id)}
           key={question.id}
+          onAddToExam={() => onAddToExam(question.id)}
+          onCopyToSchool={() => onCopyToSchool(question.id)}
+          onDelete={() => onDeleteQuestion(question.id)}
           onEdit={() => onEditQuestion(question.id)}
-          onOpen={() => onOpenQuestion(question.id)}
-          onReuse={() => onReuseQuestion(question.id)}
-          onSelect={() => onSelectQuestion(question.id)}
           question={question}
+          tab={tab}
         />
       ))}
     </div>

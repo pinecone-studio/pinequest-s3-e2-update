@@ -1,116 +1,146 @@
 "use client";
 
-import { CheckSquare, CopyPlus, PencilLine, Square, Star } from "lucide-react";
-import type { Question } from "../_lib/types";
-import { formatDate } from "../_lib/utils";
-import {
-  DifficultyBadge,
-  GradingTypeBadge,
-  QuestionStatusBadge,
-  QuestionTypeBadge,
-} from "./question-badges";
+import { ArrowRight, CopyPlus, PencilLine, Plus, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { Question, QuestionBankTab } from "../_lib/types";
+import { DIFFICULTY_LABELS } from "../_lib/utils";
 
 type QuestionCardProps = {
   question: Question;
-  isActive: boolean;
-  isSelected: boolean;
-  onSelect: () => void;
-  onOpen: () => void;
-  onEdit: () => void;
-  onReuse: () => void;
+  tab: QuestionBankTab;
+  onAddToExam: () => void;
+  onCopyToSchool?: () => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
 };
 
+const difficultyStyles = {
+  easy: "bg-[#ecfdf3] text-[#027a48]",
+  medium: "bg-[#fff7ed] text-[#c2410c]",
+  hard: "bg-[#fff1f2] text-[#be123c]",
+} as const;
 
 export function QuestionCard({
   question,
-  isActive,
-  isSelected,
-  onSelect,
-  onOpen,
+  tab,
+  onAddToExam,
+  onCopyToSchool,
+  onDelete,
   onEdit,
-  onReuse,
 }: QuestionCardProps) {
-  console.log("question:", question);
+  const isGlobal = tab === "global";
+
   return (
     <article
-      className={`rounded-3xl border p-5 shadow-sm transition ${
-        isActive
-          ? "border-[#7fb3ff] bg-[#f8fbff] shadow-[0_14px_30px_rgba(79,157,255,0.12)]"
-          : "border-[#d8e2f0] bg-white hover:border-[#9fc2f4]"
-      }`}
+      className={cn(
+        "group flex h-full flex-col justify-between rounded-[22px] border bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_44px_rgba(15,23,42,0.09)]",
+        isGlobal ? "border-[#e5ebf3]" : "border-[#efe6dc]",
+      )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <button
-          className="mt-1 text-[#4f6b96] transition hover:text-[#1f6feb]"
-          onClick={onSelect}
-          type="button"
-        >
-          {isSelected ? (
-            <CheckSquare className="h-5 w-5" />
-          ) : (
-            <Square className="h-5 w-5" />
-          )}
-        </button>
-
-        <button
-          className="min-w-0 flex-1 text-left"
-          onClick={onOpen}
-          type="button"
-        >
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <QuestionStatusBadge status={question.status} />
-            <QuestionTypeBadge type={question.questionType} />
-            <DifficultyBadge difficulty={question.difficulty} />
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.02em]",
+                isGlobal
+                  ? "bg-[#eef4ff] text-[#355caa]"
+                  : "bg-[#fff5eb] text-[#a16207]",
+              )}
+            >
+              {isGlobal ? "Улсын сан" : "Сургуулийн сан"}
+            </span>
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold",
+                difficultyStyles[question.difficulty],
+              )}
+            >
+              {DIFFICULTY_LABELS[question.difficulty]}
+            </span>
           </div>
-          <h3 className="mt-3 line-clamp-2 text-lg font-semibold text-[#183153]">
-            {question.title}
-          </h3>
-          <p className="mt-2 line-clamp-3 text-sm leading-6 text-[#5f7394]">
-            {question.content.prompt}
+
+          <div className="hidden items-center gap-2 text-xs text-[#9ca3af] lg:flex">
+            {isGlobal ? "Verified source" : "Editable"}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#9ca3af]">
+            {question.subject}
           </p>
-        </button>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[#6d7f9c]">
-        <span className="rounded-full bg-[#f5f1ff] px-2.5 py-1 font-medium text-[#6242a7]">
-          {question.grade}
-        </span>
-        <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 font-medium text-[#3b5a8f]">
-          {question.subject}
-        </span>
-        <span className="rounded-full bg-[#eef6ff] px-2.5 py-1 font-medium text-[#2f66b9]">
-          {question.topic}
-        </span>
-        <GradingTypeBadge gradingType={question.gradingType} />
-        <span>{question.points} оноо</span>
-        <span>{formatDate(question.updatedAt)} шинэчилсэн</span>
-      </div>
-
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#ecf1f7] pt-4">
-        <div className="inline-flex items-center gap-1 text-sm font-medium text-[#7a8aa5]">
-          <Star className="h-4 w-4 text-[#ffb340]" />
-          {question.usageCount} удаа ашигласан
+          <h3 className="line-clamp-3 text-lg font-semibold leading-7 tracking-[-0.02em] text-[#111827]">
+            {question.content.prompt}
+          </h3>
+          {question.title && question.title !== question.content.prompt ? (
+            <p className="line-clamp-1 text-sm text-[#6b7280]">{question.title}</p>
+          ) : null}
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            className="inline-flex h-10 items-center rounded-xl border border-[#d7e2f1] px-3 text-sm font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
-            onClick={onEdit}
-            type="button"
-          >
-            <PencilLine className="mr-2 h-4 w-4" />
-            Засах
-          </button>
-          <button
-            className="inline-flex h-10 items-center rounded-xl bg-[#1f6feb] px-3 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
-            onClick={onReuse}
-            type="button"
-          >
-            <CopyPlus className="mr-2 h-4 w-4" />
-            Шалгалтад нэмэх
-          </button>
+        <div className="flex flex-wrap gap-2">
+          <Tag>{question.grade}</Tag>
+          <Tag>{question.subject}</Tag>
+          <Tag>{question.subtopic?.trim() || question.topic}</Tag>
         </div>
+
+        {isGlobal ? (
+          <p className="text-sm text-[#6b7280]">Баталгаажсан улсын сангийн асуулт</p>
+        ) : (
+          <p className="text-sm text-[#6b7280]">
+            Багш: <span className="font-medium text-[#374151]">{question.teacherName ?? "Тодорхойгүй"}</span>
+          </p>
+        )}
+      </div>
+
+      <div className="mt-5 flex flex-col gap-3 border-t border-[#f1f3f5] pt-4 sm:flex-row sm:items-center sm:justify-end">
+        {isGlobal ? (
+          <>
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-[#dbe4f0] bg-white px-3 text-sm font-medium text-[#4b5563] transition hover:border-[#c7d2fe] hover:text-[#111827] active:translate-y-px"
+              onClick={onCopyToSchool}
+              type="button"
+            >
+              <CopyPlus className="mr-2 h-4 w-4" />
+              Сургуулийн санд хуулах
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-[#eadfce] bg-white px-3 text-sm font-medium text-[#7c5a36] transition hover:border-[#d6c2a4] hover:text-[#5b3d1e] active:translate-y-px"
+              onClick={onEdit}
+              type="button"
+            >
+              <PencilLine className="mr-2 h-4 w-4" />
+              Засах
+            </button>
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-[#f0d7d9] bg-white px-3 text-sm font-medium text-[#b42318] transition hover:border-[#e8b4b8] hover:bg-[#fff5f5] active:translate-y-px"
+              onClick={onDelete}
+              type="button"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Устгах
+            </button>
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-xl bg-[#a16207] px-3 text-sm font-semibold text-white opacity-100 transition hover:bg-[#8b4f08] active:translate-y-px md:opacity-80 md:group-hover:opacity-100"
+              onClick={onAddToExam}
+              type="button"
+            >
+              <ArrowRight className="mr-2 h-4 w-4" />
+              Шалгалтанд нэмэх
+            </button>
+          </>
+        )}
       </div>
     </article>
+  );
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-[#eceef2] bg-[#f8fafc] px-2.5 py-1 text-xs font-medium text-[#4b5563]">
+      {children}
+    </span>
   );
 }

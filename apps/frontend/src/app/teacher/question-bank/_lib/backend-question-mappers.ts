@@ -20,6 +20,7 @@ export function mapBackendTestToQuestion(test: BackendTest): Question {
     id: test.id,
     title: test.title?.trim() || buildFallbackTitle(test.question),
     questionType,
+    source: "school",
     content: {
       prompt: test.question.trim(),
       guidance: test.guidance?.trim() || "",
