@@ -672,8 +672,47 @@ function StudentClassExamResultsPanel({
           >
             Энэ сурагчийн ангийн жагсаалтад өмнөх шалгалтын дүн байхгүй байна.
           </p>
+        ) : underRow ? (
+          <div className="mt-3 space-y-3">
+            {examRows.map(({ exam, score }) => (
+              <div
+                key={exam.id}
+                className="rounded-[12px] border border-[#D4D4D4] bg-white px-4 py-3"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
+                    <span className="whitespace-nowrap text-[0.8125rem] font-semibold tabular-nums text-[#122459]">
+                      {exam.date}
+                    </span>
+                    <span className="min-w-0 text-[0.875rem] font-semibold leading-snug text-[#122459]">
+                      {exam.subject} — {exam.examTitle}
+                    </span>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[0.75rem] font-bold ${
+                        score.passed
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-rose-100 text-rose-800"
+                      }`}
+                    >
+                      {score.passed ? "Тэнцсэн" : "Тэнцээгүй"}
+                    </span>
+                    <span className="text-[0.875rem] font-bold tabular-nums text-[#122459]">
+                      {score.score}
+                      <span className="font-normal text-[#122459]">
+                        {" "}
+                        / {exam.maxScore}
+                      </span>
+                    </span>
+                    <ChevronDown className="h-4 w-4 text-[#122459]" aria-hidden />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
-          <div className={underRow ? "mt-1 space-y-3" : "mt-5 space-y-3"}>
+          <div className="mt-5 space-y-3">
             {examRows.map(({ exam, score }) => (
               <details
                 key={exam.id}
@@ -1139,7 +1178,6 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 	const [activeView, setActiveView] = useState<ClassView>("students");
-	const [openEyeIds, setOpenEyeIds] = useState<Record<string, boolean>>({});
   const [historyQuery, setHistoryQuery] = useState("");
   const [expandedPastExamId, setExpandedPastExamId] = useState<string | null>(
     null,
@@ -1246,9 +1284,9 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   }
 
   return (
-    <section className="px-4 py-10 sm:px-10">
+    <section className="px-4 py-6 sm:px-10 sm:py-10">
       <div className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-2xl border border-[#7DC8FF] bg-white p-4 sm:p-6">
+        <div className="rounded-2xl bg-white p-4 sm:p-6">
           <button
             type="button"
             onClick={() => router.push("/teacher")}
@@ -1258,7 +1296,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
             Нүүр Хуудас Руу Буцах
           </button>
 
-          <div className="mt-6 flex items-start gap-4">
+          <div className="mt-6 flex flex-col items-start gap-4 sm:flex-row">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-[#EDF6FF] text-[#122459]">
               <BookOpen className="h-6 w-6" />
             </div>
@@ -1299,7 +1337,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
         ) : null}
 
         <div
-          className="flex flex-wrap justify-center gap-6 rounded-2xl bg-[#EDF6FF] p-2"
+          className="flex flex-wrap justify-center gap-3 rounded-2xl bg-[#EDF6FF] p-2 sm:gap-6"
           role="tablist"
           aria-label="Ангийн хэсгүүд"
         >
@@ -1341,7 +1379,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
         </div>
 
 				{activeView === "students" ? (
-					<div className="rounded-2xl bg-white p-6 sm:p-8">
+					<div className="rounded-2xl bg-white p-5 sm:p-8">
 						<div className="flex flex-wrap items-start justify-between gap-3">
 							<div className="min-w-0">
 								<h2 className="flex items-center gap-2 text-5 font-extrabold text-[#122459]">
@@ -1358,77 +1396,67 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
               />
             </div>
 
-						{!selectedId ? (
-							<div className="mt-5 rounded-xl px-4 py-6 text-center text-4 text-[#122459]">
-								<hr className="mx-auto mb-3 w-full max-w-2xl border-0 border-t border-[#d9dee8]" />
-								<p className="mt-2 font-semibold text-[#122459]">
-									Ангид одоогоор {classTotal} сурагч байна.
-								</p>
-							</div>
-						) : null}
+						<div className="mt-5 rounded-xl px-2 py-6 text-center text-4 text-[#122459] sm:px-4">
+							<hr className="mx-auto mb-3 h-[2px] w-full max-w-[984px] border-0 border-t border-[#A1A1A1]" />
+							<p className="mt-2 font-semibold text-[#122459]">
+								Ангид одоогоор {classTotal} сурагч байна.
+							</p>
+						</div>
 
 						<div className="mt-6 space-y-4">
 							{students.map((student, index) => {
 								const open = selectedId === student.id;
 								return (
-									<Fragment key={student.id}>
-										<div
-											role="button"
-											tabIndex={0}
-											aria-expanded={open}
-											onClick={() =>
+									<div
+										key={student.id}
+										role="button"
+										tabIndex={0}
+										aria-expanded={open}
+										onClick={() =>
+											setSelectedId((cur) =>
+												cur === student.id ? null : student.id,
+											)
+										}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") {
+												e.preventDefault();
 												setSelectedId((cur) =>
 													cur === student.id ? null : student.id,
-												)
+												);
 											}
-											onKeyDown={(e) => {
-												if (e.key === "Enter" || e.key === " ") {
-													e.preventDefault();
-													setSelectedId((cur) =>
-														cur === student.id ? null : student.id,
-													);
-												}
-											}}
-											className={`cursor-pointer rounded-2xl border border-[#d9dee8] bg-white px-5 py-4 transition hover:bg-[#EDF6FF] ${
-												open ? "bg-[#EDF6FF] ring-1 ring-inset ring-[#7DC8FF]/40" : ""
+										}}
+										className={`mx-auto w-full max-w-[455px] cursor-pointer rounded-[12px] border border-[#D4D4D4] bg-white px-4 transition hover:bg-[#EDF6FF] sm:px-5 ${
+											open ? "pb-5" : "py-4 sm:h-[86px]"
+										}`}
+									>
+										<div
+											className={`flex h-full justify-between gap-4 ${
+												open ? "items-start pt-4" : "items-center"
 											}`}
 										>
-											<div className="flex items-center justify-between gap-4">
-												<div className="flex items-start gap-4">
-													<span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#122459]">
-														{index + 1}
-													</span>
-													<div className="min-w-0 flex-1">
-														<p className="text-4 font-semibold text-[#122459]">
-															{student.firstName} {student.lastName}
-														</p>
-														<p className="mt-1 text-3 text-[#122459]">
-															{`${student.studentNumber.toLowerCase()}@gmail.com`}
-														</p>
-													</div>
+											<div className="flex items-start gap-4">
+												<span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#122459]">
+													{index + 1}
+												</span>
+												<div className="min-w-0 flex-1">
+													<p className="text-4 font-semibold text-[#122459]">
+														{student.firstName} {student.lastName}
+													</p>
+													<p className="mt-1 text-3 text-[#122459]">
+														{`${student.studentNumber.toLowerCase()}@gmail.com`}
+													</p>
 												</div>
-												<button
-													type="button"
-													aria-label="Нүдний харагдацыг солих"
-													onClick={(event) => {
-														event.stopPropagation();
-														setOpenEyeIds((current) => ({
-															...current,
-															[student.id]: !current[student.id],
-														}));
-													}}
-													className="flex h-[50px] w-[50px] items-center justify-center rounded-xl bg-white transition hover:bg-[#EDF6FF]"
-												>
-													{openEyeIds[student.id] ? (
-														<Eye className="h-5 w-5 text-[#1f6feb]" aria-hidden />
-													) : (
-														<EyeClosed className="h-5 w-5 text-[#1f6feb]" aria-hidden />
-													)}
-												</button>
 											</div>
+											<span className="flex h-[50px] w-[50px] items-center justify-center rounded-xl bg-white">
+												{open ? (
+													<Eye className="h-5 w-5 text-[#1f6feb]" aria-hidden />
+												) : (
+													<EyeClosed className="h-5 w-5 text-[#1f6feb]" aria-hidden />
+												)}
+											</span>
 										</div>
 										{open ? (
-											<div className="rounded-2xl border border-[#d9dee8] bg-[#EDF6FF]">
+											<div className="mt-4">
 												<StudentClassExamResultsPanel
 													classLabel={cls.name}
 													examRows={selectedStudentExams}
@@ -1437,7 +1465,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 												/>
 											</div>
 										) : null}
-									</Fragment>
+									</div>
 								);
 							})}
 						</div>

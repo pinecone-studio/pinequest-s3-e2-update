@@ -104,7 +104,7 @@ export default function TeacherShell({
       <div className="min-h-screen bg-white text-[#1f2a44]">
         <header className="sticky top-0 z-40 border-b border-[#d9dee8] bg-white/95 backdrop-blur">
           <div className="mx-auto max-w-378 px-4 py-3 lg:px-6">
-            <div className="flex items-center gap-8 justify-between">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-4">
                 <Link
                   href="/teacher"
@@ -125,8 +125,8 @@ export default function TeacherShell({
                   </p>
                 </div>
               </div>
-              <div>
-                <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-5 overflow-x-auto pb-1">
+              <div className="w-full lg:w-auto">
+                <nav className="min-w-0 flex w-full flex-nowrap items-center gap-3 overflow-x-auto pb-1 lg:gap-5">
                   {menuItems.map((item) => {
                     const isActive =
                       pathname === item.href ||
@@ -138,7 +138,7 @@ export default function TeacherShell({
                         key={item.href}
                         href={item.href}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`inline-flex items-center gap-2 whitespace-nowrap rounded-lg border px-3 py-1.5 text-3 font-semibold transition-colors ${
+                        className={`inline-flex items-center gap-2 whitespace-nowrap rounded-lg border px-3 py-1.5 text-3 font-semibold transition-colors lg:px-3.5 ${
                           isActive
                             ? "border-[#d9dee8] bg-[#EDF6FF] text-black"
                             : "border-transparent text-black hover:border-[#d9dee8] hover:bg-[#EDF6FF]"
@@ -221,7 +221,7 @@ export default function TeacherShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-378 px-4 py-6 lg:px-6">
+        <main className="mx-auto w-full max-w-378 px-4 py-4 sm:py-6 lg:px-6">
           {children}
         </main>
       </div>
