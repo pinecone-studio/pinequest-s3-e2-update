@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_SUBJECTS_QUERY = gql`
-  query GetAllSubjects {
-    getAllSubjects {
+  query GetAllSubject {
+    getAllSubject {
       id
       name
     }
@@ -10,7 +10,7 @@ export const GET_ALL_SUBJECTS_QUERY = gql`
 `;
 
 export type GetAllSubjectsResponse = {
-  getAllSubjects: {
+  getAllSubject: {
     id: string;
     name: string;
   }[];
