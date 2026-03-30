@@ -101,19 +101,19 @@ export default function TeacherShell({
 
   return (
     <TeacherContext.Provider value={user}>
-      <div className="min-h-screen bg-[#f6faff] text-[#1f2a44]">
+      <div className="min-h-screen bg-white text-[#1f2a44]">
         <header className="sticky top-0 z-40 border-b border-[#d9dee8] bg-white/95 backdrop-blur">
           <div className="mx-auto max-w-378 px-4 py-3 lg:px-6">
             <div className="flex items-center gap-8 justify-between">
               <div className="flex min-w-0 items-center gap-4">
                 <Link
                   href="/teacher"
-                  className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-[#e6eaf2] bg-white/95 shadow-[0_6px_20px_rgba(31,42,68,0.12)] outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#f2d45c] focus-visible:ring-offset-2"
+                  className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
                   aria-label="Нүүр хуудас — багшийн самбар"
                 >
                   <Image
                     alt="Зөгий лого"
-                    className="object-contain"
+                    className="object-contain rotate-[12deg]"
                     fill
                     priority
                     src="/bee.png"
@@ -126,7 +126,7 @@ export default function TeacherShell({
                 </div>
               </div>
               <div>
-                <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-6 overflow-x-auto pb-1">
+                <nav className="min-w-0 flex-1 flex flex-nowrap items-center gap-5 overflow-x-auto pb-1">
                   {menuItems.map((item) => {
                     const isActive =
                       pathname === item.href ||
@@ -138,13 +138,13 @@ export default function TeacherShell({
                         key={item.href}
                         href={item.href}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`inline-flex items-center gap-2 border-b-2 whitespace-nowrap px-1 py-1.5 transition-colors ${
+                        className={`inline-flex items-center gap-2 whitespace-nowrap rounded-lg border px-3 py-1.5 text-3 font-semibold transition-colors ${
                           isActive
-                            ? "border-[#f2d45c] text-[#c69b2a]"
-                            : "border-transparent text-[#5f4517] hover:border-[#f2d45c] hover:text-[#c69b2a]"
+                            ? "border-[#d9dee8] bg-[#EDF6FF] text-black"
+                            : "border-transparent text-black hover:border-[#d9dee8] hover:bg-[#EDF6FF]"
                         }`}
                       >
-                        <Icon className="h-5 w-5 text-[#c69b2a]" />
+                        <Icon className="h-5 w-5 text-black" />
                         <span className="text-3 font-semibold lg:text-4">
                           {item.label}
                         </span>
@@ -157,7 +157,7 @@ export default function TeacherShell({
                 <button
                   aria-expanded={isMenuOpen}
                   aria-label="Хэрэглэгчийн цэс"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#f1e6b9] bg-[#fff7d6] text-[#c69b2a] transition hover:border-[#f2d45c] hover:text-[#b0811f]"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#7DC8FF] bg-[#7DC8FF] text-black transition hover:border-[#7DC8FF] hover:text-black"
                   onClick={() => setIsMenuOpen((prev) => !prev)}
                   type="button"
                 >

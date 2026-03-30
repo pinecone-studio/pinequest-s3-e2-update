@@ -3,17 +3,19 @@
 "use client";
 
 import {
-  ArrowLeft,
-  BarChart3,
-  BookOpen,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Download,
-  Search,
-  SendHorizontal,
-  Users,
-  X,
+	ArrowLeft,
+	BarChart3,
+	BookOpen,
+	CheckCircle2,
+	ChevronDown,
+	ChevronUp,
+	Download,
+	Eye,
+	EyeClosed,
+	Search,
+	SendHorizontal,
+	Users,
+	X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -193,13 +195,13 @@ function PastExamMostFailedInsight({ row }: { row: PastExamRow }) {
       >
         <div className="flex gap-4">
           <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#f1f5f9] text-[#64748b]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#f1f5f9] text-[#122459]"
             aria-hidden
           >
             <BookOpen className="h-5 w-5" />
           </div>
-          <div className="min-w-0 text-[0.9375rem] leading-relaxed text-[#64748b] sm:text-base">
-            <p className="font-semibold text-[#475569]">
+          <div className="min-w-0 text-[0.9375rem] leading-relaxed text-[#122459] sm:text-base">
+            <p className="font-semibold text-[#122459]">
               Даваагүй асуулт олдсонгүй
             </p>
             <p className="mt-1.5">
@@ -241,10 +243,10 @@ function PastExamMostFailedInsight({ row }: { row: PastExamRow }) {
         </div>
 
         <div className="rounded-2xl border border-[#e2e8f0] bg-white px-5 py-4 shadow-sm sm:px-6 sm:py-5">
-          <p className="text-[0.8125rem] font-semibold uppercase tracking-wide text-[#64748b]">
+          <p className="text-[0.8125rem] font-semibold uppercase tracking-wide text-[#122459]">
             Асуултын өгүүлбэр
           </p>
-          <p className="mt-3 text-[0.9375rem] font-medium leading-[1.65] text-[#1e293b] sm:text-base sm:leading-[1.7]">
+          <p className="mt-3 text-[0.9375rem] font-medium leading-[1.65] text-[#122459] sm:text-base sm:leading-[1.7]">
             {insight.question}
           </p>
         </div>
@@ -275,11 +277,11 @@ function PastExamClassGradeChart({ row }: { row: PastExamRow }) {
   if (total === 0) {
     return (
       <section
-        className="flex min-h-[200px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#e2e8f0] bg-[#fafbfd] p-6 text-center text-[0.9375rem] text-[#64748b]"
+        className="flex min-h-[200px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#e2e8f0] bg-[#fafbfd] p-6 text-center text-[0.9375rem] text-[#122459]"
         aria-label="Үнэлгээний график"
       >
-        <BarChart3 className="mb-3 h-10 w-10 text-[#cbd5e1]" aria-hidden />
-        <p className="font-semibold text-[#475569]">Сурагчийн дата байхгүй</p>
+        <BarChart3 className="mb-3 h-10 w-10 text-[#122459]" aria-hidden />
+        <p className="font-semibold text-[#122459]">Сурагчийн дата байхгүй</p>
         <p className="mt-1 max-w-xs leading-relaxed">
           Үнэлгээний хуваарилалт харагдахын тулд дор хаяд нэг сурагч шалгалт
           өгсөн байх ёстой.
@@ -307,16 +309,16 @@ function PastExamClassGradeChart({ row }: { row: PastExamRow }) {
       className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_12px_rgba(15,23,42,0.04)] sm:p-6"
       aria-label="Ангийн үнэлгээний хуваарилалт"
     >
-      <h3 className="text-lg font-extrabold tracking-tight text-[#0f172a] sm:text-xl">
+      <h3 className="text-lg font-extrabold tracking-tight text-[#122459] sm:text-xl">
         Ангийн үнэлгээ (A–F)
       </h3>
-      <p className="mt-3 max-w-prose rounded-xl bg-[#f8fafc] px-3.5 py-2.5 text-[0.8125rem] leading-snug text-[#64748b] ring-1 ring-[#f1f5f9] sm:text-[0.875rem]">
+      <p className="mt-3 max-w-prose rounded-xl bg-[#f8fafc] px-3.5 py-2.5 text-[0.8125rem] leading-snug text-[#122459] ring-1 ring-[#f1f5f9] sm:text-[0.875rem]">
         Нийт онооны хувиар:{" "}
-        <span className="font-semibold text-[#475569]">A — 90%+</span> ·{" "}
-        <span className="font-semibold text-[#475569]">B — 80%+</span> ·{" "}
-        <span className="font-semibold text-[#475569]">C — 70%+</span> ·{" "}
-        <span className="font-semibold text-[#475569]">D — 60%+</span> ·{" "}
-        <span className="font-semibold text-[#475569]">F — доош</span>
+        <span className="font-semibold text-[#122459]">A — 90%+</span> ·{" "}
+        <span className="font-semibold text-[#122459]">B — 80%+</span> ·{" "}
+        <span className="font-semibold text-[#122459]">C — 70%+</span> ·{" "}
+        <span className="font-semibold text-[#122459]">D — 60%+</span> ·{" "}
+        <span className="font-semibold text-[#122459]">F — доош</span>
       </p>
 
       <div
@@ -346,7 +348,7 @@ function PastExamClassGradeChart({ row }: { row: PastExamRow }) {
           return (
             <li
               key={grade}
-              className="flex flex-col rounded-xl border border-[#e8ecf2] bg-[#fafbfd] px-3 py-3 text-[#334261] shadow-sm"
+              className="flex flex-col rounded-xl border border-[#e8ecf2] bg-[#fafbfd] px-3 py-3 text-[#122459] shadow-sm"
             >
               <div className="flex items-center gap-2">
                 <span
@@ -354,14 +356,14 @@ function PastExamClassGradeChart({ row }: { row: PastExamRow }) {
                   style={{ backgroundColor: fill }}
                   aria-hidden
                 />
-                <span className="text-lg font-extrabold tabular-nums text-[#0f172a]">
+                <span className="text-lg font-extrabold tabular-nums text-[#122459]">
                   {grade}
                 </span>
               </div>
-              <span className="mt-2 text-[0.8125rem] font-medium tabular-nums text-[#64748b]">
+              <span className="mt-2 text-[0.8125rem] font-medium tabular-nums text-[#122459]">
                 {n} сурагч
               </span>
-              <span className="mt-1 line-clamp-2 text-[0.6875rem] font-medium leading-tight text-[#94a3b8]">
+              <span className="mt-1 line-clamp-2 text-[0.6875rem] font-medium leading-tight text-[#122459]">
                 {p}% — {labelMn}
               </span>
             </li>
@@ -480,25 +482,25 @@ function PastExamStudentStatPopover({
           <div className="min-w-0">
             <p
               id="student-exam-stat-popover-title"
-              className="text-xl font-extrabold tracking-tight text-[#0f172a] sm:text-2xl"
+              className="text-xl font-extrabold tracking-tight text-[#122459] sm:text-2xl"
             >
               {student.lastName} {student.firstName}
             </p>
-            <p className="mt-1.5 truncate text-[0.9375rem] text-[#64748b]">
+            <p className="mt-1.5 truncate text-[0.9375rem] text-[#122459]">
               {classLabel}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-xl p-2 text-[#64748b] transition hover:bg-[#e8ecf2] hover:text-[#1f2a44]"
+            className="shrink-0 rounded-xl p-2 text-[#122459] transition hover:bg-[#e8ecf2] hover:text-[#122459]"
             aria-label="Хаах"
           >
             <X className="h-6 w-6" aria-hidden />
           </button>
         </div>
         <div className="max-h-[min(82vh,820px)] overflow-y-auto px-5 py-5 sm:px-6 sm:py-6">
-          <p className="text-[0.8125rem] font-bold uppercase tracking-[0.06em] text-[#4f9dff]">
+          <p className="text-[0.8125rem] font-bold uppercase tracking-[0.06em] text-[#122459]">
             Шалгалтын статистик
           </p>
           <dl className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -517,7 +519,7 @@ function PastExamStudentStatPopover({
                     <span className="text-[1.125rem] font-bold tabular-nums">
                       {student.score}
                     </span>
-                    <span className="font-normal text-[#94a3b8]">
+                    <span className="font-normal text-[#122459]">
                       {" "}
                       / {exam.maxScore}
                     </span>
@@ -528,19 +530,19 @@ function PastExamStudentStatPopover({
                 label: "Тэнцсэн",
                 value: student.passed ? "Тийм" : "Үгүй",
                 valueClass: student.passed
-                  ? "font-semibold text-[#15803d]"
-                  : "font-semibold text-[#b91c1c]",
+                  ? "font-semibold text-[#122459]"
+                  : "font-semibold text-[#122459]",
               },
             ].map((item) => (
               <div
                 key={item.label}
                 className={`rounded-xl border border-[#e8ecf2] bg-[#fafbfd] px-4 py-3 ${"className" in item ? (item.className ?? "") : ""}`}
               >
-                <dt className="text-[0.75rem] font-semibold uppercase tracking-wide text-[#94a3b8]">
+                <dt className="text-[0.75rem] font-semibold uppercase tracking-wide text-[#122459]">
                   {item.label}
                 </dt>
                 <dd
-                  className={`mt-1 text-[0.9375rem] font-semibold leading-snug text-[#0f172a] ${"valueClass" in item ? (item.valueClass ?? "") : ""}`}
+                  className={`mt-1 text-[0.9375rem] font-semibold leading-snug text-[#122459] ${"valueClass" in item ? (item.valueClass ?? "") : ""}`}
                 >
                   {item.value}
                 </dd>
@@ -550,10 +552,10 @@ function PastExamStudentStatPopover({
 
           {student.attempts?.length ? (
             <div className="mt-8 border-t border-[#e8ecf2] pt-6">
-              <p className="text-base font-extrabold text-[#0f172a]">
+              <p className="text-base font-extrabold text-[#122459]">
                 Асуулт бүрээр
               </p>
-              <p className="mt-1 text-[0.8125rem] text-[#64748b]">
+              <p className="mt-1 text-[0.8125rem] text-[#122459]">
                 Бүтэн оноо ногоон, хэсэгчилсэн оноо улбар шар зураасаар
                 тэмдэглэгдсэн.
               </p>
@@ -571,17 +573,17 @@ function PastExamStudentStatPopover({
                       key={a.order}
                       className={`rounded-2xl border border-[#e4eaf5] ${barColor} pl-4 pr-4 py-4 shadow-sm sm:pl-5 sm:pr-5 sm:py-4`}
                     >
-                      <p className="text-[0.9375rem] font-semibold leading-[1.65] text-[#0f172a] sm:text-base sm:leading-[1.7]">
-                        <span className="mr-2 font-extrabold tabular-nums text-[#4f9dff]">
+                      <p className="text-[0.9375rem] font-semibold leading-[1.65] text-[#122459] sm:text-base sm:leading-[1.7]">
+                        <span className="mr-2 font-extrabold tabular-nums text-[#122459]">
                           {a.order}.
                         </span>
                         {a.question}
                       </p>
-                      <p className="mt-3 text-[0.875rem] leading-relaxed text-[#4a5875]">
-                        <span className="font-semibold text-[#64748b]">
+                      <p className="mt-3 text-[0.875rem] leading-relaxed text-[#122459]">
+                        <span className="font-semibold text-[#122459]">
                           Хариулт:{" "}
                         </span>
-                        <span className="text-[#1e293b]">
+                        <span className="text-[#122459]">
                           {a.studentAnswer}
                         </span>
                       </p>
@@ -632,15 +634,15 @@ function StudentClassExamResultsPanel({
       <div className={underRow ? "px-4 py-4 sm:px-5 sm:py-5" : ""}>
         {underRow ? (
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2 border-b border-[#e2e8f0] pb-3">
-            <p className="text-[0.8125rem] font-semibold text-[#334261]">
+            <p className="text-[0.8125rem] font-semibold text-[#122459]">
               {student.firstName} {student.lastName}
-              <span className="ml-2 font-normal text-[#64748b]">
+              <span className="ml-2 font-normal text-[#122459]">
                 · {student.studentNumber} · {classLabel}
               </span>
             </p>
-            <p className="text-[0.8125rem] text-[#64748b]">
+            <p className="text-[0.8125rem] text-[#122459]">
               Өмнөх шалгалт:{" "}
-              <span className="font-bold tabular-nums text-[#0f172a]">
+              <span className="font-bold tabular-nums text-[#122459]">
                 {examRows.length}
               </span>
             </p>
@@ -648,16 +650,16 @@ function StudentClassExamResultsPanel({
         ) : (
           <div className="flex flex-col gap-1 border-b border-[#e2e8f0] pb-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h3 className="text-lg font-extrabold text-[#0f172a] sm:text-xl">
+              <h3 className="text-lg font-extrabold text-[#122459] sm:text-xl">
                 {student.firstName} {student.lastName}
               </h3>
-              <p className="mt-1 text-[0.875rem] text-[#64748b]">
+              <p className="mt-1 text-[0.875rem] text-[#122459]">
                 {student.studentNumber} · {classLabel}
               </p>
             </div>
-            <p className="text-[0.8125rem] font-medium text-[#64748b]">
+            <p className="text-[0.8125rem] font-medium text-[#122459]">
               Өмнөх шалгалт:{" "}
-              <span className="font-bold tabular-nums text-[#0f172a]">
+              <span className="font-bold tabular-nums text-[#122459]">
                 {examRows.length}
               </span>
             </p>
@@ -666,7 +668,7 @@ function StudentClassExamResultsPanel({
 
         {examRows.length === 0 ? (
           <p
-            className={`rounded-xl border border-dashed border-[#cbd5e1] bg-white/80 px-4 py-6 text-center text-[0.875rem] text-[#64748b] ${underRow ? "" : "mt-6 py-8"}`}
+            className={`rounded-xl border border-dashed border-[#cbd5e1] bg-white/80 px-4 py-6 text-center text-[0.875rem] text-[#122459] ${underRow ? "" : "mt-6 py-8"}`}
           >
             Энэ сурагчийн ангийн жагсаалтад өмнөх шалгалтын дүн байхгүй байна.
           </p>
@@ -679,10 +681,10 @@ function StudentClassExamResultsPanel({
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-4 py-3.5 transition hover:bg-[#f8fafc] sm:px-5 sm:py-4 [&::-webkit-details-marker]:hidden">
                   <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-                    <span className="whitespace-nowrap text-[0.8125rem] font-semibold tabular-nums text-[#475569]">
+                    <span className="whitespace-nowrap text-[0.8125rem] font-semibold tabular-nums text-[#122459]">
                       {exam.date}
                     </span>
-                    <span className="min-w-0 text-[0.9375rem] font-semibold leading-snug text-[#0f172a]">
+                    <span className="min-w-0 text-[0.9375rem] font-semibold leading-snug text-[#122459]">
                       {exam.subject} — {exam.examTitle}
                     </span>
                   </div>
@@ -696,27 +698,27 @@ function StudentClassExamResultsPanel({
                     >
                       {score.passed ? "Тэнцсэн" : "Тэнцээгүй"}
                     </span>
-                    <span className="text-[0.9375rem] font-bold tabular-nums text-[#0f172a]">
+                    <span className="text-[0.9375rem] font-bold tabular-nums text-[#122459]">
                       {score.score}
-                      <span className="font-normal text-[#94a3b8]">
+                      <span className="font-normal text-[#122459]">
                         {" "}
                         / {exam.maxScore}
                       </span>
                     </span>
                     <ChevronDown
-                      className="h-5 w-5 shrink-0 text-[#94a3b8] transition group-open:rotate-180"
+                      className="h-5 w-5 shrink-0 text-[#122459] transition group-open:rotate-180"
                       aria-hidden
                     />
                   </div>
                 </summary>
                 <div className="border-t border-[#e8ecf2] px-4 py-4 sm:px-5 sm:py-5">
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-[0.8125rem] font-semibold text-[#64748b]">
+                    <p className="text-[0.8125rem] font-semibold text-[#122459]">
                       Асуулт бүрээр
                     </p>
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-[#c8d6ea] bg-white px-3 py-2 text-[0.8125rem] font-semibold text-[#4f9dff] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-[#c8d6ea] bg-white px-3 py-2 text-[0.8125rem] font-semibold text-[#122459] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]"
                       onClick={() =>
                         downloadSingleStudentPastExamXls(
                           classLabel,
@@ -744,14 +746,14 @@ function StudentClassExamResultsPanel({
                             key={a.order}
                             className={`rounded-xl border px-3 py-3 sm:px-4 sm:py-3.5 ${barColor}`}
                           >
-                            <p className="text-[0.875rem] font-semibold leading-relaxed text-[#0f172a]">
-                              <span className="mr-1.5 font-extrabold text-[#4f9dff]">
+                            <p className="text-[0.875rem] font-semibold leading-relaxed text-[#122459]">
+                              <span className="mr-1.5 font-extrabold text-[#122459]">
                                 {a.order}.
                               </span>
                               {a.question}
                             </p>
-                            <p className="mt-2 text-[0.8125rem] text-[#4a5875]">
-                              <span className="font-semibold text-[#64748b]">
+                            <p className="mt-2 text-[0.8125rem] text-[#122459]">
+                              <span className="font-semibold text-[#122459]">
                                 Хариулт:{" "}
                               </span>
                               {a.studentAnswer}
@@ -772,7 +774,7 @@ function StudentClassExamResultsPanel({
                       })}
                     </ul>
                   ) : (
-                    <p className="text-[0.875rem] text-[#64748b]">
+                    <p className="text-[0.875rem] text-[#122459]">
                       Асуулт бүрийн дэлгэрэнгүй алга.
                     </p>
                   )}
@@ -815,16 +817,16 @@ function PendingExamDeliveryPanel({
     <section className="rounded-2xl border border-[#cfe0fb] bg-gradient-to-br from-[#eff6ff] via-white to-[#f8fbff] p-6 shadow-[0_12px_32px_rgba(79,157,255,0.10)] sm:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
-          <p className="text-[0.8125rem] font-bold uppercase tracking-[0.18em] text-[#6f85a8]">
+          <p className="text-[0.8125rem] font-bold uppercase tracking-[0.18em] text-[#122459]">
             Шалгалт илгээх
           </p>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[#183153]">
+          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[#122459]">
             {examTitle}
           </h2>
-          <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-[#5f7394] sm:text-base">
+          <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-[#122459] sm:text-base">
             {className} ангид энэ шалгалтыг илгээхээс өмнө{" "}
-            <span className="font-semibold text-[#183153]">Бүгд</span> эсвэл{" "}
-            <span className="font-semibold text-[#183153]">Түүвэр</span> сонгоно
+            <span className="font-semibold text-[#122459]">Бүгд</span> эсвэл{" "}
+            <span className="font-semibold text-[#122459]">Түүвэр</span> сонгоно
             уу.
           </p>
         </div>
@@ -846,17 +848,17 @@ function PendingExamDeliveryPanel({
             onClick={() => onChangeDeliveryMode("all")}
             className={`flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition ${
               deliveryMode === "all"
-                ? "bg-[#eaf3ff] text-[#1f6feb]"
-                : "bg-[#fbfdff] text-[#365077] hover:bg-[#f4f8ff]"
+                ? "bg-[#eaf3ff] text-[#122459]"
+                : "bg-[#fbfdff] text-[#122459] hover:bg-[#f4f8ff]"
             }`}
           >
             <div>
               <p className="text-base font-semibold">Бүх сурагч</p>
-              <p className="mt-1 text-sm text-[#6a7f9f]">
+              <p className="mt-1 text-sm text-[#122459]">
                 {students.length} сурагчид бүгдэд нь илгээнэ
               </p>
             </div>
-            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb]">
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#122459]">
               Бүгд
             </span>
           </button>
@@ -866,17 +868,17 @@ function PendingExamDeliveryPanel({
             onClick={() => onChangeDeliveryMode("sample")}
             className={`flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition ${
               deliveryMode === "sample"
-                ? "bg-[#eaf3ff] text-[#1f6feb]"
-                : "bg-[#fbfdff] text-[#365077] hover:bg-[#f4f8ff]"
+                ? "bg-[#eaf3ff] text-[#122459]"
+                : "bg-[#fbfdff] text-[#122459] hover:bg-[#f4f8ff]"
             }`}
           >
             <div>
               <p className="text-base font-semibold">Түүвэр</p>
-              <p className="mt-1 text-sm text-[#6a7f9f]">
+              <p className="mt-1 text-sm text-[#122459]">
                 Сонгосон сурагчдад л илгээнэ
               </p>
             </div>
-            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb]">
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#122459]">
               {selectedCount} сонгосон
             </span>
           </button>
@@ -885,13 +887,13 @@ function PendingExamDeliveryPanel({
         <div className="rounded-2xl border border-[#d7e6fb] bg-white p-4 shadow-sm sm:p-5">
           {deliveryMode === "all" ? (
             <div className="flex h-full min-h-[220px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#cbdaf3] bg-[#f9fbff] px-6 py-8 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#4f9dff]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#122459]">
                 <Users className="h-7 w-7" />
               </div>
-              <p className="mt-4 text-lg font-semibold text-[#183153]">
+              <p className="mt-4 text-lg font-semibold text-[#122459]">
                 {className} ангийн бүх сурагч
               </p>
-              <p className="mt-2 max-w-md text-sm leading-relaxed text-[#60728f] sm:text-base">
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-[#122459] sm:text-base">
                 Илгээх дарахад энэ ангийн {students.length} сурагч бүгд
                 шалгалтыг авна.
               </p>
@@ -900,10 +902,10 @@ function PendingExamDeliveryPanel({
             <div>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-lg font-bold text-[#183153]">
+                  <h3 className="text-lg font-bold text-[#122459]">
                     Сурагч сонгох
                   </h3>
-                  <p className="mt-1 text-sm text-[#60728f]">
+                  <p className="mt-1 text-sm text-[#122459]">
                     Түүвэрт оруулах сурагчдаа сонгоно уу.
                   </p>
                 </div>
@@ -911,14 +913,14 @@ function PendingExamDeliveryPanel({
                   <button
                     type="button"
                     onClick={onSelectAllSample}
-                    className="rounded-full border border-[#d7e2f1] bg-white px-3 py-1.5 text-xs font-semibold text-[#365077] transition hover:border-[#4f9dff] hover:text-[#1f6feb]"
+                    className="rounded-full border border-[#d7e2f1] bg-white px-3 py-1.5 text-xs font-semibold text-[#122459] transition hover:border-[#4f9dff] hover:text-[#122459]"
                   >
                     Бүгдийг сонгох
                   </button>
                   <button
                     type="button"
                     onClick={onClearSample}
-                    className="rounded-full border border-[#d7e2f1] bg-white px-3 py-1.5 text-xs font-semibold text-[#365077] transition hover:border-[#4f9dff] hover:text-[#1f6feb]"
+                    className="rounded-full border border-[#d7e2f1] bg-white px-3 py-1.5 text-xs font-semibold text-[#122459] transition hover:border-[#4f9dff] hover:text-[#122459]"
                   >
                     Цэвэрлэх
                   </button>
@@ -941,10 +943,10 @@ function PendingExamDeliveryPanel({
                           }`}
                         >
                           <div className="min-w-0">
-                            <p className="font-semibold text-[#183153]">
+                            <p className="font-semibold text-[#122459]">
                               {student.firstName} {student.lastName}
                             </p>
-                            <p className="mt-1 text-sm text-[#7a8ca8]">
+                            <p className="mt-1 text-sm text-[#122459]">
                               {student.studentNumber}
                             </p>
                           </div>
@@ -1068,7 +1070,7 @@ function DownloadMenu({
         aria-expanded={isOpen}
         aria-haspopup="menu"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#f1e6b9] bg-[#ffe88a] px-4 py-2.5 text-3 font-semibold text-[#5f4517] shadow-sm transition hover:border-[#f2d45c] hover:bg-[#ffefad] disabled:cursor-not-allowed disabled:opacity-50 sm:text-4"
+        className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-3 font-semibold text-[#122459] shadow-sm transition hover:border-[#7DC8FF] hover:bg-[#EDF6FF] disabled:cursor-not-allowed disabled:opacity-50 sm:text-4"
       >
         <Download className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
         {label}
@@ -1076,7 +1078,7 @@ function DownloadMenu({
 
       {isOpen ? (
         <div
-          className="absolute right-0 z-20 mt-2 min-w-40 rounded-xl border border-[#f1e6b9] bg-white p-1 shadow-md"
+          className="absolute right-0 z-20 mt-2 min-w-40 rounded-xl border border-[#d9dee8] bg-white p-1 shadow-md"
           role="menu"
         >
           <button
@@ -1086,7 +1088,7 @@ function DownloadMenu({
               onExcel();
               setIsOpen(false);
             }}
-            className="w-full rounded-lg px-3 py-2 text-left text-3 font-semibold text-[#3f2d12] hover:bg-[#fff7d6]"
+            className="w-full rounded-lg px-3 py-2 text-left text-3 font-semibold text-[#122459] hover:bg-[#EDF6FF]"
           >
             Excel татах
           </button>
@@ -1097,7 +1099,7 @@ function DownloadMenu({
               onPdf();
               setIsOpen(false);
             }}
-            className="w-full rounded-lg px-3 py-2 text-left text-3 font-semibold text-[#3f2d12] hover:bg-[#fff7d6]"
+            className="w-full rounded-lg px-3 py-2 text-left text-3 font-semibold text-[#122459] hover:bg-[#EDF6FF]"
           >
             PDF татах
           </button>
@@ -1136,7 +1138,8 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   );
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<ClassView>("students");
+	const [activeView, setActiveView] = useState<ClassView>("students");
+	const [openEyeIds, setOpenEyeIds] = useState<Record<string, boolean>>({});
   const [historyQuery, setHistoryQuery] = useState("");
   const [expandedPastExamId, setExpandedPastExamId] = useState<string | null>(
     null,
@@ -1217,7 +1220,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
     return (
       <section className="px-4 py-10 sm:px-10">
         <div className="mx-auto max-w-lg rounded-2xl border border-[#d9dee8] bg-white p-8 text-center shadow-sm">
-          <p className="text-4 font-semibold text-[#475569]">
+          <p className="text-4 font-semibold text-[#122459]">
             Энэ ангид хандах эрхгүй эсвэл анги олдсонгүй.
           </p>
           <button
@@ -1245,25 +1248,25 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   return (
     <section className="px-4 py-10 sm:px-10">
       <div className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-2xl border border-[#f1e6b9] bg-white p-6 shadow-sm sm:p-8">
+        <div className="rounded-2xl border border-[#7DC8FF] bg-white p-4 sm:p-6">
           <button
             type="button"
             onClick={() => router.push("/teacher")}
-            className="inline-flex items-center gap-2 text-4 font-semibold text-[#6b4f1d] transition-colors hover:text-[#b7791f]"
+            className="inline-flex items-center gap-2 text-4 font-semibold text-[#122459] transition-colors hover:text-[#122459]"
           >
             <ArrowLeft className="h-5 w-5" />
             Нүүр Хуудас Руу Буцах
           </button>
 
           <div className="mt-6 flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#f3e1a4] bg-[#fff7d6] text-[#6b4f1d]">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-[#EDF6FF] text-[#122459]">
               <BookOpen className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-5 font-extrabold text-[#3f2d12]">
+              <h1 className="text-5 font-extrabold text-[#122459]">
                 {cls.name}
               </h1>
-              <p className="mt-2 text-3 text-[#7a6236]">
+              <p className="mt-2 text-3 text-[#122459]">
                 Мөр дарахад нэрний доор өмнөх шалгалтын дүн нээгдэнэ. Дахин
                 дархад хаагдана.
               </p>
@@ -1275,8 +1278,8 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
           <div
             className={`rounded-2xl border px-5 py-4 text-sm font-medium ${
               deliveryFeedback.includes("дор хаяж")
-                ? "border-[#ffd7d7] bg-[#fff5f5] text-[#bf4a4a]"
-                : "border-[#cfe0fb] bg-[#eef6ff] text-[#2f66b9]"
+                ? "border-[#ffd7d7] bg-[#fff5f5] text-[#122459]"
+                : "border-[#cfe0fb] bg-[#eef6ff] text-[#122459]"
             }`}
           >
             {deliveryFeedback}
@@ -1296,7 +1299,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
         ) : null}
 
         <div
-          className="flex flex-wrap justify-center gap-6 rounded-2xl border border-[#f1e6b9] bg-[#fff7d6] p-2 shadow-sm"
+          className="flex flex-wrap justify-center gap-6 rounded-2xl bg-[#EDF6FF] p-2"
           role="tablist"
           aria-label="Ангийн хэсгүүд"
         >
@@ -1308,14 +1311,14 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
               setExamStudentPopover(null);
               setActiveView("students");
             }}
-            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-4 font-semibold transition-colors sm:flex-none sm:min-w-[200px] ${
+            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-4 font-semibold transition-colors sm:flex-none sm:min-w-[200px] ${
               activeView === "students"
-                ? "bg-[#ffe88a] text-[#5f4517] shadow-sm"
-                : "bg-transparent text-[#6b4f1d] hover:bg-[#fff1b8] hover:text-[#5f4517]"
+                ? "border-[#7DC8FF] bg-[#cfe4ff] text-[#122459]"
+                : "border-transparent text-[#122459] hover:border-[#d9dee8] hover:bg-[#EDF6FF]"
             }`}
           >
             <Users
-              className={`h-5 w-5 shrink-0 ${activeView === "students" ? "text-[#5f4517]" : "text-[#c69b2a]"}`}
+              className={`h-5 w-5 shrink-0 ${activeView === "students" ? "text-[#122459]" : "text-[#122459]"}`}
             />
             Сурагчид
           </button>
@@ -1324,30 +1327,29 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
             role="tab"
             aria-selected={activeView === "history"}
             onClick={() => setActiveView("history")}
-            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-4 font-semibold transition-colors sm:flex-none sm:min-w-[200px] ${
+            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-4 font-semibold transition-colors sm:flex-none sm:min-w-[200px] ${
               activeView === "history"
-                ? "bg-[#ffe88a] text-[#5f4517] shadow-sm"
-                : "bg-transparent text-[#6b4f1d] hover:bg-[#fff1b8] hover:text-[#5f4517]"
+                ? "border-[#7DC8FF] bg-[#cfe4ff] text-[#122459]"
+                : "border-transparent text-[#122459] hover:border-[#d9dee8] hover:bg-[#EDF6FF]"
             }`}
           >
             <BarChart3
-              className={`h-5 w-5 shrink-0 ${activeView === "history" ? "text-[#5f4517]" : "text-[#c69b2a]"}`}
+              className={`h-5 w-5 shrink-0 ${activeView === "history" ? "text-[#122459]" : "text-[#122459]"}`}
             />
             Шалгалтын статистик
           </button>
         </div>
 
 				{activeView === "students" ? (
-					<div className="rounded-2xl border border-[#f1e6b9] bg-[#fffdf2] p-6 shadow-sm sm:p-8">
+					<div className="rounded-2xl bg-white p-6 sm:p-8">
 						<div className="flex flex-wrap items-start justify-between gap-3">
 							<div className="min-w-0">
-								<h2 className="flex items-center gap-2 text-5 font-extrabold text-[#3f2d12]">
-									<Users className="h-6 w-6 shrink-0 text-[#c69b2a]" />
+								<h2 className="flex items-center gap-2 text-5 font-extrabold text-[#122459]">
+									<Users className="h-6 w-6 shrink-0 text-[#122459]" />
 									Сурагчид
 								</h2>
-								<p className="mt-2 text-4 text-[#7a6236]">
-									Мөр дарахад нэрний доор өмнөх шалгалтын дүн нээгдэнэ. Дахин
-									дарахад хаагдана.
+								<p className="mt-2 text-4 text-[#122459]">
+									Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай.
 								</p>
 							</div>
               <DownloadMenu
@@ -1357,98 +1359,97 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
             </div>
 
 						{!selectedId ? (
-							<div className="mt-5 rounded-xl border border-dashed border-[#f3e1a4] bg-[#fff9e8] px-4 py-6 text-center text-4 text-[#7a6236]">
-								Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай.
-								<p className="mt-2 font-semibold text-[#6b4f1d]">
+							<div className="mt-5 rounded-xl px-4 py-6 text-center text-4 text-[#122459]">
+								<hr className="mx-auto mb-3 w-full max-w-2xl border-0 border-t border-[#d9dee8]" />
+								<p className="mt-2 font-semibold text-[#122459]">
 									Ангид одоогоор {classTotal} сурагч байна.
 								</p>
 							</div>
 						) : null}
 
-						<div className="mt-6 overflow-x-auto rounded-xl border border-[#f1e6b9] bg-white">
-							<table className="w-full min-w-[320px]">
-								<thead>
-									<tr className="border-b border-[#f1e6b9] bg-[#fff7d6]">
-										<th className="px-4 py-3 text-left text-4 font-semibold text-[#7a6236]">
-											№ / Нэр
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{students.map((student, index) => {
-										const open = selectedId === student.id;
-										return (
-											<Fragment key={student.id}>
-												<tr
-                          role="button"
-                          tabIndex={0}
-                          aria-expanded={open}
-                          onClick={() =>
-                            setSelectedId((cur) =>
-                              cur === student.id ? null : student.id,
-                            )
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              setSelectedId((cur) =>
-                                cur === student.id ? null : student.id,
-                              );
-                            }
-                          }}
-													className={`cursor-pointer border-b border-[#f1e6b9] transition hover:bg-[#fff9e8] ${
-														open
-															? "bg-[#fff4bf] ring-1 ring-inset ring-[#f2d45c]/60"
-															: ""
-													}`}
+						<div className="mt-6 space-y-4">
+							{students.map((student, index) => {
+								const open = selectedId === student.id;
+								return (
+									<Fragment key={student.id}>
+										<div
+											role="button"
+											tabIndex={0}
+											aria-expanded={open}
+											onClick={() =>
+												setSelectedId((cur) =>
+													cur === student.id ? null : student.id,
+												)
+											}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													e.preventDefault();
+													setSelectedId((cur) =>
+														cur === student.id ? null : student.id,
+													);
+												}
+											}}
+											className={`cursor-pointer rounded-2xl border border-[#d9dee8] bg-white px-5 py-4 transition hover:bg-[#EDF6FF] ${
+												open ? "bg-[#EDF6FF] ring-1 ring-inset ring-[#7DC8FF]/40" : ""
+											}`}
+										>
+											<div className="flex items-center justify-between gap-4">
+												<div className="flex items-start gap-4">
+													<span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#122459]">
+														{index + 1}
+													</span>
+													<div className="min-w-0 flex-1">
+														<p className="text-4 font-semibold text-[#122459]">
+															{student.firstName} {student.lastName}
+														</p>
+														<p className="mt-1 text-3 text-[#122459]">
+															{`${student.studentNumber.toLowerCase()}@gmail.com`}
+														</p>
+													</div>
+												</div>
+												<button
+													type="button"
+													aria-label="Нүдний харагдацыг солих"
+													onClick={(event) => {
+														event.stopPropagation();
+														setOpenEyeIds((current) => ({
+															...current,
+															[student.id]: !current[student.id],
+														}));
+													}}
+													className="flex h-[50px] w-[50px] items-center justify-center rounded-xl bg-white transition hover:bg-[#EDF6FF]"
 												>
-													<td className="px-4 py-3 text-[#3f2d12]">
-														<div className="flex items-start gap-3">
-															<ChevronDown
-																className={`mt-1 h-4 w-4 shrink-0 text-[#c69b2a] transition-transform ${open ? "rotate-180" : ""}`}
-																aria-hidden
-															/>
-															<span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#7a6236]">
-																{index + 1}.
-															</span>
-															<div className="min-w-0 flex-1">
-																<p className="text-4 font-semibold text-[#3f2d12]">
-																	{student.firstName} {student.lastName}
-																</p>
-																<p className="mt-1 text-3 text-[#b08a3c]">
-																	{`${student.studentNumber.toLowerCase()}@gmail.com`}
-																</p>
-															</div>
-														</div>
-													</td>
-												</tr>
-												{open ? (
-													<tr className="border-b border-[#f1e6b9] bg-[#fff9e8]">
-														<td className="p-0 align-top">
-                              <StudentClassExamResultsPanel
-                                classLabel={cls.name}
-                                examRows={selectedStudentExams}
-                                placement="underRow"
-                                student={student}
-                              />
-                            </td>
-                          </tr>
-                        ) : null}
-                      </Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+													{openEyeIds[student.id] ? (
+														<Eye className="h-5 w-5 text-[#1f6feb]" aria-hidden />
+													) : (
+														<EyeClosed className="h-5 w-5 text-[#1f6feb]" aria-hidden />
+													)}
+												</button>
+											</div>
+										</div>
+										{open ? (
+											<div className="rounded-2xl border border-[#d9dee8] bg-[#EDF6FF]">
+												<StudentClassExamResultsPanel
+													classLabel={cls.name}
+													examRows={selectedStudentExams}
+													placement="underRow"
+													student={student}
+												/>
+											</div>
+										) : null}
+									</Fragment>
+								);
+							})}
+						</div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-[#f1e6b9] bg-white p-6 shadow-sm sm:p-8">
+          <div className="rounded-2xl border border-[#7DC8FF] bg-white p-6 shadow-sm sm:p-8">
             <div className="min-w-0">
-              <h2 className="flex items-center gap-2 text-5 font-extrabold text-[#3f2d12]">
-                <BarChart3 className="h-6 w-6 shrink-0 text-[#c69b2a]" />
+              <h2 className="flex items-center gap-2 text-5 font-extrabold text-[#122459]">
+                <BarChart3 className="h-6 w-6 shrink-0 text-[#122459]" />
                 Шалгалтын статистик
               </h2>
-              <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-[#7a6236] sm:text-base">
+              <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-[#122459] sm:text-base">
                 Хичээл, шалгалт, огноо, дүн эсвэл сурагчийн нэрээр хайна уу. Мөр
                 дарахад ангийн үнэлгээ, хамгийн олон сурагч алдсан асуулт,
                 сурагчдын жагсаалт нэг дор нээгдэнэ. Сурагчийн мөр дээр дарахад
@@ -1458,7 +1459,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 
             <div className="relative mt-6">
               <Search
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#c69b2a]"
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#122459]"
                 aria-hidden
               />
               <input
@@ -1469,40 +1470,40 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                   setHistoryQuery(e.target.value);
                 }}
                 placeholder="Хайх: хичээл, шалгалт, огноо, сурагч…"
-                className="w-full rounded-2xl border border-[#f1e6b9] bg-[#fffdf2] py-3.5 pl-11 pr-4 text-[0.9375rem] text-[#3f2d12] shadow-inner outline-none transition placeholder:text-[#b79a5a] focus:border-[#f2d45c] focus:bg-white focus:ring-4 focus:ring-[#f2d45c]/25 sm:text-base"
+                className="w-full rounded-2xl border border-[#7DC8FF] bg-[#EDF6FF] py-3.5 pl-11 pr-4 text-[0.9375rem] text-[#122459] shadow-inner outline-none transition placeholder:text-[#122459] focus:border-[#7DC8FF] focus:bg-white focus:ring-4 focus:ring-[#7DC8FF]/25 sm:text-base"
                 aria-label="Шалгалтын статистик хайх"
               />
             </div>
 
             {filteredPastExams.length === 0 ? (
-              <div className="mt-6 rounded-xl border border-dashed border-[#f3e1a4] bg-[#fff9e8] px-4 py-10 text-center text-4 text-[#7a6236]">
+              <div className="mt-6 rounded-xl border border-dashed border-[#f3e1a4] bg-[#EDF6FF] px-4 py-10 text-center text-4 text-[#122459]">
                 {historyQuery.trim()
                   ? "Хайлтад тохирох шалгалт олдсонгүй."
                   : "Энэ ангийн шалгалтын статистик одоогоор алга."}
               </div>
             ) : (
-              <div className="mt-6 overflow-x-auto rounded-2xl border border-[#f1e6b9] shadow-sm">
+              <div className="mt-6 overflow-x-auto rounded-2xl border border-[#7DC8FF] shadow-sm">
                 <table className="w-full min-w-[520px]">
                   <thead>
-                    <tr className="border-b border-[#f1e6b9] bg-[#fff7d6]">
+                    <tr className="border-b border-[#7DC8FF] bg-[#EDF6FF]">
                       <th
-                        className="w-10 px-2 py-3.5 text-left text-[0.8125rem] font-semibold text-[#64748b] sm:text-sm"
+                        className="w-10 px-2 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm"
                         aria-label="Дэлгэрэнгүй"
                       />
-                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#64748b] sm:text-sm">
+                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
                         Огноо
                       </th>
-                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#64748b] sm:text-sm">
+                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
                         Хичээл
                       </th>
-                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#64748b] sm:text-sm">
+                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
                         Шалгалт
                       </th>
-                      <th className="px-4 py-3.5 text-right text-[0.8125rem] font-semibold text-[#64748b] sm:text-sm">
+                      <th className="px-4 py-3.5 text-right text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
                         Тэнцсэн
                       </th>
                       <th
-                        className="w-[1%] whitespace-nowrap px-3 py-3.5 text-center text-[0.8125rem] font-semibold text-[#64748b] sm:text-sm"
+                        className="w-[1%] whitespace-nowrap px-3 py-3.5 text-center text-[0.8125rem] font-semibold text-[#122459] sm:text-sm"
                         aria-label="Тайлан татах багана"
                       >
                         Татах
@@ -1543,27 +1544,27 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                                 return row.id;
                               });
                             }}
-                            className={`cursor-pointer border-b border-[#f1e6b9] transition last:border-0 hover:bg-[#fff9e8] ${
-                              open ? "bg-[#fff4bf]" : ""
+												className={`cursor-pointer border-b border-[#7DC8FF] transition last:border-0 hover:bg-[#EDF6FF] ${
+                              open ? "bg-[#EDF6FF]" : ""
                             }`}
                           >
-                            <td className="px-2 py-3.5 text-[#c69b2a]">
+                            <td className="px-2 py-3.5 text-[#122459]">
                               {open ? (
                                 <ChevronUp className="h-5 w-5" aria-hidden />
                               ) : (
                                 <ChevronDown className="h-5 w-5" aria-hidden />
                               )}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3.5 text-[0.9375rem] font-semibold text-[#1f2a44]">
+                            <td className="whitespace-nowrap px-4 py-3.5 text-[0.9375rem] font-semibold text-[#122459]">
                               {row.date}
                             </td>
-                            <td className="px-4 py-3.5 text-[0.9375rem] text-[#334261]">
+                            <td className="px-4 py-3.5 text-[0.9375rem] text-[#122459]">
                               {row.subject}
                             </td>
-                            <td className="max-w-[min(280px,40vw)] px-4 py-3.5 text-[0.9375rem] leading-snug text-[#334261]">
+                            <td className="max-w-[min(280px,40vw)] px-4 py-3.5 text-[0.9375rem] leading-snug text-[#122459]">
                               {row.examTitle}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3.5 text-right text-[0.9375rem] tabular-nums text-[#4a5875]">
+                            <td className="whitespace-nowrap px-4 py-3.5 text-right text-[0.9375rem] tabular-nums text-[#122459]">
                               {row.passed} / {row.total}
                             </td>
                             <td className="px-3 py-3.5 text-center">
@@ -1575,7 +1576,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                                   e.stopPropagation();
                                   downloadFullExamStatisticsXls(cls.name, row);
                                 }}
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#f1e6b9] bg-white text-[#c69b2a] shadow-sm transition hover:border-[#f2d45c] hover:bg-[#fff7d6] focus-visible:outline focus-visible:ring-4 focus-visible:ring-[#f2d45c]/30"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#7DC8FF] bg-white text-[#122459] shadow-sm transition hover:border-[#EDF6FF] hover:bg-[#EDF6FF] focus-visible:outline focus-visible:ring-4 focus-visible:ring-[#7DC8FF]/30"
                               >
                                 <Download
                                   className="h-4 w-4 shrink-0"
@@ -1585,27 +1586,27 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                             </td>
                           </tr>
                           {open ? (
-                            <tr className="border-b border-[#f1e6b9] bg-[#fff9e8]">
+                            <tr className="border-b border-[#7DC8FF] bg-[#EDF6FF]">
                               <td
                                 colSpan={6}
                                 className="px-3 py-5 sm:px-5 sm:py-6"
                               >
-                                <div className="rounded-2xl border border-[#f1e6b9] bg-gradient-to-b from-white via-[#fffdf2] to-[#fff7d6] p-4 shadow-[0_4px_32px_rgba(113,84,24,0.12)] sm:p-6 md:p-8">
+                                <div className="rounded-2xl border border-[#7DC8FF] bg-gradient-to-b from-white via-[#EDF6FF] to-[#EDF6FF] p-4 shadow-[0_4px_32px_rgba(113,84,24,0.12)] sm:p-6 md:p-8">
                                   <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 lg:items-stretch">
                                     <PastExamClassGradeChart row={row} />
                                     <PastExamMostFailedInsight row={row} />
                                   </div>
 
-                                  <div className="mt-8 border-t border-[#f1e6b9] pt-8">
+                                  <div className="mt-8 border-t border-[#7DC8FF] pt-8">
                                     <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
                                       <div>
-                                        <h4 className="text-lg font-extrabold tracking-tight text-[#0f172a] sm:text-xl">
+                                        <h4 className="text-lg font-extrabold tracking-tight text-[#122459] sm:text-xl">
                                           Сурагч бүрийн оноо
                                         </h4>
-                                        <p className="mt-1 max-w-prose text-[0.875rem] leading-relaxed text-[#64748b]">
+                                        <p className="mt-1 max-w-prose text-[0.875rem] leading-relaxed text-[#122459]">
                                           Мөр дарахад сурагчийн асуулт бүрийн
                                           дэлгэрэнгүй гарна. Дээд оноо:{" "}
-                                          <span className="font-semibold tabular-nums text-[#334261]">
+                                          <span className="font-semibold tabular-nums text-[#122459]">
                                             {row.maxScore}
                                           </span>
                                           .
@@ -1613,7 +1614,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                                       </div>
                                     </div>
                                     {row.studentScores.length === 0 ? (
-                                      <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-white/80 px-4 py-8 text-center text-[0.9375rem] text-[#64748b]">
+                                      <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-white/80 px-4 py-8 text-center text-[0.9375rem] text-[#122459]">
                                         Энэ ангид сурагч алга.
                                       </p>
                                     ) : (
@@ -1621,13 +1622,13 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                                         <table className="w-full min-w-[320px] text-left text-[0.9375rem]">
                                           <thead className="sticky top-0 z-10 border-b border-[#e2e8f0] bg-[#f8fafc] shadow-[0_1px_0_#e2e8f0]">
                                             <tr>
-                                              <th className="px-4 py-3.5 font-semibold text-[#475569] sm:px-5">
+                                              <th className="px-4 py-3.5 font-semibold text-[#122459] sm:px-5">
                                                 Овог, нэр
                                               </th>
-                                              <th className="px-4 py-3.5 text-right font-semibold text-[#475569] sm:px-5">
+                                              <th className="px-4 py-3.5 text-right font-semibold text-[#122459] sm:px-5">
                                                 Оноо
                                               </th>
-                                              <th className="w-[1%] whitespace-nowrap px-4 py-3.5 text-right font-semibold text-[#475569] sm:px-5">
+                                              <th className="w-[1%] whitespace-nowrap px-4 py-3.5 text-right font-semibold text-[#122459] sm:px-5">
                                                 Татах
                                               </th>
                                             </tr>
@@ -1702,23 +1703,23 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                                                     : ""
                                                 }`}
                                               >
-                                                <td className="px-4 py-3.5 font-medium text-[#334261] sm:px-5 sm:py-4">
+                                                <td className="px-4 py-3.5 font-medium text-[#122459] sm:px-5 sm:py-4">
                                                   <span className="leading-snug">
                                                     {s.lastName} {s.firstName}
                                                   </span>
                                                 </td>
                                                 <td className="whitespace-nowrap px-4 py-3.5 text-right sm:px-5 sm:py-4">
-                                                  <span className="text-[1.0625rem] font-bold tabular-nums text-[#0f172a]">
+                                                  <span className="text-[1.0625rem] font-bold tabular-nums text-[#122459]">
                                                     {s.score}
                                                   </span>
-                                                  <span className="ml-1 text-[0.875rem] font-normal tabular-nums text-[#94a3b8]">
+                                                  <span className="ml-1 text-[0.875rem] font-normal tabular-nums text-[#122459]">
                                                     / {row.maxScore}
                                                   </span>
                                                 </td>
                                                 <td className="whitespace-nowrap px-4 py-3.5 text-right sm:px-5 sm:py-4">
                                                   <button
                                                     type="button"
-                                                    className="inline-flex items-center justify-center rounded-xl border border-[#c8d6ea] bg-white p-2.5 text-[#4f9dff] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]"
+                                                    className="inline-flex items-center justify-center rounded-xl border border-[#c8d6ea] bg-white p-2.5 text-[#122459] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]"
                                                     title="Excel татах"
                                                     aria-label={`Excel татах — ${s.lastName} ${s.firstName}`}
                                                     onClick={(e) => {
