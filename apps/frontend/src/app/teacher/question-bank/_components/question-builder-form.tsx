@@ -13,6 +13,8 @@ import { QuestionBuilderDetailsSection } from "./question-builder-details-sectio
 import { QuestionBuilderScoringSection } from "./question-builder-scoring-section";
 import { QuestionBuilderTypeSection } from "./question-builder-type-section";
 import { useQuestionBuilderForm } from "../_hooks/use-question-builder-form";
+import { useMutation } from "@apollo/client/react";
+import { CREATE_TESTS } from "@/graphql/typeDefs/mutations";
 
 type QuestionBuilderFormProps = {
   initialValues?: QuestionBuilderValues | null;
@@ -53,8 +55,12 @@ export function QuestionBuilderForm({
   } = useQuestionBuilderForm(initialValues);
 
   const handleSubmit = () => {
-    const nextFeatureErrors: Pick<QuestionValidationErrors, "formulaRaw" | "imageUrl"> = {};
-    if (includesImage && !values.imageUrl.trim()) nextFeatureErrors.imageUrl = "Зураг оруулах эсвэл хавсаргана уу.";
+    const nextFeatureErrors: Pick<
+      QuestionValidationErrors,
+      "formulaRaw" | "imageUrl"
+    > = {};
+    if (includesImage && !values.imageUrl.trim())
+      nextFeatureErrors.imageUrl = "Зураг оруулах эсвэл хавсаргана уу.";
     if (supportsFormulaInput && includesFormula && !values.formulaRaw.trim()) {
       nextFeatureErrors.formulaRaw = "Томьёоны оролтоо бөглөнө үү.";
     }
@@ -81,6 +87,16 @@ export function QuestionBuilderForm({
     });
   };
 
+  const [createTests, { data, loading, error }] = useMutation(CREATE_TESTS);
+
+  const newTests = async () => {
+    const res = await createTests({
+      variables: {
+        inpput: {},
+      },
+    });
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#10233e]/30 p-4 backdrop-blur-[2px] sm:p-6">
       <div className="flex max-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col overflow-y-auto rounded-[28px] border border-[#d9e4f1] bg-[#f8fbff] shadow-2xl">
@@ -91,10 +107,13 @@ export function QuestionBuilderForm({
                 {initialValues ? "Асуулт засах" : "Асуулт үүсгэх"}
               </p>
               <h2 className="mt-2 text-2xl font-bold text-[#183153]">
-                {initialValues ? "Асуултын агуулгыг сайжруулах" : "Дахин ашиглах асуулт зохиох"}
+                {initialValues
+                  ? "Асуултын агуулгыг сайжруулах"
+                  : "Дахин ашиглах асуулт зохиох"}
               </h2>
               <p className="mt-2 text-sm text-[#5f7394]">
-                Асуулт, үнэлгээ, мета мэдээллээ тохируулаад системийн санд шууд нийтэлнэ.
+                Асуулт, үнэлгээ, мета мэдээллээ тохируулаад системийн санд шууд
+                нийтэлнэ.
               </p>
             </div>
             <button
@@ -133,7 +152,9 @@ export function QuestionBuilderForm({
             values={values}
           />
           <QuestionBuilderAdditionalSection
-            formulaError={featureErrors.formulaRaw || validationErrors?.formulaRaw}
+            formulaError={
+              featureErrors.formulaRaw || validationErrors?.formulaRaw
+            }
             formulaHelpers={formulaHelpers}
             formulaRaw={values.formulaRaw}
             imageError={featureErrors.imageUrl || validationErrors?.imageUrl}

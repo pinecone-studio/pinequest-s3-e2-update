@@ -1,4 +1,5 @@
 import { getClassBySchoolId } from "./classAndStudent/getClassBySchoold";
+import { getClassByTeacherAndSchoolId } from "./classAndStudent/getClassByTeacherAndSchoolId";
 import { getStudentByClassId } from "./classAndStudent/getStudentByClassId";
 import { getAllExams } from "./exam/getAllExams";
 import { getExamById } from "./exam/getExamById";
@@ -20,4 +21,5 @@ export const queryResolvers = {
   getExamById,
   getAllSubject,
   getTestsBySybjectAndGrade,
+  getClassByTeacherAndSchoolId,
 };

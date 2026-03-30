@@ -1,23 +1,65 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
 import { ChevronRight, Users } from "lucide-react";
-import { store } from "@/app/lib/store";
-import { useTeacher } from "../teacher-shell";
+import { useQuery } from "@apollo/client/react";
+import {
+  GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+  GET_STUDENT_BY_CLASS_ID,
+} from "@/graphql/typeDefs/queries";
+
+type ClassResponse = {
+  getClassByTeacherAndSchoolId: ClassType[];
+};
+
+type ClassType = {
+  id: string;
+  sectionTeacherId: string;
+  schoolId: string;
+  grade: number;
+  section: string;
+};
+
+type StudentResponse = {
+  getStudentByClassId: StudentType[];
+};
+
+type StudentType = {
+  id: string;
+  email: string;
+  classId: string;
+  firstName: string;
+  lastName: string;
+  studentCode: string;
+  studentExamResultIds: string[];
+  createdAt: string;
+  updatedAt: string;
+};
 
 export default function TeacherDashboard() {
   const router = useRouter();
-  const teacher = useTeacher();
-  const classes = store.getClassesForTeacherWithDemo(teacher.id);
 
-  const sortedClasses = useMemo(
-    () =>
-      [...classes].sort((a, b) =>
-        a.name.localeCompare(b.name, "mn", { sensitivity: "base" }),
-      ),
-    [classes],
+  const { data } = useQuery<ClassResponse>(GET_CLASS_BY_TEACHER_AND_SCHOOL_ID, {
+    variables: {
+      input: {
+        teacherId: "teacher-1",
+        schoolId: "school-1",
+      },
+    },
+    // skip: !teacher.id || !teacher.schoolId,
+  });
+
+  const { data: studentData } = useQuery<StudentResponse>(
+    GET_STUDENT_BY_CLASS_ID,
+    {
+      variables: {
+        classId: "class-1",
+      },
+    },
   );
+
+  const classes = data?.getClassByTeacherAndSchoolId ?? [];
+  const students = studentData?.getStudentByClassId ?? [];
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
@@ -40,7 +82,7 @@ export default function TeacherDashboard() {
             </p>
           </header>
 
-          {sortedClasses.length === 0 ? (
+          {!classes || classes.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-white px-6 py-14 text-center">
               <p className="text-4 font-semibold text-[#475569]">
                 Одоогоор танд харагдах анги алга.
@@ -48,11 +90,11 @@ export default function TeacherDashboard() {
             </div>
           ) : (
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
-              {sortedClasses.map((cls) => {
+              {classes?.map((item: ClassType) => {
                 const openClass = () =>
-                  router.push(`/teacher/class/${encodeURIComponent(cls.id)}`);
+                  router.push(`/teacher/class/${encodeURIComponent(item.id)}`);
                 return (
-                  <li key={cls.id}>
+                  <li key={item.id}>
                     <article
                       role="button"
                       tabIndex={0}
@@ -69,11 +111,12 @@ export default function TeacherDashboard() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-5 font-extrabold leading-snug text-[#1f2a44]">
-                          {cls.name}
+                          {item.grade}
+                          {item.section}
                         </p>
                         <p className="mt-1 text-4 leading-normal text-[#64748b]">
                           <span className="font-medium text-[#4a5875]">
-                            {cls.studentIds.length} сурагч
+                            {students?.length} сурагч
                           </span>
                         </p>
                       </div>
