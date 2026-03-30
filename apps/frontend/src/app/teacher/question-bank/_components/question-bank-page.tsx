@@ -1,6 +1,12 @@
 "use client";
 
-import { ArrowRight, CheckCircle2, ChevronsRightLeft, FileUp, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronsRightLeft,
+  FileUp,
+  Sparkles,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -67,7 +73,8 @@ export function QuestionBankPage() {
                   Системийн санд нэвтрэх
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-[#6b7280]">
-                  Эхлээд хичээл болон ангиа сонгоод тухайн хүрээний асуултууд руу нэвтэрнэ.
+                  Эхлээд хичээл болон ангиа сонгоод тухайн хүрээний асуултууд
+                  руу нэвтэрнэ.
                 </p>
               </div>
             </div>
@@ -75,14 +82,18 @@ export function QuestionBankPage() {
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <EntrySelect
                 label="Хичээл"
-                onValueChange={(value) => updateEntrySelection({ subject: value })}
+                onValueChange={(value) =>
+                  updateEntrySelection({ subject: value })
+                }
                 options={subjectOptions}
                 placeholder="Хичээл сонгох"
                 value={entrySelection.subject}
               />
               <EntrySelect
                 label="Анги"
-                onValueChange={(value) => updateEntrySelection({ grade: value })}
+                onValueChange={(value) =>
+                  updateEntrySelection({ grade: value })
+                }
                 options={gradeOptions}
                 placeholder="Анги сонгох"
                 value={entrySelection.grade}
@@ -116,8 +127,11 @@ export function QuestionBankPage() {
                     Системийн сан
                   </h2>
                   <p className="text-sm leading-6 text-[#6b7280]">
-                    Одоогийн орчин: {entrySelection.subject} • {entrySelection.grade}
-                    {summary.selectedScopeCount !== null ? ` • ${summary.selectedScopeCount} асуулт` : ""}
+                    Одоогийн орчин: {entrySelection.subject} •{" "}
+                    {entrySelection.grade}
+                    {summary.selectedScopeCount !== null
+                      ? ` • ${summary.selectedScopeCount} асуулт`
+                      : ""}
                   </p>
                 </div>
               </div>
@@ -228,7 +242,9 @@ export function QuestionBankPage() {
                   activeQuestionId={activeQuestion?.id ?? null}
                   getQuestionHeartCount={getQuestionHeartCount}
                   likedQuestionIds={likedQuestionIds}
-                  onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
+                  onAddToExam={(questionId) =>
+                    sendQuestionsToExam([questionId])
+                  }
                   onCreateQuestion={openCreateBuilder}
                   onDeleteQuestion={deleteQuestion}
                   onEditQuestion={openEditBuilder}
@@ -304,7 +320,8 @@ export function QuestionBankPage() {
               Амжилттай нийтэллээ
             </h3>
             <p className="mt-2 text-sm leading-6 text-[#6b7280]">
-              Асуулт системийн санд амжилттай нийтлэгдэж, бүх багшид харагдахаар боллоо.
+              Асуулт системийн санд амжилттай нийтлэгдэж, бүх багшид харагдахаар
+              боллоо.
             </p>
             <button
               className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-[#111827] px-5 text-sm font-semibold text-white transition hover:bg-[#1f2937]"

@@ -10,6 +10,7 @@ type CreateTestsArgs = {
   rightAnswer: string;
   difficulty: string;
   score: number;
+  teacherId: string;
   usageCount: number;
   notes: string;
 };
@@ -22,7 +23,7 @@ export const createTests = async (
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   try {
-    await ctx.db.insert(testTable).values({
+    const newTest = await ctx.db.insert(testTable).values({
       id: id,
       grade: args.input.grade,
       subjectId: args.input.subjectId,
@@ -34,24 +35,11 @@ export const createTests = async (
       score: args.input.score,
       usageCount: args.input.usageCount,
       notes: args.input.notes,
+      teacherId: args.input.teacherId,
       createdAt: now,
       updatedAt: now,
     });
-    return {
-      id: id,
-      grade: args.input.grade,
-      subjectId: args.input.subjectId,
-      question: args.input.question,
-      answers: args.input.answers,
-      imageUrl: args.input.imageUrl,
-      rightAnswer: args.input.rightAnswer,
-      difficulty: args.input.difficulty,
-      score: args.input.score,
-      usageCount: args.input.usageCount,
-      notes: args.input.notes,
-      createdAt: now,
-      updatedAt: now,
-    };
+    return newTest;
   } catch (err) {
     console.error("Failed to create test:", err);
     throw new Error(`Failed to create test: ${err}`);
