@@ -60,8 +60,8 @@ export function QuestionBankPage({
   );
 
   return (
-    <div className="space-y-6 pb-10">
-      <div className="flex flex-col gap-6 xl:flex-row xl:items-stretch">
+    <div className="bg-[#fafafa] pb-10">
+      <div className="mx-auto max-w-[1184px] px-6 pt-[28px]">
         {!hasEnteredBank ? (
           <QuestionBankEntryPanel
             entryGrade={entrySelection.grade}
@@ -146,16 +146,16 @@ export function QuestionBankPage({
         </>
       ) : null}
 
-      {isBuilderOpen ? (
-        <QuestionBuilderForm
-          initialValues={editingValues}
-          key={editingValues?.id ?? "new-question"}
-          onClose={closeBuilder}
-          onSubmit={submitQuestion}
-          subjectOptions={subjectOptions}
-          validationErrors={lastValidationErrors}
-        />
-      ) : null}
+        {isBuilderOpen ? (
+          <QuestionBuilderForm
+            initialValues={editingValues}
+            key={editingValues?.id ?? "new-question"}
+            onClose={closeBuilder}
+            onSubmit={submitQuestion}
+            subjectOptions={subjectOptions}
+            validationErrors={lastValidationErrors}
+          />
+        ) : null}
 
       <QuestionBankPublishSuccessDialog
         onClose={() => setPublishSuccessDialogOpen(false)}
