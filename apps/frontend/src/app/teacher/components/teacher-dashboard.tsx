@@ -22,18 +22,18 @@ export default function TeacherDashboard() {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
       <section>
-        <article className="rounded-2xl border border-[#f1e6b9] bg-white p-6 shadow-[0_2px_12px_rgba(113,84,24,0.12)] sm:p-8">
-          <header className="mb-6 border-b border-[#f3e1a4] pb-6">
-            <h2 className="text-[22px] font-extrabold tracking-tight text-[#3f2d12]">
+        <article className="rounded-2xl p-6 shadow-[0_2px_12px_rgba(31,42,68,0.06)] sm:p-8">
+          <header className="mb-6 border-b border-[#eef2f6] pb-6">
+            <h2 className="text-[22px] font-extrabold tracking-tight text-[#1f2a44]">
               Миний ангиуд
             </h2>
-            <p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#7a6236]">
+            <p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#4a5875]">
               Анги дээр дарж сурагчид, шалгалтын статистик руу орно.
             </p>
-            <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[#fff7d6] px-3 py-1.5 text-3 font-semibold text-[#6b4f1d]">
-              <span className="text-[#c69b2a]">◆</span>
+            <p className="mt-3 inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-3 font-semibold text-[#1f2a44]">
+              <span className="text-[#22c55e]">●</span>
               Нийт{" "}
-              <span className="font-extrabold text-[#3f2d12]">
+              <span className="font-extrabold text-[#1f2a44]">
                 {classes.length}
               </span>{" "}
               анги
@@ -41,8 +41,8 @@ export default function TeacherDashboard() {
           </header>
 
           {sortedClasses.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[#f3e1a4] bg-[#fff9e8] px-6 py-14 text-center">
-              <p className="text-4 font-semibold text-[#7a6236]">
+            <div className="rounded-2xl border border-dashed border-white px-6 py-14 text-center">
+              <p className="text-4 font-semibold text-[#475569]">
                 Одоогоор танд харагдах анги алга.
               </p>
             </div>
@@ -62,23 +62,23 @@ export default function TeacherDashboard() {
                         e.preventDefault();
                         openClass();
                       }}
-                      className="group flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl border border-[#f1e6b9] bg-white p-5 text-left shadow-sm transition hover:border-[#f2d45c] hover:bg-[#fff7d6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2d45c] focus-visible:ring-offset-2"
+                      className="group flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl border border-white p-5 text-left shadow-sm transition hover:border-[#7DC8FF] hover:bg-[#EDF6FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
                     >
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#fff4bf] text-[#c69b2a] transition group-hover:bg-[#f2d45c] group-hover:text-[#5f4517]">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[#1f2a44] transition group-hover:bg-[#EDF6FF] group-hover:text-[#1f2a44]">
                         <Users className="h-7 w-7" aria-hidden />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-5 font-extrabold leading-snug text-[#3f2d12]">
+                        <p className="text-5 font-extrabold leading-snug text-[#1f2a44]">
                           {cls.name}
                         </p>
-                        <p className="mt-1 text-4 leading-normal text-[#7a6236]">
-                          <span className="font-medium text-[#6b4f1d]">
+                        <p className="mt-1 text-4 leading-normal text-[#64748b]">
+                          <span className="font-medium text-[#4a5875]">
                             {cls.studentIds.length} сурагч
                           </span>
                         </p>
                       </div>
                       <ChevronRight
-                        className="h-6 w-6 shrink-0 text-[#d3b672] transition group-hover:translate-x-0.5 group-hover:text-[#c69b2a]"
+                        className="h-6 w-6 shrink-0 text-[#b8c4d6] transition group-hover:translate-x-0.5 group-hover:text-[#1f2a44]"
                         aria-hidden
                       />
                     </article>
