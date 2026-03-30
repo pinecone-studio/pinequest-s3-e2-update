@@ -63,7 +63,10 @@ export function SavedExamCard({
         <div className="flex flex-wrap items-center justify-end gap-2">
           <div className="min-w-52">
             <Select
-              disabled={savedExam.approvalStatus === "pending"}
+              disabled={
+                savedExam.approvalStatus === "pending" ||
+                savedExam.approvalStatus === "needs_fix"
+              }
               onValueChange={onSelectClass}
               value={selectedClassId ?? undefined}
             >
@@ -86,11 +89,16 @@ export function SavedExamCard({
 
           <ActionButton
             icon={<SendHorizontal className="mr-2 h-4 w-4" />}
-            disabled={savedExam.approvalStatus === "pending"}
+            disabled={
+              savedExam.approvalStatus === "pending" ||
+              savedExam.approvalStatus === "needs_fix"
+            }
             kind="primary"
             label={
               savedExam.approvalStatus === "pending"
                 ? "Зөвшөөрөл хүлээж байна"
+                : savedExam.approvalStatus === "needs_fix"
+                  ? "Засвар шаардлагатай"
                 : "Илгээх"
             }
             onClick={onSend}
@@ -129,6 +137,10 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
         {savedExam.approvalStatus === "pending" ? (
           <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
             Сургуулийн зөвшөөрөл хүлээж байна
+          </span>
+        ) : savedExam.approvalStatus === "needs_fix" ? (
+          <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+            Сургуулиас засвар хүссэн
           </span>
         ) : savedExam.requiresSchoolApproval ? (
           <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">

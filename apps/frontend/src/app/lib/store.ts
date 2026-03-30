@@ -25,6 +25,8 @@ let users: User[] = [
     email: "saraa@demo.mn",
     name: "Наранцэцэг Содном",
     role: "teacher",
+    registerNumber: "УБ90010111",
+    position: "Багш",
     specialty: "Математик",
   },
   {
@@ -32,6 +34,8 @@ let users: User[] = [
     email: "enkhbat@demo.mn",
     name: "Энхбат Дорж",
     role: "teacher",
+    registerNumber: "УБ89020222",
+    position: "Багш",
     specialty: "Нийгэм, түүх",
   },
   {
@@ -39,6 +43,8 @@ let users: User[] = [
     email: "oyuntsetseg@demo.mn",
     name: "Оюунцэцэг Болд",
     role: "teacher",
+    registerNumber: "УБ91030333",
+    position: "Багш",
     specialty: "Англи хэл",
   },
 ];
@@ -476,29 +482,56 @@ export const store = {
     return u ? { ...u } : undefined;
   },
 
-  createTeacher(name: string, email?: string, specialty?: string) {
+  createTeacher(input: {
+    firstName: string;
+    lastName: string;
+    registerNumber?: string;
+    email?: string;
+    position?: string;
+    specialty?: string;
+  }) {
     const id = `user-teacher-${crypto.randomUUID().slice(0, 8)}`;
-    const e = email?.trim() || slugEmail(name);
-    const spec = specialty?.trim();
+    const first = input.firstName.trim();
+    const last = input.lastName.trim();
+    const fullName = `${first} ${last}`.trim();
+    const e = input.email?.trim() || slugEmail(fullName);
+    const spec = input.specialty?.trim();
+    const reg = input.registerNumber?.trim();
+    const pos = input.position?.trim();
     users.push({
       id,
       email: e,
-      name: name.trim(),
+      name: fullName,
       role: "teacher",
+      ...(reg ? { registerNumber: reg } : {}),
+      ...(pos ? { position: pos } : {}),
       ...(spec ? { specialty: spec } : {}),
     });
     return id;
   },
 
-  updateTeacher(id: string, name: string, email: string, specialty: string) {
+  updateTeacher(
+    id: string,
+    name: string,
+    email: string,
+    specialty: string,
+    registerNumber?: string,
+    position?: string,
+  ) {
     const i = users.findIndex((u) => u.id === id && u.role === "teacher");
     if (i === -1) return false;
     const spec = specialty.trim();
+    const reg = registerNumber?.trim() ?? "";
+    const pos = position?.trim() ?? "";
     const next: User = {
       ...users[i],
       name: name.trim(),
       email: email.trim(),
     };
+    if (reg) next.registerNumber = reg;
+    else delete next.registerNumber;
+    if (pos) next.position = pos;
+    else delete next.position;
     if (spec) next.specialty = spec;
     else delete next.specialty;
     users[i] = next;

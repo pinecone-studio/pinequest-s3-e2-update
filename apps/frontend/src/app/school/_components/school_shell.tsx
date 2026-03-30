@@ -9,7 +9,7 @@ import type { User } from "@/app/lib/types";
 
 const links = [
   { href: "/school", label: "Нүүр", icon: Home },
-  { href: "/school/teachers", label: "Багш нар", icon: BookText },
+  { href: "/school/teachers", label: "Хүний нөөц", icon: BookText },
   { href: "/school/classes", label: "Ангиуд", icon: BookText },
   { href: "/school/exams", label: "Шалгалт", icon: Calculator },
   { href: "/school/results", label: "Үр дүн", icon: Cog },

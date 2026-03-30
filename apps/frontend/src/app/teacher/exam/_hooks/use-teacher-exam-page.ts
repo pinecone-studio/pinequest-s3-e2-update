@@ -3,6 +3,11 @@
 import { useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  getApprovalRequestsClient,
+  getApprovalUpdatedEventName,
+  upsertPendingApprovalRequest,
+} from "@/app/lib/exam-approval-store";
 import { teacherClasses } from "../_lib/class-data";
 import { mapBackendTestsToQuestions } from "../../question-bank/_lib/backend-question-mappers";
 import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../../question-bank/_lib/get-tests";
@@ -59,6 +64,28 @@ export function useTeacherExamPage() {
   useEffect(() => {
     if (hasLoadedSavedExams) window.localStorage.setItem(SAVED_EXAMS_STORAGE_KEY, JSON.stringify(savedExams));
   }, [hasLoadedSavedExams, savedExams]);
+
+  useEffect(() => {
+    const syncApprovalStatus = () => {
+      setSavedExams((current) => {
+        const approvals = getApprovalRequestsClient();
+        const statusByExamId = new Map(approvals.map((item) => [item.examId, item.status] as const));
+        return current.map((item) => {
+          if (!item.requiresSchoolApproval) return item;
+          const status = statusByExamId.get(item.id);
+          if (status === "approved") return { ...item, approvalStatus: "approved" as const };
+          if (status === "needs_fix") return { ...item, approvalStatus: "needs_fix" as const };
+          if (status === "pending") return { ...item, approvalStatus: "pending" as const };
+          return item;
+        });
+      });
+    };
+
+    syncApprovalStatus();
+    const eventName = getApprovalUpdatedEventName();
+    window.addEventListener(eventName, syncApprovalStatus);
+    return () => window.removeEventListener(eventName, syncApprovalStatus);
+  }, []);
 
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
@@ -154,6 +181,18 @@ export function useTeacherExamPage() {
     const approvalStatus = exam.requiresSchoolApproval ? "pending" : "not_required";
     const nextRecord: SavedExamRecord = { id: nextId, title: nextTitle, grade: exam.grade.trim(), subject: exam.subject.trim(), topic: exam.topic.trim(), durationInMinutes: exam.durationInMinutes, status: "published", totalPoints, questionCount: examQuestionDetails.length, savedAt: now, questions: examQuestions.map((item) => ({ ...item })), requiresSchoolApproval: exam.requiresSchoolApproval, approvalStatus, sentClassIds: previous?.sentClassIds ?? [] };
     setSavedExams((current) => [nextRecord, ...current.filter((item) => item.id !== nextId)].sort((left, right) => new Date(right.savedAt).getTime() - new Date(left.savedAt).getTime()));
+    if (exam.requiresSchoolApproval) {
+      upsertPendingApprovalRequest({
+        examId: nextId,
+        title: nextTitle,
+        className: exam.grade.trim() || "Тодорхойгүй анги",
+        subject: exam.subject.trim() || "Тодорхойгүй хичээл",
+        teacherName: "Б.Эрдэнэ",
+        materialTitle: `${exam.subject.trim() || "Шалгалт"} материал`,
+        sentAt: now.slice(0, 16).replace("T", " "),
+        questionCount: examQuestionDetails.length || 20,
+      });
+    }
     setActiveSavedExamId(nextId);
     setExam((current) => ({
       ...current,
@@ -182,6 +221,9 @@ export function useTeacherExamPage() {
   const sendSavedExamToClass = (savedExam: SavedExamRecord) => {
     if (savedExam.approvalStatus === "pending") {
       return showToast("Энэ шалгалт сургуулийн зөвшөөрөл хүлээж байна.");
+    }
+    if (savedExam.approvalStatus === "needs_fix") {
+      return showToast("Энэ шалгалтыг засварлаад дахин батлуулах шаардлагатай.");
     }
     const classId = selectedClassByExamId[savedExam.id];
     if (!classId) return showToast("Илгээхийн өмнө ангиа сонгоно уу.");
