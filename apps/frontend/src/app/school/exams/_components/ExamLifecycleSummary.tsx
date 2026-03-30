@@ -9,20 +9,14 @@ type ExamLifecycleSummaryProps = {
   }>;
 };
 
-export function ExamLifecycleSummary({
-  summary,
-}: ExamLifecycleSummaryProps) {
+export function ExamLifecycleSummary({ summary }: ExamLifecycleSummaryProps) {
   return (
     <section className="rounded-3xl border border-[#dbe5f0] bg-white p-6 shadow-sm">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-3 font-semibold text-[#0f172a]">
-            Шалгалтын lifecycle summary
+            Шалгалтын зохион байгуулалтын хуваарь
           </h2>
-          <p className="mt-1 text-2 text-[#61708a]">
-            Нооргоос эхлээд дууссан шалгалт хүртэлх бүх төлөвийн ачааллыг
-            харах нэгдсэн тойм.
-          </p>
         </div>
         <p className="text-2 font-medium text-[#46608a]">
           Нийт шалгалт: {summary.reduce((acc, item) => acc + item.count, 0)}
