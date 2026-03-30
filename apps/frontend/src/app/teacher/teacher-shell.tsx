@@ -108,15 +108,15 @@ export default function TeacherShell({
               <div className="flex min-w-0 items-center gap-4">
                 <Link
                   href="/teacher"
-                  className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_6px_20px_rgba(31,42,68,0.12)] outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#4f9dff] focus-visible:ring-offset-2"
+                  className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-[#e6eaf2] bg-white/95 shadow-[0_6px_20px_rgba(31,42,68,0.12)] outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#f2d45c] focus-visible:ring-offset-2"
                   aria-label="Нүүр хуудас — багшийн самбар"
                 >
                   <Image
-                    alt="UPDATE лого"
+                    alt="Зөгий лого"
                     className="object-contain"
                     fill
                     priority
-                    src="/logo.png"
+                    src="/bee.png"
                   />
                 </Link>
                 <div className="min-w-0">
@@ -140,11 +140,11 @@ export default function TeacherShell({
                         onClick={() => setIsMenuOpen(false)}
                         className={`inline-flex items-center gap-2 border-b-2 whitespace-nowrap px-1 py-1.5 transition-colors ${
                           isActive
-                            ? "border-[#4f9dff] text-[#4f9dff]"
-                            : "border-transparent text-[#2f3c59] hover:border-[#4f9dff] hover:text-[#4f9dff]"
+                            ? "border-[#f2d45c] text-[#c69b2a]"
+                            : "border-transparent text-[#5f4517] hover:border-[#f2d45c] hover:text-[#c69b2a]"
                         }`}
                       >
-                        <Icon className="h-5 w-5 text-[#4f9dff]" />
+                        <Icon className="h-5 w-5 text-[#c69b2a]" />
                         <span className="text-3 font-semibold lg:text-4">
                           {item.label}
                         </span>
@@ -157,7 +157,7 @@ export default function TeacherShell({
                 <button
                   aria-expanded={isMenuOpen}
                   aria-label="Хэрэглэгчийн цэс"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#c8d6ea] bg-white text-[#8a96ac] transition hover:border-[#4f9dff] hover:text-[#4f9dff]"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#f1e6b9] bg-[#fff7d6] text-[#c69b2a] transition hover:border-[#f2d45c] hover:text-[#b0811f]"
                   onClick={() => setIsMenuOpen((prev) => !prev)}
                   type="button"
                 >
