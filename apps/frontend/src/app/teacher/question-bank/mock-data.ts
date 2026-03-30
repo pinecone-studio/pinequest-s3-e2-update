@@ -34,6 +34,13 @@ export const SUBJECT_OPTIONS = [
   "Хөгжим",
 ] as const;
 
+/** Backend `getAllSubject` query-ийн mock — зөвхөн question-bank UI-д. */
+export const MOCK_GRAPHQL_SUBJECTS: { id: string; name: string }[] =
+  SUBJECT_OPTIONS.map((name, index) => ({
+    id: `mock-subject-${index + 1}`,
+    name,
+  }));
+
 export const GRADE_OPTIONS = [
   "6-р анги",
   "7-р анги",

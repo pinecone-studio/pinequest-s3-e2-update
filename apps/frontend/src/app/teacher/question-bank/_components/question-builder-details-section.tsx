@@ -1,10 +1,10 @@
 "use client";
 
-import { SUBTOPIC_OPTIONS } from "../_lib/constants";
+import { SUBTOPIC_OPTIONS } from "../constants";
 import type {
   QuestionBuilderValues,
   QuestionValidationErrors,
-} from "../_lib/types";
+} from "../types";
 import {
   BuilderField,
   BuilderSelectField,

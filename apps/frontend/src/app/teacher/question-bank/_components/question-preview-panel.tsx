@@ -2,8 +2,8 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { Eye } from "lucide-react";
-import type { Question } from "../_lib/types";
-import { formatDate } from "../_lib/utils";
+import type { Question } from "../types";
+import { formatDate } from "../utils";
 import {
   DifficultyBadge,
   GradingTypeBadge,

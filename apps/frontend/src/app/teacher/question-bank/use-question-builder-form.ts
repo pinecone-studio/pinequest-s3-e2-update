@@ -5,12 +5,12 @@ import type {
   QuestionBuilderValues,
   QuestionType,
   QuestionValidationErrors,
-} from "../_lib/types";
-import { createEmptyOption, createQuestionBuilderValues } from "../_lib/utils";
+} from "./types";
+import { createEmptyOption, createQuestionBuilderValues } from "./utils";
 import {
   getFormulaHelpers,
   subjectSupportsFormula,
-} from "../_components/question-builder-form-utils";
+} from "./_components/question-builder-form-utils";
 
 export function useQuestionBuilderForm(initialValues?: QuestionBuilderValues | null) {
   const [values, setValues] = useState<QuestionBuilderValues>(

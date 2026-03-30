@@ -1,6 +1,6 @@
 "use client";
 
-import type { Question } from "../_lib/types";
+import type { Question } from "../types";
 import { QuestionBankEmptyState } from "./question-bank-empty-state";
 import { QuestionCard } from "./question-card";
 

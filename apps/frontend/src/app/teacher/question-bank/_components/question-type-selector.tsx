@@ -1,6 +1,6 @@
 "use client";
 
-import type { QuestionType } from "../_lib/types";
+import type { QuestionType } from "../types";
 
 export function QuestionTypeSelector({
   value,

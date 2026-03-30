@@ -7,6 +7,8 @@ export default function TeacherClassPage() {
   const params = useParams();
   const classId = params.classId;
 
+  console.log(classId);
+
   if (!classId) {
     return (
       <section className="px-4 py-10 sm:px-10">

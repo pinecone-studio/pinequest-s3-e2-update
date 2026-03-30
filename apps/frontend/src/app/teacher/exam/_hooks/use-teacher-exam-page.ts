@@ -9,11 +9,11 @@ import {
   upsertPendingApprovalRequest,
 } from "@/app/lib/exam-approval-store";
 import { teacherClasses } from "../_lib/class-data";
-import { mapBackendTestsToQuestions } from "../../question-bank/_lib/backend-question-mappers";
-import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../../question-bank/_lib/get-tests";
-import { MOCK_QUESTIONS } from "../../question-bank/_lib/mock-data";
-import type { Question } from "../../question-bank/_lib/types";
-import { QUESTION_TYPE_LABELS } from "../../question-bank/_lib/utils";
+import { mapBackendTestsToQuestions } from "../../question-bank/backend-question-mappers";
+import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../../question-bank/get-tests";
+import { MOCK_QUESTIONS } from "../../question-bank/mock-data";
+import type { Question } from "../../question-bank/types";
+import { QUESTION_TYPE_LABELS } from "../../question-bank/utils";
 import { EXAM_GRADE_OPTIONS, INITIAL_FORM, PENDING_EXAM_TRANSFER_STORAGE_KEY, SAVED_EXAMS_STORAGE_KEY } from "../_lib/constants";
 import { normalizeSavedExamRecord } from "../_lib/utils";
 import type { ExamComposerState, ExamQuestionDetail, ExamQuestionItem, PendingExamTransfer, SavedExamRecord } from "../_lib/types";

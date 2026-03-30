@@ -7,14 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQuestionBank } from "../_hooks/use-question-bank";
-import { useQuery } from "@apollo/client/react";
-import { GET_ALL_SUBJECTS } from "@/graphql/typeDefs/queries";
+import { useQuestionBank } from "../use-question-bank";
+import { MOCK_GRAPHQL_SUBJECTS } from "../mock-data";
 import { useRouter } from "next/navigation";
-
-type GetAllSubjectQueryData = {
-  getAllSubject: { id: string; name: string }[];
-};
 
 export function QuestionBankEntry({
   initialSubjectId = "",
@@ -32,14 +27,11 @@ export function QuestionBankEntry({
         : undefined,
     );
 
-  const { data, loading } = useQuery<GetAllSubjectQueryData>(GET_ALL_SUBJECTS);
-
-  const subjectItems =
-    data?.getAllSubject.map((subject) => ({
-      key: subject.id,
-      value: subject.id,
-      label: subject.name,
-    })) ?? [];
+  const subjectItems = MOCK_GRAPHQL_SUBJECTS.map((subject) => ({
+    key: subject.id,
+    value: subject.id,
+    label: subject.name,
+  }));
 
   const gradeItems = gradeOptions.map((grade) => ({
     key: grade,
@@ -50,7 +42,7 @@ export function QuestionBankEntry({
   const totalQuestions = 9;
 
   const handleSubjectChange = (next: string) => {
-    const subject = data?.getAllSubject.find((s) => s.id === next);
+    const subject = MOCK_GRAPHQL_SUBJECTS.find((s) => s.id === next);
     if (subject) {
       updateEntrySelection({
         subjectId: subject.id,
@@ -104,11 +96,6 @@ export function QuestionBankEntry({
                 <SelectValue placeholder="Хичээл сонгох" />
               </SelectTrigger>
               <SelectContent>
-                {loading ? (
-                  <div className="px-3 py-2 text-sm text-[#6b7280]">
-                    Ачааллаж байна…
-                  </div>
-                ) : null}
                 {subjectItems.map((item) => (
                   <SelectItem key={item.key} value={item.value}>
                     {item.label}

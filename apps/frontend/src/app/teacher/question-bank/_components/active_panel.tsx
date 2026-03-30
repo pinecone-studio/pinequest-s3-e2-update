@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronsRightLeft, FileUp, Sparkles } from "lucide-react";
-import type { QuestionFilters as QuestionFiltersType } from "../_lib/types";
+import type { QuestionFilters as QuestionFiltersType } from "../types";
 import { QuestionFilters } from "./question-filters";
 
 type QuestionBankActivePanelProps = {
