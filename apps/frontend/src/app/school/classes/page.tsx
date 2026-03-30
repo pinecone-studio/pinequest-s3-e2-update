@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronRight, Users } from "lucide-react";
 import { store } from "@/app/lib/store";
 import { teacherLineById } from "@/app/lib/format_teacher";
+import { AddClassDialog } from "./_components/add-class-dialog";
 
 type SearchParams = { grade?: string | string[] };
 
@@ -93,12 +94,7 @@ export default async function AdminClassesPage({
         <div>
           <h2 className="text-2xl font-semibold text-zinc-900">Ангиуд</h2>
         </div>
-        <button
-          type="button"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-        >
-          Анги нэмэх
-        </button>
+        <AddClassDialog />
       </div>
 
       <section>
