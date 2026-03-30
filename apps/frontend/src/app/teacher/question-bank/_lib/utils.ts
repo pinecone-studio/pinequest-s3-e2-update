@@ -126,7 +126,18 @@ export function questionMatchesSearch(question: Question, search: string) {
 export function filterAndSortQuestions(questions: Question[], filters: QuestionFilters) {
   const filtered = questions.filter((question) => {
     if (!questionMatchesSearch(question, filters.search)) return false;
-    if (filters.questionType !== "all" && question.questionType !== filters.questionType) return false;
+    if (
+      filters.questionType === "multiple_choice"
+      && question.questionType !== "multiple_choice"
+    ) {
+      return false;
+    }
+    if (
+      filters.questionType === "long_answer"
+      && question.questionType === "multiple_choice"
+    ) {
+      return false;
+    }
     if (filters.difficulty !== "all" && question.difficulty !== filters.difficulty) return false;
     if (filters.subject !== "all" && question.subject !== filters.subject) return false;
     if (filters.grade !== "all" && question.grade !== filters.grade) return false;

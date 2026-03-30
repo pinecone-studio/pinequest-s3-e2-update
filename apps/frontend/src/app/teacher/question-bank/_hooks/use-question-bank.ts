@@ -9,6 +9,7 @@ import type { PendingExamTransfer } from "../../exam/_lib/types";
 import {
   GRADE_OPTIONS,
   QUESTION_BANK_FILTER_DEFAULTS,
+  SUBTOPIC_OPTIONS,
   SUBJECT_OPTIONS,
 } from "../_lib/constants";
 import { mapBackendTestsToQuestions } from "../_lib/backend-question-mappers";
@@ -159,28 +160,68 @@ export function useQuestionBank() {
   }, [entrySelection.grade, entrySelection.subject]);
 
   const subjectOptions = useMemo(
-    () =>
-      Array.from(new Set([
-        ...questions.map((question) => question.subject),
+    () => {
+      const mergedSubjects = [
         ...SUBJECT_OPTIONS,
-        ...(subjectsData?.getAllSubjects ?? []).map((subject) => subject.name.trim()).filter(Boolean),
-      ])).sort(),
+        ...questions.map((question) => question.subject),
+        ...(subjectsData?.getAllSubjects ?? [])
+          .map((subject) => subject.name.trim())
+          .filter(Boolean),
+      ];
+
+      return mergedSubjects.filter(
+        (subject, index, array) => array.indexOf(subject) === index,
+      );
+    },
     [questions, subjectsData?.getAllSubjects],
   );
   const gradeOptions = useMemo(
-    () => Array.from(new Set([...GRADE_OPTIONS, ...questions.map((question) => question.grade)])).sort(),
+    () => {
+      const allowedGrades = new Set(GRADE_OPTIONS);
+      const mergedGrades = [
+        ...GRADE_OPTIONS,
+        ...questions.map((question) => question.grade),
+      ];
+
+      return mergedGrades.filter(
+        (grade, index, array) =>
+          allowedGrades.has(grade as (typeof GRADE_OPTIONS)[number])
+          && array.indexOf(grade) === index,
+      );
+    },
     [questions],
   );
+  const activeSubjectForTopics =
+    filters.subject !== "all"
+      ? filters.subject
+      : hasEnteredBank
+        ? entrySelection.subject
+        : "all";
   const topicOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          questions
-            .map((question) => question.subtopic?.trim() || question.topic.trim())
-            .filter(Boolean),
-        ),
-      ).sort(),
-    [questions],
+    () => {
+      const constantTopics =
+        activeSubjectForTopics !== "all"
+          ? [
+              ...(SUBTOPIC_OPTIONS[
+                activeSubjectForTopics as keyof typeof SUBTOPIC_OPTIONS
+              ] ?? []),
+            ]
+          : Object.values(SUBTOPIC_OPTIONS).flat();
+
+      const questionTopics = questions
+        .filter((question) =>
+          activeSubjectForTopics === "all"
+            ? true
+            : question.subject === activeSubjectForTopics,
+        )
+        .map((question) => question.subtopic?.trim() || question.topic.trim())
+        .filter(Boolean);
+
+      return [...constantTopics, ...questionTopics].filter(
+        (topic, index, array) => array.indexOf(topic) === index,
+      );
+    },
+    [activeSubjectForTopics, questions],
   );
 
   const summary = useMemo(
@@ -211,6 +252,7 @@ export function useQuestionBank() {
     setFilters((current) => ({
       ...current,
       ...partial,
+      ...(partial.subject !== undefined ? { topic: "all", subtopic: "all" } : {}),
     }));
 
   const clearFilters = () => {

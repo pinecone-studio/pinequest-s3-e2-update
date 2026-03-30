@@ -9,10 +9,9 @@ import {
 } from "@/components/ui/select";
 import {
   QUESTION_DIFFICULTIES,
-  QUESTION_TYPES,
   type QuestionFilters,
 } from "../_lib/types";
-import { DIFFICULTY_LABELS, QUESTION_TYPE_LABELS } from "../_lib/utils";
+import { DIFFICULTY_LABELS } from "../_lib/utils";
 
 type QuestionFiltersProps = {
   filters: QuestionFilters;
@@ -99,10 +98,8 @@ export function QuestionFilters({
           label="Төрөл"
           options={[
             { value: "all", label: "Бүх төрөл" },
-            ...QUESTION_TYPES.map((type) => ({
-              value: type,
-              label: QUESTION_TYPE_LABELS[type],
-            })),
+            { value: "multiple_choice", label: "Сонгох" },
+            { value: "long_answer", label: "Задгай" },
           ]}
           onValueChange={(value) =>
             onChange({ questionType: value as QuestionFilters["questionType"] })

@@ -30,27 +30,60 @@ import { ImageUploader } from "./image-uploader";
 import { QuestionTypeSelector } from "./question-type-selector";
 
 const MATH_FORMULA_HELPERS = [
-  { label: "sin", value: "\\sin(x)" },
-  { label: "cos", value: "\\cos(x)" },
-  { label: "tan", value: "\\tan(x)" },
-  { label: "frac", value: "\\frac{a}{b}" },
-  { label: "sqrt", value: "\\sqrt{x}" },
-  { label: "pi", value: "\\pi" },
-  { label: "lim", value: "\\lim_{x \\to a}" },
+  { label: "sin", value: "sin(x)" },
+  { label: "cos", value: "cos(x)" },
+  { label: "tan", value: "tan(x)" },
+  { label: "log", value: "log(x)" },
+  { label: "ln", value: "ln(x)" },
+  { label: "frac", value: "a/b" },
+  { label: "sqrt", value: "√()" },
+  { label: "x^2", value: "x^2" },
+  { label: "x_n", value: "x_n" },
+  { label: "pi", value: "π" },
+  { label: "theta", value: "θ" },
+  { label: "lim", value: "lim x->a" },
+  { label: "sum", value: "sum(i=1..n)" },
+  { label: "int", value: "int(a..b)" },
 ];
 
 const PHYSICS_FORMULA_HELPERS = [
-  { label: "v = s/t", value: "v = \\frac{s}{t}" },
+  { label: "v = s/t", value: "v = s/t" },
   { label: "F = ma", value: "F = ma" },
-  { label: "sqrt", value: "\\sqrt{x}" },
-  { label: "delta", value: "\\Delta x" },
-  { label: "lambda", value: "\\lambda" },
+  { label: "E = mc^2", value: "E = mc^2" },
+  { label: "P = UI", value: "P = UI" },
+  { label: "W = Fs", value: "W = Fs" },
+  { label: "Q = It", value: "Q = It" },
+  { label: "sqrt", value: "√()" },
+  { label: "delta", value: "Δx" },
+  { label: "lambda", value: "λ" },
+  { label: "rho", value: "ρ" },
+  { label: "theta", value: "θ" },
+  { label: "mu", value: "μ" },
+  { label: "omega", value: "ω" },
+  { label: "pi", value: "π" },
+];
+
+const CHEMISTRY_FORMULA_HELPERS = [
+  { label: "H2O", value: "H2O" },
+  { label: "CO2", value: "CO2" },
+  { label: "O2", value: "O2" },
+  { label: "NaCl", value: "NaCl" },
+  { label: "H+", value: "H+" },
+  { label: "OH-", value: "OH-" },
+  { label: "pH", value: "pH" },
+  { label: "n = m/M", value: "n = m/M" },
+  { label: "c = n/V", value: "c = n/V" },
+  { label: "mol", value: "mol" },
+  { label: "->", value: "→" },
+  { label: "<->", value: "⇌" },
 ];
 
 const GENERIC_FORMULA_HELPERS = [
-  { label: "frac", value: "\\frac{a}{b}" },
-  { label: "sqrt", value: "\\sqrt{x}" },
-  { label: "x^2", value: "x^{2}" },
+  { label: "frac", value: "a/b" },
+  { label: "sqrt", value: "√()" },
+  { label: "x^2", value: "x^2" },
+  { label: "x_n", value: "x_n" },
+  { label: "pi", value: "π" },
 ];
 
 type QuestionBuilderFormProps = {
@@ -89,10 +122,8 @@ export function QuestionBuilderForm({
 
   const selectedMode =
     values.questionType === "multiple_choice" ? "multiple_choice" : "long_answer";
+  const supportsFormulaInput = subjectSupportsFormula(values.subject);
   const formulaHelpers = getFormulaHelpers(values.subject);
-  const formulaHelperTitle = values.subject.trim()
-    ? `${values.subject} хичээлийн томьёоны туслах`
-    : "Томьёоны туслах";
 
   const updateValue = <Key extends keyof QuestionBuilderValues>(
     key: Key,
@@ -178,40 +209,6 @@ export function QuestionBuilderForm({
     }));
   };
 
-  const applyDemoValues = () => {
-    setIncludesFormula(true);
-    setFeatureErrors({});
-    setValues((current) => ({
-      ...current,
-      title: "Тригонометрийн уламжлал бодох",
-      questionType: "multiple_choice",
-      prompt: "y = sin(x^2) функцийг дифференциалдаж хариуг сонгоно уу.",
-      guidance: "Гинжин дүрмийг ашиглана уу.",
-      explanation: "11-р ангийн тригонометрийн жишиг даалгавар.",
-      options: [
-        { id: "option-1", text: "2xcos(x^2)", isCorrect: true },
-        { id: "option-2", text: "cos(x^2)", isCorrect: false },
-        { id: "option-3", text: "2sin(x^2)", isCorrect: false },
-        { id: "option-4", text: "xsin(x)", isCorrect: false },
-      ],
-      correctAnswer: "2xcos(x^2)",
-      rubric: "Зөв хариултыг сонгосон бол бүтэн оноо.",
-      formulaRaw: "\\frac{d}{dx} \\sin(x^2) = 2x\\cos(x^2)",
-      imageUrl: "",
-      fileUploadConfig: {
-        acceptedFileTypes: [".pdf"],
-        instructions: "Хэрэв бодолтоо хавсаргах бол PDF файл байхаар.",
-        maxFiles: 1,
-      },
-      subject: current.subject,
-      grade: current.grade,
-      subtopic: "Тригонометр",
-      difficulty: "medium",
-      points: 5,
-      status: "published",
-    }));
-  };
-
   const handleSubmit = () => {
     const nextFeatureErrors: Pick<
       QuestionValidationErrors,
@@ -222,7 +219,7 @@ export function QuestionBuilderForm({
       nextFeatureErrors.imageUrl = "Зураг оруулах эсвэл хавсаргана уу.";
     }
 
-    if (includesFormula && !values.formulaRaw.trim()) {
+    if (supportsFormulaInput && includesFormula && !values.formulaRaw.trim()) {
       nextFeatureErrors.formulaRaw = "Томьёоны оролтоо бөглөнө үү.";
     }
 
@@ -236,7 +233,7 @@ export function QuestionBuilderForm({
     const nextQuestionType: QuestionType =
       selectedMode === "multiple_choice"
         ? "multiple_choice"
-        : includesFormula
+        : supportsFormulaInput && includesFormula
           ? "formula_input"
           : includesImage
             ? "image_based"
@@ -270,13 +267,6 @@ export function QuestionBuilderForm({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                className="inline-flex h-11 items-center justify-center rounded-2xl border border-[#d7e2f1] bg-white px-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#4f6b96] transition hover:text-[#1f6feb]"
-                onClick={applyDemoValues}
-                type="button"
-              >
-                Demo
-              </button>
               <button
                 className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#d7e2f1] bg-white text-[#4f6b96] transition hover:text-[#1f6feb]"
                 onClick={onClose}
@@ -313,16 +303,23 @@ export function QuestionBuilderForm({
                     handleFeatureToggle("image", checked)
                   }
                 />
-                <FeatureToggleCard
-                  checked={includesFormula}
-                  description={`${
-                    values.subject || "Сонгосон хичээл"
-                  } дээр томьёоны shortcut panel гаргана.`}
-                  label="Томьёоны оролт хэрэгтэй"
-                  onCheckedChange={(checked) =>
-                    handleFeatureToggle("formula", checked)
-                  }
-                />
+                {supportsFormulaInput ? (
+                  <FeatureToggleCard
+                    checked={includesFormula}
+                    description={`${
+                      values.subject || "Сонгосон хичээл"
+                    } дээр томьёоны shortcut panel гаргана.`}
+                    label="Томьёоны оролт хэрэгтэй"
+                    onCheckedChange={(checked) =>
+                      handleFeatureToggle("formula", checked)
+                    }
+                  />
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] p-4 text-sm text-[#6d7f9c]">
+                    Томьёоны нэмэлт оролт нь зөвхөн `Математик`, `Физик`,
+                    `Хими` хичээл дээр идэвхжинэ.
+                  </div>
+                )}
               </div>
             </div>
           </section>
@@ -354,10 +351,22 @@ export function QuestionBuilderForm({
                   list="question-bank-subjects"
                   onChange={(event) => {
                     const nextSubject = event.target.value;
+                    const nextSupportsFormula =
+                      subjectSupportsFormula(nextSubject);
+
+                    if (!nextSupportsFormula) {
+                      setIncludesFormula(false);
+                      setFeatureErrors((current) => ({
+                        ...current,
+                        formulaRaw: undefined,
+                      }));
+                    }
+
                     setValues((current) => ({
                       ...current,
                       subject: nextSubject,
                       subtopic: "",
+                      formulaRaw: nextSupportsFormula ? current.formulaRaw : "",
                     }));
                   }}
                   placeholder="Математик"
@@ -453,7 +462,7 @@ export function QuestionBuilderForm({
                   </div>
                 ) : null}
 
-                {includesFormula ? (
+                {supportsFormulaInput && includesFormula ? (
                   <div className="rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
                     <div className="mb-3">
                       <h3 className="text-base font-semibold text-[#183153]">
@@ -468,8 +477,6 @@ export function QuestionBuilderForm({
                       error={
                         featureErrors.formulaRaw || validationErrors?.formulaRaw
                       }
-                      helperDescription="Доорх товчлолууд дээр дарж томьёоны оролт руу шууд нэмнэ."
-                      helperTitle={formulaHelperTitle}
                       helperTokens={formulaHelpers}
                       onChange={(value) => updateValue("formulaRaw", value)}
                       value={values.formulaRaw}
@@ -691,15 +698,32 @@ function FeatureToggleCard({
 function getFormulaHelpers(subject: string) {
   const normalized = subject.trim().toLowerCase();
 
-  if (normalized.includes("мат")) {
+  if (normalized.includes("мат") || normalized.includes("math")) {
     return MATH_FORMULA_HELPERS;
   }
 
-  if (normalized.includes("физ")) {
+  if (normalized.includes("физ") || normalized.includes("phys")) {
     return PHYSICS_FORMULA_HELPERS;
   }
 
+  if (normalized.includes("хими") || normalized.includes("chem")) {
+    return CHEMISTRY_FORMULA_HELPERS;
+  }
+
   return GENERIC_FORMULA_HELPERS;
+}
+
+function subjectSupportsFormula(subject: string) {
+  const normalized = subject.trim().toLowerCase();
+
+  return (
+    normalized.includes("мат")
+    || normalized.includes("math")
+    || normalized.includes("физ")
+    || normalized.includes("phys")
+    || normalized.includes("хими")
+    || normalized.includes("chem")
+  );
 }
 
 function Field({
