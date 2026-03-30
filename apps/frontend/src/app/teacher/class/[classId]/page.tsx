@@ -5,8 +5,7 @@ import TeacherClassDetail from "../../components/teacher-class-detail";
 
 export default function TeacherClassPage() {
   const params = useParams();
-  const raw = params.classId;
-  const classId = Array.isArray(raw) ? (raw[0] ?? "") : (raw ?? "");
+  const classId = params.classId;
 
   if (!classId) {
     return (
@@ -18,5 +17,5 @@ export default function TeacherClassPage() {
     );
   }
 
-  return <TeacherClassDetail classId={classId} />;
+  return <TeacherClassDetail classId={classId as string} />;
 }

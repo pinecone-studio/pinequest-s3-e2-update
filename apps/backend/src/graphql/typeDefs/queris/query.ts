@@ -4,6 +4,11 @@ export const queryTypeDefs = /* GraphQL */ `
     grade: Int!
   }
 
+  input ClassByTeacherAndSchoolIdInput {
+    teacherId: String!
+    schoolId: String!
+  }
+
   type Query {
     hello: String!
     getAllTests: [Test!]!
@@ -15,5 +20,8 @@ export const queryTypeDefs = /* GraphQL */ `
     getExamById(examId: String!): Exam
     getTestsBySybjectAndGrade(input: TestInput): [Test]
     getAllSubject: [Subject!]!
+    getClassByTeacherAndSchoolId(
+      input: ClassByTeacherAndSchoolIdInput!
+    ): [Class!]
   }
 `;

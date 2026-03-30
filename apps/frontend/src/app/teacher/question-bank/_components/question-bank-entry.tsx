@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useQuestionBank } from "../_hooks/use-question-bank";
 import { useQuery } from "@apollo/client/react";
-import { GET_ALL_SUBJECTS } from "@/graphql/queries";
+import { GET_ALL_SUBJECTS } from "@/graphql/typeDefs/queries";
 import { useRouter } from "next/navigation";
 
 type GetAllSubjectQueryData = {
@@ -81,7 +81,9 @@ export function QuestionBankEntry({
               {totalQuestions}
             </p>
             <div>
-              <p className="text-sm font-extrabold text-[#1f2a44]">БҮХ АСУУЛТ</p>
+              <p className="text-sm font-extrabold text-[#1f2a44]">
+                БҮХ АСУУЛТ
+              </p>
               <p className="text-[11px] text-[#737373]">
                 Шалгалтад дахин ашиглана
               </p>
@@ -90,7 +92,9 @@ export function QuestionBankEntry({
         </section>
 
         <section className="rounded-2xl border border-[#e5e7eb] bg-white px-5 py-4 sm:px-6">
-          <p className="text-sm font-semibold text-[#1f2a44]">Сонголтын хэсэг</p>
+          <p className="text-sm font-semibold text-[#1f2a44]">
+            Сонголтын хэсэг
+          </p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <Select
               onValueChange={handleSubjectChange}

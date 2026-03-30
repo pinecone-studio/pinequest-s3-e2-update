@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GET_ALL_SUBJECTS } from "@/graphql/queries";
+import { GET_ALL_SUBJECTS } from "@/graphql/typeDefs/queries";
 
 type GetAllSubjectQueryData = {
   getAllSubject: { id: string; name: string }[];
@@ -70,7 +70,9 @@ export function QuestionBankEntrySelect({
         </SelectTrigger>
         <SelectContent>
           {useSubjectsQuery && loading ? (
-            <div className="px-3 py-2 text-sm text-[#6b7280]">Ачааллаж байна…</div>
+            <div className="px-3 py-2 text-sm text-[#6b7280]">
+              Ачааллаж байна…
+            </div>
           ) : null}
           {items.map((item) => (
             <SelectItem key={item.key} value={item.value}>
