@@ -8,12 +8,14 @@ type QuestionListProps = {
   activeQuestionId?: string | null;
   questions: Question[];
   likedQuestionIds: string[];
+  selectedQuestionIds: string[];
   getQuestionHeartCount: (question: Question) => number;
   onAddToExam: (questionId: string) => void;
   onCreateQuestion: () => void;
   onDeleteQuestion: (questionId: string) => void;
   onEditQuestion: (questionId: string) => void;
   onOpenQuestion?: (questionId: string) => void;
+  onToggleQuestionSelection: (questionId: string) => void;
   onToggleLike: (questionId: string) => void;
 };
 
@@ -21,12 +23,14 @@ export function QuestionList({
   activeQuestionId,
   questions,
   likedQuestionIds,
+  selectedQuestionIds,
   getQuestionHeartCount,
   onAddToExam,
   onCreateQuestion,
   onDeleteQuestion,
   onEditQuestion,
   onOpenQuestion,
+  onToggleQuestionSelection,
   onToggleLike,
 }: QuestionListProps) {
   if (questions.length === 0) {
@@ -40,11 +44,13 @@ export function QuestionList({
           heartCount={getQuestionHeartCount(question)}
           isActive={question.id === activeQuestionId}
           isLiked={likedQuestionIds.includes(question.id)}
+          isSelected={selectedQuestionIds.includes(question.id)}
           key={question.id}
           onAddToExam={() => onAddToExam(question.id)}
           onDelete={() => onDeleteQuestion(question.id)}
           onEdit={() => onEditQuestion(question.id)}
           onOpen={() => onOpenQuestion?.(question.id)}
+          onToggleSelect={() => onToggleQuestionSelection(question.id)}
           onToggleLike={() => onToggleLike(question.id)}
           question={question}
         />

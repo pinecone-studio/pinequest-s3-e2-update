@@ -38,16 +38,19 @@ export function QuestionBankPage() {
     publishSuccessDialogOpen,
     resetEntrySelection,
     sendQuestionsToExam,
+    selectedQuestionIds,
     setPublishSuccessDialogOpen,
     subjectOptions,
     submitQuestion,
     summary,
     setActiveQuestionId,
     toastMessage,
+    toggleQuestionSelection,
     toggleQuestionLike,
     topicOptions,
     updateEntrySelection,
     updateFilters,
+    clearQuestionSelection,
   } = useQuestionBank();
 
   return (
@@ -169,6 +172,38 @@ export function QuestionBankPage() {
 
       {hasEnteredBank ? (
         <>
+          {selectedQuestionIds.length > 0 ? (
+            <section className="rounded-[24px] border border-[#d8e2f0] bg-[#f8fbff] px-5 py-4 shadow-sm">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[#183153]">
+                    {selectedQuestionIds.length} асуулт сонгогдлоо
+                  </p>
+                  <p className="text-sm text-[#6b7280]">
+                    Сонгосон асуултуудаа нэг дор шалгалт руу нэмэх боломжтой.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <button
+                    className="inline-flex h-10 items-center justify-center rounded-xl border border-[#dbe4f0] bg-white px-4 text-sm font-medium text-[#355caa] transition hover:border-[#bfd2f6] hover:bg-[#f8fbff]"
+                    onClick={clearQuestionSelection}
+                    type="button"
+                  >
+                    Сонголт цэвэрлэх
+                  </button>
+                  <button
+                    className="inline-flex h-10 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937]"
+                    onClick={() => sendQuestionsToExam(selectedQuestionIds)}
+                    type="button"
+                  >
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    Сонгосон асуултуудыг шалгалтанд нэмэх
+                  </button>
+                </div>
+              </div>
+            </section>
+          ) : null}
+
           <section className="rounded-[28px] border border-[#e7e9ee] bg-white px-5 py-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:px-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -198,8 +233,10 @@ export function QuestionBankPage() {
                   onDeleteQuestion={deleteQuestion}
                   onEditQuestion={openEditBuilder}
                   onOpenQuestion={setActiveQuestionId}
+                  onToggleQuestionSelection={toggleQuestionSelection}
                   onToggleLike={toggleQuestionLike}
                   questions={myQuestions}
+                  selectedQuestionIds={selectedQuestionIds}
                 />
               ) : (
                 <div className="rounded-2xl border border-dashed border-[#dbe4f0] bg-[#fbfdff] px-5 py-8 text-sm text-[#6b7280]">
@@ -233,8 +270,10 @@ export function QuestionBankPage() {
                 onDeleteQuestion={deleteQuestion}
                 onEditQuestion={openEditBuilder}
                 onOpenQuestion={setActiveQuestionId}
+                onToggleQuestionSelection={toggleQuestionSelection}
                 onToggleLike={toggleQuestionLike}
                 questions={filteredQuestions}
+                selectedQuestionIds={selectedQuestionIds}
               />
               <div className="xl:sticky xl:top-24 xl:self-start">
                 <QuestionPreviewPanel question={activeQuestion} />

@@ -61,6 +61,7 @@ export function useQuestionBank() {
   });
   const [hasEnteredBank, setHasEnteredBank] = useState(false);
   const [likedQuestionIds, setLikedQuestionIds] = useState<string[]>([]);
+  const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
   const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
   const [questionOverrides, setQuestionOverrides] = useState<Record<string, Question>>({});
   const [deletedQuestionIds, setDeletedQuestionIds] = useState<string[]>([]);
@@ -290,6 +291,7 @@ export function useQuestionBank() {
       grade: "",
     });
     setFilters(QUESTION_BANK_FILTER_DEFAULTS);
+    setSelectedQuestionIds([]);
   };
 
   const openCreateBuilder = () => {
@@ -342,6 +344,7 @@ export function useQuestionBank() {
     setDeletedQuestionIds((current) =>
       current.includes(questionId) ? current : [...current, questionId],
     );
+    setSelectedQuestionIds((current) => current.filter((id) => id !== questionId));
 
     if (editingQuestionId === questionId) {
       closeBuilder();
@@ -428,6 +431,7 @@ export function useQuestionBank() {
 
     const payload: PendingExamTransfer = {
       questionIds: ids,
+      questions: nextQuestions,
       exam: firstQuestion
         ? {
             grade: firstQuestion.grade,
@@ -438,7 +442,20 @@ export function useQuestionBank() {
     };
 
     window.sessionStorage.setItem(PENDING_EXAM_TRANSFER_STORAGE_KEY, JSON.stringify(payload));
+    setSelectedQuestionIds((current) => current.filter((id) => !ids.includes(id)));
     router.push("/teacher/exam");
+  };
+
+  const toggleQuestionSelection = (questionId: string) => {
+    setSelectedQuestionIds((current) =>
+      current.includes(questionId)
+        ? current.filter((id) => id !== questionId)
+        : [...current, questionId],
+    );
+  };
+
+  const clearQuestionSelection = () => {
+    setSelectedQuestionIds([]);
   };
 
   return {
@@ -462,16 +479,19 @@ export function useQuestionBank() {
     publishSuccessDialogOpen,
     resetEntrySelection,
     sendQuestionsToExam,
+    selectedQuestionIds,
     setPublishSuccessDialogOpen,
     subjectOptions,
     submitQuestion,
     summary,
     setActiveQuestionId,
     toastMessage,
+    toggleQuestionSelection,
     toggleQuestionLike,
     topicOptions,
     updateEntrySelection,
     updateFilters,
+    clearQuestionSelection,
     likedQuestionIds,
     getQuestionHeartCount,
   };

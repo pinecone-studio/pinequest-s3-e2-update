@@ -3,12 +3,11 @@
 import {
   ArrowDown,
   ArrowUp,
-  CheckCircle2,
   GripVertical,
   Save,
   Trash2,
 } from "lucide-react";
-import type { ExamQuestionDetail, ExamStatus } from "../_lib/types";
+import type { ExamQuestionDetail } from "../_lib/types";
 
 export function ExamOutlineSection({
   examQuestionDetails,
@@ -21,7 +20,7 @@ export function ExamOutlineSection({
   examQuestionDetails: ExamQuestionDetail[];
   totalPoints: number;
   onMoveQuestion: (examQuestionId: string, direction: "up" | "down") => void;
-  onPersistExam: (status: ExamStatus) => void;
+  onPersistExam: () => void;
   onRemoveExamQuestion: (examQuestionId: string) => void;
   onUpdateAssignedPoints: (
     examQuestionId: string,
@@ -127,22 +126,14 @@ export function ExamOutlineSection({
         ))}
       </div>
 
-      <div className="mt-6 grid gap-3 border-t border-[#ecf1f7] pt-5 sm:grid-cols-2">
+      <div className="mt-6 border-t border-[#ecf1f7] pt-5">
         <button
-          className="inline-flex h-12 items-center justify-center rounded-2xl border border-[#d7e2f1] bg-white px-4 text-sm font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
-          onClick={() => onPersistExam("draft")}
+          className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-[#1f6feb] px-4 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
+          onClick={onPersistExam}
           type="button"
         >
           <Save className="mr-2 h-4 w-4" />
           Шалгалт хадгалах
-        </button>
-        <button
-          className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#1f6feb] px-4 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
-          onClick={() => onPersistExam("published")}
-          type="button"
-        >
-          <CheckCircle2 className="mr-2 h-4 w-4" />
-          Шалгалт нийтлэх
         </button>
       </div>
     </section>

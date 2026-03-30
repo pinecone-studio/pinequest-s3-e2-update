@@ -7,6 +7,7 @@ import {
   SendHorizontal,
   Trash2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -35,6 +36,7 @@ export function SavedExamCard({
   onSelectClass: (classId: string) => void;
   onSend: () => void;
 }) {
+  const router = useRouter();
   const availableClasses = teacherClasses.filter(
     (klass) => klass.grade === savedExam.grade,
   );
@@ -50,7 +52,12 @@ export function SavedExamCard({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <SavedExamMeta savedExam={savedExam} />
-          <SavedExamSendState sentClassIds={savedExam.sentClassIds ?? []} />
+          <SavedExamSendState
+            onOpenClass={(routeId) =>
+              router.push(`/teacher/class/${encodeURIComponent(routeId)}`)
+            }
+            sentClassIds={savedExam.sentClassIds ?? []}
+          />
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -136,7 +143,13 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
   );
 }
 
-function SavedExamSendState({ sentClassIds }: { sentClassIds: string[] }) {
+function SavedExamSendState({
+  sentClassIds,
+  onOpenClass,
+}: {
+  sentClassIds: string[];
+  onOpenClass: (routeId: string) => void;
+}) {
   if (sentClassIds.length === 0) return null;
   return (
     <div className="mt-3 space-y-3">
@@ -149,17 +162,28 @@ function SavedExamSendState({ sentClassIds }: { sentClassIds: string[] }) {
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
         {sentClassIds.map((classId) => {
           const klass = teacherClasses.find((item) => item.id === classId);
-          return klass ? (
+          if (!klass) return null;
+
+          return klass.routeId ? (
+            <button
+              className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9] transition hover:bg-[#dbeafe]"
+              key={classId}
+              onClick={() => onOpenClass(klass.routeId!)}
+              type="button"
+            >
+              Илгээсэн: {klass.name}
+            </button>
+          ) : (
             <span
               className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]"
               key={classId}
             >
               Илгээсэн: {klass.name}
             </span>
-          ) : null;
+          );
         })}
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@apollo/client/react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { teacherClasses } from "../_lib/class-data";
 import { mapBackendTestsToQuestions } from "../../question-bank/_lib/backend-question-mappers";
@@ -10,13 +11,15 @@ import type { Question } from "../../question-bank/_lib/types";
 import { QUESTION_TYPE_LABELS } from "../../question-bank/_lib/utils";
 import { EXAM_GRADE_OPTIONS, INITIAL_FORM, PENDING_EXAM_TRANSFER_STORAGE_KEY, SAVED_EXAMS_STORAGE_KEY } from "../_lib/constants";
 import { normalizeSavedExamRecord } from "../_lib/utils";
-import type { ExamComposerState, ExamQuestionDetail, ExamQuestionItem, ExamStatus, PendingExamTransfer, SavedExamRecord } from "../_lib/types";
+import type { ExamComposerState, ExamQuestionDetail, ExamQuestionItem, PendingExamTransfer, SavedExamRecord } from "../_lib/types";
 
 export function useTeacherExamPage() {
+  const router = useRouter();
   const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const [exam, setExam] = useState<ExamComposerState>(INITIAL_FORM);
   const [selectedBankIds, setSelectedBankIds] = useState<string[]>([]);
   const [examQuestions, setExamQuestions] = useState<ExamQuestionItem[]>([]);
+  const [transferredQuestions, setTransferredQuestions] = useState<Question[]>([]);
   const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
   const [hasLoadedSavedExams, setHasLoadedSavedExams] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -26,8 +29,15 @@ export function useTeacherExamPage() {
 
   const questionBank = useMemo(() => {
     const backendQuestions = mapBackendTestsToQuestions(testsData?.getAllTests ?? []);
-    return backendQuestions.length > 0 ? backendQuestions : MOCK_QUESTIONS;
-  }, [testsData?.getAllTests]);
+    const baseQuestions = backendQuestions.length > 0 ? backendQuestions : MOCK_QUESTIONS;
+    const merged = new Map<string, Question>();
+
+    for (const question of [...baseQuestions, ...transferredQuestions]) {
+      merged.set(question.id, question);
+    }
+
+    return Array.from(merged.values());
+  }, [testsData?.getAllTests, transferredQuestions]);
   const subjectOptions = useMemo(() => Array.from(new Set(questionBank.map((question) => question.subject))).sort(), [questionBank]);
   const topicSuggestions = useMemo(() => Array.from(new Set(questionBank.filter((question) => (exam.subject ? question.subject.toLowerCase() === exam.subject.toLowerCase() : true)).map((question) => question.topic))).sort(), [exam.subject, questionBank]);
   const filteredQuestions = useMemo(() => [...questionBank].filter((question) => matchesSearch(question, search)).sort((left, right) => scoreQuestion(right, exam) - scoreQuestion(left, exam) || right.usageCount - left.usageCount), [exam, questionBank, search]);
@@ -63,8 +73,20 @@ export function useTeacherExamPage() {
     try {
       const pending = JSON.parse(raw) as PendingExamTransfer;
       const pendingIds = Array.isArray(pending.questionIds) ? pending.questionIds : [];
-      const pendingQuestions = questionBank.filter((question) => pendingIds.includes(question.id));
+      const transferred = Array.isArray(pending.questions) ? pending.questions : [];
+      const transferredMap = new Map(transferred.map((question) => [question.id, question] as const));
+      const pendingQuestions = pendingIds
+        .map((questionId) => transferredMap.get(questionId) ?? questionBank.find((question) => question.id === questionId))
+        .filter((question): question is Question => Boolean(question));
       if (pendingQuestions.length === 0) return;
+
+      setTransferredQuestions((current) => {
+        const merged = new Map(current.map((question) => [question.id, question] as const));
+        for (const question of transferred) {
+          merged.set(question.id, question);
+        }
+        return Array.from(merged.values());
+      });
 
       const firstQuestion = pendingQuestions[0];
       setExam((current) => ({
@@ -114,16 +136,29 @@ export function useTeacherExamPage() {
   const removeExamQuestion = (examQuestionId: string) => setExamQuestions((current) => current.filter((item) => item.examQuestionId !== examQuestionId).map((item, order) => ({ ...item, order })));
   const updateAssignedPoints = (examQuestionId: string, assignedPoints: number) => setExamQuestions((current) => current.map((item) => item.examQuestionId === examQuestionId ? { ...item, assignedPoints: Number.isFinite(assignedPoints) && assignedPoints > 0 ? assignedPoints : 1 } : item));
 
-  const persistExam = (status: ExamStatus) => {
-    if (!exam.title.trim()) return showToast("Эхлээд шалгалтын гарчиг оруулна уу.");
+  const persistExam = () => {
     if (examQuestionDetails.length === 0) return showToast("Хадгалахаас өмнө дор хаяж нэг асуулт нэмнэ үү.");
+
+    const generatedTitle = [
+      exam.subject.trim() || "Шалгалт",
+      exam.topic.trim() || "Ерөнхий сэдэв",
+      exam.grade.trim() || "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    const nextTitle = exam.title.trim() || generatedTitle;
+
     const now = new Date().toISOString();
     const nextId = activeSavedExamId ?? `saved-exam-${now}`;
     const previous = savedExams.find((item) => item.id === nextId);
-    const nextRecord: SavedExamRecord = { id: nextId, title: exam.title.trim(), grade: exam.grade.trim(), subject: exam.subject.trim(), topic: exam.topic.trim(), durationInMinutes: exam.durationInMinutes, status, totalPoints, questionCount: examQuestionDetails.length, savedAt: now, questions: examQuestions.map((item) => ({ ...item })), sentClassIds: previous?.sentClassIds ?? [] };
+    const nextRecord: SavedExamRecord = { id: nextId, title: nextTitle, grade: exam.grade.trim(), subject: exam.subject.trim(), topic: exam.topic.trim(), durationInMinutes: exam.durationInMinutes, status: "published", totalPoints, questionCount: examQuestionDetails.length, savedAt: now, questions: examQuestions.map((item) => ({ ...item })), sentClassIds: previous?.sentClassIds ?? [] };
     setSavedExams((current) => [nextRecord, ...current.filter((item) => item.id !== nextId)].sort((left, right) => new Date(right.savedAt).getTime() - new Date(left.savedAt).getTime()));
     setActiveSavedExamId(nextId);
-    showToast(status === "draft" ? "Шалгалтыг ноорог төлөвөөр хадгаллаа." : "Шалгалтыг нийтэллээ.");
+    setExam((current) => ({
+      ...current,
+      title: nextTitle,
+    }));
+    showToast("Шалгалтыг амжилттай хадгаллаа.");
   };
 
   const openSavedExam = (savedExam: SavedExamRecord) => {
@@ -145,10 +180,36 @@ export function useTeacherExamPage() {
   const selectClassForSavedExam = (savedExamId: string, classId: string) => setSelectedClassByExamId((current) => ({ ...current, [savedExamId]: classId }));
   const sendSavedExamToClass = (savedExam: SavedExamRecord) => {
     const classId = selectedClassByExamId[savedExam.id];
-    const selectedClass = teacherClasses.find((item) => item.id === classId);
     if (!classId) return showToast("Илгээхийн өмнө ангиа сонгоно уу.");
+    const selectedClass = teacherClasses.find((item) => item.id === classId);
     if (!selectedClass) return showToast("Сонгосон анги олдсонгүй.");
-    setSavedExams((current) => current.map((item) => item.id === savedExam.id ? { ...item, sentClassIds: Array.from(new Set([...(item.sentClassIds ?? []), classId])) } : item));
+
+    if (selectedClass.routeId) {
+      const params = new URLSearchParams({
+        deliveryExamId: savedExam.id,
+        deliveryExamTitle: savedExam.title,
+        deliveryClassId: classId,
+      });
+      router.push(
+        `/teacher/class/${encodeURIComponent(selectedClass.routeId)}?${params.toString()}`,
+      );
+      return showToast(
+        `"${savedExam.title}" шалгалтыг ${selectedClass.name} ангид илгээх тохиргоо руу шилжлээ.`,
+      );
+    }
+
+    setSavedExams((current) =>
+      current.map((item) =>
+        item.id === savedExam.id
+          ? {
+              ...item,
+              sentClassIds: Array.from(
+                new Set([...(item.sentClassIds ?? []), classId]),
+              ),
+            }
+          : item,
+      ),
+    );
     showToast(`"${savedExam.title}" шалгалтыг ${selectedClass.name} ангид илгээлээ.`);
   };
 

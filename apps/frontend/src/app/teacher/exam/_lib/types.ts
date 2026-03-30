@@ -36,5 +36,6 @@ export type ExamQuestionDetail = ExamQuestionItem & { question: Question };
 
 export type PendingExamTransfer = {
   questionIds: string[];
+  questions?: Question[];
   exam?: Partial<Pick<ExamComposerState, "grade" | "subject" | "topic">>;
 };
