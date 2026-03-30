@@ -109,18 +109,22 @@ export function ExamScreen({
       {warning && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-120 bg-white border-2 border-gray-400 rounded-2xl flex flex-col">
-            <div className="w-full h-15 flex justify-end items-center">
-              <button className="w-10 h-10 border-2 border-black rounded-full mr-3 flex justify-center items-center cursor-pointer bg-gray-100 hover:bg-gray-200 duration-200">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-100 bg-white border-2 border-gray-400 rounded-2xl flex flex-col">
+            <div className="w-full h-20 flex justify-end items-center">
+              <button
+                className="w-10 h-10 border-2 border-black rounded-full mr-3 flex justify-center items-center cursor-pointer bg-gray-100 hover:bg-gray-200 duration-200"
+                onClick={() => setWarning(false)}
+              >
                 <IoClose size={25} />
               </button>
             </div>
-            <div className="w-full h-full bg-red-200 flex flex-col justify-center items-center gap-10">
+            <div className="w-full h-full flex flex-col pt-12 items-center gap-10">
               <p className="text-[30px] font-semibold flex justify-center items-center gap-5">
                 <IoWarning size={40} color="" /> Анхааруулга
               </p>
-              <p className="text-[24px] font-semibold">
-                This is not allowed during the test or whatever this part is.
+              <p className="text-[24px] font-semibold w-[85%] text-center">
+                This is a warning that labels whether you chnaged your tabs or
+                whether you changed you window.
               </p>
             </div>
           </div>
