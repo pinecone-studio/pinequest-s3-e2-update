@@ -14,7 +14,7 @@ import {
 export function QuestionPreviewPanel({ question }: { question: Question | null }) {
   if (!question) {
     return (
-      <aside className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+      <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
         <p className="text-sm text-[#6d7f9c]">
           Сонгосон асуултын дэлгэрэнгүйг харахын тулд жагсаалтаас асуулт сонгоно уу.
         </p>
@@ -23,7 +23,7 @@ export function QuestionPreviewPanel({ question }: { question: Question | null }
   }
 
   return (
-    <aside className="rounded-[24px] border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7c8ba4]">
         <Eye className="h-4 w-4" />
         Асуултын дэлгэрэнгүй

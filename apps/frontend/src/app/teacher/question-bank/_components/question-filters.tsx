@@ -9,16 +9,16 @@ import {
 } from "@/components/ui/select";
 import {
   QUESTION_DIFFICULTIES,
-  type QuestionFilters,
+  type QuestionFilters as QuestionFiltersType,
 } from "../_lib/types";
 import { DIFFICULTY_LABELS } from "../_lib/utils";
 
 type QuestionFiltersProps = {
-  filters: QuestionFilters;
+  filters: QuestionFiltersType;
   subjectOptions: string[];
   gradeOptions: string[];
   topicOptions: string[];
-  onChange: (partial: Partial<QuestionFilters>) => void;
+  onChange: (partial: Partial<QuestionFiltersType>) => void;
   onClear: () => void;
   embedded?: boolean;
 };
@@ -32,6 +32,10 @@ export function QuestionFilters({
   onClear,
   embedded = false,
 }: QuestionFiltersProps) {
+  const containerClassName = embedded
+    ? "space-y-5"
+    : "rounded-[28px] border border-[#e3e8ef] bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-6";
+
   const content = (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -43,112 +47,136 @@ export function QuestionFilters({
             Хурдан хайлт ба шүүлтүүр
           </h2>
         </div>
+
         <button
-          className="text-sm font-medium text-[#6b7280] transition hover:text-[#111827]"
-          onClick={onClear}
           type="button"
+          onClick={onClear}
+          className="text-sm font-medium text-[#6b7280] transition hover:text-[#111827]"
         >
           Шүүлтүүр цэвэрлэх
         </button>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <FilterSelect
-          label="Анги"
-          options={[
-            { value: "all", label: "Бүх анги" },
-            ...gradeOptions.map((grade) => ({ value: grade, label: grade })),
-          ]}
-          onValueChange={(value) => onChange({ grade: value })}
-          value={filters.grade}
-        />
-        <FilterSelect
-          label="Хичээл"
-          options={[
-            { value: "all", label: "Бүх хичээл" },
-            ...subjectOptions.map((subject) => ({ value: subject, label: subject })),
-          ]}
-          onValueChange={(value) => onChange({ subject: value })}
-          value={filters.subject}
-        />
-        <FilterSelect
-          label="Сэдэв"
-          options={[
-            { value: "all", label: "Бүх сэдэв" },
-            ...topicOptions.map((topic) => ({ value: topic, label: topic })),
-          ]}
-          onValueChange={(value) => onChange({ topic: value })}
-          value={filters.topic}
-        />
-        <FilterSelect
-          label="Түвшин"
-          options={[
-            { value: "all", label: "Бүх түвшин" },
-            ...QUESTION_DIFFICULTIES.map((difficulty) => ({
-              value: difficulty,
-              label: DIFFICULTY_LABELS[difficulty],
-            })),
-          ]}
-          onValueChange={(value) =>
-            onChange({ difficulty: value as QuestionFilters["difficulty"] })
-          }
-          value={filters.difficulty}
-        />
-        <FilterSelect
-          label="Төрөл"
-          options={[
-            { value: "all", label: "Бүх төрөл" },
-            { value: "multiple_choice", label: "Сонгох" },
-            { value: "long_answer", label: "Задгай" },
-          ]}
-          onValueChange={(value) =>
-            onChange({ questionType: value as QuestionFilters["questionType"] })
-          }
-          value={filters.questionType}
-        />
+        <label className="space-y-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+            Анги
+          </span>
+          <Select
+            value={filters.grade}
+            onValueChange={(value) => onChange({ grade: value })}
+          >
+            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Бүх анги</SelectItem>
+              {gradeOptions.map((grade) => (
+                <SelectItem key={grade} value={grade}>
+                  {grade}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+
+        <label className="space-y-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+            Хичээл
+          </span>
+          <Select
+            value={filters.subject}
+            onValueChange={(value) => onChange({ subject: value })}
+          >
+            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Бүх хичээл</SelectItem>
+              {subjectOptions.map((subject) => (
+                <SelectItem key={subject} value={subject}>
+                  {subject}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+
+        <label className="space-y-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+            Сэдэв
+          </span>
+          <Select
+            value={filters.topic}
+            onValueChange={(value) => onChange({ topic: value })}
+          >
+            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Бүх сэдэв</SelectItem>
+              {topicOptions.map((topic) => (
+                <SelectItem key={topic} value={topic}>
+                  {topic}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+
+        <label className="space-y-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+            Түвшин
+          </span>
+          <Select
+            value={filters.difficulty}
+            onValueChange={(value) =>
+              onChange({ difficulty: value as QuestionFiltersType["difficulty"] })
+            }
+          >
+            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Бүх түвшин</SelectItem>
+              {QUESTION_DIFFICULTIES.map((difficulty) => (
+                <SelectItem key={difficulty} value={difficulty}>
+                  {DIFFICULTY_LABELS[difficulty]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+
+        <label className="space-y-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+            Төрөл
+          </span>
+          <Select
+            value={filters.questionType}
+            onValueChange={(value) =>
+              onChange({
+                questionType: value as QuestionFiltersType["questionType"],
+              })
+            }
+          >
+            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Бүх төрөл</SelectItem>
+              <SelectItem value="multiple_choice">Сонгох</SelectItem>
+              <SelectItem value="long_answer">Задгай</SelectItem>
+            </SelectContent>
+          </Select>
+        </label>
       </div>
     </div>
   );
 
   if (embedded) {
-    return <div className="space-y-5">{content}</div>;
+    return <div className={containerClassName}>{content}</div>;
   }
 
-  return (
-    <section className="rounded-[28px] border border-[#e3e8ef] bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-6">
-      {content}
-    </section>
-  );
-}
-
-function FilterSelect({
-  label,
-  value,
-  onValueChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: { value: string; label: string }[];
-}) {
-  return (
-    <label className="space-y-2">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
-        {label}
-      </span>
-      <Select onValueChange={onValueChange} value={value}>
-        <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </label>
-  );
+  return <section className={containerClassName}>{content}</section>;
 }
