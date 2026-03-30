@@ -3,19 +3,19 @@
 "use client";
 
 import {
-	ArrowLeft,
-	BarChart3,
-	BookOpen,
-	CheckCircle2,
-	ChevronDown,
-	ChevronUp,
-	Download,
-	Eye,
-	EyeClosed,
-	Search,
-	SendHorizontal,
-	Users,
-	X,
+  ArrowLeft,
+  BarChart3,
+  BookOpen,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Eye,
+  EyeClosed,
+  Search,
+  SendHorizontal,
+  Users,
+  X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -46,6 +46,22 @@ function escapeHtml(s: string) {
 function sanitizeFilename(s: string) {
   const t = s.replace(/[^\w\u0400-\u04FF-]+/g, "_").replace(/^_+|_+$/g, "");
   return t.slice(0, 80) || "export";
+}
+
+function safeExamDateKey(date?: string | null) {
+  if (!date) return "";
+  return date.trim();
+}
+
+function formatExamDate(date?: string | null) {
+  if (!date || !date.trim()) return "Огноо байхгүй";
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return date;
+  return new Intl.DateTimeFormat("mn-MN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(parsed);
 }
 
 function triggerExcelDownload(filename: string, tableHtml: string) {
@@ -130,7 +146,7 @@ function downloadStudentListPdf(className: string, students: Student[]) {
 function downloadFullExamStatisticsXls(className: string, row: PastExamRow) {
   const html = buildPastExamFullStatisticsExportHtml(className, row);
   const base = sanitizeFilename(
-    `${className}_${row.date}_${row.examTitle}_ang_statistik`,
+    `${className}_${safeExamDateKey(row.date)}_${row.examTitle}_ang_statistik`,
   );
   triggerExcelDownload(`${base}.xls`, html);
 }
@@ -382,7 +398,7 @@ function buildSingleStudentPastExamTablesHtml(
   const summary = `
     <table border="1">
       <tr><th colspan="2">Сурагчийн шалгалтын дүн — ${escapeHtml(className)}</th></tr>
-      <tr><td>Огноо</td><td>${escapeHtml(exam.date)}</td></tr>
+      <tr><td>Огноо</td><td>${escapeHtml(formatExamDate(exam.date))}</td></tr>
       <tr><td>Хичээл</td><td>${escapeHtml(exam.subject)}</td></tr>
       <tr><td>Шалгалт</td><td>${escapeHtml(exam.examTitle)}</td></tr>
       <tr><td>Сурагч</td><td>${escapeHtml(`${student.lastName} ${student.firstName}`)}</td></tr>
@@ -414,7 +430,7 @@ function downloadSingleStudentPastExamXls(
 ) {
   const html = buildSingleStudentPastExamTablesHtml(className, exam, student);
   const base = sanitizeFilename(
-    `${className}_${student.lastName}_${student.firstName}_${exam.date}`,
+    `${className}_${student.lastName}_${student.firstName}_${safeExamDateKey(exam.date)}`,
   );
   triggerExcelDownload(`${base}.xls`, html);
 }
@@ -505,8 +521,9 @@ function PastExamStudentStatPopover({
           </p>
           <dl className="mt-4 grid gap-3 sm:grid-cols-2">
             {[
-              { label: "Огноо", value: exam.date },
+              { label: "Огноо", value: formatExamDate(exam.date) },
               { label: "Хичээл", value: exam.subject },
+
               {
                 label: "Шалгалт",
                 value: exam.examTitle,
@@ -682,7 +699,7 @@ function StudentClassExamResultsPanel({
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
                     <span className="whitespace-nowrap text-[0.8125rem] font-semibold tabular-nums text-[#122459]">
-                      {exam.date}
+                      {formatExamDate(exam.date)}
                     </span>
                     <span className="min-w-0 text-[0.875rem] font-semibold leading-snug text-[#122459]">
                       {exam.subject} — {exam.examTitle}
@@ -705,7 +722,10 @@ function StudentClassExamResultsPanel({
                         / {exam.maxScore}
                       </span>
                     </span>
-                    <ChevronDown className="h-4 w-4 text-[#122459]" aria-hidden />
+                    <ChevronDown
+                      className="h-4 w-4 text-[#122459]"
+                      aria-hidden
+                    />
                   </div>
                 </div>
               </div>
@@ -721,7 +741,7 @@ function StudentClassExamResultsPanel({
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-4 py-3.5 transition hover:bg-[#f8fafc] sm:px-5 sm:py-4 [&::-webkit-details-marker]:hidden">
                   <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
                     <span className="whitespace-nowrap text-[0.8125rem] font-semibold tabular-nums text-[#122459]">
-                      {exam.date}
+                      {formatExamDate(exam.date)}
                     </span>
                     <span className="min-w-0 text-[0.9375rem] font-semibold leading-snug text-[#122459]">
                       {exam.subject} — {exam.examTitle}
@@ -1177,7 +1197,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   );
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-	const [activeView, setActiveView] = useState<ClassView>("students");
+  const [activeView, setActiveView] = useState<ClassView>("students");
   const [historyQuery, setHistoryQuery] = useState("");
   const [expandedPastExamId, setExpandedPastExamId] = useState<string | null>(
     null,
@@ -1211,7 +1231,9 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
       const score = exam.studentScores.find((s) => s.studentId === selectedId);
       if (score) items.push({ exam, score });
     }
-    return items.sort((a, b) => b.exam.date.localeCompare(a.exam.date));
+    return items.sort((a, b) =>
+      safeExamDateKey(b.exam.date).localeCompare(safeExamDateKey(a.exam.date)),
+    );
   }, [pastExams, selectedId]);
 
   const filteredPastExams = useMemo(() => {
@@ -1221,7 +1243,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
       if (
         e.subject.toLowerCase().includes(q) ||
         e.examTitle.toLowerCase().includes(q) ||
-        e.date.toLowerCase().includes(q) ||
+        safeExamDateKey(e.date).toLowerCase().includes(q) ||
         `${e.maxScore}`.includes(q)
       ) {
         return true;
@@ -1378,106 +1400,109 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
           </button>
         </div>
 
-				{activeView === "students" ? (
-					<div className="rounded-2xl bg-white p-5 sm:p-8">
-						<div className="flex flex-wrap items-start justify-between gap-3">
-							<div className="min-w-0">
-								<h2 className="flex items-center gap-2 text-5 font-extrabold text-[#122459]">
-									<Users className="h-6 w-6 shrink-0 text-[#122459]" />
-									Сурагчид
-								</h2>
-								<p className="mt-2 text-4 text-[#122459]">
-									Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай.
-								</p>
-							</div>
+        {activeView === "students" ? (
+          <div className="rounded-2xl bg-white p-5 sm:p-8">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="flex items-center gap-2 text-5 font-extrabold text-[#122459]">
+                  <Users className="h-6 w-6 shrink-0 text-[#122459]" />
+                  Сурагчид
+                </h2>
+                <p className="mt-2 text-4 text-[#122459]">
+                  Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай.
+                </p>
+              </div>
               <DownloadMenu
                 onExcel={() => downloadStudentListXls(cls.name, students)}
                 onPdf={() => downloadStudentListPdf(cls.name, students)}
               />
             </div>
 
-						<div className="mt-5 rounded-xl px-2 py-6 text-center text-4 text-[#122459] sm:px-4">
-							<hr className="mx-auto mb-3 h-[2px] w-full max-w-[984px] border-0 border-t border-[#A1A1A1]" />
-							<p className="mt-2 font-semibold text-[#122459]">
-								Ангид одоогоор {classTotal} сурагч байна.
-							</p>
-						</div>
+            <div className="mt-5 rounded-xl px-2 py-6 text-center text-4 text-[#122459] sm:px-4">
+              <hr className="mx-auto mb-3 h-[2px] w-full max-w-[984px] border-0 border-t border-[#A1A1A1]" />
+              <p className="mt-2 font-semibold text-[#122459]">
+                Ангид одоогоор {classTotal} сурагч байна.
+              </p>
+            </div>
 
-						<div className="mt-6 space-y-4">
-							{students.map((student, index) => {
-								const open = selectedId === student.id;
-								return (
-									<div
-										key={student.id}
-										role="button"
-										tabIndex={0}
-										aria-expanded={open}
-										onClick={() =>
-											setSelectedId((cur) =>
-												cur === student.id ? null : student.id,
-											)
-										}
-										onKeyDown={(e) => {
-											if (e.key === "Enter" || e.key === " ") {
-												e.preventDefault();
-												setSelectedId((cur) =>
-													cur === student.id ? null : student.id,
-												);
-											}
-										}}
-										className={`mx-auto w-full max-w-[455px] cursor-pointer rounded-[12px] border border-[#D4D4D4] bg-white px-4 transition hover:bg-[#EDF6FF] sm:px-5 ${
-											open ? "pb-5" : "py-4 sm:h-[86px]"
-										}`}
-									>
-										<div
-											className={`flex h-full justify-between gap-4 ${
-												open ? "items-start pt-4" : "items-center"
-											}`}
-										>
-											<div className="flex items-start gap-4">
-												<span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#122459]">
-													{index + 1}
-												</span>
-												<div className="min-w-0 flex-1">
-													<p className="text-4 font-semibold text-[#122459]">
-														{student.firstName} {student.lastName}
-													</p>
-													<p className="mt-1 text-3 text-[#122459]">
-														{`${student.studentNumber.toLowerCase()}@gmail.com`}
-													</p>
-												</div>
-											</div>
-											<span className="flex h-[50px] w-[50px] items-center justify-center rounded-xl bg-white">
-												{open ? (
-													<Eye className="h-5 w-5 text-[#1f6feb]" aria-hidden />
-												) : (
-													<EyeClosed className="h-5 w-5 text-[#1f6feb]" aria-hidden />
-												)}
-											</span>
-										</div>
-										{open ? (
-											<div className="mt-4">
-												<StudentClassExamResultsPanel
-													classLabel={cls.name}
-													examRows={selectedStudentExams}
-													placement="underRow"
-													student={student}
-												/>
-											</div>
-										) : null}
-									</div>
-								);
-							})}
-						</div>
+            <div className="mt-6 space-y-4">
+              {students.map((student, index) => {
+                const open = selectedId === student.id;
+                return (
+                  <div
+                    key={student.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={open}
+                    onClick={() =>
+                      setSelectedId((cur) =>
+                        cur === student.id ? null : student.id,
+                      )
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedId((cur) =>
+                          cur === student.id ? null : student.id,
+                        );
+                      }
+                    }}
+                    className={`mx-auto w-full max-w-[455px] cursor-pointer rounded-[12px] border border-[#D4D4D4] bg-white px-4 transition hover:bg-[#EDF6FF] sm:px-5 ${
+                      open ? "pb-5" : "py-4 sm:h-[86px]"
+                    }`}
+                  >
+                    <div
+                      className={`flex h-full justify-between gap-4 ${
+                        open ? "items-start pt-4" : "items-center"
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <span className="mt-0.5 w-8 shrink-0 text-4 font-semibold text-[#122459]">
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-4 font-semibold text-[#122459]">
+                            {student.firstName} {student.lastName}
+                          </p>
+                          <p className="mt-1 text-3 text-[#122459]">
+                            {`${student.studentNumber.toLowerCase()}@gmail.com`}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="flex h-[50px] w-[50px] items-center justify-center rounded-xl bg-white">
+                        {open ? (
+                          <Eye className="h-5 w-5 text-[#1f6feb]" aria-hidden />
+                        ) : (
+                          <EyeClosed
+                            className="h-5 w-5 text-[#1f6feb]"
+                            aria-hidden
+                          />
+                        )}
+                      </span>
+                    </div>
+                    {open ? (
+                      <div className="mt-4">
+                        <StudentClassExamResultsPanel
+                          classLabel={cls.name}
+                          examRows={selectedStudentExams}
+                          placement="underRow"
+                          student={student}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-[#7DC8FF] bg-white p-6 shadow-sm sm:p-8">
+          <div className="rounded-2xl bg-white p-6 sm:p-8">
             <div className="min-w-0">
               <h2 className="flex items-center gap-2 text-5 font-extrabold text-[#122459]">
                 <BarChart3 className="h-6 w-6 shrink-0 text-[#122459]" />
                 Шалгалтын статистик
               </h2>
-              <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-[#122459] sm:text-base">
+              <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-[#737373] sm:text-base">
                 Хичээл, шалгалт, огноо, дүн эсвэл сурагчийн нэрээр хайна уу. Мөр
                 дарахад ангийн үнэлгээ, хамгийн олон сурагч алдсан асуулт,
                 сурагчдын жагсаалт нэг дор нээгдэнэ. Сурагчийн мөр дээр дарахад
@@ -1485,23 +1510,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
               </p>
             </div>
 
-            <div className="relative mt-6">
-              <Search
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#122459]"
-                aria-hidden
-              />
-              <input
-                type="search"
-                value={historyQuery}
-                onChange={(e) => {
-                  setExamStudentPopover(null);
-                  setHistoryQuery(e.target.value);
-                }}
-                placeholder="Хайх: хичээл, шалгалт, огноо, сурагч…"
-                className="w-full rounded-2xl border border-[#7DC8FF] bg-[#EDF6FF] py-3.5 pl-11 pr-4 text-[0.9375rem] text-[#122459] shadow-inner outline-none transition placeholder:text-[#122459] focus:border-[#7DC8FF] focus:bg-white focus:ring-4 focus:ring-[#7DC8FF]/25 sm:text-base"
-                aria-label="Шалгалтын статистик хайх"
-              />
-            </div>
+            <hr className="mt-5 h-px w-full border-0 bg-[#d9dee8]" />
 
             {filteredPastExams.length === 0 ? (
               <div className="mt-6 rounded-xl border border-dashed border-[#f3e1a4] bg-[#EDF6FF] px-4 py-10 text-center text-4 text-[#122459]">
@@ -1510,277 +1519,323 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
                   : "Энэ ангийн шалгалтын статистик одоогоор алга."}
               </div>
             ) : (
-              <div className="mt-6 overflow-x-auto rounded-2xl border border-[#7DC8FF] shadow-sm">
-                <table className="w-full min-w-[520px]">
-                  <thead>
-                    <tr className="border-b border-[#7DC8FF] bg-[#EDF6FF]">
-                      <th
-                        className="w-10 px-2 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm"
-                        aria-label="Дэлгэрэнгүй"
-                      />
-                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
-                        Огноо
-                      </th>
-                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
-                        Хичээл
-                      </th>
-                      <th className="px-4 py-3.5 text-left text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
-                        Шалгалт
-                      </th>
-                      <th className="px-4 py-3.5 text-right text-[0.8125rem] font-semibold text-[#122459] sm:text-sm">
-                        Тэнцсэн
-                      </th>
-                      <th
-                        className="w-[1%] whitespace-nowrap px-3 py-3.5 text-center text-[0.8125rem] font-semibold text-[#122459] sm:text-sm"
-                        aria-label="Тайлан татах багана"
-                      >
-                        Татах
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPastExams.map((row) => {
-                      const open = expandedPastExamId === row.id;
-                      return (
-                        <Fragment key={row.id}>
-                          <tr
-                            role="button"
-                            tabIndex={0}
-                            onClick={() =>
-                              setExpandedPastExamId((id) => {
-                                if (id === row.id) {
-                                  setExamStudentPopover((p) =>
-                                    p?.examId === row.id ? null : p,
-                                  );
-                                  return null;
-                                }
-                                setExamStudentPopover(null);
-                                return row.id;
-                              })
-                            }
-                            onKeyDown={(ev) => {
-                              if (ev.key !== "Enter" && ev.key !== " ") return;
-                              ev.preventDefault();
-                              setExpandedPastExamId((id) => {
-                                if (id === row.id) {
-                                  setExamStudentPopover((p) =>
-                                    p?.examId === row.id ? null : p,
-                                  );
-                                  return null;
-                                }
-                                setExamStudentPopover(null);
-                                return row.id;
-                              });
-                            }}
-												className={`cursor-pointer border-b border-[#7DC8FF] transition last:border-0 hover:bg-[#EDF6FF] ${
-                              open ? "bg-[#EDF6FF]" : ""
-                            }`}
-                          >
-                            <td className="px-2 py-3.5 text-[#122459]">
-                              {open ? (
-                                <ChevronUp className="h-5 w-5" aria-hidden />
-                              ) : (
-                                <ChevronDown className="h-5 w-5" aria-hidden />
-                              )}
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-3.5 text-[0.9375rem] font-semibold text-[#122459]">
-                              {row.date}
-                            </td>
-                            <td className="px-4 py-3.5 text-[0.9375rem] text-[#122459]">
-                              {row.subject}
-                            </td>
-                            <td className="max-w-[min(280px,40vw)] px-4 py-3.5 text-[0.9375rem] leading-snug text-[#122459]">
-                              {row.examTitle}
-                            </td>
-                            <td className="whitespace-nowrap px-4 py-3.5 text-right text-[0.9375rem] tabular-nums text-[#122459]">
-                              {row.passed} / {row.total}
-                            </td>
-                            <td className="px-3 py-3.5 text-center">
-                              <button
-                                type="button"
-                                title="Ангийн бүрэн статистик татах — асуулт бүрээр, тэнцэлт, сурагч бүр"
-                                aria-label={`Бүрэн статистик татах: ${row.examTitle}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  downloadFullExamStatisticsXls(cls.name, row);
-                                }}
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#7DC8FF] bg-white text-[#122459] shadow-sm transition hover:border-[#EDF6FF] hover:bg-[#EDF6FF] focus-visible:outline focus-visible:ring-4 focus-visible:ring-[#7DC8FF]/30"
-                              >
-                                <Download
-                                  className="h-4 w-4 shrink-0"
-                                  aria-hidden
-                                />
-                              </button>
-                            </td>
-                          </tr>
-                          {open ? (
-                            <tr className="border-b border-[#7DC8FF] bg-[#EDF6FF]">
-                              <td
-                                colSpan={6}
-                                className="px-3 py-5 sm:px-5 sm:py-6"
-                              >
-                                <div className="rounded-2xl border border-[#7DC8FF] bg-gradient-to-b from-white via-[#EDF6FF] to-[#EDF6FF] p-4 shadow-[0_4px_32px_rgba(113,84,24,0.12)] sm:p-6 md:p-8">
-                                  <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 lg:items-stretch">
-                                    <PastExamClassGradeChart row={row} />
-                                    <PastExamMostFailedInsight row={row} />
-                                  </div>
+              <div className="mt-6">
+                <div className="overflow-x-auto">
+                  <div className="mx-auto w-full max-w-[984px] min-w-[520px]">
+                    <div className="overflow-hidden rounded-[12px] border border-[#d4d4d4] bg-white">
+                      <div className="relative flex h-10 items-center px-3">
+                        <Search
+                          className="pointer-events-none absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[#c4c4c4]"
+                          aria-hidden
+                        />
+                        <input
+                          type="search"
+                          value={historyQuery}
+                          onChange={(e) => {
+                            setExamStudentPopover(null);
+                            setHistoryQuery(e.target.value);
+                          }}
+                          placeholder="Хайх: хичээл, шалгалт, огноо, сурагч…"
+                          className="w-full bg-transparent pl-10 pr-3 text-[0.8125rem] text-[#737373] outline-none placeholder:text-[#9ca3af] sm:text-[0.875rem]"
+                          aria-label="Шалгалтын статистик хайх"
+                        />
+                      </div>
+                      <div className="h-px bg-[#e5e7eb]" />
+                      <div className="grid h-8 grid-cols-[minmax(110px,140px)_minmax(120px,160px)_1fr_minmax(80px,120px)_minmax(60px,90px)] items-center bg-white px-4 text-[0.6875rem] font-semibold leading-none text-[#737373] sm:text-[0.75rem]">
+                        <span className="truncate whitespace-nowrap">Огноо</span>
+                        <span className="truncate whitespace-nowrap">Хичээл</span>
+                        <span className="truncate whitespace-nowrap">Шалгалт</span>
+                        <span className="truncate whitespace-nowrap text-right">
+                          Шалгалт
+                        </span>
+                        <span className="truncate whitespace-nowrap text-center">
+                          Харах
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                                  <div className="mt-8 border-t border-[#7DC8FF] pt-8">
-                                    <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-                                      <div>
-                                        <h4 className="text-lg font-extrabold tracking-tight text-[#122459] sm:text-xl">
-                                          Сурагч бүрийн оноо
-                                        </h4>
-                                        <p className="mt-1 max-w-prose text-[0.875rem] leading-relaxed text-[#122459]">
-                                          Мөр дарахад сурагчийн асуулт бүрийн
-                                          дэлгэрэнгүй гарна. Дээд оноо:{" "}
-                                          <span className="font-semibold tabular-nums text-[#122459]">
-                                            {row.maxScore}
-                                          </span>
-                                          .
-                                        </p>
-                                      </div>
-                                    </div>
-                                    {row.studentScores.length === 0 ? (
-                                      <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-white/80 px-4 py-8 text-center text-[0.9375rem] text-[#122459]">
-                                        Энэ ангид сурагч алга.
-                                      </p>
+                <div className="mt-4 overflow-x-auto">
+                  <table className="w-full min-w-[520px] border-collapse">
+                    <tbody>
+                      {filteredPastExams.map((row) => {
+                        const open = expandedPastExamId === row.id;
+                        return (
+                          <Fragment key={row.id}>
+                            <tr
+                              role="button"
+                              tabIndex={0}
+                              onClick={() =>
+                                setExpandedPastExamId((id) => {
+                                  if (id === row.id) {
+                                    setExamStudentPopover((p) =>
+                                      p?.examId === row.id ? null : p,
+                                    );
+                                    return null;
+                                  }
+                                  setExamStudentPopover(null);
+                                  return row.id;
+                                })
+                              }
+                              onKeyDown={(ev) => {
+                                if (ev.key !== "Enter" && ev.key !== " ")
+                                  return;
+                                ev.preventDefault();
+                                setExpandedPastExamId((id) => {
+                                  if (id === row.id) {
+                                    setExamStudentPopover((p) =>
+                                      p?.examId === row.id ? null : p,
+                                    );
+                                    return null;
+                                  }
+                                  setExamStudentPopover(null);
+                                  return row.id;
+                                });
+                              }}
+                              className={`cursor-pointer border-b border-[#e6edf8] transition last:border-0 hover:bg-[#f8fafc] ${
+                                open ? "bg-[#f8fafc]" : ""
+                              }`}
+                            >
+                              <td className="whitespace-nowrap px-4 py-3.5 text-[0.9375rem] font-semibold text-[#122459]">
+                                {formatExamDate(row.date)}
+                              </td>
+                              <td className="px-4 py-3.5 text-[0.9375rem] text-[#737373]">
+                                {row.subject}
+                              </td>
+                              <td className="max-w-[min(280px,40vw)] px-4 py-3.5 text-[0.9375rem] leading-snug text-[#737373]">
+                                {row.examTitle}
+                              </td>
+                              <td className="whitespace-nowrap px-4 py-3.5 text-right text-[0.9375rem] tabular-nums text-[#122459]">
+                                {row.passed} / {row.total}
+                              </td>
+                              <td className="px-3 py-3.5 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <button
+                                    type="button"
+                                    title="Дэлгэрэнгүй харах"
+                                    aria-label={`Дэлгэрэнгүй харах: ${row.examTitle}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setExpandedPastExamId((id) => {
+                                        if (id === row.id) {
+                                          setExamStudentPopover((p) =>
+                                            p?.examId === row.id ? null : p,
+                                          );
+                                          return null;
+                                        }
+                                        setExamStudentPopover(null);
+                                        return row.id;
+                                      });
+                                    }}
+                                    className="inline-flex items-center gap-1 rounded-full border border-[#d9dee8] bg-white px-3 py-1.5 text-[0.75rem] font-semibold text-[#122459] shadow-sm transition hover:border-[#9fbef5] hover:bg-[#f3f7ff] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#9fbef5]/40"
+                                  >
+                                    Харах
+                                    {open ? (
+                                      <Eye
+                                        className="h-3.5 w-3.5 text-[#B8DCFF]"
+                                        aria-hidden
+                                      />
                                     ) : (
-                                      <div className="max-h-[min(28rem,55vh)] overflow-auto rounded-2xl border border-[#e2e8f0] bg-white shadow-sm">
-                                        <table className="w-full min-w-[320px] text-left text-[0.9375rem]">
-                                          <thead className="sticky top-0 z-10 border-b border-[#e2e8f0] bg-[#f8fafc] shadow-[0_1px_0_#e2e8f0]">
-                                            <tr>
-                                              <th className="px-4 py-3.5 font-semibold text-[#122459] sm:px-5">
-                                                Овог, нэр
-                                              </th>
-                                              <th className="px-4 py-3.5 text-right font-semibold text-[#122459] sm:px-5">
-                                                Оноо
-                                              </th>
-                                              <th className="w-[1%] whitespace-nowrap px-4 py-3.5 text-right font-semibold text-[#122459] sm:px-5">
-                                                Татах
-                                              </th>
-                                            </tr>
-                                          </thead>
-                                          <tbody className="divide-y divide-[#f1f5f9]">
-                                            {sortPastExamStudents(
-                                              row.studentScores,
-                                            ).map((s) => (
-                                              <tr
-                                                key={s.studentId}
-                                                role="button"
-                                                tabIndex={0}
-                                                aria-expanded={
-                                                  examStudentPopoverResolved
-                                                    ?.exam.id === row.id &&
-                                                  examStudentPopoverResolved
-                                                    ?.student.studentId ===
-                                                    s.studentId
-                                                }
-                                                aria-label={`${s.lastName} ${s.firstName} — шалгалтын статистик`}
-                                                onKeyDown={(e) => {
-                                                  if (
-                                                    e.key !== "Enter" &&
-                                                    e.key !== " "
-                                                  ) {
-                                                    return;
-                                                  }
-                                                  e.preventDefault();
-                                                  e.stopPropagation();
-                                                  setExamStudentPopover(
-                                                    (cur) =>
-                                                      cur?.examId === row.id &&
-                                                      cur?.studentId ===
-                                                        s.studentId
-                                                        ? null
-                                                        : {
-                                                            examId: row.id,
-                                                            studentId:
-                                                              s.studentId,
-                                                          },
-                                                  );
-                                                }}
-                                                onClick={(e) => {
-                                                  if (
-                                                    (
-                                                      e.target as HTMLElement
-                                                    ).closest("button")
-                                                  ) {
-                                                    return;
-                                                  }
-                                                  e.stopPropagation();
-                                                  setExamStudentPopover(
-                                                    (cur) =>
-                                                      cur?.examId === row.id &&
-                                                      cur?.studentId ===
-                                                        s.studentId
-                                                        ? null
-                                                        : {
-                                                            examId: row.id,
-                                                            studentId:
-                                                              s.studentId,
-                                                          },
-                                                  );
-                                                }}
-                                                className={`cursor-pointer transition-colors hover:bg-[#f0f7ff] ${
-                                                  examStudentPopoverResolved
-                                                    ?.exam.id === row.id &&
-                                                  examStudentPopoverResolved
-                                                    ?.student.studentId ===
-                                                    s.studentId
-                                                    ? "bg-[#e8f2ff]"
-                                                    : ""
-                                                }`}
-                                              >
-                                                <td className="px-4 py-3.5 font-medium text-[#122459] sm:px-5 sm:py-4">
-                                                  <span className="leading-snug">
-                                                    {s.lastName} {s.firstName}
-                                                  </span>
-                                                </td>
-                                                <td className="whitespace-nowrap px-4 py-3.5 text-right sm:px-5 sm:py-4">
-                                                  <span className="text-[1.0625rem] font-bold tabular-nums text-[#122459]">
-                                                    {s.score}
-                                                  </span>
-                                                  <span className="ml-1 text-[0.875rem] font-normal tabular-nums text-[#122459]">
-                                                    / {row.maxScore}
-                                                  </span>
-                                                </td>
-                                                <td className="whitespace-nowrap px-4 py-3.5 text-right sm:px-5 sm:py-4">
-                                                  <button
-                                                    type="button"
-                                                    className="inline-flex items-center justify-center rounded-xl border border-[#c8d6ea] bg-white p-2.5 text-[#122459] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]"
-                                                    title="Excel татах"
-                                                    aria-label={`Excel татах — ${s.lastName} ${s.firstName}`}
-                                                    onClick={(e) => {
-                                                      e.stopPropagation();
-                                                      downloadSingleStudentPastExamXls(
-                                                        cls.name,
-                                                        row,
-                                                        s,
-                                                      );
-                                                    }}
-                                                  >
-                                                    <Download
-                                                      className="h-4 w-4 shrink-0"
-                                                      aria-hidden
-                                                    />
-                                                  </button>
-                                                </td>
-                                              </tr>
-                                            ))}
-                                          </tbody>
-                                        </table>
-                                      </div>
+                                      <EyeClosed
+                                        className="h-3.5 w-3.5 text-[#B8DCFF]"
+                                        aria-hidden
+                                      />
                                     )}
-                                  </div>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    title="Ангийн бүрэн статистик татах — асуулт бүрээр, тэнцэлт, сурагч бүр"
+                                    aria-label={`Бүрэн статистик татах: ${row.examTitle}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      downloadFullExamStatisticsXls(
+                                        cls.name,
+                                        row,
+                                      );
+                                    }}
+                                    className="inline-flex items-center gap-1 rounded-full border border-[#d9dee8] bg-white px-3 py-1.5 text-[0.75rem] font-semibold text-[#122459] shadow-sm transition hover:border-[#9fbef5] hover:bg-[#f3f7ff] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#9fbef5]/40"
+                                  >
+                                    Файл
+                                    <Download
+                                      className="h-3.5 w-3.5"
+                                      aria-hidden
+                                    />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
-                          ) : null}
-                        </Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                            {open ? (
+                              <tr className="border-b border-[#e6edf8] bg-[#f8fafc]">
+                                <td
+                                  colSpan={5}
+                                  className="px-3 py-5 sm:px-5 sm:py-6"
+                                >
+                                  <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-[0_2px_12px_rgba(15,23,42,0.06)] sm:p-6 md:p-8">
+                                    <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 lg:items-stretch">
+                                      <PastExamClassGradeChart row={row} />
+                                      <PastExamMostFailedInsight row={row} />
+                                    </div>
+
+                                    <div className="mt-8 border-t border-[#e2e8f0] pt-8">
+                                      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                                        <div>
+                                          <h4 className="text-lg font-extrabold tracking-tight text-[#122459] sm:text-xl">
+                                            Сурагч бүрийн оноо
+                                          </h4>
+                                          <p className="mt-1 max-w-prose text-[0.875rem] leading-relaxed text-[#122459]">
+                                            Мөр дарахад сурагчийн асуулт бүрийн
+                                            дэлгэрэнгүй гарна. Дээд оноо:{" "}
+                                            <span className="font-semibold tabular-nums text-[#122459]">
+                                              {row.maxScore}
+                                            </span>
+                                            .
+                                          </p>
+                                        </div>
+                                      </div>
+                                      {row.studentScores.length === 0 ? (
+                                        <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-white/80 px-4 py-8 text-center text-[0.9375rem] text-[#122459]">
+                                          Энэ ангид сурагч алга.
+                                        </p>
+                                      ) : (
+                                        <div className="max-h-[min(28rem,55vh)] overflow-auto rounded-2xl border border-[#e2e8f0] bg-white shadow-sm">
+                                          <table className="w-full min-w-[320px] text-left text-[0.9375rem]">
+                                            <thead className="sticky top-0 z-10 border-b border-[#e2e8f0] bg-[#f8fafc] shadow-[0_1px_0_#e2e8f0]">
+                                              <tr>
+                                                <th className="px-4 py-3.5 font-semibold text-[#122459] sm:px-5">
+                                                  Овог, нэр
+                                                </th>
+                                                <th className="px-4 py-3.5 text-right font-semibold text-[#122459] sm:px-5">
+                                                  Оноо
+                                                </th>
+                                                <th className="w-[1%] whitespace-nowrap px-4 py-3.5 text-right font-semibold text-[#122459] sm:px-5">
+                                                  Татах
+                                                </th>
+                                              </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-[#f1f5f9]">
+                                              {sortPastExamStudents(
+                                                row.studentScores,
+                                              ).map((s) => (
+                                                <tr
+                                                  key={s.studentId}
+                                                  role="button"
+                                                  tabIndex={0}
+                                                  aria-expanded={
+                                                    examStudentPopoverResolved
+                                                      ?.exam.id === row.id &&
+                                                    examStudentPopoverResolved
+                                                      ?.student.studentId ===
+                                                      s.studentId
+                                                  }
+                                                  aria-label={`${s.lastName} ${s.firstName} — шалгалтын статистик`}
+                                                  onKeyDown={(e) => {
+                                                    if (
+                                                      e.key !== "Enter" &&
+                                                      e.key !== " "
+                                                    ) {
+                                                      return;
+                                                    }
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setExamStudentPopover(
+                                                      (cur) =>
+                                                        cur?.examId ===
+                                                          row.id &&
+                                                        cur?.studentId ===
+                                                          s.studentId
+                                                          ? null
+                                                          : {
+                                                              examId: row.id,
+                                                              studentId:
+                                                                s.studentId,
+                                                            },
+                                                    );
+                                                  }}
+                                                  onClick={(e) => {
+                                                    if (
+                                                      (
+                                                        e.target as HTMLElement
+                                                      ).closest("button")
+                                                    ) {
+                                                      return;
+                                                    }
+                                                    e.stopPropagation();
+                                                    setExamStudentPopover(
+                                                      (cur) =>
+                                                        cur?.examId ===
+                                                          row.id &&
+                                                        cur?.studentId ===
+                                                          s.studentId
+                                                          ? null
+                                                          : {
+                                                              examId: row.id,
+                                                              studentId:
+                                                                s.studentId,
+                                                            },
+                                                    );
+                                                  }}
+                                                  className={`cursor-pointer transition-colors hover:bg-[#f0f7ff] ${
+                                                    examStudentPopoverResolved
+                                                      ?.exam.id === row.id &&
+                                                    examStudentPopoverResolved
+                                                      ?.student.studentId ===
+                                                      s.studentId
+                                                      ? "bg-[#e8f2ff]"
+                                                      : ""
+                                                  }`}
+                                                >
+                                                  <td className="px-4 py-3.5 font-medium text-[#122459] sm:px-5 sm:py-4">
+                                                    <span className="leading-snug">
+                                                      {s.lastName} {s.firstName}
+                                                    </span>
+                                                  </td>
+                                                  <td className="whitespace-nowrap px-4 py-3.5 text-right sm:px-5 sm:py-4">
+                                                    <span className="text-[1.0625rem] font-bold tabular-nums text-[#122459]">
+                                                      {s.score}
+                                                    </span>
+                                                    <span className="ml-1 text-[0.875rem] font-normal tabular-nums text-[#122459]">
+                                                      / {row.maxScore}
+                                                    </span>
+                                                  </td>
+                                                  <td className="whitespace-nowrap px-4 py-3.5 text-right sm:px-5 sm:py-4">
+                                                    <button
+                                                      type="button"
+                                                      className="inline-flex items-center justify-center rounded-xl border border-[#c8d6ea] bg-white p-2.5 text-[#122459] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]"
+                                                      title="Excel татах"
+                                                      aria-label={`Excel татах — ${s.lastName} ${s.firstName}`}
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        downloadSingleStudentPastExamXls(
+                                                          cls.name,
+                                                          row,
+                                                          s,
+                                                        );
+                                                      }}
+                                                    >
+                                                      <Download
+                                                        className="h-4 w-4 shrink-0"
+                                                        aria-hidden
+                                                      />
+                                                    </button>
+                                                  </td>
+                                                </tr>
+                                              ))}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            ) : null}
+                          </Fragment>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>

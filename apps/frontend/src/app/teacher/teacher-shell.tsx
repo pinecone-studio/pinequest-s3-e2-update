@@ -13,15 +13,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import {
-  BookText,
-  Calculator,
-  Cog,
-  Home,
-  LogOut,
-  Mail,
-  User as UserIcon,
-} from "lucide-react";
+import { LogOut, Mail, User as UserIcon } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import type { User } from "@/app/lib/types";
 
@@ -38,7 +30,6 @@ export function useTeacher() {
 type MenuItem = {
   href: string;
   label: string;
-  icon: typeof Home;
   activePrefixes?: string[];
 };
 
@@ -46,24 +37,20 @@ const menuItems: MenuItem[] = [
   {
     href: "/teacher",
     label: "Нүүр хуудас",
-    icon: Home,
     activePrefixes: ["/teacher/class", "/teacher/demo-class"],
   },
   {
     href: "/teacher/question-bank",
     label: "Асуултын сан",
-    icon: BookText,
   },
   {
     href: "/teacher/exam",
     label: "Шалгалт",
-    icon: Calculator,
     activePrefixes: ["/teacher/exam", "/teacher/exam-management"],
   },
   {
     href: "/teacher/exam-optimization",
     label: "Хяналт",
-    icon: Cog,
   },
 ];
 
@@ -132,7 +119,6 @@ export default function TeacherShell({
                       pathname === item.href ||
                       (item.href !== "/teacher" &&
                         pathname.startsWith(`${item.href}/`));
-                    const Icon = item.icon;
                     return (
                       <Link
                         key={item.href}
@@ -144,7 +130,6 @@ export default function TeacherShell({
                             : "border-transparent text-black hover:border-[#d9dee8] hover:bg-[#EDF6FF]"
                         }`}
                       >
-                        <Icon className="h-5 w-5 text-black" />
                         <span className="text-3 font-semibold lg:text-4">
                           {item.label}
                         </span>
