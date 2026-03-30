@@ -19,14 +19,23 @@ import { QuestionFilters } from "./question-filters";
 import { QuestionList } from "./question-list";
 import { QuestionPreviewPanel } from "./question-preview-panel";
 import { useQuestionBank } from "../_hooks/use-question-bank";
+import { useQuery } from "@apollo/client/react";
+import { GET_ALL_SUBJECTS } from "@/graphql/queries";
+import { useRouter } from "next/navigation";
 
-export function QuestionBankPage() {
+export function QuestionBankPage({
+  initialSubjectId = "",
+  initialGrade = "",
+}: {
+  initialSubjectId?: string;
+  initialGrade?: string;
+} = {}) {
+  const router = useRouter();
   const {
     clearFilters,
     closeBuilder,
     currentFilters,
     deleteQuestion,
-    enterBank,
     entrySelection,
     activeQuestion,
     editingValues,
@@ -57,7 +66,11 @@ export function QuestionBankPage() {
     updateEntrySelection,
     updateFilters,
     clearQuestionSelection,
-  } = useQuestionBank();
+  } = useQuestionBank(
+    initialSubjectId && initialGrade
+      ? { initialSubjectId, initialGrade }
+      : undefined,
+  );
 
   return (
     <div className="space-y-6 pb-10">
@@ -82,12 +95,12 @@ export function QuestionBankPage() {
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <EntrySelect
                 label="Хичээл"
-                onValueChange={(value) =>
-                  updateEntrySelection({ subject: value })
+                onSubjectSelect={(subjectId, name) =>
+                  updateEntrySelection({ subjectId, subject: name })
                 }
-                options={subjectOptions}
                 placeholder="Хичээл сонгох"
-                value={entrySelection.subject}
+                useSubjectsQuery
+                value={entrySelection.subjectId}
               />
               <EntrySelect
                 label="Анги"
@@ -103,8 +116,12 @@ export function QuestionBankPage() {
             <div className="mt-6 flex flex-col gap-3">
               <button
                 className="inline-flex h-11 items-center justify-center self-start rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937] disabled:cursor-not-allowed disabled:bg-[#d1d5db]"
-                disabled={!entrySelection.subject || !entrySelection.grade}
-                onClick={enterBank}
+                disabled={!entrySelection.subjectId || !entrySelection.grade}
+                onClick={() =>
+                  router.push(
+                    `/teacher/question-bank/${encodeURIComponent(entrySelection.subjectId)}/${encodeURIComponent(entrySelection.grade)}`,
+                  )
+                }
                 type="button"
               >
                 <ArrowRight className="mr-2 h-4 w-4" />
@@ -139,7 +156,10 @@ export function QuestionBankPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <button
                   className="inline-flex h-11 items-center justify-center rounded-xl border border-[#dbe4f0] bg-white px-4 text-sm font-medium text-[#355caa] transition hover:border-[#bfd2f6] hover:bg-[#f8fbff]"
-                  onClick={resetEntrySelection}
+                  onClick={() => {
+                    resetEntrySelection();
+                    router.push("/teacher/question-bank");
+                  }}
                   type="button"
                 >
                   <ChevronsRightLeft className="mr-2 h-4 w-4" />
@@ -337,32 +357,75 @@ export function QuestionBankPage() {
   );
 }
 
+type GetAllSubjectQueryData = {
+  getAllSubject: { id: string; name: string }[];
+};
+
 function EntrySelect({
   label,
   value,
   onValueChange,
-  options,
+  onSubjectSelect,
+  options = [],
   placeholder,
+  useSubjectsQuery = false,
 }: {
   label: string;
   value: string;
-  onValueChange: (value: string) => void;
-  options: string[];
+  onValueChange?: (value: string) => void;
+  onSubjectSelect?: (subjectId: string, name: string) => void;
+  options?: string[];
   placeholder: string;
+  useSubjectsQuery?: boolean;
 }) {
+  const { data, loading } = useQuery<GetAllSubjectQueryData>(GET_ALL_SUBJECTS, {
+    skip: !useSubjectsQuery,
+  });
+
+  const subjectItems =
+    data?.getAllSubject.map((subject) => ({
+      key: subject.id,
+      value: subject.id,
+      label: subject.name,
+    })) ?? [];
+
+  const optionItems = options.map((option) => ({
+    key: option,
+    value: option,
+    label: option,
+  }));
+
+  const items = useSubjectsQuery ? subjectItems : optionItems;
+
+  const handleValueChange = (next: string) => {
+    if (useSubjectsQuery && onSubjectSelect) {
+      const subject = data?.getAllSubject.find((s) => s.id === next);
+      if (subject) {
+        onSubjectSelect(subject.id, subject.name);
+      }
+      return;
+    }
+    onValueChange?.(next);
+  };
+
   return (
     <label className="space-y-2">
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
         {label}
       </span>
-      <Select onValueChange={onValueChange} value={value}>
+      <Select onValueChange={handleValueChange} value={value}>
         <SelectTrigger className="h-12 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
+          {useSubjectsQuery && loading ? (
+            <div className="px-3 py-2 text-sm text-[#6b7280]">
+              Ачааллаж байна…
+            </div>
+          ) : null}
+          {items.map((item) => (
+            <SelectItem key={item.key} value={item.value}>
+              {item.label}
             </SelectItem>
           ))}
         </SelectContent>

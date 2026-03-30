@@ -14,6 +14,6 @@ export const queryTypeDefs = /* GraphQL */ `
     getAllExams: [Exam!]
     getExamById(examId: String!): Exam
     getTestsBySybjectAndGrade(input: TestInput): [Test]
-    getAllSubject: [Subject]
+    getAllSubject: [Subject!]!
   }
 `;

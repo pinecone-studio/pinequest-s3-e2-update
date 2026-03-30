@@ -2,7 +2,7 @@
 
 import { useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTeacher } from "../../teacher-shell";
 import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../../exam/_lib/constants";
 import type { PendingExamTransfer } from "../../exam/_lib/types";
@@ -46,17 +46,24 @@ function createSeededQuestions() {
   })) satisfies Question[];
 }
 
-export function useQuestionBank() {
+type UseQuestionBankOptions = {
+  initialSubjectId?: string;
+  initialGrade?: string;
+};
+
+export function useQuestionBank(options?: UseQuestionBankOptions) {
   const router = useRouter();
   const teacher = useTeacher();
   const { createQuestionInBackend, incrementUsageInBackend, updateQuestionInBackend } = useCreateTestSync();
   const { data: subjectsData } = useQuery<GetAllSubjectsResponse>(GET_ALL_SUBJECTS_QUERY);
   const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const toastTimeoutRef = useRef<number | null>(null);
+  const bootstrappedRouteKeyRef = useRef<string | null>(null);
 
   const [filters, setFilters] = useState<QuestionFilters>(QUESTION_BANK_FILTER_DEFAULTS);
   const [entrySelection, setEntrySelection] = useState({
     subject: "",
+    subjectId: "",
     grade: "",
   });
   const [hasEnteredBank, setHasEnteredBank] = useState(false);
@@ -165,7 +172,7 @@ export function useQuestionBank() {
       const mergedSubjects = [
         ...SUBJECT_OPTIONS,
         ...questions.map((question) => question.subject),
-        ...(subjectsData?.getAllSubjects ?? [])
+        ...(subjectsData?.getAllSubject ?? [])
           .map((subject) => subject.name.trim())
           .filter(Boolean),
       ];
@@ -174,7 +181,7 @@ export function useQuestionBank() {
         (subject, index, array) => array.indexOf(subject) === index,
       );
     },
-    [questions, subjectsData?.getAllSubjects],
+    [questions, subjectsData?.getAllSubject],
   );
   const gradeOptions = useMemo(
     () => {
@@ -270,6 +277,36 @@ export function useQuestionBank() {
       ...partial,
     }));
 
+  useEffect(() => {
+    const subjectId = options?.initialSubjectId?.trim();
+    const grade = options?.initialGrade?.trim();
+    if (!subjectId || !grade) return;
+
+    const list = subjectsData?.getAllSubject ?? [];
+    if (list.length === 0) return;
+
+    const subject = list.find((s) => s.id === subjectId);
+    if (!subject) return;
+
+    const routeKey = `${subjectId}\0${grade}`;
+    if (bootstrappedRouteKeyRef.current === routeKey) return;
+
+    bootstrappedRouteKeyRef.current = routeKey;
+    void Promise.resolve().then(() => {
+      setEntrySelection({
+        subject: subject.name,
+        subjectId: subject.id,
+        grade,
+      });
+      setFilters({
+        ...QUESTION_BANK_FILTER_DEFAULTS,
+        subject: subject.name,
+        grade,
+      });
+      setHasEnteredBank(true);
+    });
+  }, [options?.initialGrade, options?.initialSubjectId, subjectsData?.getAllSubject]);
+
   const enterBank = () => {
     if (!entrySelection.subject || !entrySelection.grade) {
       showToast("Системийн санд нэвтрэхийн тулд хичээл, ангиа сонгоно уу.");
@@ -285,9 +322,11 @@ export function useQuestionBank() {
   };
 
   const resetEntrySelection = () => {
+    bootstrappedRouteKeyRef.current = null;
     setHasEnteredBank(false);
     setEntrySelection({
       subject: "",
+      subjectId: "",
       grade: "",
     });
     setFilters(QUESTION_BANK_FILTER_DEFAULTS);
