@@ -2,44 +2,20 @@
 
 "use client";
 
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-	type ReactNode,
-} from "react";
-import { AlertTriangle, Camera, Users } from "lucide-react";
-
-type ActiveStudentEntry = {
-	id: string;
-	fullName: string;
-	email: string;
-	grade: string;
-	school: string;
-	startedAt: number;
-	status: "active" | "disconnected";
-};
-
-const MOCK_ACTIVE_STUDENTS: ActiveStudentEntry[] = [
-	{ id: "s-10a-01", fullName: "А. Тэмүүлэн", email: "temuulen10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 2, status: "active" },
-	{ id: "s-10a-02", fullName: "Б. Номин", email: "nomin10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 3, status: "active" },
-	{ id: "s-10a-03", fullName: "В. Анударь", email: "anudari10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 4, status: "active" },
-	{ id: "s-10a-04", fullName: "Г. Билгүүн", email: "bilguun10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 5, status: "active" },
-	{ id: "s-10a-05", fullName: "Д. Энэрэл", email: "enerel10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 6, status: "active" },
-	{ id: "s-10a-06", fullName: "Е. Марал", email: "maral10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 7, status: "active" },
-	{ id: "s-10a-07", fullName: "Ж. Төгөлдөр", email: "tuguldur10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 8, status: "active" },
-	{ id: "s-10a-08", fullName: "З. Хүслэн", email: "huslen10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 9, status: "active" },
-	{ id: "s-10a-09", fullName: "И. Содон", email: "sodon10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 10, status: "active" },
-	{ id: "s-10a-10", fullName: "Й. Мөнхжин", email: "munkhjin10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 11, status: "active" },
-	{ id: "s-10a-11", fullName: "К. Нандин", email: "nandin10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 12, status: "disconnected" },
-	{ id: "s-10a-12", fullName: "Л. Тэнүүн", email: "tenuun10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 13, status: "disconnected" },
-];
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { MonitorDetailSection } from "./_components/monitor-detail-section";
+import { MonitorExamsSection } from "./_components/monitor-exams-section";
+import { MOCK_ACTIVE_STUDENTS, type ActiveStudentEntry, type MonitorExamCardItem } from "./_lib/monitoring";
+import { teacherClasses } from "../exam/_lib/class-data";
+import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
+import { formatSavedDate, normalizeSavedExamRecord } from "../exam/_lib/utils";
+import type { SavedExamRecord } from "../exam/_lib/types";
 
 export default function ExamOptimizationPage() {
 	const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
 
-	const MONITOR_TOTAL_STUDENTS = 12;
+	const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
+	const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
 	const [isMonitoring, setIsMonitoring] = useState(false);
 	const [activeStudents, setActiveStudents] = useState<ActiveStudentEntry[]>(
 		[],
@@ -84,6 +60,82 @@ export default function ExamOptimizationPage() {
 		return bestGrade;
 	}, [activeStudents]);
 
+	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
+		if (savedExams.length === 0) {
+			return [
+				{
+					id: "monitor-mock-1",
+					title: "10-р ангийн математикийн сорил",
+					grade: "10-р анги",
+					subject: "Математик",
+					topic: "Квадрат функц",
+					status: "ongoing",
+					questionCount: 12,
+					totalPoints: 24,
+					classLabel: currentClassName,
+					savedAtLabel: "Одоо явагдаж байна",
+				},
+				{
+					id: "monitor-mock-2",
+					title: "9-р ангийн логикийн шалгалт",
+					grade: "9-р анги",
+					subject: "Математик",
+					topic: "Логарифм",
+					status: "completed",
+					questionCount: 10,
+					totalPoints: 20,
+					classLabel: "9B",
+					savedAtLabel: "Өнөөдөр дууссан",
+				},
+			];
+		}
+
+		const firstSentExamId =
+			savedExams.find((item) => (item.sentClassIds ?? []).length > 0)?.id ?? null;
+		const resolveClassLabel = (classId?: string) => {
+			if (!classId) return "Анги оноогоогүй";
+			return teacherClasses.find((klass) => klass.id === classId)?.name ?? classId;
+		};
+
+		return savedExams.map((exam) => ({
+			id: exam.id,
+			title: exam.title,
+			grade: exam.grade,
+			subject: exam.subject,
+			topic: exam.topic,
+			status:
+				exam.approvalStatus === "pending"
+					? "approval_pending"
+					: (exam.sentClassIds ?? []).length === 0
+						? "draft"
+						: exam.id === firstSentExamId
+							? "ongoing"
+							: "completed",
+			questionCount: exam.questionCount,
+			totalPoints: exam.totalPoints,
+			classLabel:
+				exam.id === firstSentExamId
+					? currentClassName
+					: resolveClassLabel(exam.sentClassIds?.[0]),
+			savedAtLabel: formatSavedDate(exam.savedAt),
+		}));
+	}, [currentClassName, savedExams]);
+
+	const activeMonitorExam = useMemo(() => {
+		const fallbackId =
+			selectedExamId ??
+			monitorExamCards.find((item) => item.status === "ongoing")?.id ??
+			monitorExamCards[0]?.id ??
+			null;
+		return monitorExamCards.find((item) => item.id === fallbackId) ?? null;
+	}, [monitorExamCards, selectedExamId]);
+
+	const monitorTotalStudents = useMemo(() => {
+		if (activeMonitorExam?.status === "ongoing") return activeStudents.length;
+		if (!activeMonitorExam) return 0;
+		return 12;
+	}, [activeMonitorExam, activeStudents.length]);
+
 	const readActiveStudents = useCallback((): ActiveStudentEntry[] => {
 		try {
 			const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
@@ -116,17 +168,31 @@ export default function ExamOptimizationPage() {
 	}, []);
 
 	useEffect(() => {
+		const syncSavedExams = () => {
+			try {
+				const raw = window.localStorage.getItem(SAVED_EXAMS_STORAGE_KEY);
+				setSavedExams(
+					raw
+						? (JSON.parse(raw) as SavedExamRecord[]).map(normalizeSavedExamRecord)
+						: [],
+				);
+			} catch {
+				setSavedExams([]);
+			}
+		};
+
 		const sync = () => {
 			const next = readActiveStudents();
 			setActiveStudents(next);
 			setLastUpdatedAt(Date.now());
 		};
 
+		syncSavedExams();
 		sync();
 
 		const onStorage = (e: StorageEvent) => {
-			if (e.key !== ACTIVE_STUDENTS_STORAGE_KEY) return;
-			sync();
+			if (e.key === ACTIVE_STUDENTS_STORAGE_KEY) sync();
+			if (e.key === SAVED_EXAMS_STORAGE_KEY) syncSavedExams();
 		};
 		window.addEventListener("storage", onStorage);
 
@@ -142,210 +208,30 @@ export default function ExamOptimizationPage() {
 	return (
 		<section className="px-6 py-8 sm:px-10 sm:py-10">
 			<div className="mx-auto max-w-6xl space-y-10">
-				<section className="rounded-2xl border border-[#d9dee8] bg-white px-6 py-6 shadow-sm">
-					<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-						<div>
-							<h2 className="text-5 font-extrabold text-[#1f2a44]">
-								Бодит цагийн жагсаалт
-							</h2>
-							<p className="mt-2 text-3 text-[#66789f]">
-								{isMonitoring
-									? "Шалгалт/хариултын статусыг бодит цагаар шинэчилж байна."
-									: "Хяналтыг эхлүүлэхийн тулд дээрх товчийг дарна уу."}
-							</p>
-							<p className="mt-2 text-3 text-[#66789f]">
-								Одоо явагдаж буй анги:{" "}
-								<span className="font-bold text-[#1f2a44]">
-									{currentClassName}
-								</span>
-							</p>
-						</div>
+				<MonitorExamsSection
+					activeExamId={activeMonitorExam?.id ?? null}
+					exams={monitorExamCards}
+					onOpenExam={(exam) => {
+						setSelectedExamId(exam.id);
+						if (exam.status === "ongoing") {
+							setIsMonitoring(true);
+							setLastUpdatedAt(Date.now());
+						}
+					}}
+				/>
 
-						<div className="flex flex-wrap items-center gap-3">
-							{!isMonitoring ? (
-								<button
-									type="button"
-									onClick={startMonitoring}
-									className="rounded-xl bg-[#2563eb] px-4 py-2.5 text-4 font-semibold text-white transition hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-45"
-								>
-									Хяналт эхлүүлэх
-								</button>
-							) : (
-								<button
-									type="button"
-									onClick={stopMonitoring}
-									className="rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-4 font-semibold text-[#2f3c59] transition hover:bg-[#f8fafc]"
-								>
-									Зогсоох
-								</button>
-							)}
-						</div>
-					</div>
-
-					<div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-						<StatCard
-							tone="blue"
-							title="Нийт сурагч"
-							value={String(MONITOR_TOTAL_STUDENTS)}
-							icon={<Users className="h-5 w-5" />}
-						/>
-							<StatCard
-              tone="green"
-              title="Идэвхтэй"
-              value={String(activeCount)}
-              icon={<span className="text-[#2f66b9]">●</span>}
-							/>
-						<StatCard
-							tone="amber"
-							title="Анхааруулах"
-							value={"0"}
-							icon={<AlertTriangle className="h-5 w-5" />}
-						/>
-							<StatCard
-								tone="red"
-								title="Салсан"
-								value={String(disconnectedCount)}
-								icon={<Camera className="h-5 w-5" />}
-							/>
-					</div>
-
-					<div className="mt-6">
-						<h3 className="text-4 font-extrabold text-[#1f2a44]">
-							Сурагчдын жагсаалт
-						</h3>
-
-						<div className="mt-4 space-y-4">
-							{activeStudents.length ? (
-								<div className="overflow-hidden rounded-2xl border border-[#d9dee8] bg-white">
-									<div className="grid grid-cols-[minmax(0,1fr)_140px] items-center border-b border-[#e7edf5] px-6 py-4 text-[#66789f]">
-										<p className="text-4 font-bold">№ / Нэр</p>
-										<p className="text-right text-4 font-bold">Төлөв</p>
-									</div>
-									{[...activeStudents]
-										.sort((a, b) => b.startedAt - a.startedAt)
-										.map((student, index) => (
-											<ActiveStudentRow
-												index={index}
-												key={student.id}
-												student={student}
-											/>
-										))}
-								</div>
-							) : (
-								<div className="rounded-2xl border border-[#d9dee8] bg-[#f8fafc] px-5 py-4 text-4 text-[#66789f]">
-									Одоогоор линкээр орсон сурагч алга байна.
-								</div>
-							)}
-						</div>
-
-						<p className="mt-4 text-3 text-[#66789f]">
-							{lastUpdatedAt
-								? `Сүүлд шинэчлэгдсэн: ${new Date(
-										lastUpdatedAt,
-									).toLocaleTimeString(undefined, {
-										hour: "2-digit",
-										minute: "2-digit",
-									})}`
-								: " "}
-						</p>
-					</div>
-				</section>
+				<MonitorDetailSection
+					activeCount={activeCount}
+					activeExam={activeMonitorExam}
+					activeStudents={activeStudents}
+					disconnectedCount={disconnectedCount}
+					isMonitoring={isMonitoring}
+					lastUpdatedAt={lastUpdatedAt}
+					monitorTotalStudents={monitorTotalStudents}
+					onStartMonitoring={startMonitoring}
+					onStopMonitoring={stopMonitoring}
+				/>
 			</div>
 		</section>
-	);
-}
-function StatCard({
-	tone,
-	title,
-	value,
-	icon,
-}: {
-	tone: "blue" | "green" | "amber" | "red";
-	title: string;
-	value: string;
-	icon: ReactNode;
-}) {
-	const cfg = {
-		blue: {
-			bg: "bg-[#e6f2ff]",
-			value: "text-[#0b78d1]",
-			border: "border-[#cfe6ff]",
-			iconWrap: "text-[#0b78d1]",
-		},
-      green: {
-        bg: "bg-[#edf5ff]",
-        value: "text-[#2f66b9]",
-        border: "border-[#cfe0fb]",
-        iconWrap: "text-[#2f66b9]",
-		},
-		amber: {
-			bg: "bg-[#fff4e5]",
-			value: "text-[#f59e0b]",
-			border: "border-[#ffe5b8]",
-			iconWrap: "text-[#a16207]",
-		},
-		red: {
-			bg: "bg-[#ffe9ec]",
-			value: "text-[#f15f6a]",
-			border: "border-[#ffd3d9]",
-			iconWrap: "text-[#d61f3f]",
-		},
-	}[tone];
-
-	return (
-		<div className={`rounded-2xl border ${cfg.border} ${cfg.bg} p-5`}>
-			<div className="flex items-start justify-between gap-3">
-				<div>
-					<p className="text-3 font-semibold text-[#66789f]">{title}</p>
-					<p className={`mt-2 text-6 font-extrabold ${cfg.value}`}>{value}</p>
-				</div>
-				<div className={`mt-1 ${cfg.iconWrap}`}>{icon}</div>
-			</div>
-		</div>
-	);
-}
-
-function ActiveStudentRow({
-	index,
-	student,
-}: {
-	index: number;
-		student: {
-			fullName: string;
-			email: string;
-			grade: string;
-			school: string;
-			startedAt: number;
-			status: "active" | "disconnected";
-		};
-	}) {
-	return (
-		<div
-			className={`grid grid-cols-[minmax(0,1fr)_140px] items-center border-b border-[#eef2f7] px-6 py-5 last:border-b-0 ${
-				index % 2 === 1 ? "bg-[#f8fbff]" : "bg-white"
-			}`}
-		>
-			<div className="flex min-w-0 items-start gap-4">
-				<div className="w-12 shrink-0 text-5 font-extrabold text-[#66789f]">
-					{index + 1}.
-				</div>
-				<div className="min-w-0">
-					<p className="truncate text-5 font-extrabold text-[#1f2a44]">
-						{student.fullName}
-					</p>
-					<p className="mt-2 truncate text-4 text-[#7c8fb1]">
-						{student.email}
-					</p>
-				</div>
-			</div>
-
-			<div
-				className={`text-right text-4 font-semibold ${
-					student.status === "active" ? "text-[#4f9dff]" : "text-[#f15f6a]"
-				}`}
-			>
-				{student.status === "active" ? "Идэвхтэй" : "Салсан"}
-			</div>
-		</div>
 	);
 }
