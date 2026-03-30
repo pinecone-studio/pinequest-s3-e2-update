@@ -1,5 +1,4 @@
 "use client";
-
 import { ArrowRight, Sparkles } from "lucide-react";
 import {
   Select,
@@ -8,13 +7,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { useQuestionBank } from "../_hooks/use-question-bank";
 import { useQuery } from "@apollo/client/react";
 import { GET_ALL_SUBJECTS } from "@/graphql/queries";
 import { useRouter } from "next/navigation";
 
-export function Entry({
+type GetAllSubjectQueryData = {
+  getAllSubject: { id: string; name: string }[];
+};
+
+export function QuestionBankEntry({
   initialSubjectId = "",
   initialGrade = "",
 }: {
@@ -22,12 +24,42 @@ export function Entry({
   initialGrade?: string;
 } = {}) {
   const router = useRouter();
+
   const { entrySelection, gradeOptions, toastMessage, updateEntrySelection } =
     useQuestionBank(
       initialSubjectId && initialGrade
         ? { initialSubjectId, initialGrade }
         : undefined,
     );
+
+  const { data, loading } = useQuery<GetAllSubjectQueryData>(GET_ALL_SUBJECTS);
+
+  const subjectItems =
+    data?.getAllSubject.map((subject) => ({
+      key: subject.id,
+      value: subject.id,
+      label: subject.name,
+    })) ?? [];
+
+  const gradeItems = gradeOptions.map((grade) => ({
+    key: grade,
+    value: grade,
+    label: grade,
+  }));
+
+  const handleSubjectChange = (next: string) => {
+    const subject = data?.getAllSubject.find((s) => s.id === next);
+    if (subject) {
+      updateEntrySelection({
+        subjectId: subject.id,
+        subject: subject.name,
+      });
+    }
+  };
+
+  const handleGradeChange = (next: string) => {
+    updateEntrySelection({ grade: next });
+  };
 
   return (
     <div className="space-y-6 pb-10">
@@ -49,22 +81,52 @@ export function Entry({
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <EntrySelect
-              label="Хичээл"
-              onSubjectSelect={(subjectId, name) =>
-                updateEntrySelection({ subjectId, subject: name })
-              }
-              placeholder="Хичээл сонгох"
-              useSubjectsQuery
-              value={entrySelection.subjectId}
-            />
-            <EntrySelect
-              label="Анги"
-              onValueChange={(value) => updateEntrySelection({ grade: value })}
-              options={gradeOptions}
-              placeholder="Анги сонгох"
-              value={entrySelection.grade}
-            />
+            <label className="space-y-2">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+                Хичээл
+              </span>
+              <Select
+                onValueChange={handleSubjectChange}
+                value={entrySelection.subjectId}
+              >
+                <SelectTrigger className="h-12 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+                  <SelectValue placeholder="Хичээл сонгох" />
+                </SelectTrigger>
+                <SelectContent>
+                  {loading ? (
+                    <div className="px-3 py-2 text-sm text-[#6b7280]">
+                      Ачааллаж байна…
+                    </div>
+                  ) : null}
+                  {subjectItems.map((item) => (
+                    <SelectItem key={item.key} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </label>
+
+            <label className="space-y-2">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+                Анги
+              </span>
+              <Select
+                onValueChange={handleGradeChange}
+                value={entrySelection.grade}
+              >
+                <SelectTrigger className="h-12 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
+                  <SelectValue placeholder="Анги сонгох" />
+                </SelectTrigger>
+                <SelectContent>
+                  {gradeItems.map((item) => (
+                    <SelectItem key={item.key} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </label>
           </div>
 
           <div className="mt-6 flex flex-col gap-3">
@@ -94,82 +156,5 @@ export function Entry({
         </div>
       ) : null}
     </div>
-  );
-}
-
-type GetAllSubjectQueryData = {
-  getAllSubject: { id: string; name: string }[];
-};
-
-function EntrySelect({
-  label,
-  value,
-  onValueChange,
-  onSubjectSelect,
-  options = [],
-  placeholder,
-  useSubjectsQuery = false,
-}: {
-  label: string;
-  value: string;
-  onValueChange?: (value: string) => void;
-  onSubjectSelect?: (subjectId: string, name: string) => void;
-  options?: string[];
-  placeholder: string;
-  useSubjectsQuery?: boolean;
-}) {
-  const { data, loading } = useQuery<GetAllSubjectQueryData>(GET_ALL_SUBJECTS, {
-    skip: !useSubjectsQuery,
-  });
-
-  const subjectItems =
-    data?.getAllSubject.map((subject) => ({
-      key: subject.id,
-      value: subject.id,
-      label: subject.name,
-    })) ?? [];
-
-  const optionItems = options.map((option) => ({
-    key: option,
-    value: option,
-    label: option,
-  }));
-
-  const items = useSubjectsQuery ? subjectItems : optionItems;
-
-  const handleValueChange = (next: string) => {
-    if (useSubjectsQuery && onSubjectSelect) {
-      const subject = data?.getAllSubject.find((s) => s.id === next);
-      if (subject) {
-        onSubjectSelect(subject.id, subject.name);
-      }
-      return;
-    }
-    onValueChange?.(next);
-  };
-
-  return (
-    <label className="space-y-2">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
-        {label}
-      </span>
-      <Select onValueChange={handleValueChange} value={value}>
-        <SelectTrigger className="h-12 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {useSubjectsQuery && loading ? (
-            <div className="px-3 py-2 text-sm text-[#6b7280]">
-              Ачааллаж байна…
-            </div>
-          ) : null}
-          {items.map((item) => (
-            <SelectItem key={item.key} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </label>
   );
 }
