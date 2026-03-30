@@ -118,13 +118,14 @@ export function ExamScreen({
                 <IoClose size={25} />
               </button>
             </div>
-            <div className="w-full h-full flex flex-col pt-12 items-center gap-10">
+            <div className="w-full h-full flex flex-col pt-10 items-center gap-10">
               <p className="text-[30px] font-semibold flex justify-center items-center gap-5">
                 <IoWarning size={40} color="" /> Анхааруулга
               </p>
-              <p className="text-[24px] font-semibold w-[85%] text-center">
-                This is a warning that labels whether you chnaged your tabs or
-                whether you changed you window.
+              <p className="text-[20px] font-semibold w-[85%] text-center">
+                Шалгалтын явцад дэлгэц солих, шинэ цонх нээх зэрэг хуулах
+                оролдлого гаргаж болохгүйг анхаарна уу. Энэ мэдэгдэл багшид
+                хандагдана.
               </p>
             </div>
           </div>
