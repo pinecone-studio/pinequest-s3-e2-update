@@ -1,34 +1,30 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTeacher } from "../../teacher-shell";
-import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../../exam/_lib/constants";
-import type { PendingExamTransfer } from "../../exam/_lib/types";
+import { useTeacher } from "../teacher-shell";
+import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../exam/_lib/constants";
+import type { PendingExamTransfer } from "../exam/_lib/types";
 import {
   GRADE_OPTIONS,
   QUESTION_BANK_FILTER_DEFAULTS,
   SUBTOPIC_OPTIONS,
   SUBJECT_OPTIONS,
-} from "../_lib/constants";
-import { mapBackendTestsToQuestions } from "../_lib/backend-question-mappers";
-import { GET_ALL_SUBJECTS_QUERY, type GetAllSubjectsResponse } from "../_lib/get-subjects";
-import { GET_ALL_TESTS_QUERY, type GetAllTestsResponse } from "../_lib/get-tests";
-import { MOCK_QUESTIONS } from "../_lib/mock-data";
+} from "./constants";
+import { MOCK_GRAPHQL_SUBJECTS, MOCK_QUESTIONS } from "./mock-data";
 import type {
   Question,
   QuestionBuilderValues,
   QuestionFilters,
   QuestionValidationErrors,
-} from "../_lib/types";
+} from "./types";
 import {
   buildQuestionPayload,
   createQuestionBuilderValues,
   filterAndSortQuestions,
   mapQuestionToBuilderValues,
   validateQuestion,
-} from "../_lib/utils";
+} from "./utils";
 import { useCreateTestSync } from "./use-create-test-sync";
 
 const SEEDED_TEACHERS = ["Оюунбилэг", "Номин-Эрдэнэ", "Батчимэг"] as const;
@@ -55,8 +51,6 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   const router = useRouter();
   const teacher = useTeacher();
   const { createQuestionInBackend, incrementUsageInBackend, updateQuestionInBackend } = useCreateTestSync();
-  const { data: subjectsData } = useQuery<GetAllSubjectsResponse>(GET_ALL_SUBJECTS_QUERY);
-  const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const toastTimeoutRef = useRef<number | null>(null);
   const bootstrappedRouteKeyRef = useRef<string | null>(null);
 
@@ -88,17 +82,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     () => seededQuestions.filter((question) => question.source === "school"),
     [seededQuestions],
   );
-  const backendEditableQuestions = useMemo(
-    () =>
-      mapBackendTestsToQuestions(testsData?.getAllTests ?? []).map((question) => ({
-        ...question,
-        source: "school" as const,
-        teacherName: question.teacherName ?? teacher.name,
-      })),
-    [teacher.name, testsData?.getAllTests],
-  );
-  const persistedEditableQuestions =
-    backendEditableQuestions.length > 0 ? backendEditableQuestions : fallbackEditableQuestions;
+  const persistedEditableQuestions = fallbackEditableQuestions;
 
   const editableQuestions = useMemo(() => {
     const hiddenIds = new Set(deletedQuestionIds);
@@ -172,16 +156,14 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       const mergedSubjects = [
         ...SUBJECT_OPTIONS,
         ...questions.map((question) => question.subject),
-        ...(subjectsData?.getAllSubject ?? [])
-          .map((subject) => subject.name.trim())
-          .filter(Boolean),
+        ...MOCK_GRAPHQL_SUBJECTS.map((subject) => subject.name.trim()).filter(Boolean),
       ];
 
       return mergedSubjects.filter(
         (subject, index, array) => array.indexOf(subject) === index,
       );
     },
-    [questions, subjectsData?.getAllSubject],
+    [questions],
   );
   const gradeOptions = useMemo(
     () => {
@@ -282,9 +264,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     const grade = options?.initialGrade?.trim();
     if (!subjectId || !grade) return;
 
-    const list = subjectsData?.getAllSubject ?? [];
-    if (list.length === 0) return;
-
+    const list = MOCK_GRAPHQL_SUBJECTS;
     const subject = list.find((s) => s.id === subjectId);
     if (!subject) return;
 
@@ -305,7 +285,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       });
       setHasEnteredBank(true);
     });
-  }, [options?.initialGrade, options?.initialSubjectId, subjectsData?.getAllSubject]);
+  }, [options?.initialGrade, options?.initialSubjectId]);
 
   const enterBank = () => {
     if (!entrySelection.subject || !entrySelection.grade) {
@@ -428,7 +408,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
           showToast("Асуултын мэдээлэл шинэчлэгдлээ.");
         }
       } else {
-        const createdId = await createQuestionInBackend(values);
+        let createdId = values.id?.trim();
+        if (!createdId) {
+          createdId = await createQuestionInBackend(values);
+        }
         const createdQuestion: Question = {
           ...nextQuestion,
           id: createdId ?? nextQuestion.id,

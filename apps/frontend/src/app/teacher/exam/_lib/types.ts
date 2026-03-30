@@ -1,4 +1,4 @@
-import type { Question } from "../../question-bank/_lib/types";
+import type { Question } from "../../question-bank/types";
 
 export type ExamComposerState = {
   title: string;

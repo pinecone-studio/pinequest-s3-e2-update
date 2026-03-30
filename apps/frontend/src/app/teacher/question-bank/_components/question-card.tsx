@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeacher } from "../../teacher-shell";
-import type { Question } from "../_lib/types";
-import { DIFFICULTY_LABELS } from "../_lib/utils";
+import type { Question } from "../types";
+import { DIFFICULTY_LABELS } from "../utils";
 
 type QuestionCardProps = {
   heartCount: number;

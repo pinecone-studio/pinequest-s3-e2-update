@@ -6,13 +6,13 @@ import type {
   QuestionGradingType,
   QuestionStatus,
   QuestionType,
-} from "../_lib/types";
+} from "../types";
 import {
   DIFFICULTY_LABELS,
   GRADING_TYPE_LABELS,
   QUESTION_TYPE_LABELS,
   STATUS_LABELS,
-} from "../_lib/utils";
+} from "../utils";
 
 type BadgeProps =
   | { type: "status"; value: QuestionStatus }

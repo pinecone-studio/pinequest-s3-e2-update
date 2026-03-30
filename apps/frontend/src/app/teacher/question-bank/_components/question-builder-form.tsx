@@ -1,25 +1,23 @@
 "use client";
 
 import { X } from "lucide-react";
-import { GRADE_OPTIONS, SUBJECT_OPTIONS } from "../_lib/constants";
+import { GRADE_OPTIONS, SUBJECT_OPTIONS } from "../constants";
 import {
   type QuestionBuilderValues,
   type QuestionType,
   type QuestionValidationErrors,
-} from "../_lib/types";
+} from "../types";
 import { QuestionBuilderAdditionalSection } from "./question-builder-additional-section";
 import { QuestionBuilderAnswerSection } from "./question-builder-answer-section";
 import { QuestionBuilderDetailsSection } from "./question-builder-details-section";
 import { QuestionBuilderScoringSection } from "./question-builder-scoring-section";
 import { QuestionBuilderTypeSection } from "./question-builder-type-section";
-import { useQuestionBuilderForm } from "../_hooks/use-question-builder-form";
-import { useMutation } from "@apollo/client/react";
-import { CREATE_TESTS } from "@/graphql/typeDefs/mutations";
+import { useQuestionBuilderForm } from "../use-question-builder-form";
 
 type QuestionBuilderFormProps = {
   initialValues?: QuestionBuilderValues | null;
   onClose: () => void;
-  onSubmit: (values: QuestionBuilderValues) => void;
+  onSubmit: (values: QuestionBuilderValues) => void | Promise<void | boolean>;
   subjectOptions?: string[];
   validationErrors?: QuestionValidationErrors;
 };
@@ -54,7 +52,7 @@ export function QuestionBuilderForm({
     values,
   } = useQuestionBuilderForm(initialValues);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const nextFeatureErrors: Pick<
       QuestionValidationErrors,
       "formulaRaw" | "imageUrl"
@@ -79,22 +77,15 @@ export function QuestionBuilderForm({
             : "long_answer";
 
     setFeatureErrors({});
-    onSubmit({
+
+    const finalValues: QuestionBuilderValues = {
       ...values,
       topic: values.subtopic.trim() || values.subject.trim(),
       questionType: nextQuestionType,
       status: "published",
-    });
-  };
+    };
 
-  const [createTests, { data, loading, error }] = useMutation(CREATE_TESTS);
-
-  const newTests = async () => {
-    const res = await createTests({
-      variables: {
-        inpput: {},
-      },
-    });
+    await onSubmit(finalValues);
   };
 
   return (

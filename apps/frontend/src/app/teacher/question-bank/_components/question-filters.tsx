@@ -10,8 +10,8 @@ import {
 import {
   QUESTION_DIFFICULTIES,
   type QuestionFilters as QuestionFiltersType,
-} from "../_lib/types";
-import { DIFFICULTY_LABELS } from "../_lib/utils";
+} from "../types";
+import { DIFFICULTY_LABELS } from "../utils";
 
 type QuestionFiltersProps = {
   filters: QuestionFiltersType;

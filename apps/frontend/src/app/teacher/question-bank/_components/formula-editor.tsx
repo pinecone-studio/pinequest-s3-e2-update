@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Delete, RotateCcw } from "lucide-react";
 import { useRef, useState } from "react";
-import { renderFormulaPreview } from "../_lib/utils";
+import { renderFormulaPreview } from "../utils";
 
 const CURSOR_MARKER = "__CURSOR__";
 const SELECTION_MARKER = "__SEL__";

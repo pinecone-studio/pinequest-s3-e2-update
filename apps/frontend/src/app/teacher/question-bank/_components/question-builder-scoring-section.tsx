@@ -1,7 +1,7 @@
 "use client";
 
-import { QUESTION_DIFFICULTIES, type QuestionValidationErrors } from "../_lib/types";
-import { DIFFICULTY_LABELS } from "../_lib/utils";
+import { QUESTION_DIFFICULTIES, type QuestionValidationErrors } from "../types";
+import { DIFFICULTY_LABELS } from "../utils";
 import {
   BuilderField,
   BuilderSelectField,

@@ -4,7 +4,7 @@ import { Plus, X } from "lucide-react";
 import type {
   QuestionBuilderValues,
   QuestionValidationErrors,
-} from "../_lib/types";
+} from "../types";
 import {
   BuilderField,
   builderInputClassName,

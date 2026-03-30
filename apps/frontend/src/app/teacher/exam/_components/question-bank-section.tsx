@@ -10,8 +10,8 @@ import {
 import {
   DIFFICULTY_LABELS,
   QUESTION_TYPE_LABELS,
-} from "../../question-bank/_lib/utils";
-import type { Question } from "../../question-bank/_lib/types";
+} from "../../question-bank/utils";
+import type { Question } from "../../question-bank/types";
 import type { ExamComposerState, ExamQuestionItem } from "../_lib/types";
 import { inputClassName } from "../_lib/utils";
 

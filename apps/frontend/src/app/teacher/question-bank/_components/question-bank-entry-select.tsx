@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
 import {
   Select,
   SelectContent,
@@ -8,11 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GET_ALL_SUBJECTS } from "@/graphql/typeDefs/queries";
-
-type GetAllSubjectQueryData = {
-  getAllSubject: { id: string; name: string }[];
-};
+import { MOCK_GRAPHQL_SUBJECTS } from "../mock-data";
 
 type QuestionBankEntrySelectProps = {
   label: string;
@@ -33,12 +28,8 @@ export function QuestionBankEntrySelect({
   useSubjectsQuery = false,
   value,
 }: QuestionBankEntrySelectProps) {
-  const { data, loading } = useQuery<GetAllSubjectQueryData>(GET_ALL_SUBJECTS, {
-    skip: !useSubjectsQuery,
-  });
-
   const items = useSubjectsQuery
-    ? (data?.getAllSubject ?? []).map((subject) => ({
+    ? MOCK_GRAPHQL_SUBJECTS.map((subject) => ({
         key: subject.id,
         value: subject.id,
         label: subject.name,
@@ -51,7 +42,7 @@ export function QuestionBankEntrySelect({
 
   const handleValueChange = (next: string) => {
     if (useSubjectsQuery && onSubjectSelect) {
-      const subject = data?.getAllSubject.find((item) => item.id === next);
+      const subject = MOCK_GRAPHQL_SUBJECTS.find((item) => item.id === next);
       if (subject) onSubjectSelect(subject.id, subject.name);
       return;
     }
@@ -69,11 +60,6 @@ export function QuestionBankEntrySelect({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {useSubjectsQuery && loading ? (
-            <div className="px-3 py-2 text-sm text-[#6b7280]">
-              Ачааллаж байна…
-            </div>
-          ) : null}
           {items.map((item) => (
             <SelectItem key={item.key} value={item.value}>
               {item.label}

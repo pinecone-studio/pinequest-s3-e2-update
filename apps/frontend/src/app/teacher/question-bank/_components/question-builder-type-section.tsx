@@ -1,7 +1,7 @@
 "use client";
 
 import { QuestionTypeSelector } from "./question-type-selector";
-import type { QuestionType } from "../_lib/types";
+import type { QuestionType } from "../types";
 
 type QuestionBuilderTypeSectionProps = {
   includesFormula: boolean;
@@ -30,12 +30,15 @@ export function QuestionBuilderTypeSection({
             Асуултын төрөл
           </h3>
           <p className="text-sm text-[#6d7f9c]">
-            Эхлээд үндсэн төрлөө сонгоод, дараа нь нэмэлт хэрэгцээгээ
-            тэмдэглэнэ үү.
+            Эхлээд үндсэн төрлөө сонгоод, дараа нь нэмэлт хэрэгцээгээ тэмдэглэнэ
+            үү.
           </p>
         </div>
 
-        <QuestionTypeSelector onChange={onQuestionTypeChange} value={questionType} />
+        <QuestionTypeSelector
+          onChange={onQuestionTypeChange}
+          value={questionType}
+        />
 
         <div className="grid gap-3 md:grid-cols-2">
           <FeatureToggleCard

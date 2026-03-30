@@ -1,6 +1,6 @@
 "use client";
 
-import type { Question } from "../_lib/types";
+import type { Question } from "../types";
 import { QuestionList } from "./question-list";
 import { QuestionPreviewPanel } from "./question-preview-panel";
 
