@@ -10,8 +10,10 @@ import { studentTypeDefs } from "./schema/student";
 import { classTypeDefs } from "./schema/class";
 import { examCheatLogTypeDefs } from "./schema/examCheatLog";
 import { studentExamResultTypeDefs } from "./schema/studentExamResult";
+import { scalarJson } from "./scalarJson";
 
 export const typeDefs = [
+  scalarJson,
   openExerciesTypeDefs,
   studentTypeDefs,
   teacherTypeDefs,
