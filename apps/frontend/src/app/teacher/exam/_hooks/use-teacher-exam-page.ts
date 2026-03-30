@@ -151,19 +151,20 @@ export function useTeacherExamPage() {
     const now = new Date().toISOString();
     const nextId = activeSavedExamId ?? `saved-exam-${now}`;
     const previous = savedExams.find((item) => item.id === nextId);
-    const nextRecord: SavedExamRecord = { id: nextId, title: nextTitle, grade: exam.grade.trim(), subject: exam.subject.trim(), topic: exam.topic.trim(), durationInMinutes: exam.durationInMinutes, status: "published", totalPoints, questionCount: examQuestionDetails.length, savedAt: now, questions: examQuestions.map((item) => ({ ...item })), sentClassIds: previous?.sentClassIds ?? [] };
+    const approvalStatus = exam.requiresSchoolApproval ? "pending" : "not_required";
+    const nextRecord: SavedExamRecord = { id: nextId, title: nextTitle, grade: exam.grade.trim(), subject: exam.subject.trim(), topic: exam.topic.trim(), durationInMinutes: exam.durationInMinutes, status: "published", totalPoints, questionCount: examQuestionDetails.length, savedAt: now, questions: examQuestions.map((item) => ({ ...item })), requiresSchoolApproval: exam.requiresSchoolApproval, approvalStatus, sentClassIds: previous?.sentClassIds ?? [] };
     setSavedExams((current) => [nextRecord, ...current.filter((item) => item.id !== nextId)].sort((left, right) => new Date(right.savedAt).getTime() - new Date(left.savedAt).getTime()));
     setActiveSavedExamId(nextId);
     setExam((current) => ({
       ...current,
       title: nextTitle,
     }));
-    showToast("Шалгалтыг амжилттай хадгаллаа.");
+    showToast(exam.requiresSchoolApproval ? "Шалгалтыг хадгалж, сургуулийн зөвшөөрлийн хүсэлт илгээлээ." : "Шалгалтыг амжилттай хадгаллаа.");
   };
 
   const openSavedExam = (savedExam: SavedExamRecord) => {
     const next = normalizeSavedExamRecord(savedExam);
-    setExam({ title: next.title, grade: next.grade, subject: next.subject, topic: next.topic, durationInMinutes: next.durationInMinutes });
+    setExam({ title: next.title, grade: next.grade, subject: next.subject, topic: next.topic, durationInMinutes: next.durationInMinutes, requiresSchoolApproval: Boolean(next.requiresSchoolApproval) });
     setExamQuestions(next.questions.map((item, index) => ({ ...item, order: index })));
     setSelectedBankIds([]);
     setActiveSavedExamId(next.id);
@@ -179,6 +180,9 @@ export function useTeacherExamPage() {
 
   const selectClassForSavedExam = (savedExamId: string, classId: string) => setSelectedClassByExamId((current) => ({ ...current, [savedExamId]: classId }));
   const sendSavedExamToClass = (savedExam: SavedExamRecord) => {
+    if (savedExam.approvalStatus === "pending") {
+      return showToast("Энэ шалгалт сургуулийн зөвшөөрөл хүлээж байна.");
+    }
     const classId = selectedClassByExamId[savedExam.id];
     if (!classId) return showToast("Илгээхийн өмнө ангиа сонгоно уу.");
     const selectedClass = teacherClasses.find((item) => item.id === classId);

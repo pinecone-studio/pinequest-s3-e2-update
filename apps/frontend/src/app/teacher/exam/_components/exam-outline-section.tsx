@@ -11,6 +11,7 @@ import type { ExamQuestionDetail } from "../_lib/types";
 
 export function ExamOutlineSection({
   examQuestionDetails,
+  requiresSchoolApproval,
   totalPoints,
   onMoveQuestion,
   onPersistExam,
@@ -18,6 +19,7 @@ export function ExamOutlineSection({
   onUpdateAssignedPoints,
 }: {
   examQuestionDetails: ExamQuestionDetail[];
+  requiresSchoolApproval: boolean;
   totalPoints: number;
   onMoveQuestion: (examQuestionId: string, direction: "up" | "down") => void;
   onPersistExam: () => void;
@@ -133,7 +135,9 @@ export function ExamOutlineSection({
           type="button"
         >
           <Save className="mr-2 h-4 w-4" />
-          Шалгалт хадгалах
+          {requiresSchoolApproval
+            ? "Хадгалж, зөвшөөрөл хүсэх"
+            : "Шалгалт хадгалах"}
         </button>
       </div>
     </section>

@@ -63,6 +63,7 @@ export function SavedExamCard({
         <div className="flex flex-wrap items-center justify-end gap-2">
           <div className="min-w-52">
             <Select
+              disabled={savedExam.approvalStatus === "pending"}
               onValueChange={onSelectClass}
               value={selectedClassId ?? undefined}
             >
@@ -85,8 +86,13 @@ export function SavedExamCard({
 
           <ActionButton
             icon={<SendHorizontal className="mr-2 h-4 w-4" />}
+            disabled={savedExam.approvalStatus === "pending"}
             kind="primary"
-            label="Илгээх"
+            label={
+              savedExam.approvalStatus === "pending"
+                ? "Зөвшөөрөл хүлээж байна"
+                : "Илгээх"
+            }
             onClick={onSend}
           />
           <ActionButton
@@ -120,6 +126,15 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
         >
           {savedExam.status === "published" ? "Нийтэлсэн" : "Ноорог"}
         </span>
+        {savedExam.approvalStatus === "pending" ? (
+          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+            Сургуулийн зөвшөөрөл хүлээж байна
+          </span>
+        ) : savedExam.requiresSchoolApproval ? (
+          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            Сургуулийн зөвшөөрөлтэй
+          </span>
+        ) : null}
         <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#3b5a8f]">
           {savedExam.grade}
         </span>
@@ -199,11 +214,13 @@ function ClassOption({ klass }: { klass: TeacherClass }) {
 }
 
 function ActionButton({
+  disabled = false,
   icon,
   kind = "secondary",
   label,
   onClick,
 }: {
+  disabled?: boolean;
   icon: React.ReactNode;
   kind?: "secondary" | "primary" | "danger";
   label: string;
@@ -211,13 +228,14 @@ function ActionButton({
 }) {
   const styles =
     kind === "primary"
-      ? "bg-[#1f6feb] text-white hover:bg-[#195fcc]"
+      ? "bg-[#1f6feb] text-white hover:bg-[#195fcc] disabled:bg-[#9fbceb] disabled:text-white"
       : kind === "danger"
-        ? "border-[#f0d0d0] bg-[#fff5f5] text-[#c95050] hover:bg-[#ffeaea]"
-        : "border-[#d7e2f1] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]";
+        ? "border-[#f0d0d0] bg-[#fff5f5] text-[#c95050] hover:bg-[#ffeaea] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]"
+        : "border-[#d7e2f1] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]";
   return (
     <button
-      className={`inline-flex h-11 items-center rounded-2xl border px-4 text-sm font-semibold transition ${styles}`}
+      className={`inline-flex h-11 items-center rounded-2xl border px-4 text-sm font-semibold transition disabled:cursor-not-allowed ${styles}`}
+      disabled={disabled}
       onClick={onClick}
       type="button"
     >

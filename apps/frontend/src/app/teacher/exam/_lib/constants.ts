@@ -19,4 +19,5 @@ export const INITIAL_FORM: ExamComposerState = {
   subject: "Математик",
   topic: "Бутархай",
   durationInMinutes: 40,
+  requiresSchoolApproval: false,
 };

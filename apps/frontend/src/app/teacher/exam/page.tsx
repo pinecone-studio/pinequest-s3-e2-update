@@ -27,6 +27,7 @@ export default function TeacherExamPage() {
       <div className="grid gap-6">
         <ExamOutlineSection
           examQuestionDetails={examPage.examQuestionDetails}
+          requiresSchoolApproval={examPage.exam.requiresSchoolApproval}
           totalPoints={examPage.totalPoints}
           onMoveQuestion={examPage.moveQuestion}
           onPersistExam={examPage.persistExam}

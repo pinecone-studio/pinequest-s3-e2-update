@@ -7,6 +7,10 @@ export function normalizeSavedExamRecord(savedExam: SavedExamRecord): SavedExamR
       Number.isFinite(savedExam.durationInMinutes) && savedExam.durationInMinutes > 0
         ? savedExam.durationInMinutes
         : 40,
+    requiresSchoolApproval: Boolean(savedExam.requiresSchoolApproval),
+    approvalStatus: savedExam.requiresSchoolApproval
+      ? savedExam.approvalStatus ?? "pending"
+      : "not_required",
     sentClassIds: Array.isArray(savedExam.sentClassIds) ? savedExam.sentClassIds : [],
   };
 }
