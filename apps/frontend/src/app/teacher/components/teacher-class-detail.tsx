@@ -11,6 +11,7 @@ import {
 	ChevronUp,
 	Download,
 	Search,
+	SendHorizontal,
 	Users,
 	X,
 } from "lucide-react";
@@ -24,6 +25,9 @@ import {
 } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
 import type { Student } from "@/app/lib/types";
+import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
+import { normalizeSavedExamRecord } from "../exam/_lib/utils";
+import type { SavedExamRecord } from "../exam/_lib/types";
 import ReviewScreen from "./review-screen";
 import { useTeacher } from "../teacher-shell";
 
@@ -412,6 +416,34 @@ function downloadSingleStudentPastExamXls(
 	triggerExcelDownload(`${base}.xls`, html);
 }
 
+function markSavedExamDelivered(
+	examId: string,
+	classId: string,
+) {
+	try {
+		const raw = window.localStorage.getItem(SAVED_EXAMS_STORAGE_KEY);
+		const savedExams = raw
+			? (JSON.parse(raw) as SavedExamRecord[]).map(normalizeSavedExamRecord)
+			: [];
+		const nextSavedExams = savedExams.map((item) =>
+			item.id === examId
+				? {
+						...item,
+						sentClassIds: Array.from(
+							new Set([...(item.sentClassIds ?? []), classId]),
+						),
+					}
+				: item,
+		);
+		window.localStorage.setItem(
+			SAVED_EXAMS_STORAGE_KEY,
+			JSON.stringify(nextSavedExams),
+		);
+	} catch {
+		// Ignore local persistence issues and keep the class-page flow usable.
+	}
+}
+
 function PastExamStudentStatPopover({
 	classLabel,
 	exam,
@@ -755,6 +787,254 @@ function StudentClassExamResultsPanel({
 	);
 }
 
+function PendingExamDeliveryPanel({
+	className,
+	deliveryMode,
+	examTitle,
+	onChangeDeliveryMode,
+	onClearSample,
+	onSubmit,
+	onToggleStudent,
+	onSelectAllSample,
+	selectedStudentIds,
+	students,
+}: {
+	className: string;
+	deliveryMode: "all" | "sample";
+	examTitle: string;
+	onChangeDeliveryMode: (mode: "all" | "sample") => void;
+	onClearSample: () => void;
+	onSubmit: () => void;
+	onToggleStudent: (studentId: string) => void;
+	onSelectAllSample: () => void;
+	selectedStudentIds: string[];
+	students: Student[];
+}) {
+	const selectedCount = selectedStudentIds.length;
+
+	return (
+		<section className="rounded-2xl border border-[#cfe0fb] bg-gradient-to-br from-[#eff6ff] via-white to-[#f8fbff] p-6 shadow-[0_12px_32px_rgba(79,157,255,0.10)] sm:p-8">
+			<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+				<div className="min-w-0">
+					<p className="text-[0.8125rem] font-bold uppercase tracking-[0.18em] text-[#6f85a8]">
+						Шалгалт илгээх
+					</p>
+					<h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[#183153]">
+						{examTitle}
+					</h2>
+					<p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-[#5f7394] sm:text-base">
+						{className} ангид энэ шалгалтыг илгээхээс өмнө{" "}
+						<span className="font-semibold text-[#183153]">Бүгд</span> эсвэл{" "}
+						<span className="font-semibold text-[#183153]">Түүвэр</span>{" "}
+						сонгоно уу.
+					</p>
+				</div>
+
+				<button
+					type="button"
+					onClick={onSubmit}
+					className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#1f6feb] px-5 text-sm font-semibold text-white shadow-[0_12px_26px_rgba(31,111,235,0.28)] transition hover:bg-[#195fcc]"
+				>
+					<SendHorizontal className="mr-2 h-4 w-4" />
+					Илгээх
+				</button>
+			</div>
+
+			<div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]">
+				<div className="space-y-3 rounded-2xl border border-[#d7e6fb] bg-white p-3 shadow-sm">
+					<button
+						type="button"
+						onClick={() => onChangeDeliveryMode("all")}
+						className={`flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition ${
+							deliveryMode === "all"
+								? "bg-[#eaf3ff] text-[#1f6feb]"
+								: "bg-[#fbfdff] text-[#365077] hover:bg-[#f4f8ff]"
+						}`}
+					>
+						<div>
+							<p className="text-base font-semibold">Бүх сурагч</p>
+							<p className="mt-1 text-sm text-[#6a7f9f]">
+								{students.length} сурагчид бүгдэд нь илгээнэ
+							</p>
+						</div>
+						<span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb]">
+							Бүгд
+						</span>
+					</button>
+
+					<button
+						type="button"
+						onClick={() => onChangeDeliveryMode("sample")}
+						className={`flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition ${
+							deliveryMode === "sample"
+								? "bg-[#eaf3ff] text-[#1f6feb]"
+								: "bg-[#fbfdff] text-[#365077] hover:bg-[#f4f8ff]"
+						}`}
+					>
+						<div>
+							<p className="text-base font-semibold">Түүвэр</p>
+							<p className="mt-1 text-sm text-[#6a7f9f]">
+								Сонгосон сурагчдад л илгээнэ
+							</p>
+						</div>
+						<span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb]">
+							{selectedCount} сонгосон
+						</span>
+					</button>
+				</div>
+
+				<div className="rounded-2xl border border-[#d7e6fb] bg-white p-4 shadow-sm sm:p-5">
+					{deliveryMode === "all" ? (
+						<div className="flex h-full min-h-[220px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#cbdaf3] bg-[#f9fbff] px-6 py-8 text-center">
+							<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#edf4ff] text-[#4f9dff]">
+								<Users className="h-7 w-7" />
+							</div>
+							<p className="mt-4 text-lg font-semibold text-[#183153]">
+								{className} ангийн бүх сурагч
+							</p>
+							<p className="mt-2 max-w-md text-sm leading-relaxed text-[#60728f] sm:text-base">
+								Илгээх дарахад энэ ангийн {students.length} сурагч бүгд шалгалтыг
+								авна.
+							</p>
+						</div>
+					) : (
+						<div>
+							<div className="flex flex-wrap items-center justify-between gap-3">
+								<div>
+									<h3 className="text-lg font-bold text-[#183153]">
+										Сурагч сонгох
+									</h3>
+									<p className="mt-1 text-sm text-[#60728f]">
+										Түүвэрт оруулах сурагчдаа сонгоно уу.
+									</p>
+								</div>
+								<div className="flex flex-wrap gap-2">
+									<button
+										type="button"
+										onClick={onSelectAllSample}
+										className="rounded-full border border-[#d7e2f1] bg-white px-3 py-1.5 text-xs font-semibold text-[#365077] transition hover:border-[#4f9dff] hover:text-[#1f6feb]"
+									>
+										Бүгдийг сонгох
+									</button>
+									<button
+										type="button"
+										onClick={onClearSample}
+										className="rounded-full border border-[#d7e2f1] bg-white px-3 py-1.5 text-xs font-semibold text-[#365077] transition hover:border-[#4f9dff] hover:text-[#1f6feb]"
+									>
+										Цэвэрлэх
+									</button>
+								</div>
+							</div>
+
+							<div className="mt-4 max-h-[320px] overflow-y-auto rounded-2xl border border-[#e2e8f0]">
+								<ul className="divide-y divide-[#eef3fa]">
+									{students.map((student) => {
+										const checked = selectedStudentIds.includes(student.id);
+										return (
+											<li key={student.id}>
+												<button
+													type="button"
+													onClick={() => onToggleStudent(student.id)}
+													className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition ${
+														checked
+															? "bg-[#edf5ff]"
+															: "bg-white hover:bg-[#f8fbff]"
+													}`}
+												>
+													<div className="min-w-0">
+														<p className="font-semibold text-[#183153]">
+															{student.firstName} {student.lastName}
+														</p>
+														<p className="mt-1 text-sm text-[#7a8ca8]">
+															{student.studentNumber}
+														</p>
+													</div>
+													<span
+														className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-xs font-bold ${
+															checked
+																? "border-[#1f6feb] bg-[#1f6feb] text-white"
+																: "border-[#c7d5ea] bg-white text-transparent"
+														}`}
+													>
+														✓
+													</span>
+												</button>
+											</li>
+										);
+									})}
+								</ul>
+							</div>
+						</div>
+					)}
+				</div>
+			</div>
+		</section>
+	);
+}
+
+function PendingExamDeliveryFlow({
+	classId,
+	className,
+	classPath,
+	examId,
+	examTitle,
+	onComplete,
+	students,
+}: {
+	classId: string;
+	className: string;
+	classPath: string;
+	examId: string;
+	examTitle: string;
+	onComplete: (message: string) => void;
+	students: Student[];
+}) {
+	const router = useRouter();
+	const [deliveryMode, setDeliveryMode] = useState<"all" | "sample">("all");
+	const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+
+	const toggleStudent = (studentId: string) =>
+		setSelectedStudentIds((current) =>
+			current.includes(studentId)
+				? current.filter((id) => id !== studentId)
+				: [...current, studentId],
+		);
+
+	const submitDelivery = () => {
+		if (deliveryMode === "sample" && selectedStudentIds.length === 0) {
+			onComplete("Түүвэр илгээхийн тулд дор хаяж нэг сурагч сонгоно уу.");
+			return;
+		}
+
+		markSavedExamDelivered(examId, classId);
+		const targetCount =
+			deliveryMode === "all" ? students.length : selectedStudentIds.length;
+		onComplete(
+			deliveryMode === "all"
+				? `"${examTitle}" шалгалтыг ${className} ангийн бүх ${targetCount} сурагчид илгээлээ.`
+				: `"${examTitle}" шалгалтыг ${targetCount} сурагчтай түүвэр бүлэгт илгээлээ.`,
+		);
+		router.replace(classPath);
+	};
+
+	return (
+		<PendingExamDeliveryPanel
+			className={className}
+			deliveryMode={deliveryMode}
+			examTitle={examTitle}
+			onChangeDeliveryMode={setDeliveryMode}
+			onClearSample={() => setSelectedStudentIds([])}
+			onSelectAllSample={() =>
+				setSelectedStudentIds(students.map((student) => student.id))
+			}
+			onSubmit={submitDelivery}
+			onToggleStudent={toggleStudent}
+			selectedStudentIds={selectedStudentIds}
+			students={students}
+		/>
+	);
+}
+
 function DownloadMenu({
 	onExcel,
 	onPdf,
@@ -832,6 +1112,9 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const studentNumber = searchParams.get("student");
+	const pendingDeliveryExamId = searchParams.get("deliveryExamId");
+	const pendingDeliveryExamTitle = searchParams.get("deliveryExamTitle");
+	const pendingDeliveryClassId = searchParams.get("deliveryClassId");
 	const teacher = useTeacher();
 
 	const cls = useMemo(() => store.getClass(classId), [classId]);
@@ -859,10 +1142,31 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 	const [expandedPastExamId, setExpandedPastExamId] = useState<string | null>(
 		null,
 	);
+	const [deliveryFeedback, setDeliveryFeedback] = useState("");
 	const [examStudentPopover, setExamStudentPopover] = useState<{
 		examId: string;
 		studentId: string;
 	} | null>(null);
+
+	const pendingExamDelivery = useMemo(() => {
+		if (
+			!pendingDeliveryExamId ||
+			!pendingDeliveryExamTitle ||
+			!pendingDeliveryClassId
+		) {
+			return null;
+		}
+
+		return {
+			classId: pendingDeliveryClassId,
+			examId: pendingDeliveryExamId,
+			examTitle: pendingDeliveryExamTitle,
+		};
+	}, [
+		pendingDeliveryClassId,
+		pendingDeliveryExamId,
+		pendingDeliveryExamTitle,
+	]);
 
 	const selectedStudentExams = useMemo(() => {
 		if (!selectedId) return [];
@@ -971,6 +1275,30 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 						</div>
 					</div>
 				</div>
+
+				{deliveryFeedback ? (
+					<div
+						className={`rounded-2xl border px-5 py-4 text-sm font-medium ${
+							deliveryFeedback.includes("дор хаяж")
+								? "border-[#ffd7d7] bg-[#fff5f5] text-[#bf4a4a]"
+								: "border-[#cfe0fb] bg-[#eef6ff] text-[#2f66b9]"
+						}`}
+					>
+						{deliveryFeedback}
+					</div>
+				) : null}
+
+				{pendingExamDelivery ? (
+					<PendingExamDeliveryFlow
+						classId={pendingExamDelivery.classId}
+						className={cls.name}
+						classPath={classPath}
+						examId={pendingExamDelivery.examId}
+						examTitle={pendingExamDelivery.examTitle}
+						onComplete={setDeliveryFeedback}
+						students={students}
+					/>
+				) : null}
 
 				<div
 					className="flex flex-wrap justify-center gap-6 rounded-2xl border border-[#d9dee8] bg-white p-2 shadow-sm"

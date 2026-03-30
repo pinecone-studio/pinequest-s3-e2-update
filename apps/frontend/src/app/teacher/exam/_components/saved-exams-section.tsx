@@ -37,7 +37,7 @@ export function SavedExamsSection({
             {savedExams.length} шалгалт
           </p>
           <p className="text-sm text-[#5f7394]">
-            Ноорог болон нийтэлсэн төлөвүүд
+            Хадгалсан шалгалтын жагсаалт
           </p>
         </div>
       </div>

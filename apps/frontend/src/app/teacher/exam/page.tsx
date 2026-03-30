@@ -24,17 +24,6 @@ export default function TeacherExamPage() {
         onUpdateExam={examPage.updateExam}
       />
 
-      <SavedExamsSection
-        activeSavedExamId={examPage.activeSavedExamId}
-        hasLoadedSavedExams={examPage.hasLoadedSavedExams}
-        savedExams={examPage.savedExams}
-        selectedClassByExamId={examPage.selectedClassByExamId}
-        onDeleteSavedExam={examPage.deleteSavedExam}
-        onOpenSavedExam={examPage.openSavedExam}
-        onSelectClass={examPage.selectClassForSavedExam}
-        onSendSavedExam={examPage.sendSavedExamToClass}
-      />
-
       <div className="grid gap-6">
         <ExamOutlineSection
           examQuestionDetails={examPage.examQuestionDetails}
@@ -43,6 +32,17 @@ export default function TeacherExamPage() {
           onPersistExam={examPage.persistExam}
           onRemoveExamQuestion={examPage.removeExamQuestion}
           onUpdateAssignedPoints={examPage.updateAssignedPoints}
+        />
+
+        <SavedExamsSection
+          activeSavedExamId={examPage.activeSavedExamId}
+          hasLoadedSavedExams={examPage.hasLoadedSavedExams}
+          savedExams={examPage.savedExams}
+          selectedClassByExamId={examPage.selectedClassByExamId}
+          onDeleteSavedExam={examPage.deleteSavedExam}
+          onOpenSavedExam={examPage.openSavedExam}
+          onSelectClass={examPage.selectClassForSavedExam}
+          onSendSavedExam={examPage.sendSavedExamToClass}
         />
       </div>
     </div>

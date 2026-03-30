@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Heart, PencilLine, Trash2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Circle, Heart, PencilLine, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTeacher } from "../../teacher-shell";
 import type { Question } from "../_lib/types";
@@ -10,11 +10,13 @@ type QuestionCardProps = {
   heartCount: number;
   isActive?: boolean;
   isLiked: boolean;
+  isSelected?: boolean;
   question: Question;
   onAddToExam: () => void;
   onDelete?: () => void;
   onEdit?: () => void;
   onOpen?: () => void;
+  onToggleSelect: () => void;
   onToggleLike: () => void;
 };
 
@@ -28,11 +30,13 @@ export function QuestionCard({
   heartCount,
   isActive = false,
   isLiked,
+  isSelected = false,
   question,
   onAddToExam,
   onDelete,
   onEdit,
   onOpen,
+  onToggleSelect,
   onToggleLike,
 }: QuestionCardProps) {
   const teacher = useTeacher();
@@ -43,7 +47,9 @@ export function QuestionCard({
     <article
       className={cn(
         "group flex h-full flex-col justify-between rounded-[22px] border bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_44px_rgba(15,23,42,0.09)]",
-        isActive
+        isSelected
+          ? "border-[#60a5fa] shadow-[0_16px_40px_rgba(59,130,246,0.14)]"
+          : isActive
           ? "border-[#93c5fd] shadow-[0_16px_40px_rgba(59,130,246,0.14)]"
           : "border-[#e5ebf3]",
       )}
@@ -106,6 +112,23 @@ export function QuestionCard({
       </div>
 
       <div className="mt-5 flex flex-col gap-3 border-t border-[#f1f3f5] pt-4 sm:flex-row sm:items-center sm:justify-end">
+        <button
+          className={cn(
+            "inline-flex h-10 items-center justify-center rounded-xl border px-3 text-sm font-medium transition active:translate-y-px",
+            isSelected
+              ? "border-[#bfdbfe] bg-[#eff6ff] text-[#1d4ed8]"
+              : "border-[#dbe4f0] bg-white text-[#355caa] hover:border-[#bfd2f6] hover:text-[#1d4ed8]",
+          )}
+          onClick={onToggleSelect}
+          type="button"
+        >
+          {isSelected ? (
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+          ) : (
+            <Circle className="mr-2 h-4 w-4" />
+          )}
+          {isSelected ? "Сонгосон" : "Сонгох"}
+        </button>
         {canManage ? (
           <>
             <button
