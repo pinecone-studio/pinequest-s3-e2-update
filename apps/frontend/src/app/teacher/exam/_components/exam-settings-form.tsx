@@ -112,6 +112,28 @@ export function ExamSettingsForm({
           </div>
         </Field>
       </div>
+
+      <div className="mt-4 rounded-3xl border border-[#d7e6fb] bg-white/80 p-4">
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            checked={exam.requiresSchoolApproval}
+            className="mt-1 h-4 w-4 rounded border-[#bfd3f4] text-[#1f6feb] focus:ring-[#1f6feb]/20"
+            onChange={(event) =>
+              onUpdateExam("requiresSchoolApproval", event.target.checked)
+            }
+            type="checkbox"
+          />
+          <div>
+            <p className="text-sm font-semibold text-[#183153]">
+              Сургуулийн зөвшөөрөл авах
+            </p>
+            <p className="mt-1 text-sm leading-6 text-[#60728f]">
+              Хэрэв энэ шалгалт сургуулийн талаас баталгаажих шаардлагатай бол
+              хадгалах үед зөвшөөрлийн хүсэлт илгээгдэнэ.
+            </p>
+          </div>
+        </label>
+      </div>
     </section>
   );
 }

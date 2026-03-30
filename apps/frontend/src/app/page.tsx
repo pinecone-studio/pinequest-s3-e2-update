@@ -64,10 +64,10 @@ export default async function Home({
             <div className="mt-12 flex items-center gap-4">
               <div className="flex items-center -space-x-3">
                 {[
-                  "/bagsh1.png",
-                  "/bagsh2.png",
-                  "/bagsh3.png",
-                  "/bagsh4.png",
+                  "/angarag.jpg",
+                  "/sor.jpg",
+                  "/purwe.jpg",
+                  "/ogo.jpg",
                 ].map((src, idx) => (
                   <span
                     key={src}
@@ -99,7 +99,7 @@ export default async function Home({
             <article className="mt-10 h-60 w-125 rounded-[14px] border border-[#efe6b4] bg-[#fefce6] p-6 shadow-[0_0_12px_rgba(255,197,0,0.44)] transition hover:border-[#ffcf4d] hover:shadow-[0_0_16px_rgba(255,197,0,0.56)]">
               <div className="flex items-start gap-5">
                 <Image
-                  src="/teacher.png"
+                  src="/gana.jpg"
                   alt="Teacher testimonial"
                   width={76}
                   height={76}
@@ -107,7 +107,7 @@ export default async function Home({
                 />
                 <div>
                   <p className="text-2 font-extrabold leading-tight text-[#3a2614]">
-                    Багш: О.Наранзул
+                    Багш: С.Гантүшиг
                   </p>
                   <p className="mt-1 text-2 text-[#2f3640]">16-р сургууль</p>
                   <div className="mt-3 h-px w-78 bg-[#c8c4a8]" />

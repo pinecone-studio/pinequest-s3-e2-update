@@ -6,6 +6,7 @@ export type ExamComposerState = {
   subject: string;
   topic: string;
   durationInMinutes: number;
+  requiresSchoolApproval: boolean;
 };
 
 export type ExamQuestionItem = {
@@ -16,6 +17,7 @@ export type ExamQuestionItem = {
 };
 
 export type ExamStatus = "draft" | "published";
+export type ExamApprovalStatus = "not_required" | "pending" | "approved";
 
 export type SavedExamRecord = {
   id: string;
@@ -29,6 +31,8 @@ export type SavedExamRecord = {
   questionCount: number;
   savedAt: string;
   questions: ExamQuestionItem[];
+  requiresSchoolApproval?: boolean;
+  approvalStatus?: ExamApprovalStatus;
   sentClassIds?: string[];
 };
 
