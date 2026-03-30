@@ -7,8 +7,7 @@ import { ProgressSummary } from "./progress-summary";
 import { QuestionCard } from "./question-card";
 import { QuestionNavigator } from "./question-navigator";
 import { useState, useEffect } from "react";
-import { IoClose } from "react-icons/io5";
-import { IoWarning } from "react-icons/io5";
+import { AlertTriangle, X } from "lucide-react";
 
 type ExamScreenProps = {
   examData: ExamData;
@@ -115,12 +114,12 @@ export function ExamScreen({
                 className="w-10 h-10 border-2 border-black rounded-full mr-3 flex justify-center items-center cursor-pointer bg-gray-100 hover:bg-gray-200 duration-200"
                 onClick={() => setWarning(false)}
               >
-                <IoClose size={25} />
+                <X className="h-6 w-6" />
               </button>
             </div>
             <div className="w-full h-full flex flex-col pt-10 items-center gap-10">
               <p className="text-[30px] font-semibold flex justify-center items-center gap-5">
-                <IoWarning size={40} color="" /> Анхааруулга
+                <AlertTriangle className="h-10 w-10" /> Анхааруулга
               </p>
               <p className="text-[20px] font-semibold w-[85%] text-center">
                 Шалгалтын явцад дэлгэц солих, шинэ цонх нээх зэрэг хуулах
