@@ -1,14 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const QuestionBankPage = dynamic(
-  () => import("./_components/question-bank-page").then((module) => module.QuestionBankPage),
-  {
-    ssr: false,
-  },
-);
+import { QuestionBankEntry } from "./_components/question-bank-entry";
 
 export default function Page() {
-  return <QuestionBankPage />;
+  return <QuestionBankEntry />;
 }

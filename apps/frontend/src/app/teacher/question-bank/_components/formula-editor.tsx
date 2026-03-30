@@ -211,30 +211,58 @@ export function FormulaEditor({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <ActionButton
+            <button
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
+                historyStack.length === 0
+                  ? "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
+                  : "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
+              }`}
               disabled={historyStack.length === 0}
-              icon={RotateCcw}
-              label="Буцаах"
               onClick={undoLastChange}
-            />
-            <ActionButton
+              type="button"
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span className="sr-only">Буцаах</span>
+            </button>
+            <button
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
+                value.length === 0
+                  ? "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
+                  : "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
+              }`}
               disabled={value.length === 0}
-              icon={ArrowLeft}
-              label="Зүүн"
               onClick={() => moveCursor("left")}
-            />
-            <ActionButton
+              type="button"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="sr-only">Зүүн</span>
+            </button>
+            <button
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
+                value.length === 0
+                  ? "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
+                  : "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
+              }`}
               disabled={value.length === 0}
-              icon={ArrowRight}
-              label="Баруун"
               onClick={() => moveCursor("right")}
-            />
-            <ActionButton
+              type="button"
+            >
+              <ArrowRight className="h-4 w-4" />
+              <span className="sr-only">Баруун</span>
+            </button>
+            <button
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
+                value.length === 0
+                  ? "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
+                  : "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
+              }`}
               disabled={value.length === 0}
-              icon={Delete}
-              label="Устгах"
               onClick={deleteBackward}
-            />
+              type="button"
+            >
+              <Delete className="h-4 w-4" />
+              <span className="sr-only">Устгах</span>
+            </button>
           </div>
         </div>
 
@@ -287,33 +315,5 @@ export function FormulaEditor({
         </div>
       </div>
     </div>
-  );
-}
-
-function ActionButton({
-  icon: Icon,
-  label,
-  disabled,
-  onClick,
-}: {
-  icon: typeof RotateCcw;
-  label: string;
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
-        disabled
-          ? "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
-          : "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
-      }`}
-      disabled={disabled}
-      onClick={onClick}
-      type="button"
-    >
-      <Icon className="h-4 w-4" />
-      <span className="sr-only">{label}</span>
-    </button>
   );
 }

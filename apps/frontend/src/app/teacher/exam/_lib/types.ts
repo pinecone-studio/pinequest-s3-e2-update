@@ -17,7 +17,11 @@ export type ExamQuestionItem = {
 };
 
 export type ExamStatus = "draft" | "published";
-export type ExamApprovalStatus = "not_required" | "pending" | "approved";
+export type ExamApprovalStatus =
+  | "not_required"
+  | "pending"
+  | "approved"
+  | "needs_fix";
 
 export type SavedExamRecord = {
   id: string;

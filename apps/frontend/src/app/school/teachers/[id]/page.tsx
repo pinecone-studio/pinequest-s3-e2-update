@@ -23,7 +23,7 @@ export default async function AdminTeacherDetailPage({
 		<div className="space-y-8">
 			<div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
 				<Link href="/school/teachers" className="hover:text-blue-600">
-					Багш нар
+					Хүний нөөц
 				</Link>
 				<span aria-hidden>/</span>
 				<span className="text-zinc-900">{user.name}</span>
@@ -32,6 +32,10 @@ export default async function AdminTeacherDetailPage({
 			<div>
 				<h1 className="text-2xl font-semibold text-zinc-900">{user.name}</h1>
 				<p className="mt-1 text-sm text-zinc-600">{user.email}</p>
+				<p className="mt-1 text-sm text-zinc-600">
+					Регистр: {user.registerNumber || "-"} · Албан тушаал:{" "}
+					{user.position || "-"}
+				</p>
 				{user.specialty?.trim() ? (
 					<p className="mt-2 text-sm font-medium text-blue-700">
 						Мэргэжил / хичээл: {user.specialty}

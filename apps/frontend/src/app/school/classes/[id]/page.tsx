@@ -92,7 +92,7 @@ export default async function AdminClassDetailPage({
           </h3>
           {teachers.length === 0 ? (
             <p className="mt-4 text-sm text-zinc-500">
-              Эхлээд «Багш нар» хуудаснаас багш нэмнэ үү.
+              Эхлээд «Хүний нөөц» хуудаснаас багш нэмнэ үү.
             </p>
           ) : (
             <form action={assignTeachersToClass} className="mt-4 space-y-4">

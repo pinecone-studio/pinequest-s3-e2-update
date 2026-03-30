@@ -5,6 +5,10 @@ export type User = {
   email: string;
   name: string;
   role: UserRole;
+  /** Хүний нөөц дэх регистрийн дугаар */
+  registerNumber?: string;
+  /** Албан тушаал (жишээ: Багш, Нийгмийн ажилтан) */
+  position?: string;
   /** Багшийн мэргэжил, заадаг хичээл (жишээ: Математик, Нийгэм) */
   specialty?: string;
   /** Утас (Clerk unsafeMetadata.phone) */
@@ -46,4 +50,3 @@ export type Student = {
   lastName: string;
   classId: string;
 };
-
