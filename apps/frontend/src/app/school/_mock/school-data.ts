@@ -66,7 +66,7 @@ export const schoolExams: SchoolExam[] = [
     endAt: "2026-03-29 09:40",
     stage: "scheduled",
     studentCount: 38,
-    submittedCount: 0,
+    submittedCount: 31,
     issues: ["11А ангийн Англи хэлтэй 10 мин давхцаж магадгүй"],
   },
   {
@@ -79,7 +79,7 @@ export const schoolExams: SchoolExam[] = [
     endAt: "2026-03-28 11:35",
     stage: "ongoing",
     studentCount: 41,
-    submittedCount: 26,
+    submittedCount: 34,
   },
   {
     id: "ex-103",
@@ -91,7 +91,7 @@ export const schoolExams: SchoolExam[] = [
     endAt: "2026-03-28 09:20",
     stage: "grading",
     studentCount: 35,
-    submittedCount: 35,
+    submittedCount: 32,
   },
   {
     id: "ex-104",
@@ -103,7 +103,7 @@ export const schoolExams: SchoolExam[] = [
     endAt: "2026-03-27 13:45",
     stage: "completed",
     studentCount: 32,
-    submittedCount: 32,
+    submittedCount: 30,
   },
   {
     id: "ex-105",
@@ -115,7 +115,7 @@ export const schoolExams: SchoolExam[] = [
     endAt: "2026-03-31 10:50",
     stage: "draft",
     studentCount: 36,
-    submittedCount: 0,
+    submittedCount: 29,
   },
 ];
 

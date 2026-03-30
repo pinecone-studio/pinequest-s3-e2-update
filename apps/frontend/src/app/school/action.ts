@@ -13,11 +13,21 @@ async function requireAdmin() {
 
 export async function createTeacher(formData: FormData): Promise<void> {
   await requireAdmin();
-  const name = String(formData.get("name") ?? "").trim();
-  const email = String(formData.get("email") ?? "");
+  const firstName = String(formData.get("firstName") ?? "").trim();
+  const lastName = String(formData.get("lastName") ?? "").trim();
+  const registerNumber = String(formData.get("registerNumber") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const position = String(formData.get("position") ?? "").trim();
   const specialty = String(formData.get("specialty") ?? "").trim();
-  if (!name) return;
-  store.createTeacher(name, email || undefined, specialty || undefined);
+  if (!firstName || !lastName) return;
+  store.createTeacher({
+    firstName,
+    lastName,
+    registerNumber: registerNumber || undefined,
+    email: email || undefined,
+    position: position || undefined,
+    specialty: specialty || undefined,
+  });
   revalidatePath("/school");
   revalidatePath("/school/teachers");
 }
@@ -27,9 +37,18 @@ export async function updateTeacher(formData: FormData): Promise<void> {
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
+  const registerNumber = String(formData.get("registerNumber") ?? "").trim();
+  const position = String(formData.get("position") ?? "").trim();
   const specialty = String(formData.get("specialty") ?? "");
   if (!id || !name || !email) return;
-  store.updateTeacher(id, name, email, specialty);
+  store.updateTeacher(
+    id,
+    name,
+    email,
+    specialty,
+    registerNumber || undefined,
+    position || undefined,
+  );
   revalidatePath("/school");
   revalidatePath("/school/teachers");
 }
