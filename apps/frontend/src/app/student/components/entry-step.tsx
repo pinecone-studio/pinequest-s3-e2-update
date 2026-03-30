@@ -26,9 +26,9 @@ export function EntryStep({
   onProceed,
 }: EntryStepProps) {
   return (
-    <main className="min-h-screen bg-[#f3f6fb] px-4 py-10 text-[#1f2a44]">
-      <div className="mx-auto max-w-3xl rounded-3xl border border-[#dbe3f0] bg-white p-8 shadow-[0_14px_40px_rgba(27,39,80,0.08)]">
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+    <main className="min-h-screen bg-[#f3f6fb] px-4 py-8 text-[#1f2a44] sm:py-10">
+      <div className="mx-auto w-full max-w-3xl rounded-3xl border border-[#dbe3f0] bg-white p-6 shadow-[0_14px_40px_rgba(27,39,80,0.08)] sm:p-8">
+        <div className="mt-4 grid gap-4 sm:mt-6 sm:grid-cols-2">
           <div>
             <label className="text-3 font-semibold text-[#405173]">
               Овог <span className="text-[#ef4444]">*</span>
@@ -76,7 +76,7 @@ export function EntryStep({
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -96,7 +96,7 @@ export function EntryStep({
             type="button"
             disabled={!canProceed}
             onClick={onProceed}
-            className="rounded-xl bg-[#2563eb] px-5 py-2.5 text-3 font-semibold text-white hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#9dbaf6]"
+            className="w-full rounded-xl bg-[#2563eb] px-5 py-2.5 text-3 font-semibold text-white hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#9dbaf6] sm:w-auto"
           >
             Дараагийн алхам
           </button>
