@@ -3,6 +3,7 @@ import { getClassByTeacherAndSchoolId } from "./classAndStudent/getClassByTeache
 import { getStudentByClassId } from "./classAndStudent/getStudentByClassId";
 import { getAllExams } from "./exam/getAllExams";
 import { getExamById } from "./exam/getExamById";
+import { getExamBySchoolId } from "./exam/getExamBySchoolId";
 import { hello } from "./hello";
 import { getAllSubject } from "./subjectSchoolAndTeachers/getAllSubjects";
 import { getSchoolByClerkId } from "./subjectSchoolAndTeachers/getSchoolByClerkId";
@@ -24,4 +25,5 @@ export const queryResolvers = {
   getTestsBySybjectAndGrade,
   getClassByTeacherAndSchoolId,
   getOpenExerciesBySubjectAndGrade,
+  getExamBySchoolId,
 };
