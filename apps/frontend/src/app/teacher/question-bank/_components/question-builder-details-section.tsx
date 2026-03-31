@@ -1,6 +1,6 @@
 "use client";
 
-import { SUBTOPIC_OPTIONS } from "../constants";
+import { NATIONAL_SCRIPT_SUBJECT, SUBTOPIC_OPTIONS } from "../constants";
 import type {
   QuestionBuilderValues,
   QuestionValidationErrors,
@@ -10,6 +10,7 @@ import {
   BuilderSelectField,
   builderInputClassName,
 } from "./question-builder-form-fields";
+import { NationalScriptAssist } from "./national-script-assist";
 
 type QuestionBuilderDetailsSectionProps = {
   gradeOptions: string[];
@@ -92,12 +93,20 @@ export function QuestionBuilderDetailsSection({
 
       <div className="mt-4">
         <BuilderField error={validationErrors?.prompt} label="Асуулгын текст">
-          <textarea
-            className={`${builderInputClassName} min-h-36 py-3`}
-            onChange={(event) => onPromptChange(event.target.value)}
-            placeholder="Сурагчид харагдах асуулгын текстээ энд бичнэ үү."
-            value={values.prompt}
-          />
+          <>
+            <textarea
+              className={`${builderInputClassName} min-h-36 py-3`}
+              onChange={(event) => onPromptChange(event.target.value)}
+              placeholder="Сурагчид харагдах асуулгын текстээ энд бичнэ үү."
+              value={values.prompt}
+            />
+            {values.subject === NATIONAL_SCRIPT_SUBJECT ? (
+              <NationalScriptAssist
+                key={values.subject}
+                onApplyText={onPromptChange}
+              />
+            ) : null}
+          </>
         </BuilderField>
       </div>
 

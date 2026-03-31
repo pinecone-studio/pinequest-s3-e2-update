@@ -43,6 +43,8 @@ export const SUBJECT_OPTIONS = [
   "Хөгжим",
 ] as const;
 
+export const NATIONAL_SCRIPT_SUBJECT = "Үндэсний бичиг";
+
 export const SUBTOPIC_OPTIONS = {
   "Математик": ["Алгебр", "Геометр", "Функц", "Тригонометр", "Магадлал", "Статистик"],
   "Монгол хэл": ["Хэлзүй", "Найруулга", "Унших ойлголт", "Эсээ бичлэг", "Үгийн сан"],

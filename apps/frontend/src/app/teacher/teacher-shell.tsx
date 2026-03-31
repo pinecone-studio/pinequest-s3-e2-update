@@ -116,9 +116,8 @@ export default function TeacherShell({
                 <nav className="min-w-0 flex w-full flex-nowrap items-center gap-3 overflow-x-auto pb-1 lg:gap-5">
                   {menuItems.map((item) => {
                     const isActive =
-                      pathname === item.href ||
-                      (item.href !== "/teacher" &&
-                        pathname.startsWith(`${item.href}/`));
+                      isMenuItemActive(pathname, item.href) ||
+                      item.activePrefixes?.some((prefix) => pathname.startsWith(prefix));
                     return (
                       <Link
                         key={item.href}
