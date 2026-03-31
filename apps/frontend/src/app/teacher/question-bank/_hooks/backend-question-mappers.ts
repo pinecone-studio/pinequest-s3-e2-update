@@ -1,4 +1,3 @@
-import { MOCK_GRAPHQL_SUBJECTS } from "../_lib/mock-data";
 import type {
   Question,
   QuestionDifficulty,
@@ -7,9 +6,14 @@ import type {
 } from "../_lib/types";
 import type { BackendTest } from "./get-tests";
 
-function subjectNameFromId(subjectId: string): string {
-  const hit = MOCK_GRAPHQL_SUBJECTS.find((s) => s.id === subjectId);
-  return hit?.name ?? subjectId;
+type SubjectNameById = Map<string, string>;
+
+function subjectNameFromId(
+  subjectId: string,
+  subjectNameById?: SubjectNameById,
+): string {
+  const fromApi = subjectNameById?.get(subjectId);
+  return fromApi ?? subjectId;
 }
 
 function gradeLabel(grade: number): string {
@@ -49,7 +53,10 @@ function buildOptions(
   }));
 }
 
-export function mapBackendTestsToQuestions(tests: BackendTest[]): Question[] {
+export function mapBackendTestsToQuestions(
+  tests: BackendTest[],
+  subjectNameById?: SubjectNameById,
+): Question[] {
   return tests.map((test) => {
     const answerTexts = toStringAnswers(test.answers ?? []);
     const questionType = inferQuestionType(test, answerTexts);
@@ -57,7 +64,7 @@ export function mapBackendTestsToQuestions(tests: BackendTest[]): Question[] {
       questionType === "multiple_choice"
         ? buildOptions(answerTexts, test.rightAnswer)
         : [];
-    const subject = subjectNameFromId(test.subjectId);
+    const subject = subjectNameFromId(test.subjectId, subjectNameById);
     const prompt = test.question?.trim() || "(Агуулга байхгүй)";
     const title =
       test.notes?.trim()?.slice(0, 120) || prompt.slice(0, 80) || "Асуулт";

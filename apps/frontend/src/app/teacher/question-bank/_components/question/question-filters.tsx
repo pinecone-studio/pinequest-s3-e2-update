@@ -25,8 +25,6 @@ type QuestionFiltersProps = {
 
 export function QuestionFilters({
   filters,
-  subjectOptions,
-  gradeOptions,
   topicOptions,
   onChange,
   onClear,
@@ -58,50 +56,6 @@ export function QuestionFilters({
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <label className="space-y-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
-            Анги
-          </span>
-          <Select
-            value={filters.grade}
-            onValueChange={(value) => onChange({ grade: value })}
-          >
-            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Бүх анги</SelectItem>
-              {gradeOptions.map((grade) => (
-                <SelectItem key={grade} value={grade}>
-                  {grade}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
-
-        <label className="space-y-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
-            Хичээл
-          </span>
-          <Select
-            value={filters.subject}
-            onValueChange={(value) => onChange({ subject: value })}
-          >
-            <SelectTrigger className="h-11 rounded-xl border-[#e5e7eb] bg-[#fbfbfc] text-sm text-[#111827] focus:border-[#d1d5db] focus:ring-4 focus:ring-[#e5e7eb] focus-visible:border-[#d1d5db] focus-visible:ring-4 focus-visible:ring-[#e5e7eb]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Бүх хичээл</SelectItem>
-              {subjectOptions.map((subject) => (
-                <SelectItem key={subject} value={subject}>
-                  {subject}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
-
         <label className="space-y-2">
           <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
             Сэдэв
