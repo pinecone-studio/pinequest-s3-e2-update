@@ -5,17 +5,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { BookText, Calculator, Cog, Home, Menu, X } from "lucide-react";
 import { ProfileMenu } from "./profile-menu";
 import type { User } from "@/app/lib/types";
 
 const links = [
-	{ href: "/school", label: "Нүүр", icon: Home },
-	{ href: "/school/teachers", label: "Хүний нөөц", icon: BookText },
-	{ href: "/school/classes", label: "Ангиуд", icon: BookText },
-	{ href: "/school/exams", label: "Шалгалт", icon: Calculator },
-	{ href: "/school/results", label: "Үр дүн", icon: Cog },
+  { href: "/school", label: "Нүүр" },
+  { href: "/school/teachers", label: "Хүний нөөц" },
+  { href: "/school/classes", label: "Ангиуд" },
+  { href: "/school/exams", label: "Шалгалт" },
+  { href: "/school/results", label: "Үр дүн" },
 ] as const;
 
 function isActive(pathname: string, href: string) {
@@ -126,54 +124,50 @@ export function SchoolShell({
 						) : null}
 					</div>
 
-					{/* Desktop */}
-					<div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-6 lg:grid">
-						<div className="min-w-0">
-							<Link
-								href="/school"
-								className="mt-0.5 inline-flex min-w-0 max-w-full items-center gap-2 rounded-lg outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#4f9dff] focus-visible:ring-offset-2"
-								aria-label="Сургуулийн самбар — нүүр руу"
-							>
-								<Image
-									src="/bee.png"
-									alt=""
-									width={36}
-									height={36}
-									className="h-9 w-9 shrink-0 object-contain"
-									priority
-								/>
-								<span className="mt-1 truncate text-[20px] font-bold tracking-tight text-[#0f172a]">
-									UPDATE
-								</span>
-							</Link>
-						</div>
+  return (
+    <div className="flex h-screen flex-col bg-[#f7fafc]">
+      <header className="sticky top-0 z-40 border-b border-[#e3e7ee] bg-[#fdfdff]">
+        <div className="mx-auto flex h-[70px] w-[1512px] max-w-full items-center justify-between px-[52px]">
+          <div className="min-w-0">
+            <div className="flex h-14 w-43 items-center gap-[6px] rounded-[20px] pt-[4px] pr-[16px] pb-[8px] pl-[14px]">
+              <Image
+                src="/bee.png"
+                alt="UPDATE logo"
+                width={44}
+                height={44}
+                className="h-10 w-10 object-contain"
+                priority
+              />
+              <h1 className="mt-2 h-6 w-23 text-[22px] font-semibold leading-[100%] tracking-[0px] text-[#171717]">
+                UPDATE
+              </h1>
+            </div>
+          </div>
 
-						<nav
-							aria-label="School main navigation"
-							className="justify-self-center"
-						>
-							<ul className="flex flex-row items-center gap-5">
-								{links.map((l) => {
-									const active = isActive(pathname, l.href);
-									const Icon = l.icon;
-									return (
-										<li key={l.href}>
-											<Link
-												href={l.href}
-												className={`inline-flex items-center gap-2 border-b-2 px-1 py-1.5 text-[17px] font-semibold transition-colors ${
-													active
-														? "border-[#4f9dff] text-[#4f9dff]"
-														: "border-transparent text-[#2f3c59] hover:border-[#4f9dff] hover:text-[#4f9dff]"
-												}`}
-											>
-												<Icon className="h-5 w-5 text-[#4f9dff]" />
-												{l.label}
-											</Link>
-										</li>
-									);
-								})}
-							</ul>
-						</nav>
+          <nav
+            aria-label="School main navigation"
+            className="justify-self-center"
+          >
+            <ul className="flex flex-row items-center gap-5">
+              {links.map((l) => {
+                const active = isActive(pathname, l.href);
+                return (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className={`inline-flex h-[35px] items-center rounded-[6px]  px-[12px] py-[6px] text-[17px] font-semibold transition-colors ${
+                        active
+                          ? "border-[#d2cccc] border"
+                          : "border-[#d2cccc] hover:border"
+                      }`}
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
 						<div className="justify-self-end">
 							<ProfileMenu user={user} />
