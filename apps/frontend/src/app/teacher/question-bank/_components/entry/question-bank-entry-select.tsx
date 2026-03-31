@@ -7,15 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MOCK_GRAPHQL_SUBJECTS } from "../../_lib/mock-data";
 
 type QuestionBankEntrySelectProps = {
   label: string;
   onSubjectSelect?: (subjectId: string, name: string) => void;
   onValueChange?: (value: string) => void;
   options?: string[];
+  subjects?: { id: string; name: string }[];
   placeholder: string;
-  useSubjectsQuery?: boolean;
   value: string;
 };
 
@@ -24,25 +23,26 @@ export function QuestionBankEntrySelect({
   onSubjectSelect,
   onValueChange,
   options = [],
+  subjects = [],
   placeholder,
-  useSubjectsQuery = false,
   value,
 }: QuestionBankEntrySelectProps) {
-  const items = useSubjectsQuery
-    ? MOCK_GRAPHQL_SUBJECTS.map((subject) => ({
-        key: subject.id,
-        value: subject.id,
-        label: subject.name,
-      }))
-    : options.map((option) => ({
-        key: option,
-        value: option,
-        label: option,
-      }));
+  const items =
+    subjects.length > 0
+      ? subjects.map((subject) => ({
+          key: subject.id,
+          value: subject.id,
+          label: subject.name,
+        }))
+      : options.map((option) => ({
+          key: option,
+          value: option,
+          label: option,
+        }));
 
   const handleValueChange = (next: string) => {
-    if (useSubjectsQuery && onSubjectSelect) {
-      const subject = MOCK_GRAPHQL_SUBJECTS.find((item) => item.id === next);
+    if (subjects.length > 0 && onSubjectSelect) {
+      const subject = subjects.find((item) => item.id === next);
       if (subject) onSubjectSelect(subject.id, subject.name);
       return;
     }

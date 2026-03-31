@@ -8,7 +8,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQuestionBank } from "../../_hooks/use-question-bank";
-import { MOCK_GRAPHQL_SUBJECTS } from "../../_lib/mock-data";
 import { useRouter } from "next/navigation";
 
 export function QuestionBankEntry({
@@ -20,14 +19,20 @@ export function QuestionBankEntry({
 } = {}) {
   const router = useRouter();
 
-  const { entrySelection, gradeOptions, toastMessage, updateEntrySelection } =
+  const {
+    entrySelection,
+    gradeOptions,
+    subjectItems,
+    toastMessage,
+    updateEntrySelection,
+  } =
     useQuestionBank(
       initialSubjectId && initialGrade
         ? { initialSubjectId, initialGrade }
         : undefined,
     );
 
-  const subjectItems = MOCK_GRAPHQL_SUBJECTS.map((subject) => ({
+  const subjectSelectItems = subjectItems.map((subject) => ({
     key: subject.id,
     value: subject.id,
     label: subject.name,
@@ -42,7 +47,7 @@ export function QuestionBankEntry({
   const totalQuestions = 9;
 
   const handleSubjectChange = (next: string) => {
-    const subject = MOCK_GRAPHQL_SUBJECTS.find((s) => s.id === next);
+    const subject = subjectItems.find((s) => s.id === next);
     if (subject) {
       updateEntrySelection({
         subjectId: subject.id,
@@ -96,7 +101,7 @@ export function QuestionBankEntry({
                 <SelectValue placeholder="Хичээл сонгох" />
               </SelectTrigger>
               <SelectContent>
-                {subjectItems.map((item) => (
+                {subjectSelectItems.map((item) => (
                   <SelectItem key={item.key} value={item.value}>
                     {item.label}
                   </SelectItem>

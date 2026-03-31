@@ -1,20 +1,20 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useTeacher } from "../../teacher-shell";
 import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../../exam/_lib/constants";
 import type { PendingExamTransfer } from "../../exam/_lib/types";
 import { mapBackendTestsToQuestions } from "./backend-question-mappers";
-import type { GetAllTestsResponse } from "./get-tests";
-import { GET_ALL_TESTS_QUERY } from "./get-tests";
+import type { BackendTest } from "./get-tests";
+import { CREATE_TESTS } from "@/graphql/typeDefs/mutations";
+import { GET_ALL_SUBJECTS, GET_TESTS_BY_SUBJECT_AND_GRADE } from "@/graphql/typeDefs/queries";
 import {
   GRADE_OPTIONS,
   QUESTION_BANK_FILTER_DEFAULTS,
-  SUBJECT_OPTIONS,
 } from "../_lib/constants";
-import { MOCK_GRAPHQL_SUBJECTS, MOCK_QUESTIONS } from "../_lib/mock-data";
+import { MOCK_QUESTIONS } from "../_lib/mock-data";
 import type { Question, QuestionFilters } from "../_lib/types";
 import {
   buildQuestionPayload,
@@ -28,6 +28,18 @@ type UseQuestionBankOptions = {
   initialGrade: string;
 };
 
+type CreateTestsResponse = {
+  createTests: BackendTest & { teacherId: string };
+};
+
+type GetAllSubjectResponse = {
+  getAllSubject: { id: string; name: string }[];
+};
+
+type GetTestsBySubjectAndGradeResponse = {
+  getTestsBySybjectAndGrade: (BackendTest & { teacherId: string })[];
+};
+
 function entryMatchesQuestion(
   question: Question,
   entrySubject: string,
@@ -36,19 +48,35 @@ function entryMatchesQuestion(
   return question.subject === entrySubject && question.grade === entryGrade;
 }
 
+function parseGradeToInt(gradeLabel: string) {
+  const n = Number.parseInt(gradeLabel, 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
 export function useQuestionBank(options?: UseQuestionBankOptions) {
   const router = useRouter();
   const teacher = useTeacher();
-  const { data: testsData } =
-    useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
+  const { data: subjectsData } =
+    useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+  const [createTests] = useMutation<CreateTestsResponse>(CREATE_TESTS);
+
+  const subjectItems = useMemo(
+    () => subjectsData?.getAllSubject ?? [],
+    [subjectsData?.getAllSubject],
+  );
+
+  const subjectNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const s of subjectItems) map.set(s.id, s.name);
+    return map;
+  }, [subjectItems]);
 
   const entryFromRoute = useMemo(() => {
     const subjectId = options?.initialSubjectId ?? "";
     const grade = options?.initialGrade ?? "";
-    const subject =
-      MOCK_GRAPHQL_SUBJECTS.find((s) => s.id === subjectId)?.name ?? "";
+    const subject = subjectNameById.get(subjectId) ?? "";
     return { subjectId, subject, grade };
-  }, [options?.initialGrade, options?.initialSubjectId]);
+  }, [options?.initialGrade, options?.initialSubjectId, subjectNameById]);
 
   const enteredFromRoute = Boolean(
     entryFromRoute.subjectId && entryFromRoute.grade,
@@ -65,6 +93,22 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   const hasEnteredBank = Boolean(
     entrySelection.subjectId && entrySelection.grade,
   );
+
+  const entryGradeInt = useMemo(
+    () => parseGradeToInt(entrySelection.grade),
+    [entrySelection.grade],
+  );
+  const shouldFetchTests = Boolean(entrySelection.subjectId && entryGradeInt);
+  const { data: testsData, refetch: refetchTests } = useQuery<
+    GetTestsBySubjectAndGradeResponse
+  >(GET_TESTS_BY_SUBJECT_AND_GRADE, {
+    variables: {
+      input: shouldFetchTests
+        ? { subjectId: entrySelection.subjectId, grade: entryGradeInt }
+        : null,
+    },
+    skip: !shouldFetchTests,
+  });
 
   const [currentFilters, setCurrentFilters] = useState<QuestionFilters>(
     QUESTION_BANK_FILTER_DEFAULTS,
@@ -91,10 +135,12 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   }, []);
 
   const remoteQuestions = useMemo(() => {
-    const backend = mapBackendTestsToQuestions(testsData?.getAllTests ?? []);
+    const backend = mapBackendTestsToQuestions(
+      testsData?.getTestsBySybjectAndGrade ?? [],
+    );
     const base = backend.length > 0 ? backend : MOCK_QUESTIONS;
     return base;
-  }, [testsData?.getAllTests]);
+  }, [testsData?.getTestsBySybjectAndGrade]);
 
   const mergedQuestions = useMemo(() => {
     const byId = new Map<string, Question>();
@@ -150,7 +196,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     [myQuestions.length, scopedQuestions.length],
   );
 
-  const subjectOptions = SUBJECT_OPTIONS as unknown as string[];
+  const subjectOptions = useMemo(
+    () => subjectItems.map((s) => s.name).sort(),
+    [subjectItems],
+  );
   const gradeOptions = GRADE_OPTIONS as unknown as string[];
 
   const topicOptions = useMemo(() => {
@@ -275,21 +324,76 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
         grade: entrySelection.grade || built.grade,
         subject: entrySelection.subject || built.subject,
       };
-      setUpserts((current) => {
-        const next = new Map(current);
-        next.set(payload.id, payload);
-        return next;
-      });
-      setPublishSuccessDialogOpen(true);
-      setIsBuilderOpen(false);
-      setEditingValues(null);
-      return true;
+
+      try {
+        const subjectId = entrySelection.subjectId;
+        const grade = parseGradeToInt(payload.grade);
+        const answers =
+          payload.questionType === "multiple_choice"
+            ? payload.options.map((o) => o.text)
+            : payload.correctAnswer
+              ? [payload.correctAnswer]
+              : [];
+
+        const result = await createTests({
+          variables: {
+            input: {
+              grade,
+              subjectId,
+              question: payload.content.prompt,
+              answers,
+              imageUrl: payload.imageUrl || "",
+              rightAnswer: payload.correctAnswer || "",
+              difficulty: payload.difficulty,
+              score: payload.points,
+              usageCount: 0,
+              notes: payload.content.explanation || payload.content.guidance || "",
+              teacherId: teacher.id,
+            },
+          },
+        });
+
+        const created = result.data?.createTests;
+        if (created) {
+          // Ensure UI updates immediately even before refetch paints.
+          const [mapped] = mapBackendTestsToQuestions([created as BackendTest]);
+          if (mapped) {
+            setUpserts((current) => {
+              const next = new Map(current);
+              next.set(mapped.id, {
+                ...mapped,
+                source: "school",
+                teacherName: teacher.name,
+              });
+              return next;
+            });
+          }
+        }
+
+        if (shouldFetchTests) {
+          // Keep list in sync with selected subject/grade.
+          refetchTests();
+        }
+
+        setPublishSuccessDialogOpen(true);
+        setIsBuilderOpen(false);
+        setEditingValues(null);
+        return true;
+      } catch {
+        showToast("Асуулт хадгалахад алдаа гарлаа. Дахин оролдоно уу.");
+        return false;
+      }
     },
     [
+      createTests,
       mergedQuestions,
       entrySelection.grade,
       entrySelection.subject,
       teacher.name,
+      teacher.id,
+      refetchTests,
+      shouldFetchTests,
+      showToast,
     ],
   );
 
@@ -359,6 +463,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     sendQuestionsToExam,
     selectedQuestionIds,
     setPublishSuccessDialogOpen,
+    subjectItems,
     subjectOptions,
     submitQuestion,
     summary,
