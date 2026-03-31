@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { QuestionFilters as QuestionFiltersType } from "../types";
+import type { QuestionFilters as QuestionFiltersType } from "../_lib/types";
 
 type QuestionBankFigmaControlsProps = {
   currentFilters: QuestionFiltersType;

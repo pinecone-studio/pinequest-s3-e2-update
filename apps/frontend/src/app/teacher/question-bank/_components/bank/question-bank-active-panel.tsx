@@ -1,6 +1,6 @@
 "use client";
 
-import type { Question, QuestionDifficulty } from "../types";
+import type { Question, QuestionDifficulty } from "../../_lib/types";
 
 const difficultyLabelMap: Record<QuestionDifficulty, string> = {
   easy: "Хялбар",

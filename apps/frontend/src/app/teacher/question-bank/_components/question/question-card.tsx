@@ -2,7 +2,6 @@
 
 import { Bookmark, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTeacher } from "../../../teacher-shell";
 import type { Question } from "../../_lib/types";
 import { DIFFICULTY_LABELS } from "../../_lib/utils";
 
@@ -35,11 +34,7 @@ export function QuestionCard({
     <article
       className={cn(
         "group flex min-h-[185px] flex-col rounded-[12px] border bg-white px-[22px] py-[14px]",
-        isSelected
-          ? "border-[#7DC8FF]"
-          : isActive
-            ? "border-[#7DC8FF]"
-            : "border-[#E5E5E5]",
+        isSelected || isActive ? "border-[#7DC8FF]" : "border-[#E5E5E5]",
       )}
     >
       <div className="flex items-start justify-between gap-[12px]">
@@ -65,18 +60,23 @@ export function QuestionCard({
         </button>
       </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center rounded-full border border-[#eceef2] bg-[#f8fafc] px-2.5 py-1 text-xs font-medium text-[#4b5563]">
-                {question.grade}
-              </span>
-              <span className="inline-flex items-center rounded-full border border-[#eceef2] bg-[#f8fafc] px-2.5 py-1 text-xs font-medium text-[#4b5563]">
-                {question.subject}
-              </span>
-              <span className="inline-flex items-center rounded-full border border-[#eceef2] bg-[#f8fafc] px-2.5 py-1 text-xs font-medium text-[#4b5563]">
-                {question.subtopic?.trim() || question.topic}
-              </span>
-            </div>
+      <button className="mt-[16px] w-full text-left" onClick={onOpen} type="button">
+        <h3 className="line-clamp-2 text-[16px] font-medium leading-[20px] text-[#323232]">
+          {question.title || "Квадрат функцийн оройг олох"}
+        </h3>
+        <p className="mt-[10px] line-clamp-2 text-[12px] leading-[18px] text-[#7B7B7B]">
+          {question.content.prompt}
+        </p>
+      </button>
+
+      <div className="mt-[14px] flex flex-wrap items-center gap-[10px]">
+        <Tag>{question.grade}</Tag>
+        <Tag>{question.subject}</Tag>
+        <Tag>{question.subtopic?.trim() || question.topic}</Tag>
+        <Tag>
+          {question.gradingType === "auto" ? "Автомат үнэлгээ" : "Гар үнэлгээ"}
+        </Tag>
+      </div>
 
       <div className="mt-[14px] flex items-center justify-end gap-[18px] text-[12px] leading-[15px] text-[#7B7B7B]">
         <button
@@ -130,4 +130,3 @@ function Tag({ children }: { children: React.ReactNode }) {
     </span>
   );
 }
-

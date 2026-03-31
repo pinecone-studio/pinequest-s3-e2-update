@@ -1,8 +1,8 @@
 "use client";
 
-import type { Question } from "../types";
-import { QuestionBankActivePanel } from "./question-bank-active-panel";
-import { QuestionList } from "./question-list";
+import type { Question } from "../_lib/types";
+import { QuestionBankActivePanel } from "./bank/question-bank-active-panel";
+import { QuestionList } from "./question/question-list";
 
 type QuestionBankFigmaResultsProps = {
   activeQuestionId: string | null;

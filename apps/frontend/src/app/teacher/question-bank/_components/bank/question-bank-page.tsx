@@ -4,12 +4,14 @@ import { QuestionBuilderForm } from "../builder/question-builder-form";
 import { QuestionBankActivePanel } from "./question-bank-active-panel";
 import { QuestionBankBulkToolbar } from "./question-bank-bulk-toolbar";
 import { QuestionBankEntryPanel } from "../entry/question-bank-entry-panel";
+import { QuestionBankFigmaControls } from "../question-bank-figma-controls";
+import { QuestionBankFigmaHero } from "../question-bank-figma-hero";
+import { QuestionBankFigmaResults } from "../question-bank-figma-results";
 import { useQuestionBank } from "../../_hooks/use-question-bank";
 import { useRouter } from "next/navigation";
 import { QuestionBankMySection } from "./question-bank-my-section";
 import { QuestionBankAllSection } from "./question-bank-all-section";
 import { QuestionBankPublishSuccessDialog } from "./question-bank-publish-success-dialog";
-import { useQuestionBank } from "../use-question-bank";
 
 export function QuestionBankPage({
   initialSubjectId = "",
@@ -91,7 +93,7 @@ export function QuestionBankPage({
           <div className="space-y-[24px]">
             <QuestionBankFigmaHero
               onCreateQuestion={openCreateBuilder}
-              totalQuestions={summary.systemCount}
+              totalQuestions={summary.selectedScopeCount}
             />
             <QuestionBankFigmaControls
               currentFilters={currentFilters}
