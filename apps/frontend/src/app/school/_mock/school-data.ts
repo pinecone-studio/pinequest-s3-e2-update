@@ -130,6 +130,18 @@ export const teacherPerformance = [
   { teacherName: "О.Наранзул", gradingDelayHours: 2, avgScore: 76, examsThisMonth: 8 },
   { teacherName: "Б.Эрдэнэ", gradingDelayHours: 11, avgScore: 71, examsThisMonth: 10 },
   { teacherName: "С.Тэмүүлэн", gradingDelayHours: 6, avgScore: 80, examsThisMonth: 6 },
+  { teacherName: "М.Батчимэг", gradingDelayHours: 4, avgScore: 84, examsThisMonth: 7 },
+  { teacherName: "Д.Эрдэнэсайхан", gradingDelayHours: 5, avgScore: 82, examsThisMonth: 9 },
+  { teacherName: "Ц.Саруул", gradingDelayHours: 3, avgScore: 88, examsThisMonth: 8 },
+  { teacherName: "Г.Отгонтуяа", gradingDelayHours: 7, avgScore: 79, examsThisMonth: 11 },
+  { teacherName: "Ж.Мөнх-Эрдэнэ", gradingDelayHours: 2, avgScore: 91, examsThisMonth: 6 },
+  { teacherName: "Н.Энхжин", gradingDelayHours: 1, avgScore: 95, examsThisMonth: 5 },
+  { teacherName: "П.Сүндэр", gradingDelayHours: 6, avgScore: 83, examsThisMonth: 10 },
+  { teacherName: "Т.Хонгорзул", gradingDelayHours: 8, avgScore: 77, examsThisMonth: 12 },
+  { teacherName: "Р.Билгүүн", gradingDelayHours: 3, avgScore: 86, examsThisMonth: 7 },
+  { teacherName: "Л.Номуун", gradingDelayHours: 5, avgScore: 90, examsThisMonth: 8 },
+  { teacherName: "А.Төгөлдөр", gradingDelayHours: 4, avgScore: 81, examsThisMonth: 9 },
+  { teacherName: "Э.Гэгээн", gradingDelayHours: 2, avgScore: 92, examsThisMonth: 6 },
 ];
 
 export const aiSuggestions = [
