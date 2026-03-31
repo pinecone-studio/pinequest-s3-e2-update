@@ -51,9 +51,12 @@ export function SchoolShell({
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f7fafc]">
-      <header className="sticky top-0 z-40 border-b border-[#e3e7ee] bg-[#fdfdff]">
-        <div className="mx-auto w-full max-w-[94.5rem] px-4 py-3 lg:px-10">
-          <div className="relative lg:hidden" ref={mobileShellRef}>
+      <header className="sticky top-0 z-40 h-[70px] border-b border-[#e3e7ee] bg-[#fdfdff]">
+        <div className="mx-auto h-full w-full max-w-[94.5rem] px-4 lg:px-10">
+          <div
+            className="relative flex h-full items-center lg:hidden"
+            ref={mobileShellRef}
+          >
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#cfe8ff] bg-gradient-to-br from-[#eef7ff] via-white to-[#f5f9ff] px-3 py-2.5 shadow-[0_4px_24px_rgba(29,111,235,0.08)]">
               <Link
                 href="/school"
@@ -127,7 +130,11 @@ export function SchoolShell({
 
           <div className="hidden h-[70px] items-center justify-between lg:flex">
             <div className="min-w-0">
-              <div className="flex items-center gap-[6px] rounded-[20px] px-[14px] py-[6px]">
+              <Link
+                href="/school"
+                className="flex items-center gap-[6px] rounded-[20px] px-[14px] py-[6px] outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
+                aria-label="Сургуулийн нүүр рүү очих"
+              >
                 <Image
                   src="/bee.png"
                   alt="UPDATE logo"
@@ -136,24 +143,27 @@ export function SchoolShell({
                   className="h-10 w-10 object-contain"
                   priority
                 />
-                <h1 className="text-[22px] font-semibold leading-[100%] tracking-[0px] text-[#171717]">
+                <h1 className="text-[22px] mt-2 font-semibold leading-[100%] tracking-[0px] text-[#171717]">
                   UPDATE
                 </h1>
-              </div>
+              </Link>
             </div>
 
-            <nav aria-label="School main navigation" className="justify-self-center">
-              <ul className="flex flex-row items-center gap-5">
+            <nav
+              aria-label="School main navigation"
+              className="justify-self-center"
+            >
+              <ul className="flex flex-row items-center gap-[30px]">
                 {links.map((l) => {
                   const active = isActive(pathname, l.href);
                   return (
                     <li key={l.href}>
                       <Link
                         href={l.href}
-                        className={`inline-flex h-[35px] items-center rounded-[6px] px-[12px] py-[6px] text-[17px] font-semibold transition-colors ${
+                        className={`inline-flex h-[35px] items-center rounded-[6px] px-[12px] py-[6px] text-[17px] font-semibold transition-colors text-[#262626] gap-15 ${
                           active
                             ? "border border-[#d2cccc]"
-                            : "border-[#d2cccc] hover:border"
+                            : "border border-transparent hover:border-[#d2cccc]"
                         }`}
                       >
                         {l.label}
@@ -171,7 +181,7 @@ export function SchoolShell({
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1512px] flex-1 flex-col px-4 py-6 sm:px-6">
+      <main className="mx-auto flex w-full max-w-378 flex-1 flex-col px-4 py-6 sm:px-6">
         {children}
       </main>
     </div>
