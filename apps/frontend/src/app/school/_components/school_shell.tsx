@@ -5,17 +5,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { BookText, Calculator, Cog, Home, Menu, X } from "lucide-react";
 import { ProfileMenu } from "./profile-menu";
 import type { User } from "@/app/lib/types";
 
 const links = [
-  { href: "/school", label: "Нүүр", icon: Home },
-  { href: "/school/teachers", label: "Хүний нөөц", icon: BookText },
-  { href: "/school/classes", label: "Ангиуд", icon: BookText },
-  { href: "/school/exams", label: "Шалгалт", icon: Calculator },
-  { href: "/school/results", label: "Үр дүн", icon: Cog },
+  { href: "/school", label: "Нүүр" },
+  { href: "/school/teachers", label: "Хүний нөөц" },
+  { href: "/school/classes", label: "Ангиуд" },
+  { href: "/school/exams", label: "Шалгалт" },
+  { href: "/school/results", label: "Үр дүн" },
 ] as const;
 
 function isActive(pathname: string, href: string) {
@@ -35,9 +35,8 @@ export function SchoolShell({
   const mobileShellRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      setMobileNavOpen(false);
-    }, 0);
+    const id = window.setTimeout(() => setMobileNavOpen(false), 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   useEffect(() => {
@@ -55,7 +54,6 @@ export function SchoolShell({
     <div className="flex min-h-screen flex-col bg-[#f7fafc]">
       <header className="sticky top-0 z-40 border-b border-[#e3e7ee] bg-[#fdfdff]">
         <div className="mx-auto w-full max-w-[94.5rem] px-4 py-3 lg:px-10">
-          {/* Mobile — багшийн shell-тай ижил: цэнхэг gradient card + цэс + профайл + доош нээлттэй жагсаалт */}
           <div className="relative lg:hidden" ref={mobileShellRef}>
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#cfe8ff] bg-gradient-to-br from-[#eef7ff] via-white to-[#f5f9ff] px-3 py-2.5 shadow-[0_4px_24px_rgba(29,111,235,0.08)]">
               <Link
@@ -128,47 +126,37 @@ export function SchoolShell({
             ) : null}
           </div>
 
-          {/* Desktop */}
-          <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-6 lg:grid">
+          <div className="hidden h-[70px] items-center justify-between lg:flex">
             <div className="min-w-0">
-              <Link
-                href="/school"
-                className="mt-0.5 inline-flex min-w-0 max-w-full items-center gap-2 rounded-lg outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#4f9dff] focus-visible:ring-offset-2"
-                aria-label="Сургуулийн самбар — нүүр руу"
-              >
+              <div className="flex items-center gap-[6px] rounded-[20px] px-[14px] py-[6px]">
                 <Image
                   src="/bee.png"
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="h-9 w-9 shrink-0 object-contain"
+                  alt="UPDATE logo"
+                  width={44}
+                  height={44}
+                  className="h-10 w-10 object-contain"
                   priority
                 />
-                <span className="mt-1 truncate text-[20px] font-bold tracking-tight text-[#0f172a]">
+                <h1 className="text-[22px] font-semibold leading-[100%] tracking-[0px] text-[#171717]">
                   UPDATE
-                </span>
-              </Link>
+                </h1>
+              </div>
             </div>
 
-            <nav
-              aria-label="School main navigation"
-              className="justify-self-center"
-            >
+            <nav aria-label="School main navigation" className="justify-self-center">
               <ul className="flex flex-row items-center gap-5">
                 {links.map((l) => {
                   const active = isActive(pathname, l.href);
-                  const Icon = l.icon;
                   return (
                     <li key={l.href}>
                       <Link
                         href={l.href}
-                        className={`inline-flex items-center gap-2 border-b-2 px-1 py-1.5 text-[17px] font-semibold transition-colors ${
+                        className={`inline-flex h-[35px] items-center rounded-[6px] px-[12px] py-[6px] text-[17px] font-semibold transition-colors ${
                           active
-                            ? "border-[#4f9dff] text-[#4f9dff]"
-                            : "border-transparent text-[#2f3c59] hover:border-[#4f9dff] hover:text-[#4f9dff]"
+                            ? "border border-[#d2cccc]"
+                            : "border-[#d2cccc] hover:border"
                         }`}
                       >
-                        <Icon className="h-5 w-5 text-[#4f9dff]" />
                         {l.label}
                       </Link>
                     </li>
