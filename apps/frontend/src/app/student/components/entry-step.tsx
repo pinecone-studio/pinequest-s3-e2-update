@@ -4,6 +4,8 @@ type EntryStepProps = {
   studentEmail: string;
   classCode: string;
   canProceed: boolean;
+  classCodeHint?: string;
+  classCodeRequired?: boolean;
   onChangeLastName: (value: string) => void;
   onChangeFirstName: (value: string) => void;
   onChangeEmail: (value: string) => void;
@@ -18,6 +20,8 @@ export function EntryStep({
   studentEmail,
   classCode,
   canProceed,
+  classCodeHint,
+  classCodeRequired = false,
   onChangeLastName,
   onChangeFirstName,
   onChangeEmail,
@@ -26,8 +30,8 @@ export function EntryStep({
   onProceed,
 }: EntryStepProps) {
   return (
-    <main className="min-h-screen bg-[#f3f6fb] px-4 py-8 text-[#1f2a44] sm:py-10">
-      <div className="mx-auto w-full max-w-3xl rounded-3xl border border-[#dbe3f0] bg-white p-6 shadow-[0_14px_40px_rgba(27,39,80,0.08)] sm:p-8">
+    <main className="min-h-screen bg-[#f3f6fb] px-3 py-6 text-[#1f2a44] sm:px-4 sm:py-10">
+      <div className="mx-auto w-full max-w-3xl rounded-2xl border border-[#dbe3f0] bg-white p-4 shadow-[0_14px_40px_rgba(27,39,80,0.08)] sm:rounded-3xl sm:p-6 md:p-8">
         <div className="mt-4 grid gap-4 sm:mt-6 sm:grid-cols-2">
           <div>
             <label className="text-3 font-semibold text-[#405173]">
@@ -65,7 +69,7 @@ export function EntryStep({
           </div>
           <div>
             <label className="text-3 font-semibold text-[#405173]">
-              Ангийн код (заавал биш)
+              Ангийн код {classCodeRequired ? <span className="text-[#ef4444]">*</span> : "(заавал биш)"}
             </label>
             <input
               className="mt-2 w-full rounded-xl border border-[#dbe3f0] bg-white px-4 py-3 text-3 outline-none transition focus:border-[#3b82f6]"
@@ -73,6 +77,9 @@ export function EntryStep({
               value={classCode}
               onChange={(event) => onChangeClassCode(event.target.value)}
             />
+            {classCodeHint ? (
+              <p className="mt-2 text-2 text-[#66789f]">{classCodeHint}</p>
+            ) : null}
           </div>
         </div>
 

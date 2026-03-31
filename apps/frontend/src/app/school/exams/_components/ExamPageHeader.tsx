@@ -1,6 +1,10 @@
 import { CalendarPlus2, Sparkles } from "lucide-react";
 
-export function ExamPageHeader() {
+type ExamPageHeaderProps = {
+  onAddExam?: () => void;
+};
+
+export function ExamPageHeader({ onAddExam }: ExamPageHeaderProps) {
   return (
     <section className="overflow-hidden rounded-[28px] border border-[#dbe5f0] bg-[linear-gradient(135deg,#f8fbff_0%,#ffffff_55%,#eef6ff_100%)] p-6 shadow-sm">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -20,6 +24,7 @@ export function ExamPageHeader() {
 
         <button
           type="button"
+          onClick={onAddExam}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1d4ed8] px-4 py-3 text-2 font-semibold text-white shadow-[0_12px_24px_rgba(29,78,216,0.22)] transition hover:bg-[#1b43bd]"
         >
           <CalendarPlus2 className="h-4 w-4" />

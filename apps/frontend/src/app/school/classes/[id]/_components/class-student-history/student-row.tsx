@@ -46,15 +46,15 @@ export function StudentRow({
       <td className="p-0">
         <div role="button" tabIndex={0} aria-expanded={open} onClick={onToggleOpen} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggleOpen(); } }} className={`cursor-pointer px-4 py-4 transition hover:bg-[#f6faff] ${open ? "bg-[#eef6ff]" : ""}`}>
           <div className="flex items-center gap-3">
-            {open ? <ChevronUp className="h-5 w-5 text-[#4f9dff]" /> : <ChevronDown className="h-5 w-5 text-[#4f9dff]" />}
+            {open ? <ChevronUp className="h-6 w-6 text-[#4f9dff]" /> : <ChevronDown className="h-6 w-6 text-[#4f9dff]" />}
             <p className="w-12 text-2 font-bold tabular-nums text-[#64748b] sm:w-16">{index + 1}.</p>
-            <div className="min-w-0"><p className="text-2 font-semibold text-[#1f2a44]">{shortStudentName(student)}</p><p className="mt-1 text-2 text-[#7b8aa3]">{student.studentNumber}</p></div>
+            <div className="min-w-0"><p className="text-2 font-semibold text-[#1f2a44]">{shortStudentName(student)}</p></div>
             <div className="ml-auto flex items-center gap-2">
-              <button type="button" onClick={(e) => { e.stopPropagation(); onToggleEdit(); }} className="inline-flex items-center gap-1 rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50"><Pencil className="h-3.5 w-3.5" />Edit</button>
+              <button type="button" aria-label="Edit" title="Edit" onClick={(e) => { e.stopPropagation(); onToggleEdit(); }} className="inline-flex items-center rounded-md border border-zinc-300 bg-white p-1.5 text-zinc-700 hover:bg-zinc-50"><Pencil className="h-3.5 w-3.5" /></button>
               <form action={(formData) => { void Promise.resolve(removeStudentAction(formData)).then(() => router.refresh()); }} onClick={(e) => e.stopPropagation()}>
                 <input type="hidden" name="id" value={student.id} />
                 <input type="hidden" name="classId" value={classId} />
-                <button type="submit" className="inline-flex items-center gap-1 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-100"><Trash2 className="h-3.5 w-3.5" />Delete</button>
+                <button type="submit" aria-label="Delete" title="Delete" className="inline-flex items-center rounded-md border border-red-200 bg-red-50 p-1.5 text-red-700 hover:bg-red-100"><Trash2 className="h-3.5 w-3.5" /></button>
               </form>
             </div>
           </div>

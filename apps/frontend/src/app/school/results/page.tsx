@@ -5,12 +5,12 @@ import { useMemo, useState } from "react";
 import {
   classPerformance,
   schoolExams,
-  teacherPerformance,
 } from "@/app/school/_mock/school-data";
 
 export default function SchoolResultsPage() {
-  const [selectedSubject, setSelectedSubject] = useState("all");
-  const [selectedGrade, setSelectedGrade] = useState("all");
+  const [selectedQuarterOverview, setSelectedQuarterOverview] = useState("all");
+  const [selectedClassOverview, setSelectedClassOverview] = useState("all");
+  const [selectedSubjectOverview, setSelectedSubjectOverview] = useState("all");
   const [selectedSummary, setSelectedSummary] = useState<
     "completed" | "grading" | "pass" | "attention"
     | null
@@ -33,29 +33,83 @@ export default function SchoolResultsPage() {
     }
     return map;
   }, []);
-  const subjects = useMemo(
-    () => Array.from(new Set(classPerformance.map((row) => row.weakSubject))),
-    []
-  );
-  const grades = useMemo(
+  const quarterOf = (startAt: string) => {
+    const month = Number(startAt.slice(5, 7));
+    if (Number.isNaN(month) || month < 1 || month > 12) return "Q1";
+    if (month <= 3) return "Q1";
+    if (month <= 6) return "Q2";
+    if (month <= 9) return "Q3";
+    return "Q4";
+  };
+  const quarterFilteredExams = useMemo(() => {
+    if (selectedQuarterOverview === "all") return schoolExams;
+    return schoolExams.filter((exam) => quarterOf(exam.startAt) === selectedQuarterOverview);
+  }, [selectedQuarterOverview]);
+  const classOptionsOverview = useMemo(
     () =>
-      Array.from(
-        new Set(
-          classPerformance
-            .map((row) => row.className.match(/\d+/)?.[0])
-            .filter((grade): grade is string => Boolean(grade))
-        )
-      ).sort((a, b) => Number(a) - Number(b)),
-    []
+      Array.from(new Set(quarterFilteredExams.map((exam) => exam.className))).sort((a, b) =>
+        a.localeCompare(b, "mn")
+      ),
+    [quarterFilteredExams]
   );
-  const filteredClassPerformance = useMemo(() => {
-    return classPerformance.filter((row) => {
-      const grade = row.className.match(/\d+/)?.[0] ?? "";
-      const subjectMatch = selectedSubject === "all" || row.weakSubject === selectedSubject;
-      const gradeMatch = selectedGrade === "all" || grade === selectedGrade;
-      return subjectMatch && gradeMatch;
+  const subjectOptionsOverview = useMemo(
+    () =>
+      Array.from(new Set(quarterFilteredExams.map((exam) => exam.subject))).sort((a, b) =>
+        a.localeCompare(b, "mn")
+      ),
+    [quarterFilteredExams]
+  );
+  const aggregatedByClassSubjectOverview = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        className: string;
+        subject: string;
+        totalScorePercent: number;
+        highestScorePercent: number;
+        examCount: number;
+      }
+    >();
+
+    quarterFilteredExams.forEach((exam) => {
+      const key = `${exam.className}__${exam.subject}`;
+      const current = map.get(key);
+      const scorePercent =
+        exam.studentCount > 0
+          ? Math.round((exam.submittedCount / exam.studentCount) * 100)
+          : 0;
+      const topScorePercent = Math.min(100, scorePercent + 8);
+
+      if (!current) {
+        map.set(key, {
+          className: exam.className,
+          subject: exam.subject,
+          totalScorePercent: scorePercent,
+          highestScorePercent: topScorePercent,
+          examCount: 1,
+        });
+        return;
+      }
+
+      current.totalScorePercent += scorePercent;
+      current.highestScorePercent = Math.max(current.highestScorePercent, topScorePercent);
+      current.examCount += 1;
     });
-  }, [selectedGrade, selectedSubject]);
+
+    return Array.from(map.values())
+      .map((row) => ({
+        className: row.className,
+        subject: row.subject,
+        averagePercent: Math.round(row.totalScorePercent / row.examCount),
+        highestScorePercent: row.highestScorePercent,
+      }))
+      .filter((row) => selectedClassOverview === "all" || row.className === selectedClassOverview)
+      .filter((row) => selectedSubjectOverview === "all" || row.subject === selectedSubjectOverview)
+      .sort((a, b) => {
+        if (a.className !== b.className) return a.className.localeCompare(b.className, "mn");
+        return a.subject.localeCompare(b.subject, "mn");
+      });
+  }, [quarterFilteredExams, selectedClassOverview, selectedSubjectOverview]);
 
   return (
     <div className="space-y-6">
@@ -225,119 +279,144 @@ export default function SchoolResultsPage() {
         </div>
       ) : null}
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section>
         <article className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-[#0f172a]">Дүн шинжилгээ</h3>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-600" htmlFor="subject-filter">
-                Хичээл сонгох
-              </label>
+          <h3 className="text-lg font-semibold text-[#0f172a]">Гүйцэтгэлийн тойм (анги)</h3>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <label className="block text-sm font-medium text-zinc-600">
+              Улирал
               <select
-                id="subject-filter"
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm"
+                value={selectedQuarterOverview}
+                onChange={(e) => setSelectedQuarterOverview(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
+              >
+                <option value="all">Бүх улирал</option>
+                <option value="Q1">I улирал</option>
+                <option value="Q2">II улирал</option>
+                <option value="Q3">III улирал</option>
+                <option value="Q4">IV улирал</option>
+              </select>
+            </label>
+
+            <label className="block text-sm font-medium text-zinc-600">
+              Анги
+              <select
+                value={selectedClassOverview}
+                onChange={(e) => setSelectedClassOverview(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
+              >
+                <option value="all">Бүх анги</option>
+                {classOptionsOverview.map((className) => (
+                  <option key={className} value={className}>
+                    {className}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="block text-sm font-medium text-zinc-600">
+              Хичээл
+              <select
+                value={selectedSubjectOverview}
+                onChange={(e) => setSelectedSubjectOverview(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
               >
                 <option value="all">Бүх хичээл</option>
-                {subjects.map((subject) => (
+                {subjectOptionsOverview.map((subject) => (
                   <option key={subject} value={subject}>
                     {subject}
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-600" htmlFor="grade-filter">
-                Анги (түвшин) сонгох
-              </label>
-              <select
-                id="grade-filter"
-                value={selectedGrade}
-                onChange={(e) => setSelectedGrade(e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm"
-              >
-                <option value="all">Бүх анги</option>
-                {grades.map((grade) => (
-                  <option key={grade} value={grade}>
-                    {grade}-р анги
-                  </option>
-                ))}
-              </select>
-            </div>
+            </label>
           </div>
 
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full min-w-[480px] text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 text-left text-zinc-500">
-                  <th className="py-2">№</th>
-                  <th className="py-2">Анги</th>
-                  <th className="py-2">Дундаж</th>
-                  <th className="py-2">Тэнцэлт</th>
-                  <th className="py-2">Хичээл</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredClassPerformance.map((row, index) => (
-                  <tr key={row.className} className="border-b border-zinc-100">
-                    <td className="py-2 text-zinc-500">{index + 1}</td>
-                    <td className="py-2 font-medium">{row.className}</td>
-                    <td className="py-2">{row.averageScore}%</td>
-                    <td className="py-2">{row.passRate}%</td>
-                    <td className="py-2 text-amber-700">{row.weakSubject}</td>
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <div className="overflow-x-auto rounded-xl border border-zinc-200">
+              <table className="w-full min-w-[560px] text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 text-left text-zinc-500">
+                    <th className="py-2 pl-3">№</th>
+                    <th className="py-2">Анги</th>
+                    <th className="py-2">Хичээл</th>
+                    <th className="py-2">Дундаж</th>
+                    <th className="py-2 pr-3 text-center">Дээд оноо (%)</th>
                   </tr>
-                ))}
-                {filteredClassPerformance.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-6 text-center text-sm text-zinc-500">
-                      Сонгосон нөхцөлд харгалзах дүн байхгүй байна.
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {aggregatedByClassSubjectOverview.map((row, index) => (
+                    <tr key={`${row.className}-${row.subject}`} className="border-b border-zinc-100">
+                      <td className="py-2 pl-3 text-zinc-500">{index + 1}</td>
+                      <td className="py-2 font-medium text-zinc-900">{row.className}</td>
+                      <td className="py-2 text-amber-700">{row.subject}</td>
+                      <td className="py-2">{row.averagePercent}%</td>
+                      <td className="py-2 pr-3 text-center">{row.highestScorePercent}%</td>
+                    </tr>
+                  ))}
+                  {aggregatedByClassSubjectOverview.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-5 text-center text-zinc-500">
+                        Сонгосон шүүлтүүрт тохирох шалгалт алга.
+                      </td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
 
-          <div className="mt-5 rounded-xl border border-zinc-200 p-4">
-            <p className="text-sm font-semibold text-zinc-900">График харах</p>
-            <div className="mt-3 space-y-3">
-              {filteredClassPerformance.map((row) => (
-                <div key={`chart-${row.className}`} className="space-y-1">
-                  <div className="flex items-center justify-between text-xs text-zinc-600">
-                    <span className="font-medium text-zinc-700">{row.className}</span>
-                    <span>
-                      Дундаж {row.averageScore}% · Тэнцэлт {row.passRate}%
-                    </span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-zinc-100">
-                    <div className="h-full bg-blue-500" style={{ width: `${row.averageScore}%` }} />
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-zinc-100">
-                    <div className="h-full bg-emerald-500" style={{ width: `${row.passRate}%` }} />
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+              <p className="font-medium text-zinc-800">График</p>
+              <div className="mt-3">
+                <div className="mb-3 flex items-center gap-4 text-xs text-zinc-600">
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-blue-500" />
+                    Дундаж
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    Дээд оноо
+                  </span>
+                </div>
+                <div className="overflow-x-auto">
+                  <div className="flex min-w-[560px] items-end gap-4 pb-2">
+                    {aggregatedByClassSubjectOverview.map((row) => (
+                      <div key={`bar-${row.className}-${row.subject}`} className="w-24 shrink-0">
+                        <div className="mx-auto flex h-44 items-end justify-center gap-2">
+                          <div className="flex h-full w-7 flex-col justify-end">
+                            <p className="mb-1 text-center text-[10px] font-medium text-zinc-600">
+                              {row.averagePercent}%
+                            </p>
+                            <div className="flex h-full items-end rounded-md bg-zinc-200/70">
+                              <div
+                                className="w-full rounded-md bg-blue-500"
+                                style={{ height: `${Math.max(row.averagePercent, 2)}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex h-full w-7 flex-col justify-end">
+                            <p className="mb-1 text-center text-[10px] font-medium text-zinc-600">
+                              {row.highestScorePercent}%
+                            </p>
+                            <div className="flex h-full items-end rounded-md bg-zinc-200/70">
+                              <div
+                                className="w-full rounded-md bg-emerald-500"
+                                style={{ height: `${Math.max(row.highestScorePercent, 2)}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <p className="mt-2 truncate text-center text-xs font-medium text-zinc-700">{row.className}</p>
+                        <p className="truncate text-center text-xs text-zinc-500">{row.subject}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-              {filteredClassPerformance.length === 0 ? (
-                <p className="text-sm text-zinc-500">График харуулах өгөгдөл алга.</p>
-              ) : null}
+                {aggregatedByClassSubjectOverview.length === 0 ? (
+                  <p className="text-sm text-zinc-500">График харуулах өгөгдөл алга.</p>
+                ) : null}
+              </div>
             </div>
           </div>
-        </article>
-
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-[#0f172a]">Багш түвшний хяналт</h3>
-          <ul className="mt-4 space-y-3">
-            {teacherPerformance.map((row) => (
-              <li key={row.teacherName} className="rounded-lg border border-zinc-200 p-3">
-                <p className="font-medium text-zinc-900">{row.teacherName}</p>
-                <p className="mt-1 text-sm text-zinc-600">
-                  Улирлын шалгалт: {row.examsThisMonth} · Дундаж дүн: {row.avgScore}%
-                </p>
-              </li>
-            ))}
-          </ul>
         </article>
       </section>
     </div>

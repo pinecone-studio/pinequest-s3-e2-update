@@ -9,11 +9,9 @@ import {
   getApprovalUpdatedEventName,
 } from "@/app/lib/exam-approval-store";
 import { ExamLifecycleSummary } from "./_components/ExamLifecycleSummary";
-import { ExamPageHeader } from "./_components/ExamPageHeader";
-import { ExamSmartAlerts } from "./_components/ExamSmartAlerts";
+import { ExamScheduleCalendarSection } from "./_components/ExamScheduleCalendarSection";
 import { ExamTableSection } from "./_components/ExamTableSection";
 import {
-  examAlerts,
   getExamLifecycleSummary,
   schoolExams,
 } from "./_mock/school-exams";
@@ -22,6 +20,7 @@ export default function SchoolExamsPage() {
   const [approvalRequests, setApprovalRequests] = useState<
     ReturnType<typeof getApprovalRequestsClient>
   >([]);
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const lifecycleSummary = getExamLifecycleSummary(schoolExams);
   const pendingApprovals = useMemo(
     () => approvalRequests.filter((item) => item.status === "pending"),
@@ -38,8 +37,14 @@ export default function SchoolExamsPage() {
 
   return (
     <div className="space-y-6">
-      <ExamPageHeader />
-      <ExamLifecycleSummary summary={lifecycleSummary} />
+      <ExamLifecycleSummary
+        summary={lifecycleSummary}
+        onCreateSchedule={() => setIsScheduleDialogOpen(true)}
+      />
+      <ExamScheduleCalendarSection
+        open={isScheduleDialogOpen}
+        onOpenChange={setIsScheduleDialogOpen}
+      />
       <section className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-lg font-semibold text-[#0f172a]">
@@ -66,7 +71,6 @@ export default function SchoolExamsPage() {
           ) : null}
         </div>
       </section>
-      <ExamSmartAlerts alerts={examAlerts} />
       <ExamTableSection exams={schoolExams} />
     </div>
   );

@@ -27,7 +27,7 @@ export function QuestionNavigator({
         <NavigatorLegend />
       </div>
 
-      <div className="mt-4 grid grid-cols-5 gap-3 sm:grid-cols-8 md:grid-cols-10">
+      <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 sm:gap-3 md:grid-cols-8 lg:grid-cols-10">
         {Array.from({ length: total }, (_, idx) => idx + 1).map((id) => {
           const isCurrent = id === currentQuestionId;
           const isAnswered = Boolean(answers[id]);
