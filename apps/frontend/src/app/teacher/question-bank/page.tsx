@@ -1,6 +1,6 @@
 "use client";
 
-import { QuestionBankEntry } from "./_components/question-bank-entry";
+import { QuestionBankEntry } from "./_components/entry/question-bank-entry";
 
 export default function Page() {
   return <QuestionBankEntry />;

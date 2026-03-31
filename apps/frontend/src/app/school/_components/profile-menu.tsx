@@ -9,6 +9,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { User } from "@/app/lib/types";
 
+function roleLabel(role: User["role"]) {
+  return role === "school_admin" ? "Сургуулийн админ" : "Багш";
+}
+
 /** Header profile dropdown — same pattern as `teacher/teacher-shell` */
 export function ProfileMenu({
   user,
@@ -56,7 +60,7 @@ export function ProfileMenu({
         onClick={() => setOpen((prev) => !prev)}
         type="button"
       >
-        <UserIcon className="h-8 w-8" />
+        <UserIcon className="h-5 w-5" />
       </button>
 
       {open ? (
@@ -70,14 +74,6 @@ export function ProfileMenu({
               <div className="flex h-22 w-22 items-center justify-center rounded-full border-1 border-[#1d7ff2] bg-white text-[#1d7ff2]">
                 <UserIcon className="h-10 w-10" />
               </div>
-              <button
-                type="button"
-                className="absolute bottom-0 right-0 inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#eaf4ff] bg-white text-[#1b3170]"
-                aria-label="Зураг солих"
-                title="Зураг солих"
-              >
-                <Camera className=" h-3 w-3" />
-              </button>
             </div>
           </div>
 
@@ -110,12 +106,9 @@ export function ProfileMenu({
               </Link>
             </div>
             <button
-              className="inline-flex w-full items-center justify-center gap-[10px] rounded-[8px] border border-[#e55656] bg-[#f8ecf1] px-[20px] py-[8px] text-[14px] font-semibold text-[#d92f2f] transition hover:bg-[#f7e2ea]"
+              className="inline-flex w-full items-center gap-2 rounded-xl border border-[#ff6b6b]/50 bg-[#ff6b6b]/10 px-3 py-2 text-2 font-semibold text-[#d84e4e] transition hover:bg-[#ff6b6b]/20"
               type="button"
-              onClick={() => {
-                setOpen(false);
-                signOut({ redirectUrl: "/" });
-              }}
+              onClick={() => signOut({ redirectUrl: "/" })}
             >
               <LogOut className="h-4 w-4" />
               Гарах

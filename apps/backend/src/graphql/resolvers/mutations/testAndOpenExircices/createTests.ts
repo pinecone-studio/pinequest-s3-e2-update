@@ -23,7 +23,7 @@ export const createTests = async (
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   try {
-    const newTest = await ctx.db.insert(testTable).values({
+    await ctx.db.insert(testTable).values({
       id: id,
       grade: args.input.grade,
       subjectId: args.input.subjectId,
@@ -39,7 +39,25 @@ export const createTests = async (
       createdAt: now,
       updatedAt: now,
     });
-    return newTest;
+
+    // Return the created Test object (NOT the insert result).
+    // GraphQL schema expects non-nullable `id` and `answers` as an array.
+    return {
+      id,
+      grade: args.input.grade,
+      subjectId: args.input.subjectId,
+      question: args.input.question,
+      answers: args.input.answers,
+      imageUrl: args.input.imageUrl ?? null,
+      rightAnswer: args.input.rightAnswer,
+      difficulty: args.input.difficulty,
+      score: args.input.score,
+      usageCount: args.input.usageCount,
+      notes: args.input.notes,
+      teacherId: args.input.teacherId,
+      createdAt: now,
+      updatedAt: now,
+    };
   } catch (err) {
     console.error("Failed to create test:", err);
     throw new Error(`Failed to create test: ${err}`);
