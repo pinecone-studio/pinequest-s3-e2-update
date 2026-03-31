@@ -1,3 +1,6 @@
+import Image from "next/image";
+import Link from "next/link";
+
 type EntryStepProps = {
   studentLastName: string;
   studentFirstName: string;
@@ -13,6 +16,28 @@ type EntryStepProps = {
   onApplyDemo: () => void;
   onProceed: () => void;
 };
+
+function EntryInput({
+  placeholder,
+  type = "text",
+  value,
+  onChange,
+}: {
+  placeholder: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <input
+      className="h-16 w-full rounded-[14px] border border-[#8b9199] bg-white px-5 text-[18px] font-normal text-[#2b2f36] outline-none transition placeholder:text-[#b2b2b2] focus:border-[#4ca2ff] focus:ring-4 focus:ring-[#4ca2ff]/10"
+      placeholder={placeholder}
+      type={type}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+    />
+  );
+}
 
 export function EntryStep({
   studentLastName,
@@ -30,83 +55,92 @@ export function EntryStep({
   onProceed,
 }: EntryStepProps) {
   return (
-    <main className="min-h-screen bg-[#f3f6fb] px-3 py-6 text-[#1f2a44] sm:px-4 sm:py-10">
-      <div className="mx-auto w-full max-w-3xl rounded-2xl border border-[#dbe3f0] bg-white p-4 shadow-[0_14px_40px_rgba(27,39,80,0.08)] sm:rounded-3xl sm:p-6 md:p-8">
-        <div className="mt-4 grid gap-4 sm:mt-6 sm:grid-cols-2">
-          <div>
-            <label className="text-3 font-semibold text-[#405173]">
-              Овог <span className="text-[#ef4444]">*</span>
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border border-[#dbe3f0] bg-white px-4 py-3 text-3 outline-none transition focus:border-[#3b82f6]"
-              placeholder="Түвшин"
-              value={studentLastName}
-              onChange={(event) => onChangeLastName(event.target.value)}
-            />
+    <main className="min-h-screen bg-[#f3f6fb] px-4 py-8 text-[#1f2a44] sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-383.5 flex-col rounded-[18px] bg-[#eaf4ff] px-8 py-12 shadow-[0_22px_50px_rgba(15,23,42,0.12)] sm:px-12 sm:py-14 lg:min-h-188.5 lg:px-17 lg:py-18">
+        <div className="grid items-center gap-8 lg:grid-cols-[320px_1fr] lg:gap-14">
+          <div className="flex justify-center lg:justify-start">
+            <div className="relative h-47.5 w-60">
+              <div className="absolute left-0 top-13.5 z-10 px-3 py-2">
+                <p className="text-[38px] font-black uppercase leading-[0.9] tracking-[-0.04em] text-[#151515]">
+                  Busy
+                  <br />
+                  Bee
+                </p>
+              </div>
+              <Image
+                src="/macbee.png"
+                alt="Busy bee"
+                width={140}
+                height={140}
+                priority
+                className="absolute right-3 top-3 h-auto w-39 object-contain"
+              />
+            </div>
           </div>
-          <div>
-            <label className="text-3 font-semibold text-[#405173]">
-              Нэр <span className="text-[#ef4444]">*</span>
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border border-[#dbe3f0] bg-white px-4 py-3 text-3 outline-none transition focus:border-[#3b82f6]"
-              placeholder="Элзий-Орших"
-              value={studentFirstName}
-              onChange={(event) => onChangeFirstName(event.target.value)}
-            />
-          </div>
-          <div>
-            <label className="text-3 font-semibold text-[#405173]">
-              И-мэйл <span className="text-[#ef4444]">*</span>
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border border-[#dbe3f0] bg-white px-4 py-3 text-3 outline-none transition focus:border-[#3b82f6]"
-              placeholder="student@school.mn"
-              type="email"
-              value={studentEmail}
-              onChange={(event) => onChangeEmail(event.target.value)}
-            />
-          </div>
-          <div>
-            <label className="text-3 font-semibold text-[#405173]">
-              Ангийн код {classCodeRequired ? <span className="text-[#ef4444]">*</span> : "(заавал биш)"}
-            </label>
-            <input
-              className="mt-2 w-full rounded-xl border border-[#dbe3f0] bg-white px-4 py-3 text-3 outline-none transition focus:border-[#3b82f6]"
-              placeholder="8A"
-              value={classCode}
-              onChange={(event) => onChangeClassCode(event.target.value)}
-            />
-            {classCodeHint ? (
-              <p className="mt-2 text-2 text-[#66789f]">{classCodeHint}</p>
-            ) : null}
+
+          <div className="text-center">
+            <h1 className="text-[42px] font-medium leading-[1.28] text-[#262626] sm:text-[46px] lg:text-[58px]">
+              Доорх мэдээллийг бөглөөд
+              <br className="hidden sm:block" /> шалгалтаа эхлүүлээрэй.
+            </h1>
           </div>
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={onApplyDemo}
-              className="rounded-xl border border-[#dbe3f0] bg-white px-4 py-2.5 text-3 font-semibold text-[#365077] transition hover:border-[#b7c8e6] hover:text-[#1d4ed8]"
-            >
-              Demo
-            </button>
-            <a
-              href="/teacher"
-              className="rounded-xl border border-[#dbe3f0] bg-white px-4 py-2.5 text-3 font-semibold text-[#365077] transition hover:border-[#b7c8e6] hover:text-[#1d4ed8]"
-            >
-              Багшийн хэсэг
-            </a>
-          </div>
+        <div className="mt-12 grid gap-6 md:grid-cols-2 md:gap-x-27 md:gap-y-6">
+          <EntryInput
+            placeholder="Овог бичих"
+            value={studentLastName}
+            onChange={onChangeLastName}
+          />
+          <EntryInput
+            placeholder="Нэр бичих"
+            value={studentFirstName}
+            onChange={onChangeFirstName}
+          />
+          <EntryInput
+            placeholder="И-мэйл бичих"
+            type="email"
+            value={studentEmail}
+            onChange={onChangeEmail}
+          />
+          <EntryInput
+            placeholder={classCodeRequired ? "Анги оруулах" : "Анги оруулах"}
+            value={classCode}
+            onChange={onChangeClassCode}
+          />
+        </div>
+
+        {classCodeHint ? (
+          <p className="mt-4 text-center text-[14px] font-medium text-[#5f7394] md:text-left">
+            {classCodeHint}
+          </p>
+        ) : null}
+
+        <div className="mt-16 flex justify-center">
           <button
             type="button"
             disabled={!canProceed}
             onClick={onProceed}
-            className="w-full rounded-xl bg-[#2563eb] px-5 py-2.5 text-3 font-semibold text-white hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#9dbaf6] sm:w-auto"
+            className="inline-flex min-w-85 items-center justify-center rounded-[14px] bg-[#85befc] px-8 py-5 text-[24px] font-medium text-white transition hover:bg-[#69acfb] disabled:cursor-not-allowed disabled:bg-[#b7d9ff] disabled:text-white/90"
           >
-            Дараагийн алхам
+            Үргэлжлүүлэх
           </button>
+        </div>
+
+        <div className="mt-auto flex flex-wrap items-center justify-center gap-3 pt-8">
+          <button
+            type="button"
+            onClick={onApplyDemo}
+            className="rounded-xl border border-[#b8c7db] bg-white px-4 py-2 text-[14px] font-medium text-[#365077] transition hover:border-[#99b7df]"
+          >
+            Demo мэдээлэл
+          </button>
+          <Link
+            href="/teacher"
+            className="rounded-xl border border-[#b8c7db] bg-white px-4 py-2 text-[14px] font-medium text-[#365077] transition hover:border-[#99b7df]"
+          >
+            Багшийн хэсэг
+          </Link>
         </div>
       </div>
     </main>
