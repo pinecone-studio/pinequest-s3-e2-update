@@ -117,7 +117,9 @@ export default function TeacherShell({
                   {menuItems.map((item) => {
                     const isActive =
                       isMenuItemActive(pathname, item.href) ||
-                      item.activePrefixes?.some((prefix) => pathname.startsWith(prefix));
+                      item.activePrefixes?.some((prefix) =>
+                        isMenuItemActive(pathname, prefix),
+                      );
                     return (
                       <Link
                         key={item.href}
