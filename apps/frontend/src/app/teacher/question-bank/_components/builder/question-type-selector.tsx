@@ -31,10 +31,10 @@ export function QuestionTypeSelector({
         const isActive = option.value === selectedMode;
         return (
           <button
-            className={`rounded-2xl border p-4 text-left transition ${
+            className={`rounded-[12px] border p-4 text-left transition ${
               isActive
-                ? "border-[#6caeff] bg-[#eef6ff] shadow-sm"
-                : "border-[#d8e2f0] bg-white hover:border-[#a9c8f6]"
+                ? "border-[#d8e2f0] bg-[#eef6ff] shadow-sm"
+                : "border-[#d8e2f0] bg-white hover:border-[#d8e2f0]"
             }`}
             key={option.value}
             onClick={() => onChange(option.value)}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type {
   QuestionBuilderValues,
@@ -27,7 +27,7 @@ type QuestionBuilderAnswerSectionProps = {
 export function QuestionBuilderAnswerSection({
   mode,
   onAddOption,
-  onMarkCorrectOption,
+  onMarkCorrectOption: _onMarkCorrectOption,
   onOptionChange,
   onRemoveOption,
   onRubricChange,
@@ -44,7 +44,7 @@ export function QuestionBuilderAnswerSection({
 
   return (
     <section>
-      <div className="mb-4">
+      <div className="mb-4 ml-1">
         <h3 className="text-[13px] font-semibold text-[#183153]">
           Хариултын тохиргоо
         </h3>
@@ -58,35 +58,24 @@ export function QuestionBuilderAnswerSection({
         <div className="space-y-4">
           <div className="space-y-3">
             {values.options.map((option, index) => (
-              <div className="flex gap-3" key={option.id}>
-                <button
-                  className={`mt-3 h-5 w-5 rounded-full border-2 ${
-                    option.isCorrect
-                      ? "border-[#1f6feb] bg-[#1f6feb]"
-                      : "border-[#b8c8dc] bg-white"
-                  }`}
-                  onClick={() => onMarkCorrectOption(option.id)}
-                  type="button"
-                />
+              <div className="flex items-center gap-3" key={option.id}>
                 <div className="flex-1">
-                  <BuilderField label={`Сонголт ${index + 1}`}>
-                    <input
-                      className={builderInputClassName}
-                      onChange={(event) =>
-                        onOptionChange(option.id, event.target.value)
-                      }
-                      placeholder={`Хариултын сонголт ${index + 1}`}
-                      value={option.text}
-                    />
-                  </BuilderField>
+                  <input
+                    className={builderInputClassName}
+                    onChange={(event) =>
+                      onOptionChange(option.id, event.target.value)
+                    }
+                    placeholder={`Хариултын сонголт ${index + 1}`}
+                    value={option.text}
+                  />
                 </div>
                 {values.options.length > 2 ? (
                   <button
-                    className="mt-8 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#f0d0d0] bg-[#fff5f5] text-[#c95050]"
+                    className="inline-flex h-12 w-12 items-center justify-center rounded-[12px] border border-[#f2b6b6] bg-white text-[28px] leading-none text-[#e59a9a]"
                     onClick={() => onRemoveOption(option.id)}
                     type="button"
                   >
-                    <X className="h-4 w-4" />
+                    -
                   </button>
                 ) : null}
               </div>
@@ -100,16 +89,16 @@ export function QuestionBuilderAnswerSection({
           ) : null}
 
           <button
-            className="inline-flex h-11 items-center rounded-2xl border border-[#d7e2f1] px-4 text-[13px] font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
+            className="inline-flex h-[46px] items-center rounded-[12px] border border-[#272727] px-4 py-0 text-[13px] font-semibold text-[#272727] transition"
             onClick={onAddOption}
             type="button"
           >
-            <Plus className="mr-2 h-4 w-4" />
             Сонголт нэмэх
+            <Plus className="ml-3 h-4 w-4" />
           </button>
 
           {isNationalScript && activeOptionId ? (
-            <div className="rounded-3xl border border-[#d7e3f4] bg-[#f7faff] p-4">
+            <div className="rounded-[12px] border border-[#d7e3f4] bg-[#f7faff] p-4">
               <label className="block space-y-2">
                 <span className="text-[13px] font-semibold text-[#183153]">
                   Хөрвүүлсэн текст оруулах сонголт
