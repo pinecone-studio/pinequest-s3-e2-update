@@ -44,11 +44,11 @@ const inputClass =
 	"disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500";
 
 const authPanelClass =
-	"box-border flex h-[619px] max-h-[min(619px,calc(100dvh-2rem))] min-h-0 w-[540px] max-w-full flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)]";
+	"box-border mx-auto flex h-[min(619px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] max-h-[min(619px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] min-h-0 w-full max-w-[540px] flex-col overflow-hidden rounded-none border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)] sm:mx-4 sm:h-[619px] sm:max-h-[min(619px,calc(100dvh-2rem))] sm:rounded-2xl";
 
 /** Сургуулийн бүртгэл — илүү олон талбарт зай их */
 const authPanelClassSchool =
-	"box-border flex h-[780px] max-h-[min(780px,calc(100dvh-2rem))] min-h-0 w-[540px] max-w-full flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)]";
+	"box-border mx-auto flex h-[min(780px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] max-h-[min(780px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] min-h-0 w-full max-w-[540px] flex-col overflow-hidden rounded-none border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)] sm:mx-4 sm:h-[780px] sm:max-h-[min(780px,calc(100dvh-2rem))] sm:rounded-2xl";
 
 type BackAction = { href: string } | { onBack: () => void };
 
@@ -92,11 +92,11 @@ function SignUpScreenFrame({
 	const innerClass = contentClassName ?? signupBodyInnerClass;
 
 	return (
-		<div className="flex min-h-svh flex-col items-center justify-center overflow-x-hidden overflow-y-auto bg-[#f4f4ee] p-4">
+		<div className="flex min-h-svh flex-col items-stretch justify-center overflow-x-hidden overflow-y-auto bg-[#f4f4ee] px-0 py-0 sm:items-center sm:p-4">
 			<div
-				className={`my-auto min-h-0 ${schoolSignup ? authPanelClassSchool : authPanelClass}`}
+				className={`my-auto min-h-0 w-full ${schoolSignup ? authPanelClassSchool : authPanelClass}`}
 			>
-				<header className="flex shrink-0 items-center px-8 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)]">
+				<header className="flex shrink-0 items-center px-5 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-8">
 					{"href" in back ? (
 						<Link
 							href={back.href}
@@ -121,7 +121,7 @@ function SignUpScreenFrame({
 					<span className="inline-block h-10 w-10 shrink-0" aria-hidden />
 				</header>
 
-				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-8 pb-8 [touch-action:pan-y]">
+				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-5 pb-6 [touch-action:pan-y] sm:px-8 sm:pb-8">
 					<div className={innerClass}>{children}</div>
 				</div>
 			</div>

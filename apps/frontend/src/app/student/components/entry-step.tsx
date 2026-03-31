@@ -30,8 +30,8 @@ export function EntryStep({
   onProceed,
 }: EntryStepProps) {
   return (
-    <main className="min-h-screen bg-[#f3f6fb] px-4 py-8 text-[#1f2a44] sm:py-10">
-      <div className="mx-auto w-full max-w-3xl rounded-3xl border border-[#dbe3f0] bg-white p-6 shadow-[0_14px_40px_rgba(27,39,80,0.08)] sm:p-8">
+    <main className="min-h-screen bg-[#f3f6fb] px-3 py-6 text-[#1f2a44] sm:px-4 sm:py-10">
+      <div className="mx-auto w-full max-w-3xl rounded-2xl border border-[#dbe3f0] bg-white p-4 shadow-[0_14px_40px_rgba(27,39,80,0.08)] sm:rounded-3xl sm:p-6 md:p-8">
         <div className="mt-4 grid gap-4 sm:mt-6 sm:grid-cols-2">
           <div>
             <label className="text-3 font-semibold text-[#405173]">
