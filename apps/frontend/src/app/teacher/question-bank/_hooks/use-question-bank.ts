@@ -9,7 +9,10 @@ import type { PendingExamTransfer } from "../../exam/_lib/types";
 import { mapBackendTestsToQuestions } from "./backend-question-mappers";
 import type { BackendTest } from "./get-tests";
 import { CREATE_TESTS } from "@/graphql/typeDefs/mutations";
-import { GET_ALL_SUBJECTS, GET_TESTS_BY_SUBJECT_AND_GRADE } from "@/graphql/typeDefs/queries";
+import {
+  GET_ALL_SUBJECTS,
+  GET_TESTS_BY_SUBJECT_AND_GRADE,
+} from "@/graphql/typeDefs/queries";
 import {
   GRADE_OPTIONS,
   QUESTION_BANK_FILTER_DEFAULTS,
@@ -99,16 +102,18 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     [entrySelection.grade],
   );
   const shouldFetchTests = Boolean(entrySelection.subjectId && entryGradeInt);
-  const { data: testsData, refetch: refetchTests } = useQuery<
-    GetTestsBySubjectAndGradeResponse
-  >(GET_TESTS_BY_SUBJECT_AND_GRADE, {
-    variables: {
-      input: shouldFetchTests
-        ? { subjectId: entrySelection.subjectId, grade: entryGradeInt }
-        : null,
-    },
-    skip: !shouldFetchTests,
-  });
+  const { data: testsData, refetch: refetchTests } =
+    useQuery<GetTestsBySubjectAndGradeResponse>(
+      GET_TESTS_BY_SUBJECT_AND_GRADE,
+      {
+        variables: {
+          input: shouldFetchTests
+            ? { subjectId: entrySelection.subjectId, grade: entryGradeInt }
+            : null,
+        },
+        skip: !shouldFetchTests,
+      },
+    );
 
   const [currentFilters, setCurrentFilters] = useState<QuestionFilters>(
     QUESTION_BANK_FILTER_DEFAULTS,
@@ -137,10 +142,11 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   const remoteQuestions = useMemo(() => {
     const backend = mapBackendTestsToQuestions(
       testsData?.getTestsBySybjectAndGrade ?? [],
+      subjectNameById,
     );
     const base = backend.length > 0 ? backend : MOCK_QUESTIONS;
     return base;
-  }, [testsData?.getTestsBySybjectAndGrade]);
+  }, [testsData?.getTestsBySybjectAndGrade, subjectNameById]);
 
   const mergedQuestions = useMemo(() => {
     const byId = new Map<string, Question>();
@@ -347,7 +353,8 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
               difficulty: payload.difficulty,
               score: payload.points,
               usageCount: 0,
-              notes: payload.content.explanation || payload.content.guidance || "",
+              notes:
+                payload.content.explanation || payload.content.guidance || "",
               teacherId: teacher.id,
             },
           },
@@ -356,7 +363,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
         const created = result.data?.createTests;
         if (created) {
           // Ensure UI updates immediately even before refetch paints.
-          const [mapped] = mapBackendTestsToQuestions([created as BackendTest]);
+          const [mapped] = mapBackendTestsToQuestions(
+            [created as BackendTest],
+            subjectNameById,
+          );
           if (mapped) {
             setUpserts((current) => {
               const next = new Map(current);
@@ -394,6 +404,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       refetchTests,
       shouldFetchTests,
       showToast,
+      subjectNameById,
     ],
   );
 
