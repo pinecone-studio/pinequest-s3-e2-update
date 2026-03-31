@@ -22,7 +22,6 @@ import {
   GRADE_OPTIONS,
   QUESTION_BANK_FILTER_DEFAULTS,
 } from "../_lib/constants";
-import { MOCK_QUESTIONS } from "../_lib/mock-data";
 import type { Question, QuestionFilters } from "../_lib/types";
 import {
   buildQuestionPayload,
@@ -184,8 +183,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     });
 
     const combined = [...backendTests, ...backendOpenExercies];
-    const base = combined.length > 0 ? combined : MOCK_QUESTIONS;
-    return base;
+    return combined;
   }, [
     testsData?.getTestsBySybjectAndGrade,
     openExerciesData?.getOpenExerciesBySubjectAndGrade,

@@ -1,27 +1,28 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getApprovalRequestsClient,
   getApprovalUpdatedEventName,
   upsertPendingApprovalRequest,
 } from "@/app/lib/exam-approval-store";
+import { CREATE_EXAM } from "@/graphql/typeDefs/mutations";
+import { GET_ALL_SUBJECTS, GET_EXAM_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
+import { useTeacher } from "../../teacher-shell";
 import { teacherClasses } from "../_lib/class-data";
 import { mapBackendTestsToQuestions } from "../../question-bank/_hooks/backend-question-mappers";
 import {
   GET_ALL_TESTS_QUERY,
   type GetAllTestsResponse,
 } from "../../question-bank/_hooks/get-tests";
-import { MOCK_QUESTIONS } from "../../question-bank/_lib/mock-data";
 import type { Question } from "../../question-bank/_lib/types";
 import { QUESTION_TYPE_LABELS } from "../../question-bank/_lib/utils";
 import {
   EXAM_GRADE_OPTIONS,
   INITIAL_FORM,
   PENDING_EXAM_TRANSFER_STORAGE_KEY,
-  SAVED_EXAMS_STORAGE_KEY,
 } from "../_lib/constants";
 import { normalizeSavedExamRecord } from "../_lib/utils";
 import type {
@@ -32,25 +33,74 @@ import type {
   SavedExamRecord,
 } from "../_lib/types";
 
-const DEFAULT_SUBJECT_OPTIONS = [
-  "Монгол хэл",
-  "Математик",
-  "Англи хэл",
-  "Физик",
-  "Хими",
-  "Биологи",
-  "Газарзүй",
-  "Түүх",
-  "Нийгмийн ухаан",
-  "Мэдээлэл зүй",
-  "Урлаг",
-  "Биеийн тамир",
-];
+type GetAllSubjectResponse = {
+  getAllSubject: { id: string; name: string }[];
+};
+
+type BackendExam = {
+  id: string;
+  grade: number;
+  subjectId: string;
+  topic: string | null;
+  title: string | null;
+  date: string | null;
+  location: string | null;
+  duration: string | null;
+  variation: string | null;
+  testIds: string[] | null;
+  openExerciseIds: string[] | null;
+  notes: string | null;
+  score: number | null;
+  usageCount: number | null;
+  isActive: number | null;
+  needpermission: number | null;
+  schoolId: string;
+  teacherId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type GetExamBySchoolIdResponse = {
+  getExamBySchoolId: BackendExam[];
+};
+
+type CreateExamResponse = {
+  createExam: BackendExam;
+};
+
+function parseGradeToInt(gradeLabel: string) {
+  const n = Number.parseInt(gradeLabel, 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function gradeLabel(grade: number): string {
+  if (grade >= 1 && grade <= 12) return `${grade}-р анги`;
+  return "";
+}
+
+function parseDurationMinutes(duration: string | null | undefined): number {
+  if (!duration) return 40;
+  const n = Number.parseInt(duration, 10);
+  return Number.isFinite(n) && n > 0 ? n : 40;
+}
 
 export function useTeacherExamPage() {
   const router = useRouter();
+  const teacher = useTeacher();
   const { data: testsData } =
     useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
+  const { data: subjectsData } =
+    useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+
+  const schoolId = ("schoolId" in teacher ? teacher.schoolId : undefined) ?? "school-1";
+  const { data: examsData, refetch: refetchExams } =
+    useQuery<GetExamBySchoolIdResponse>(GET_EXAM_BY_SCHOOL_ID, {
+      variables: { schoolId },
+      skip: !schoolId,
+      fetchPolicy: "cache-and-network",
+    });
+
+  const [createExam] = useMutation<CreateExamResponse>(CREATE_EXAM);
   const [exam, setExam] = useState<ExamComposerState>(INITIAL_FORM);
   const [selectedBankIds, setSelectedBankIds] = useState<string[]>([]);
   const [examQuestions, setExamQuestions] = useState<ExamQuestionItem[]>([]);
@@ -72,54 +122,124 @@ export function useTeacherExamPage() {
     const backendQuestions = mapBackendTestsToQuestions(
       testsData?.getAllTests ?? [],
     );
-    const baseQuestions =
-      backendQuestions.length > 0 ? backendQuestions : MOCK_QUESTIONS;
     const merged = new Map<string, Question>();
 
-    for (const question of [...baseQuestions, ...transferredQuestions]) {
+    for (const question of [...backendQuestions, ...transferredQuestions]) {
       merged.set(question.id, question);
     }
 
     return Array.from(merged.values());
   }, [testsData?.getAllTests, transferredQuestions]);
+
+  const subjectNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const s of subjectsData?.getAllSubject ?? []) map.set(s.id, s.name);
+    return map;
+  }, [subjectsData?.getAllSubject]);
+
   const subjectOptions = useMemo(
     () =>
       Array.from(
         new Set([
-          ...DEFAULT_SUBJECT_OPTIONS,
+          ...(subjectsData?.getAllSubject ?? []).map((s) => s.name),
           ...questionBank.map((question) => question.subject),
         ]),
       ).sort((a, b) => a.localeCompare(b, "mn", { sensitivity: "base" })),
-    [questionBank],
+    [questionBank, subjectsData?.getAllSubject],
   );
-  const topicSuggestions = useMemo(() => Array.from(new Set(questionBank.filter((question) => (exam.subject ? question.subject.toLowerCase() === exam.subject.toLowerCase() : true)).map((question) => question.topic))).sort(), [exam.subject, questionBank]);
-  const filteredQuestions = useMemo(() => [...questionBank].filter((question) => matchesSearch(question, search)).sort((left, right) => scoreQuestion(right, exam) - scoreQuestion(left, exam) || right.usageCount - left.usageCount), [exam, questionBank, search]);
-  const examQuestionDetails = useMemo(() => examQuestions.slice().sort((left, right) => left.order - right.order).map((item) => ({ ...item, question: questionBank.find((question) => question.id === item.questionId) })).filter((item): item is ExamQuestionDetail => Boolean(item.question)), [examQuestions, questionBank]);
-  const totalPoints = examQuestionDetails.reduce((sum, item) => sum + item.assignedPoints, 0);
+  const topicSuggestions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          questionBank
+            .filter((question) =>
+              exam.subject
+                ? question.subject.toLowerCase() === exam.subject.toLowerCase()
+                : true,
+            )
+            .map((question) => question.topic),
+        ),
+      ).sort(),
+    [exam.subject, questionBank],
+  );
+  const filteredQuestions = useMemo(
+    () =>
+      [...questionBank]
+        .filter((question) => matchesSearch(question, search))
+        .sort(
+          (left, right) =>
+            scoreQuestion(right, exam) - scoreQuestion(left, exam) ||
+            right.usageCount - left.usageCount,
+        ),
+    [exam, questionBank, search],
+  );
+  const examQuestionDetails = useMemo(
+    () =>
+      examQuestions
+        .slice()
+        .sort((left, right) => left.order - right.order)
+        .map((item) => ({
+          ...item,
+          question: questionBank.find(
+            (question) => question.id === item.questionId,
+          ),
+        }))
+        .filter((item): item is ExamQuestionDetail => Boolean(item.question)),
+    [examQuestions, questionBank],
+  );
+  const totalPoints = examQuestionDetails.reduce(
+    (sum, item) => sum + item.assignedPoints,
+    0,
+  );
+
+  const savedExamsFromApi = useMemo(() => {
+    const rows = examsData?.getExamBySchoolId ?? [];
+    return rows
+      .slice()
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
+      .map((row) => {
+        const testIds = Array.isArray(row.testIds) ? row.testIds : [];
+        const openIds = Array.isArray(row.openExerciseIds)
+          ? row.openExerciseIds
+          : [];
+        const questionIds = [...testIds, ...openIds];
+        const durationInMinutes = parseDurationMinutes(row.duration);
+        const subjectName =
+          subjectNameById.get(row.subjectId) ?? row.subjectId ?? "";
+        return normalizeSavedExamRecord({
+          id: row.id,
+          title: row.title ?? "",
+          grade: gradeLabel(row.grade),
+          subject: subjectName,
+          topic: row.topic ?? "",
+          durationInMinutes,
+          status: "published",
+          totalPoints: row.score ?? 0,
+          questionCount: questionIds.length,
+          savedAt: row.createdAt,
+          questions: questionIds.map((questionId, index) => ({
+            examQuestionId: `exam-question-${questionId}`,
+            questionId,
+            assignedPoints:
+              questionBank.find((q) => q.id === questionId)?.points ?? 1,
+            order: index,
+          })),
+          requiresSchoolApproval: Boolean(row.needpermission),
+          approvalStatus: row.needpermission ? "pending" : "not_required",
+          sentClassIds: [],
+        });
+      });
+  }, [examsData?.getExamBySchoolId, questionBank, subjectNameById]);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(SAVED_EXAMS_STORAGE_KEY);
-      setSavedExams(
-        raw
-          ? (JSON.parse(raw) as SavedExamRecord[]).map(normalizeSavedExamRecord)
-          : [],
-      );
-    } catch {
-      window.localStorage.removeItem(SAVED_EXAMS_STORAGE_KEY);
-      setSavedExams([]);
-    } finally {
+    queueMicrotask(() => {
+      setSavedExams(savedExamsFromApi);
       setHasLoadedSavedExams(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (hasLoadedSavedExams)
-      window.localStorage.setItem(
-        SAVED_EXAMS_STORAGE_KEY,
-        JSON.stringify(savedExams),
-      );
-  }, [hasLoadedSavedExams, savedExams]);
+    });
+  }, [savedExamsFromApi]);
 
   useEffect(() => {
     const syncApprovalStatus = () => {
@@ -148,13 +268,11 @@ export function useTeacherExamPage() {
     return () => window.removeEventListener(eventName, syncApprovalStatus);
   }, []);
 
+  const toastTimeoutRef = useRef<number | undefined>(undefined);
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
-    window.clearTimeout((showToast as unknown as { timeout?: number }).timeout);
-    (showToast as unknown as { timeout?: number }).timeout = window.setTimeout(
-      () => setToastMessage(""),
-      2600,
-    );
+    if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = window.setTimeout(() => setToastMessage(""), 2600);
   }, []);
 
   useEffect(() => {
@@ -183,39 +301,45 @@ export function useTeacherExamPage() {
         .filter((question): question is Question => Boolean(question));
       if (pendingQuestions.length === 0) return;
 
-      setTransferredQuestions((current) => {
-        const merged = new Map(
-          current.map((question) => [question.id, question] as const),
-        );
-        for (const question of transferred) {
-          merged.set(question.id, question);
-        }
-        return Array.from(merged.values());
+      queueMicrotask(() => {
+        setTransferredQuestions((current) => {
+          const merged = new Map(
+            current.map((question) => [question.id, question] as const),
+          );
+          for (const question of transferred) {
+            merged.set(question.id, question);
+          }
+          return Array.from(merged.values());
+        });
       });
 
       const firstQuestion = pendingQuestions[0];
-      setExam((current) => ({
-        ...current,
-        grade: pending.exam?.grade || firstQuestion.grade || current.grade,
-        subject:
-          pending.exam?.subject || firstQuestion.subject || current.subject,
-        topic: pending.exam?.topic || firstQuestion.topic || current.topic,
-      }));
-      setExamQuestions((current) => {
-        const existingIds = new Set(current.map((item) => item.questionId));
-        const appended = pendingQuestions
-          .filter((question) => !existingIds.has(question.id))
-          .map((question, index) => ({
-            examQuestionId: `exam-question-${question.id}`,
-            questionId: question.id,
-            assignedPoints: question.points,
-            order: current.length + index,
-          }));
-
-        return appended.length > 0 ? [...current, ...appended] : current;
+      queueMicrotask(() => {
+        setExam((current) => ({
+          ...current,
+          grade: pending.exam?.grade || firstQuestion.grade || current.grade,
+          subject:
+            pending.exam?.subject || firstQuestion.subject || current.subject,
+          topic: pending.exam?.topic || firstQuestion.topic || current.topic,
+        }));
       });
-      setActiveSavedExamId(null);
-      showToast(`${pendingQuestions.length} асуултыг шалгалт руу орууллаа.`);
+      queueMicrotask(() => {
+        setExamQuestions((current) => {
+          const existingIds = new Set(current.map((item) => item.questionId));
+          const appended = pendingQuestions
+            .filter((question) => !existingIds.has(question.id))
+            .map((question, index) => ({
+              examQuestionId: `exam-question-${question.id}`,
+              questionId: question.id,
+              assignedPoints: question.points,
+              order: current.length + index,
+            }));
+
+          return appended.length > 0 ? [...current, ...appended] : current;
+        });
+        setActiveSavedExamId(null);
+        showToast(`${pendingQuestions.length} асуултыг шалгалт руу орууллаа.`);
+      });
     } catch {
       window.sessionStorage.removeItem(PENDING_EXAM_TRANSFER_STORAGE_KEY);
       return;
@@ -295,14 +419,7 @@ export function useTeacherExamPage() {
       ),
     );
 
-  const resetComposer = useCallback(() => {
-    setExam(INITIAL_FORM);
-    setSelectedBankIds([]);
-    setExamQuestions([]);
-    setActiveSavedExamId(null);
-  }, []);
-
-  const persistExam = () => {
+  const persistExam = async () => {
     if (examQuestionDetails.length === 0)
       return showToast("Хадгалахаас өмнө дор хаяж нэг асуулт нэмнэ үү.");
 
@@ -316,36 +433,60 @@ export function useTeacherExamPage() {
     const nextTitle = exam.title.trim() || generatedTitle;
 
     const now = new Date().toISOString();
-    const nextId = activeSavedExamId ?? `saved-exam-${now}`;
-    const previous = savedExams.find((item) => item.id === nextId);
-    const approvalStatus = exam.requiresSchoolApproval
-      ? "pending"
-      : "not_required";
-    const nextRecord: SavedExamRecord = {
-      id: nextId,
-      title: nextTitle,
-      grade: exam.grade.trim(),
-      subject: exam.subject.trim(),
-      topic: exam.topic.trim(),
-      durationInMinutes: exam.durationInMinutes,
-      status: "published",
-      totalPoints,
-      questionCount: examQuestionDetails.length,
-      savedAt: now,
-      questions: examQuestions.map((item) => ({ ...item })),
-      requiresSchoolApproval: exam.requiresSchoolApproval,
-      approvalStatus,
-      sentClassIds: previous?.sentClassIds ?? [],
-    };
-    setSavedExams((current) =>
-      [nextRecord, ...current.filter((item) => item.id !== nextId)].sort(
-        (left, right) =>
-          new Date(right.savedAt).getTime() - new Date(left.savedAt).getTime(),
-      ),
-    );
+    const gradeInt = parseGradeToInt(exam.grade);
+    const subjects = subjectsData?.getAllSubject ?? [];
+    const subjectId =
+      subjects.find((s) => s.name === exam.subject)?.id ?? exam.subject;
+
+    const testIds = examQuestionDetails
+      .filter((item) => item.question.questionType !== "long_answer")
+      .map((item) => item.question.id);
+    const openExerciseIds = examQuestionDetails
+      .filter((item) => item.question.questionType === "long_answer")
+      .map((item) => item.question.id);
+
+    try {
+      const result = await createExam({
+        variables: {
+          input: {
+            grade: gradeInt,
+            subjectId,
+            topic: exam.topic.trim() || null,
+            title: nextTitle,
+            date: now,
+            location: null,
+            duration: String(exam.durationInMinutes || 40),
+            variation: null,
+            testIds,
+            openExerciseIds,
+            notes: null,
+            score: totalPoints,
+            usageCount: 0,
+            isActive: 1,
+            needpermission: exam.requiresSchoolApproval ? 1 : 0,
+            schoolId,
+            teacherId: teacher.id,
+          },
+        },
+      });
+
+      const created = result.data?.createExam;
+      if (created) {
+        setActiveSavedExamId(created.id);
+        showToast(
+          exam.requiresSchoolApproval
+            ? "Шалгалтыг хадгалж, сургуулийн зөвшөөрлийн хүсэлт илгээлээ."
+            : "Шалгалтыг амжилттай хадгаллаа.",
+        );
+        refetchExams();
+      }
+    } catch {
+      showToast("Шалгалт хадгалахад алдаа гарлаа. Дахин оролдоно уу.");
+      return;
+    }
     if (exam.requiresSchoolApproval) {
       upsertPendingApprovalRequest({
-        examId: nextId,
+        examId: activeSavedExamId ?? `saved-exam-${now}`,
         title: nextTitle,
         className: exam.grade.trim() || "Тодорхойгүй анги",
         subject: exam.subject.trim() || "Тодорхойгүй хичээл",
@@ -355,12 +496,10 @@ export function useTeacherExamPage() {
         questionCount: examQuestionDetails.length || 20,
       });
     }
-    resetComposer();
-    showToast(
-      exam.requiresSchoolApproval
-        ? "Шалгалтыг хадгалж, сургуулийн зөвшөөрлийн хүсэлт илгээлээ."
-        : "Шалгалтыг амжилттай хадгаллаа.",
-    );
+    setExam((current) => ({
+      ...current,
+      title: nextTitle,
+    }));
   };
 
   const openSavedExam = (savedExam: SavedExamRecord) => {
@@ -435,10 +574,6 @@ export function useTeacherExamPage() {
     );
 
     setSavedExams(nextSavedExams);
-    window.localStorage.setItem(
-      SAVED_EXAMS_STORAGE_KEY,
-      JSON.stringify(nextSavedExams),
-    );
 
     const monitoringUrl = `/teacher/exam-optimization?examId=${encodeURIComponent(savedExam.id)}`;
     showToast(

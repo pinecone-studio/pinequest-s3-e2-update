@@ -1,6 +1,2 @@
--- Add scoping fields to openExercies rows (subjectId + grade + topic).
--- Required for filtering open exercises by subject & grade in the question bank.
-
-ALTER TABLE `openExercies` ADD COLUMN `subjectId` text;
-ALTER TABLE `openExercies` ADD COLUMN `grade` integer;
-ALTER TABLE `openExercies` ADD COLUMN `topic` text;
+-- no-op
+-- Remote D1 already has `subjectId`, `grade`, `topic` on `openExercies`.

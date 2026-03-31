@@ -26,10 +26,10 @@ export function QuestionBuilderTypeSection({
     <section>
       <div className="space-y-4">
         <div>
-          <h3 className="text-[13px] font-semibold text-[#183153]">
+          <h3 className="text-[13px] font-semibold text-[#183153] ml-2">
             Асуултын төрөл
           </h3>
-          <p className="text-[13px] text-[#6d7f9c]">
+          <p className="text-[13px] text-[#6d7f9c] ml-2">
             Эхлээд үндсэн төрлөө сонгоод, дараа нь нэмэлт хэрэгцээгээ тэмдэглэнэ
             үү.
           </p>
@@ -55,7 +55,7 @@ export function QuestionBuilderTypeSection({
               onCheckedChange={(checked) => onFeatureToggle("formula", checked)}
             />
           ) : (
-            <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] p-4 text-[13px] text-[#6d7f9c]">
+            <div className="rounded-[12px] border border-dashed border-[#d8e2f0] bg-[#f8fbff] p-4 text-[13px] text-[#6d7f9c]">
               Томьёоны нэмэлт оролт нь зөвхөн `Математик`, `Физик`, `Хими`
               хичээл дээр идэвхжинэ.
             </div>
@@ -79,10 +79,10 @@ function FeatureToggleCard({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
+      className={`flex cursor-pointer items-start gap-3 rounded-[12px] border p-4 transition ${
         checked
-          ? "border-[#6caeff] bg-[#eef6ff]"
-          : "border-[#d8e2f0] bg-white hover:border-[#a9c8f6]"
+          ? "border-[#d8e2f0] bg-[#eef6ff]"
+          : "border-[#d8e2f0] bg-white hover:border-[#d8e2f0]"
       }`}
     >
       <input
@@ -93,7 +93,9 @@ function FeatureToggleCard({
       />
       <div>
         <p className="text-[13px] font-semibold text-[#183153]">{label}</p>
-        <p className="mt-1 text-[13px] leading-6 text-[#607391]">{description}</p>
+        <p className="mt-1 text-[13px] leading-6 text-[#607391]">
+          {description}
+        </p>
       </div>
     </label>
   );

@@ -89,21 +89,17 @@ export function QuestionBuilderForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#10233e]/30 p-4 backdrop-blur-[2px] sm:p-6">
-      <div className="my-2 flex max-h-[calc(100dvh-1rem)] w-full max-w-[768px] flex-col overflow-x-hidden overflow-y-hidden rounded-[28px] border border-[#d9e4f1] bg-[#f8fbff] shadow-2xl sm:my-4">
-        <div className="sticky top-0 z-10 border-b border-[#dce5f2] bg-[#f8fbff]/95 px-6 py-5 backdrop-blur">
+      <div className="my-2 flex max-h-[calc(100dvh-1rem)] w-full max-w-[768px] flex-col overflow-x-hidden overflow-y-hidden rounded-[12px] border border-[#d9e4f1] bg-[#F5F5F5] shadow-2xl sm:my-4">
+        <div className="sticky top-0 z-10 border-b border-[#dce5f2] bg-[#F5F5F5]/95 px-6 py-5 backdrop-blur">
           <div className="flex items-start gap-4">
             <div>
-              <p className="text-[13px] font-semibold uppercase tracking-[0.22em] text-[#7c8ba4]">
-                {initialValues ? "Асуулт засах" : "Асуулт засах"}
-              </p>
-              <h2 className="mt-2 text-[13px] font-bold text-[#183153]">
+              <h2 className="mt-1 text-[23px] font-bold leading-[1.2] text-[#183153]">
                 {initialValues
                   ? "Асуултын агуулгыг сайжруулах"
                   : "Асуултын агуулгыг сайжруулах"}
               </h2>
-              <p className="mt-2 text-[13px] text-[#5f7394]">
-                Асуулт, үнэлгээ, мета мэдээллээ тохируулаад системийн санд шууд
-                нийтэлнэ.
+              <p className="mt-1 text-[13px] text-[#5f7394]">
+                Системийн санд шууд нийтэлнэ.
               </p>
             </div>
           </div>
@@ -169,17 +165,17 @@ export function QuestionBuilderForm({
           </div>
         </div>
 
-        <div className="sticky bottom-0 mt-auto border-t border-[#dce5f2] bg-white px-6 py-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="sticky bottom-0 mt-auto border-t border-[#dce5f2] bg-white px-[14px] py-[16px]">
+          <div className="flex flex-col gap-[42px] sm:flex-row sm:justify-center">
             <button
-              className="inline-flex h-14 w-full items-center justify-center rounded-2xl border border-[#3a9df2] bg-white px-6 text-[13px] font-semibold text-[#3a9df2] transition hover:bg-[#f4faff] sm:flex-1"
+              className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] border border-[#3a9df2] bg-white px-[4px] text-[13px] font-semibold text-[#3a9df2] transition hover:bg-[#f4faff] sm:w-[278px]"
               onClick={onClose}
               type="button"
             >
               Цуцлах
             </button>
             <button
-              className="inline-flex h-14 w-full items-center justify-center rounded-2xl bg-[#3a9df2] px-6 text-[13px] font-semibold text-white transition hover:bg-[#2f90e4] sm:flex-1"
+              className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] bg-[#29A4FF] px-[4px] text-[13px] font-semibold text-white transition hover:bg-[#1f97f1] sm:w-[278px]"
               onClick={handleSubmit}
               type="button"
             >

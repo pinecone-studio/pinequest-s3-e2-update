@@ -8,7 +8,7 @@ export const getAllSubject = async (
 ) => {
   try {
     const subjects = await ctx.db.select().from(subjectTable);
-    console.log(subjects);
+    // console.log(subjects);
     return subjects;
   } catch (err) {
     console.error("Failed to get subjects. Error:", err);

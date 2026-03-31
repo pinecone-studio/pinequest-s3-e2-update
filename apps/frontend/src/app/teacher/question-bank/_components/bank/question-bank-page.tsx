@@ -4,11 +4,15 @@ import { QuestionBuilderForm } from "../builder/question-builder-form";
 import { QuestionBankActivePanel } from "./question-bank-active-panel";
 import { QuestionBankBulkToolbar } from "./question-bank-bulk-toolbar";
 import { QuestionBankEntryPanel } from "../entry/question-bank-entry-panel";
+import { QuestionBankFigmaControls } from "../question-bank-figma-controls";
+import { QuestionBankFigmaHero } from "../question-bank-figma-hero";
+import { QuestionBankFigmaResults } from "../question-bank-figma-results";
 import { useQuestionBank } from "../../_hooks/use-question-bank";
 import { useRouter } from "next/navigation";
 import { QuestionBankMySection } from "./question-bank-my-section";
 import { QuestionBankAllSection } from "./question-bank-all-section";
 import { QuestionBankPublishSuccessDialog } from "./question-bank-publish-success-dialog";
+
 export function QuestionBankPage({
   initialSubjectId = "",
   initialGrade = "",
@@ -21,7 +25,6 @@ export function QuestionBankPage({
     clearFilters,
     closeBuilder,
     currentFilters,
-    deleteQuestion,
     entrySelection,
     activeQuestion,
     editingValues,
@@ -31,10 +34,9 @@ export function QuestionBankPage({
     hasEnteredBank,
     isBuilderOpen,
     lastValidationErrors,
-    likedQuestionIds,
     myQuestions,
-    openBulkImport,
     openCreateBuilder,
+    openBulkImport,
     openEditBuilder,
     publishSuccessDialogOpen,
     resetEntrySelection,
@@ -59,9 +61,16 @@ export function QuestionBankPage({
       : undefined,
   );
 
+  const resultQuestions =
+    filteredQuestions.length > 0 ? filteredQuestions : myQuestions;
+  const visibleQuestions = resultQuestions.slice(0, 3);
+  const previewQuestion =
+    activeQuestion ?? resultQuestions[0] ?? myQuestions[0] ?? null;
+  const myQuestionCount = myQuestions.length;
+
   return (
-    <div className="bg-[#fafafa] pb-10">
-      <div className="mx-auto max-w-[1184px] px-4 pt-5 sm:px-6 sm:pt-[28px]">
+    <div className="bg-[#fafafa] pb-[32px]">
+      <div className="mx-auto max-w-[1184px] px-[18px] pt-[14px]">
         {!hasEnteredBank ? (
           <QuestionBankEntryPanel
             entryGrade={entrySelection.grade}
@@ -70,7 +79,9 @@ export function QuestionBankPage({
             gradeOptions={gradeOptions}
             onEnter={() =>
               router.push(
-                `/teacher/question-bank/${encodeURIComponent(entrySelection.subjectId)}/${encodeURIComponent(entrySelection.grade)}`,
+                `/teacher/question-bank/${encodeURIComponent(
+                  entrySelection.subjectId,
+                )}/${encodeURIComponent(entrySelection.grade)}`,
               )
             }
             onGradeSelect={(value) => updateEntrySelection({ grade: value })}
@@ -79,73 +90,55 @@ export function QuestionBankPage({
             }
           />
         ) : (
-          <QuestionBankActivePanel
-            currentFilters={currentFilters}
-            entryGrade={entrySelection.grade}
-            entrySubject={entrySelection.subject}
-            gradeOptions={gradeOptions}
-            onChangeFilters={updateFilters}
-            onClearFilters={clearFilters}
-            onCreateQuestion={openCreateBuilder}
-            onOpenBulkImport={openBulkImport}
-            onResetSelection={() => {
-              resetEntrySelection();
-              router.push("/teacher/question-bank");
-            }}
-            selectedScopeCount={summary.selectedScopeCount}
-            subjectOptions={subjectOptions}
-            topicOptions={topicOptions}
-          />
+          <div className="space-y-[24px]">
+            <QuestionBankFigmaHero
+              onCreateQuestion={openCreateBuilder}
+              totalQuestions={summary.selectedScopeCount}
+            />
+            <QuestionBankFigmaControls
+              currentFilters={currentFilters}
+              entryGrade={entrySelection.grade}
+              entrySubject={entrySelection.subject}
+              onClearFilters={clearFilters}
+              onOpenBulkImport={openBulkImport}
+              onResetSelection={() => {
+                resetEntrySelection();
+                router.push("/teacher/question-bank");
+              }}
+              onUpdateFilters={updateFilters}
+              topicOptions={topicOptions}
+            />
+
+            {toastMessage ? (
+              <div className="rounded-[10px] border border-[#e7ebf1] bg-white px-[12px] py-[8px] text-[11px] font-medium text-[#4b5563]">
+                {toastMessage}
+              </div>
+            ) : null}
+
+            {selectedQuestionIds.length > 0 ? (
+              <QuestionBankBulkToolbar
+                count={selectedQuestionIds.length}
+                onClear={clearQuestionSelection}
+                onSendToExam={() => sendQuestionsToExam(selectedQuestionIds)}
+              />
+            ) : null}
+
+            <QuestionBankFigmaResults
+              activeQuestionId={activeQuestion?.id ?? null}
+              getQuestionHeartCount={getQuestionHeartCount}
+              myQuestionCount={myQuestionCount}
+              onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
+              onEditQuestion={openEditBuilder}
+              onOpenQuestion={setActiveQuestionId}
+              onToggleLike={toggleQuestionLike}
+              onToggleSelection={toggleQuestionSelection}
+              previewQuestion={previewQuestion}
+              questions={visibleQuestions}
+              selectedQuestionIds={selectedQuestionIds}
+            />
+          </div>
         )}
       </div>
-
-      {toastMessage ? (
-        <div className="rounded-2xl border border-[#e5e7eb] bg-white px-4 py-3 text-sm font-medium text-[#374151] shadow-sm">
-          {toastMessage}
-        </div>
-      ) : null}
-
-      {hasEnteredBank ? (
-        <>
-          <QuestionBankBulkToolbar
-            count={selectedQuestionIds.length}
-            onClear={clearQuestionSelection}
-            onSendToExam={() => sendQuestionsToExam(selectedQuestionIds)}
-          />
-
-          <QuestionBankMySection
-            activeQuestionId={activeQuestion?.id ?? null}
-            getQuestionHeartCount={getQuestionHeartCount}
-            likedQuestionIds={likedQuestionIds}
-            myQuestionCount={summary.myQuestionCount}
-            myQuestions={myQuestions}
-            onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
-            onCreateQuestion={openCreateBuilder}
-            onDeleteQuestion={deleteQuestion}
-            onEditQuestion={openEditBuilder}
-            onOpenQuestion={setActiveQuestionId}
-            onToggleQuestionSelection={toggleQuestionSelection}
-            onToggleLike={toggleQuestionLike}
-            selectedQuestionIds={selectedQuestionIds}
-          />
-
-          <QuestionBankAllSection
-            activeQuestion={activeQuestion}
-            activeQuestionId={activeQuestion?.id ?? null}
-            filteredQuestions={filteredQuestions}
-            getQuestionHeartCount={getQuestionHeartCount}
-            likedQuestionIds={likedQuestionIds}
-            onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
-            onCreateQuestion={openCreateBuilder}
-            onDeleteQuestion={deleteQuestion}
-            onEditQuestion={openEditBuilder}
-            onOpenQuestion={setActiveQuestionId}
-            onToggleQuestionSelection={toggleQuestionSelection}
-            onToggleLike={toggleQuestionLike}
-            selectedQuestionIds={selectedQuestionIds}
-          />
-        </>
-      ) : null}
 
       {isBuilderOpen ? (
         <QuestionBuilderForm

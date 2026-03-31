@@ -79,3 +79,29 @@ export const GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE = gql`
     }
   }
 `;
+export const GET_EXAM_BY_SCHOOL_ID = gql`
+  query GetExamBySchoolId($schoolId: String!) {
+    getExamBySchoolId(schoolId: $schoolId) {
+      id
+      grade
+      subjectId
+      topic
+      title
+      date
+      location
+      duration
+      variation
+      testIds
+      openExerciseIds
+      notes
+      score
+      usageCount
+      isActive
+      needpermission
+      schoolId
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
