@@ -35,7 +35,8 @@ export function SchoolShell({
   const mobileShellRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setMobileNavOpen(false);
+    const id = window.setTimeout(() => setMobileNavOpen(false), 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   useEffect(() => {
