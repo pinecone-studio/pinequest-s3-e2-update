@@ -1,94 +1,107 @@
 "use client";
 
-import { ChevronsRightLeft, FileUp, Sparkles } from "lucide-react";
-import type { QuestionFilters as QuestionFiltersType } from "../types";
-import { QuestionFilters } from "./question-filters";
+import type { Question, QuestionDifficulty } from "../types";
+
+const difficultyLabelMap: Record<QuestionDifficulty, string> = {
+  easy: "Хялбар",
+  medium: "Дунд зэрэг",
+  hard: "Хэцүү",
+};
 
 type QuestionBankActivePanelProps = {
-  currentFilters: QuestionFiltersType;
-  entryGrade: string;
-  entrySubject: string;
-  gradeOptions: string[];
-  onChangeFilters: (partial: Partial<QuestionFiltersType>) => void;
-  onClearFilters: () => void;
-  onCreateQuestion: () => void;
-  onOpenBulkImport: () => void;
-  onResetSelection: () => void;
-  selectedScopeCount: number | null;
-  subjectOptions: string[];
-  topicOptions: string[];
+  question: Question | null;
 };
 
 export function QuestionBankActivePanel({
-  currentFilters,
-  entryGrade,
-  entrySubject,
-  gradeOptions,
-  onChangeFilters,
-  onClearFilters,
-  onCreateQuestion,
-  onOpenBulkImport,
-  onResetSelection,
-  selectedScopeCount,
-  subjectOptions,
-  topicOptions,
+  question,
 }: QuestionBankActivePanelProps) {
+  if (!question) {
+    return (
+      <section className="min-h-[527px] w-[381px] rounded-[10px] border border-[#7DC8FF] bg-[#F5F5F5] px-[22px] py-[27px]" />
+    );
+  }
+
+  const metaItems = [
+    ["Сургууль", "21"],
+    ["Багш", question.teacherName ?? "Ц.Цэвээнжав"],
+    ["Анги", question.grade],
+    ["Хичээл", question.subject],
+    ["Сэдэв", question.subtopic?.trim() || question.topic],
+    ["Оноо", `${question.points}`],
+    ["Ашигласан тоо", `${question.usageCount}`],
+    ["Шинэчлэсэн", question.updatedAt],
+  ];
+
   return (
-    <section className="rounded-[28px] border border-[#e7e9ee] bg-white px-5 py-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:px-6 xl:min-w-0 xl:flex-1">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eef4ff] text-[#355caa]">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold tracking-[-0.02em] text-[#111827]">
-              Системийн сан
-            </h2>
-            <p className="text-sm leading-6 text-[#6b7280]">
-              Одоогийн орчин: {entrySubject} • {entryGrade}
-              {selectedScopeCount !== null ? ` • ${selectedScopeCount} асуулт` : ""}
-            </p>
-          </div>
-        </div>
+    <section className="min-h-[527px] w-[381px] rounded-[10px] border border-[#7DC8FF] bg-[#F5F5F5] px-[22px] py-[27px]">
+      <p className="text-[14px] font-normal uppercase leading-[17px] text-[#7B7B7B]">
+        АСУУЛТЫН ДЭЛГЭРЭНГҮЙ
+      </p>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <button
-            className="inline-flex h-11 items-center justify-center rounded-xl border border-[#dbe4f0] bg-white px-4 text-sm font-medium text-[#355caa] transition hover:border-[#bfd2f6] hover:bg-[#f8fbff]"
-            onClick={onResetSelection}
-            type="button"
-          >
-            <ChevronsRightLeft className="mr-2 h-4 w-4" />
-            Сонголт солих
-          </button>
-          <button
-            className="inline-flex h-11 items-center justify-center rounded-xl border border-[#dbe4f0] bg-white px-4 text-sm font-medium text-[#355caa] transition hover:border-[#bfd2f6] hover:bg-[#f8fbff]"
-            onClick={onOpenBulkImport}
-            type="button"
-          >
-            <FileUp className="mr-2 h-4 w-4" />
-            Bulk import
-          </button>
-          <button
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937] active:translate-y-px"
-            onClick={onCreateQuestion}
-            type="button"
-          >
-            + Асуулт нэмэх
-          </button>
-        </div>
+      <div className="mt-[16px] flex flex-wrap gap-x-[8px] gap-y-[5px]">
+        <TinyChip tone="filled">Нэгтгэсэн</TinyChip>
+        <TinyChip tone="outline">
+          {question.questionType === "multiple_choice"
+            ? "Сонгох асуулт"
+            : "Автомат үнэлгээ"}
+        </TinyChip>
+        <TinyChip tone="outline">{difficultyLabelMap[question.difficulty]}</TinyChip>
+      </div>
 
-        <div className="border-t border-[#edf1f5] pt-6">
-          <QuestionFilters
-            embedded
-            filters={currentFilters}
-            gradeOptions={gradeOptions}
-            onChange={onChangeFilters}
-            onClear={onClearFilters}
-            subjectOptions={subjectOptions}
-            topicOptions={topicOptions}
-          />
-        </div>
+      <h3 className="mt-[18px] text-[16px] font-medium leading-[20px] text-[#323232]">
+        {question.title || "Квадрат функцийн оройг олох"}
+      </h3>
+      <p className="mt-[10px] text-[12px] leading-[18px] text-[#7B7B7B]">
+        {question.content.prompt}
+      </p>
+
+      <div className="mt-[18px] space-y-[10px]">
+        {question.options.slice(0, 4).map((option, index) => (
+          <div
+            key={option.id}
+            className={`flex h-[38px] items-center rounded-[6px] border px-[16px] text-[12px] leading-[15px] ${
+              option.isCorrect
+                ? "border-[#7DC8FF] bg-[#75B8ED] text-[#122459]"
+                : "border-[#B8D9FF] bg-white text-[#122459]"
+            }`}
+          >
+            <span className="mr-[12px] shrink-0">{index + 1}.</span>
+            <span>{option.text}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-[18px] grid grid-cols-[1fr_auto] gap-x-[22px] gap-y-[12px] bg-[#DCEEFF] px-[20px] py-[18px]">
+        {metaItems.map(([label, value]) => (
+          <div
+            key={label}
+            className="contents"
+          >
+            <span className="text-[12px] leading-[15px] text-[#23407D]">{label}</span>
+            <span className="text-[12px] leading-[15px] text-[#23407D]">{value}</span>
+          </div>
+        ))}
       </div>
     </section>
+  );
+}
+
+function TinyChip({
+  children,
+  tone,
+}: {
+  children: React.ReactNode;
+  tone: "filled" | "outline";
+}) {
+  return (
+    <span
+      className={`inline-flex h-[16px] items-center rounded-[5px] px-[14px] text-[8px] font-normal leading-[10px] ${
+        tone === "filled"
+          ? "bg-[#AED5FF] text-[#122459]"
+          : "border border-[#AED5FF] bg-[#F5F5F5] text-[#122459]"
+      }`}
+    >
+      {children}
+    </span>
   );
 }

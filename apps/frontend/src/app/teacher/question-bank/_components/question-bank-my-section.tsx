@@ -35,25 +35,22 @@ export function QuestionBankMySection({
   selectedQuestionIds,
 }: QuestionBankMySectionProps) {
   return (
-    <section className="rounded-[28px] border border-[#e7e9ee] bg-white px-5 py-5 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:px-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <section className="rounded-[12px] border border-[#60a5fa] bg-[#fbfdff] px-[12px] py-[10px]">
+      <div className="flex items-start justify-between gap-[12px] border-b border-dashed border-[#93c5fd] pb-[6px]">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
-            Миний хэсэг
-          </p>
-          <h2 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[#111827]">
+          <h2 className="text-[13px] font-medium leading-[18px] text-[#355caa]">
             Миний үүсгэсэн асуултууд
           </h2>
-          <p className="mt-1 text-sm leading-6 text-[#6b7280]">
+          <p className="mt-[2px] text-[10px] leading-[14px] text-[#7a8fb4]">
             Таны өөрөө нэмсэн, засварлах боломжтой асуултууд.
           </p>
         </div>
-        <div className="inline-flex items-center rounded-full border border-[#dbe4f0] bg-[#f8fbff] px-3 py-1.5 text-sm font-medium text-[#355caa]">
+        <div className="pt-[1px] text-[12px] font-medium leading-[18px] text-[#355caa]">
           {myQuestionCount} асуулт
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-[10px]">
         {myQuestions.length > 0 ? (
           <QuestionList
             activeQuestionId={activeQuestionId}
@@ -70,7 +67,7 @@ export function QuestionBankMySection({
             selectedQuestionIds={selectedQuestionIds}
           />
         ) : (
-          <div className="rounded-2xl border border-dashed border-[#dbe4f0] bg-[#fbfdff] px-5 py-8 text-sm text-[#6b7280]">
+          <div className="flex h-[48px] items-center justify-center rounded-[10px] border border-dashed border-[#93c5fd] bg-white text-[12px] font-medium text-[#6b7da1]">
             Одоогоор таны үүсгэсэн асуулт алга байна.
           </div>
         )}

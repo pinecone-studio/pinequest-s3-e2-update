@@ -38,10 +38,11 @@ export function QuestionList({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {questions.map((question) => (
+    <div className="space-y-[8px]">
+      {questions.slice(0, 3).map((question, index) => (
         <QuestionCard
           key={question.id}
+          compactAction={index === 2}
           question={question}
           heartCount={getQuestionHeartCount(question)}
           isActive={question.id === activeQuestionId}
