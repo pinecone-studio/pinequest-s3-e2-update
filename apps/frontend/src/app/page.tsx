@@ -32,8 +32,8 @@ export default async function Home({
     typeof raw === "string" ? raw : Array.isArray(raw) ? raw[0] : undefined;
 
   return (
-    <main className="h-screen bg-[#f4f4ee] text-[#1f242b]">
-      <div className="mx-auto h-full w-378 max-w-full px-10 py-8">
+    <main className="min-h-screen bg-[#f4f4ee] text-[#1f242b]">
+      <div className="mx-auto min-h-screen w-full max-w-[94.5rem] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-8">
         {loginError === "login" ? (
           <p className="mb-4 inline-flex rounded-xl border border-[#f3c2c2] bg-[#fff1f1] px-4 py-2 text-2 font-medium text-[#8a1f1f]">
             Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.
@@ -45,9 +45,9 @@ export default async function Home({
           </p>
         ) : null}
 
-        <section className="grid h-full items-start gap-0 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="max-w-190">
-            <header className="inline-flex justify-center items-center gap-2">
+        <section className="grid min-h-0 items-start gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+          <div className="max-w-xl lg:max-w-190">
+            <header className="inline-flex items-center justify-center gap-2 sm:justify-start">
               <Image
                 src="/bee.png"
                 alt="Bee logo"
@@ -61,7 +61,7 @@ export default async function Home({
               </p>
             </header>
 
-            <div className="mt-12 flex items-center gap-4">
+            <div className="mt-8 flex flex-wrap items-center gap-3 sm:mt-12 sm:gap-4">
               <div className="flex items-center -space-x-3">
                 {[
                   "/angarag.jpg",
@@ -85,19 +85,18 @@ export default async function Home({
               </p>
             </div>
 
-            <h1 className="mt-10 text-[42px] font-black leading-tight tracking-tight text-[#0f141b]">
+            <h1 className="mt-8 text-3xl font-black leading-tight tracking-tight text-[#0f141b] sm:mt-10 sm:text-4xl lg:text-[42px]">
               UPDATE Шалгалтын
               <br />
               Нэгдсэн Платформ
             </h1>
-            <p className="mt-6 text-2 leading-relaxed text-[#2d333b]">
-              Шалгалт бэлтгэх, авах, үнэлэх бүх процессыг
-              <br />
-              илүү ойлгомжтой, хурдан, найдвартай болгоно.
+            <p className="mt-4 max-w-xl text-2 leading-relaxed text-[#2d333b] sm:mt-6">
+              Шалгалт бэлтгэх, авах, үнэлэх бүх процессыг илүү ойлгомжтой, хурдан,
+              найдвартай болгоно.
             </p>
 
-            <article className="mt-10 h-60 w-125 rounded-[14px] border border-[#efe6b4] bg-[#fefce6] p-6 shadow-[0_0_12px_rgba(255,197,0,0.44)] transition hover:border-[#ffcf4d] hover:shadow-[0_0_16px_rgba(255,197,0,0.56)]">
-              <div className="flex items-start gap-5">
+            <article className="mt-8 w-full max-w-lg rounded-[14px] border border-[#efe6b4] bg-[#fefce6] p-4 shadow-[0_0_12px_rgba(255,197,0,0.44)] transition hover:border-[#ffcf4d] hover:shadow-[0_0_16px_rgba(255,197,0,0.56)] sm:mt-10 sm:p-6 lg:max-w-125 lg:min-h-[15rem]">
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-5">
                 <Image
                   src="/gana.jpg"
                   alt="Teacher testimonial"
@@ -110,7 +109,7 @@ export default async function Home({
                     Багш: С.Гантүшиг
                   </p>
                   <p className="mt-1 text-2 text-[#2f3640]">16-р сургууль</p>
-                  <div className="mt-3 h-px w-78 bg-[#c8c4a8]" />
+                  <div className="mt-3 h-px max-w-xs bg-[#c8c4a8] sm:w-78" />
                 </div>
               </div>
               <p className="mt-4 text-2 leading-snug text-[#14181f]">
@@ -121,24 +120,34 @@ export default async function Home({
               </p>
             </article>
 
-            <div className="mt-10 flex items-center gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 href="/school"
-                className="inline-flex h-14 w-40 items-center justify-center rounded-lg bg-[#ffdf00] p-2 text-2 font-semibold text-[#1f2227] transition hover:brightness-95"
+                className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-[#ffdf00] p-2 text-2 font-semibold text-[#1f2227] transition hover:brightness-95 sm:h-14 sm:w-40"
               >
                 Сургууль
               </Link>
               <Link
                 href="/teacher"
-                className="inline-flex h-14 w-40 items-center justify-center rounded-lg bg-[#ffdf00] p-2 text-2 font-semibold text-[#1f2227] transition hover:brightness-95"
+                className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-[#ffdf00] p-2 text-2 font-semibold text-[#1f2227] transition hover:brightness-95 sm:h-14 sm:w-40"
               >
                 Багш
               </Link>
             </div>
           </div>
 
-          <div className="relative -ml-45 mt-20 flex min-h-190 items-start justify-start">
-            <div className="relative h-90 w-140">
+          <div className="mt-6 w-full lg:mt-20 lg:-ml-45 lg:min-h-190">
+            <div className="flex justify-center px-2 lg:hidden">
+              <Image
+                src="/path.png"
+                alt="Path"
+                width={780}
+                height={420}
+                priority
+                className="h-auto max-h-52 w-full max-w-lg object-contain sm:max-h-64"
+              />
+            </div>
+            <div className="relative mx-auto hidden h-90 w-140 max-w-full lg:mx-0 lg:block">
               <Image
                 src="/path.png"
                 alt="Path"
