@@ -29,5 +29,6 @@ export const queryTypeDefs = /* GraphQL */ `
       input: ClassByTeacherAndSchoolIdInput!
     ): [Class!]
     getOpenExerciesBySubjectAndGrade(input: OpenExerciesInput): [OpenExercies]
+    getExamBySchoolId(schoolId: String!): [Exam!]
   }
 `;

@@ -15,21 +15,19 @@ function parseIds(value: unknown): string[] {
   }
 }
 
-export const getExamById = async (
+export const getExamBySchoolId = async (
   _parent: unknown,
-  args: { examId: string },
+  args: { schoolId: string },
   ctx: GraphQLUserContext,
 ) => {
   const rows = await ctx.db
     .select()
     .from(examTable)
-    .where(eq(examTable.id, args.examId));
+    .where(eq(examTable.schoolId, args.schoolId));
 
-  const row = rows[0];
-  if (!row) return null;
-  return {
+  return rows.map((row) => ({
     ...row,
     testIds: parseIds((row as any).testIds),
     openExerciseIds: parseIds((row as any).openExerciseIds),
-  };
+  }));
 };
