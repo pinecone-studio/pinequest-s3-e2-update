@@ -10,7 +10,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { IoChevronBack } from "react-icons/io5";
 import { AuthButton } from "@/app/components/auth/auth-button";
-import { GoogleIcon } from "@/app/components/auth/google-icon";
 import {
 	LOGIN_INTENT_QUERY_KEY,
 	absoluteAppUrlForPath,
@@ -29,6 +28,10 @@ const inputClass =
 	"h-14 w-full rounded-[14px] border border-gray-200 bg-white px-4 text-base text-gray-900 shadow-sm " +
 	"placeholder:text-gray-400 focus:border-[#29B6FF] focus:outline-none focus:ring-2 focus:ring-[#29B6FF]/30 " +
 	"disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500";
+
+/** Дэлгэц дээр төвлөрсөн нэвтрэх самбарын хэмжээ */
+const authPanelClass =
+	"box-border flex h-[619px] w-[540px] max-h-[min(619px,calc(100dvh-2rem))] max-w-full flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)]";
 
 export function SignInForm() {
 	const searchParams = useSearchParams();
@@ -166,12 +169,12 @@ export function SignInForm() {
 	if (!isLoaded) {
 		return (
 			<div
-				className="flex min-h-screen flex-col bg-[#f7f7f7]"
+				className="flex min-h-screen flex-col items-center justify-center bg-[#f4f4ee] p-4"
 				aria-busy="true"
 				aria-label="Уншиж байна"
 			>
-				<div className="mx-auto w-full max-w-md flex-1 px-5 py-6">
-					<div className="h-96 animate-pulse rounded-2xl bg-gray-200/70" />
+				<div className={`${authPanelClass} p-8`}>
+					<div className="h-full animate-pulse rounded-xl bg-gray-100" />
 				</div>
 			</div>
 		);
@@ -179,165 +182,173 @@ export function SignInForm() {
 
 	if (isSignedIn) {
 		return (
-			<div className="flex min-h-screen flex-col items-center justify-center bg-[#f7f7f7] px-5">
-				<p className="text-center text-sm text-gray-600">
-					Та аль хэдийн нэвтэрсэн байна. Шилжиж байна…
-				</p>
+			<div className="flex min-h-screen flex-col items-center justify-center bg-[#f4f4ee] p-4">
+				<div className={`${authPanelClass} items-center justify-center px-8`}>
+					<p className="text-center text-sm text-gray-600">
+						Та аль хэдийн нэвтэрсэн байна. Шилжиж байна…
+					</p>
+				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex min-h-screen flex-col bg-[#f7f7f7]">
-			<header className="relative flex h-14 shrink-0 items-center justify-center px-5 pt-[env(safe-area-inset-top)]">
-				<Link
-					href="/"
-					className="absolute left-5 flex h-10 w-10 items-center justify-center rounded-full text-gray-800 transition hover:bg-gray-200/80"
-					aria-label="Буцах"
-				>
-					<IoChevronBack className="h-6 w-6" aria-hidden />
-				</Link>
-				<h1 className="text-lg font-bold tracking-tight text-gray-900">
-					Нэвтрэх
-				</h1>
-			</header>
+		<div className="flex min-h-screen flex-col items-center justify-center bg-[#f4f4ee] p-4">
+			<div className={authPanelClass}>
+				<header className="flex shrink-0 items-center px-8 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)]">
+					<Link
+						href="/"
+						className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-800 transition hover:bg-gray-200/80"
+						aria-label="Буцах"
+					>
+						<IoChevronBack className="h-6 w-6" aria-hidden />
+					</Link>
+					<h1 className="min-w-0 flex-1 text-center text-lg font-bold tracking-tight text-gray-900">
+						Нэвтрэх
+					</h1>
+					<span className="inline-block h-10 w-10 shrink-0" aria-hidden />
+				</header>
 
-			<div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-10">
-				<div className="flex flex-1 flex-col justify-center">
-					<form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
-						<div>
-							<label htmlFor="signin-identifier" className="sr-only">
-								Имэйл эсвэл утас
-							</label>
-							<input
-								id="signin-identifier"
-								name="identifier"
-								type="text"
-								autoComplete="username"
-								inputMode="email"
-								placeholder="Имэйл эсвэл утасны дугаар"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								className={inputClass}
-								required
-								disabled={loading}
-								aria-invalid={Boolean(emailError)}
-								aria-describedby={
-									emailError ? "signin-identifier-error" : undefined
-								}
-							/>
-							{emailError ? (
-								<p
-									id="signin-identifier-error"
-									className="mt-1.5 text-sm text-red-600"
-									role="alert"
-								>
-									{emailError}
-								</p>
-							) : null}
-						</div>
-
-						<div>
-							<label htmlFor="signin-password" className="sr-only">
-								Нууц үг
-							</label>
-							<div className="relative">
+				<div className="flex min-h-0 flex-1 flex-col px-8 pb-8">
+					<div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto py-2">
+						<form
+							className="flex flex-col gap-4"
+							onSubmit={onSubmit}
+							noValidate
+						>
+							<div>
+								<label htmlFor="signin-identifier" className="sr-only">
+									Имэйл эсвэл утас
+								</label>
 								<input
-									id="signin-password"
-									name="password"
-									type={showPassword ? "text" : "password"}
-									autoComplete="current-password"
-									placeholder="Нууц үг"
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									className={`${inputClass} pr-12`}
+									id="signin-identifier"
+									name="identifier"
+									type="text"
+									autoComplete="username"
+									inputMode="email"
+									placeholder="Имэйл эсвэл утасны дугаар"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									className={inputClass}
 									required
 									disabled={loading}
-									aria-invalid={Boolean(passwordError)}
+									aria-invalid={Boolean(emailError)}
 									aria-describedby={
-										passwordError ? "signin-password-error" : undefined
+										emailError ? "signin-identifier-error" : undefined
 									}
 								/>
-								<button
-									type="button"
-									className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
-									onClick={() => setShowPassword((v) => !v)}
-									disabled={loading}
-									aria-label={
-										showPassword ? "Нууц үг нуух" : "Нууц үг харуулах"
-									}
-								>
-									{showPassword ? (
-										<AiOutlineEyeInvisible className="h-5 w-5" aria-hidden />
-									) : (
-										<AiOutlineEye className="h-5 w-5" aria-hidden />
-									)}
-								</button>
+								{emailError ? (
+									<p
+										id="signin-identifier-error"
+										className="mt-1.5 text-sm text-red-600"
+										role="alert"
+									>
+										{emailError}
+									</p>
+								) : null}
 							</div>
-							{passwordError ? (
-								<p
-									id="signin-password-error"
-									className="mt-1.5 text-sm text-red-600"
-									role="alert"
-								>
-									{passwordError}
+
+							<div>
+								<label htmlFor="signin-password" className="sr-only">
+									Нууц үг
+								</label>
+								<div className="relative">
+									<input
+										id="signin-password"
+										name="password"
+										type={showPassword ? "text" : "password"}
+										autoComplete="current-password"
+										placeholder="Нууц үг"
+										value={password}
+										onChange={(e) => setPassword(e.target.value)}
+										className={`${inputClass} pr-12`}
+										required
+										disabled={loading}
+										aria-invalid={Boolean(passwordError)}
+										aria-describedby={
+											passwordError ? "signin-password-error" : undefined
+										}
+									/>
+									<button
+										type="button"
+										className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+										onClick={() => setShowPassword((v) => !v)}
+										disabled={loading}
+										aria-label={
+											showPassword ? "Нууц үг нуух" : "Нууц үг харуулах"
+										}
+									>
+										{showPassword ? (
+											<AiOutlineEyeInvisible className="h-5 w-5" aria-hidden />
+										) : (
+											<AiOutlineEye className="h-5 w-5" aria-hidden />
+										)}
+									</button>
+								</div>
+								{passwordError ? (
+									<p
+										id="signin-password-error"
+										className="mt-1.5 text-sm text-red-600"
+										role="alert"
+									>
+										{passwordError}
+									</p>
+								) : null}
+							</div>
+
+							{formError ? (
+								<p className="text-sm text-red-600" role="alert">
+									{formError}
 								</p>
 							) : null}
-						</div>
 
-						{formError ? (
-							<p className="text-sm text-red-600" role="alert">
-								{formError}
-							</p>
-						) : null}
+							<AuthButton
+								type="submit"
+								disabled={loading}
+								className={`mt-1 h-14 rounded-[14px] text-base cursor-pointer font-bold ${primaryBlue}`}
+							>
+								{fetching ? "Нэвтэрч байна…" : "Нэвтрэх"}
+							</AuthButton>
+						</form>
+
+						<Link
+							href="/forgot-password"
+							className="mt-5 block text-center text-sm font-medium text-gray-600 underline-offset-2 hover:text-gray-900 hover:underline"
+						>
+							Нууц үгээ мартсан уу?
+						</Link>
 
 						<AuthButton
-							type="submit"
+							type="button"
+							variant="social"
 							disabled={loading}
-							className={`mt-1 h-14 rounded-[14px] text-base cursor-pointer font-bold ${primaryBlue}`}
+							onClick={onGoogle}
+							className="cursor-pointer mt-6 h-14 rounded-[14px] border-[#29B6FF] bg-white text-base font-semibold text-[#29B6FF] shadow-none hover:bg-[#f0f9ff]"
 						>
-							{fetching ? "Нэвтэрч байна…" : "Нэвтрэх"}
+							Google-ээр нэвтрэх
 						</AuthButton>
-					</form>
 
-					<Link
-						href="/forgot-password"
-						className="mt-5 block text-center text-sm font-medium text-gray-600 underline-offset-2 hover:text-gray-900 hover:underline"
-					>
-						Нууц үгээ мартсан уу?
-					</Link>
+						<Link
+							href={signUpHref}
+							className="mt-8 block text-center text-base font-bold text-gray-800 underline-offset-2 hover:underline"
+						>
+							Бүртгүүлэх
+						</Link>
 
-					<AuthButton
-						type="button"
-						variant="social"
-						disabled={loading}
-						onClick={onGoogle}
-						className="cursor-pointer mt-6 h-14 rounded-[14px] border-[#29B6FF] bg-white text-base font-semibold text-[#29B6FF] shadow-none hover:bg-[#f0f9ff]"
-					>
-						<GoogleIcon />
-						Google-ээр нэвтрэх
-					</AuthButton>
-
-					<Link
-						href={signUpHref}
-						className="mt-8 block text-center text-base font-bold text-gray-800 underline-offset-2 hover:underline"
-					>
-						Бүртгүүлэх
-					</Link>
+						<div className="mt-8 flex items-center justify-center gap-2 pb-[env(safe-area-inset-bottom)]">
+							<Image
+								src="/bee.png"
+								alt=""
+								width={40}
+								height={40}
+								className="h-9 w-9 object-contain"
+							/>
+							<span className="text-lg font-black tracking-tight text-[#11161d]">
+								UPDATE
+							</span>
+						</div>
+					</div>
 				</div>
-
-				<footer className="mt-auto flex shrink-0 items-center justify-center gap-2 pt-10 pb-[env(safe-area-inset-bottom)]">
-					<Image
-						src="/bee.png"
-						alt=""
-						width={40}
-						height={40}
-						className="h-9 w-9 object-contain"
-					/>
-					<span className="text-lg font-black tracking-tight text-[#11161d]">
-						UPDATE
-					</span>
-				</footer>
 			</div>
 		</div>
 	);
