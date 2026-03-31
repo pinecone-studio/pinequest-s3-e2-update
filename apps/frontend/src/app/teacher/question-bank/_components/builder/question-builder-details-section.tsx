@@ -7,10 +7,16 @@ import type {
 } from "../../_lib/types";
 import {
   BuilderField,
-  BuilderSelectField,
   builderInputClassName,
 } from "./question-builder-form-fields";
 import { NationalScriptAssist } from "../shared/national-script-assist";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type QuestionBuilderDetailsSectionProps = {
   gradeOptions: string[];
@@ -41,58 +47,72 @@ export function QuestionBuilderDetailsSection({
     SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [];
 
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
-      <div className="grid gap-4 xl:grid-cols-2">
-        <BuilderSelectField
-          error={validationErrors?.grade}
-          label="Анги"
-          onValueChange={onGradeChange}
-          options={gradeOptions.map((grade) => ({
-            label: grade,
-            value: grade,
-          }))}
-          placeholder="Анги сонгоно уу."
-          value={values.grade}
+    <section>
+      <div className="grid gap-3 lg:grid-cols-[130px_130px_minmax(220px,1fr)_minmax(260px,1fr)]">
+        <input
+          className="h-12 w-full rounded-2xl border border-[#6cb4ff] bg-[#eef6ff] px-4 text-[13px] font-semibold text-[#183153] outline-none"
+          list="question-bank-subjects"
+          onChange={(event) => onSubjectChange(event.target.value)}
+          placeholder="Математик"
+          value={values.subject}
         />
+        <datalist id="question-bank-subjects">
+          {subjectOptions.map((subject) => (
+            <option key={subject} value={subject} />
+          ))}
+        </datalist>
 
-        <BuilderField error={validationErrors?.title} label="Асуултын гарчиг">
-          <input
-            className={builderInputClassName}
-            onChange={(event) => onTitleChange(event.target.value)}
-            placeholder="Жишээ: Тригонометрийн уламжлал бодох"
-            value={values.title}
-          />
-        </BuilderField>
-
-        <BuilderField error={validationErrors?.subject} label="Хичээл">
-          <input
-            className={builderInputClassName}
-            list="question-bank-subjects"
-            onChange={(event) => onSubjectChange(event.target.value)}
-            placeholder="Математик"
-            value={values.subject}
-          />
-          <datalist id="question-bank-subjects">
-            {subjectOptions.map((subject) => (
-              <option key={subject} value={subject} />
+        <Select onValueChange={onGradeChange} value={values.grade}>
+          <SelectTrigger className="h-12 rounded-2xl border-[#6cb4ff] bg-[#eef6ff] text-[13px] font-semibold text-[#183153] focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
+            <SelectValue placeholder="10-р анги" />
+          </SelectTrigger>
+          <SelectContent>
+            {gradeOptions.map((grade) => (
+              <SelectItem key={grade} value={grade}>
+                {grade}
+              </SelectItem>
             ))}
-          </datalist>
-        </BuilderField>
-      </div>
+          </SelectContent>
+        </Select>
 
-      <div className="mt-4">
-        <BuilderSelectField
+        <Select
           disabled={!subtopicOptions.length}
-          label="Дэд сэдэв"
           onValueChange={onSubtopicChange}
-          options={subtopicOptions.map((subtopic) => ({
-            label: subtopic,
-            value: subtopic,
-          }))}
-          placeholder="Хичээлээ сонгоно уу."
           value={values.subtopic}
+        >
+          <SelectTrigger className="h-12 rounded-2xl border-[#d3deef] focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
+            <SelectValue placeholder="Дэд сэдэв сонгоно уу." />
+          </SelectTrigger>
+          <SelectContent>
+            {subtopicOptions.map((subtopic) => (
+              <SelectItem key={subtopic} value={subtopic}>
+                {subtopic}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <input
+          className={builderInputClassName}
+          onChange={(event) => onTitleChange(event.target.value)}
+          placeholder="Асуултын гарчиг бичих"
+          value={values.title}
         />
       </div>
+
+      {validationErrors?.grade || validationErrors?.subject || validationErrors?.title ? (
+        <div className="mt-2 space-y-1">
+          {validationErrors?.grade ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">{validationErrors.grade}</p>
+          ) : null}
+          {validationErrors?.subject ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">{validationErrors.subject}</p>
+          ) : null}
+          {validationErrors?.title ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">{validationErrors.title}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-4">
         <BuilderField error={validationErrors?.prompt} label="Асуулгын текст">

@@ -23,13 +23,13 @@ export function QuestionBuilderTypeSection({
   supportsFormulaInput,
 }: QuestionBuilderTypeSectionProps) {
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section>
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-[#183153]">
+          <h3 className="text-[13px] font-semibold text-[#183153]">
             Асуултын төрөл
           </h3>
-          <p className="text-sm text-[#6d7f9c]">
+          <p className="text-[13px] text-[#6d7f9c]">
             Эхлээд үндсэн төрлөө сонгоод, дараа нь нэмэлт хэрэгцээгээ тэмдэглэнэ
             үү.
           </p>
@@ -55,7 +55,7 @@ export function QuestionBuilderTypeSection({
               onCheckedChange={(checked) => onFeatureToggle("formula", checked)}
             />
           ) : (
-            <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] p-4 text-sm text-[#6d7f9c]">
+            <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] p-4 text-[13px] text-[#6d7f9c]">
               Томьёоны нэмэлт оролт нь зөвхөн `Математик`, `Физик`, `Хими`
               хичээл дээр идэвхжинэ.
             </div>
@@ -92,8 +92,8 @@ function FeatureToggleCard({
         type="checkbox"
       />
       <div>
-        <p className="text-sm font-semibold text-[#183153]">{label}</p>
-        <p className="mt-1 text-sm leading-6 text-[#607391]">{description}</p>
+        <p className="text-[13px] font-semibold text-[#183153]">{label}</p>
+        <p className="mt-1 text-[13px] leading-6 text-[#607391]">{description}</p>
       </div>
     </label>
   );

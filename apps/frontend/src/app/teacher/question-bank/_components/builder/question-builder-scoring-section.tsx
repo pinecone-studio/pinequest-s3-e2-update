@@ -27,10 +27,10 @@ export function QuestionBuilderScoringSection({
   validationErrors,
 }: QuestionBuilderScoringSectionProps) {
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-[#183153]">Үнэлгээ</h3>
-        <p className="text-sm text-[#6d7f9c]">
+        <h3 className="text-[13px] font-semibold text-[#183153]">Үнэлгээ</h3>
+        <p className="text-[13px] text-[#6d7f9c]">
           Түвшин, оноо зэрэг үнэлгээтэй холбоотой тохиргоо.
         </p>
       </div>
