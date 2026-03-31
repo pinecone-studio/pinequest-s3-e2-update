@@ -23,13 +23,15 @@ export default function AdminTeachersPage() {
           <AddEmployeeDialog />
         </div>
         <ul className="divide-y divide-zinc-100">
-          {teachers.map((t) => (
+          {teachers.map((t, index) => (
             <li key={t.id} className="px-6 py-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-zinc-900">{t.name}</p>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    {t.specialty?.trim() || "-"}
+                  <p className="truncate text-sm font-semibold text-zinc-900">
+                    {index + 1}. {t.name}{" "}
+                    <span className="font-normal text-zinc-500">
+                      {t.specialty?.trim() || "-"}
+                    </span>
                   </p>
                 </div>
 

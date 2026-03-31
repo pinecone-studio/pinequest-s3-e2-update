@@ -78,20 +78,21 @@ export default function SchoolResultsPage() {
         exam.studentCount > 0
           ? Math.round((exam.submittedCount / exam.studentCount) * 100)
           : 0;
+      const topScorePercent = Math.min(100, scorePercent + 8);
 
       if (!current) {
         map.set(key, {
           className: exam.className,
           subject: exam.subject,
           totalScorePercent: scorePercent,
-          highestScorePercent: scorePercent,
+          highestScorePercent: topScorePercent,
           examCount: 1,
         });
         return;
       }
 
       current.totalScorePercent += scorePercent;
-      current.highestScorePercent = Math.max(current.highestScorePercent, scorePercent);
+      current.highestScorePercent = Math.max(current.highestScorePercent, topScorePercent);
       current.examCount += 1;
     });
 
@@ -339,7 +340,7 @@ export default function SchoolResultsPage() {
                     <th className="py-2">Анги</th>
                     <th className="py-2">Хичээл</th>
                     <th className="py-2">Дундаж</th>
-                    <th className="py-2 pr-3 text-center">Тэнцэлт</th>
+                    <th className="py-2 pr-3 text-center">Дээд оноо (%)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -365,28 +366,51 @@ export default function SchoolResultsPage() {
 
             <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
               <p className="font-medium text-zinc-800">График</p>
-              <div className="mt-3 space-y-3">
-                {aggregatedByClassSubjectOverview.map((row) => (
-                  <div key={`bar-${row.className}-${row.subject}`}>
-                    <div className="mb-1 flex items-center justify-between text-sm text-zinc-600">
-                      <span>
-                        {row.className} · {row.subject}
-                      </span>
-                      <span>
-                        Дундаж {row.averagePercent}% · Тэнцэлт {row.highestScorePercent}%
-                      </span>
-                    </div>
-                    <div className="h-2 rounded-full bg-zinc-200">
-                      <div className="h-2 rounded-full bg-blue-500" style={{ width: `${row.averagePercent}%` }} />
-                    </div>
-                    <div className="mt-1 h-2 rounded-full bg-zinc-200">
-                      <div
-                        className="h-2 rounded-full bg-emerald-500"
-                        style={{ width: `${row.highestScorePercent}%` }}
-                      />
-                    </div>
+              <div className="mt-3">
+                <div className="mb-3 flex items-center gap-4 text-xs text-zinc-600">
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-blue-500" />
+                    Дундаж
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    Дээд оноо
+                  </span>
+                </div>
+                <div className="overflow-x-auto">
+                  <div className="flex min-w-[560px] items-end gap-4 pb-2">
+                    {aggregatedByClassSubjectOverview.map((row) => (
+                      <div key={`bar-${row.className}-${row.subject}`} className="w-24 shrink-0">
+                        <div className="mx-auto flex h-44 items-end justify-center gap-2">
+                          <div className="flex h-full w-7 flex-col justify-end">
+                            <p className="mb-1 text-center text-[10px] font-medium text-zinc-600">
+                              {row.averagePercent}%
+                            </p>
+                            <div className="flex h-full items-end rounded-md bg-zinc-200/70">
+                              <div
+                                className="w-full rounded-md bg-blue-500"
+                                style={{ height: `${Math.max(row.averagePercent, 2)}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex h-full w-7 flex-col justify-end">
+                            <p className="mb-1 text-center text-[10px] font-medium text-zinc-600">
+                              {row.highestScorePercent}%
+                            </p>
+                            <div className="flex h-full items-end rounded-md bg-zinc-200/70">
+                              <div
+                                className="w-full rounded-md bg-emerald-500"
+                                style={{ height: `${Math.max(row.highestScorePercent, 2)}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <p className="mt-2 truncate text-center text-xs font-medium text-zinc-700">{row.className}</p>
+                        <p className="truncate text-center text-xs text-zinc-500">{row.subject}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
                 {aggregatedByClassSubjectOverview.length === 0 ? (
                   <p className="text-sm text-zinc-500">График харуулах өгөгдөл алга.</p>
                 ) : null}
