@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 type Variant = "primary" | "social";
 
@@ -23,7 +24,7 @@ export function AuthButton({
       : "border border-gray-300 bg-white text-gray-900 shadow-sm hover:bg-gray-50";
 
   return (
-    <button type={type} className={`${base} ${styles} ${className}`} {...props}>
+    <button type={type} className={twMerge(base, styles, className)} {...props}>
       {children}
     </button>
   );
