@@ -43,12 +43,12 @@ export function QuestionBuilderAnswerSection({
     : (values.options[0]?.id ?? "");
 
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-[#183153]">
+        <h3 className="text-[13px] font-semibold text-[#183153]">
           Хариултын тохиргоо
         </h3>
-        <p className="text-sm text-[#6d7f9c]">
+        <p className="text-[13px] text-[#6d7f9c]">
           {mode === "multiple_choice" ? "Сонгох асуултын" : "Задгай асуултын"}{" "}
           үндсэн талбарууд энд харагдана.
         </p>
@@ -94,13 +94,13 @@ export function QuestionBuilderAnswerSection({
           </div>
 
           {validationErrors?.options ? (
-            <p className="text-sm font-medium text-[#d34f4f]">
+            <p className="text-[13px] font-medium text-[#d34f4f]">
               {validationErrors.options}
             </p>
           ) : null}
 
           <button
-            className="inline-flex h-11 items-center rounded-2xl border border-[#d7e2f1] px-4 text-sm font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
+            className="inline-flex h-11 items-center rounded-2xl border border-[#d7e2f1] px-4 text-[13px] font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
             onClick={onAddOption}
             type="button"
           >
@@ -111,7 +111,7 @@ export function QuestionBuilderAnswerSection({
           {isNationalScript && activeOptionId ? (
             <div className="rounded-3xl border border-[#d7e3f4] bg-[#f7faff] p-4">
               <label className="block space-y-2">
-                <span className="text-sm font-semibold text-[#183153]">
+                <span className="text-[13px] font-semibold text-[#183153]">
                   Хөрвүүлсэн текст оруулах сонголт
                 </span>
                 <select

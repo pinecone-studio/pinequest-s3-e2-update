@@ -29,10 +29,10 @@ export function QuestionBuilderAdditionalSection({
   supportsFormulaInput,
 }: QuestionBuilderAdditionalSectionProps) {
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+    <section>
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-[#183153]">Нэмэлт оролт</h3>
-        <p className="text-sm text-[#6d7f9c]">
+        <h3 className="text-[13px] font-semibold text-[#183153]">Нэмэлт оролт</h3>
+        <p className="text-[13px] text-[#6d7f9c]">
           Зураг эсвэл томьёо хэрэгтэй гэж сонгосон үед доорх хэсгүүд автоматаар
           гарч ирнэ.
         </p>
@@ -43,10 +43,10 @@ export function QuestionBuilderAdditionalSection({
           {includesImage ? (
             <div className="rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
               <div className="mb-3">
-                <h3 className="text-base font-semibold text-[#183153]">
+                <h3 className="text-[13px] font-semibold text-[#183153]">
                   Зургийн хэсэг
                 </h3>
-                <p className="text-sm text-[#6d7f9c]">
+                <p className="text-[13px] text-[#6d7f9c]">
                   Асуултад зураг нэмэх бол эндээс upload хийнэ.
                 </p>
               </div>
@@ -61,10 +61,10 @@ export function QuestionBuilderAdditionalSection({
           {supportsFormulaInput && includesFormula ? (
             <div className="rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
               <div className="mb-3">
-                <h3 className="text-base font-semibold text-[#183153]">
+                <h3 className="text-[13px] font-semibold text-[#183153]">
                   Томьёоны хэсэг
                 </h3>
-                <p className="text-sm text-[#6d7f9c]">
+                <p className="text-[13px] text-[#6d7f9c]">
                   Сонгосон хичээлд тохирох тэмдэглэгээг ашиглаад томьёогоо
                   нэмнэ үү.
                 </p>
@@ -79,7 +79,7 @@ export function QuestionBuilderAdditionalSection({
           ) : null}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] px-4 py-5 text-sm text-[#6d7f9c]">
+        <div className="rounded-2xl border border-dashed border-[#d8e2f0] bg-[#f8fbff] px-4 py-5 text-[13px] text-[#6d7f9c]">
           Одоогоор нэмэлт зураг эсвэл томьёоны panel идэвхжээгүй байна.
         </div>
       )}

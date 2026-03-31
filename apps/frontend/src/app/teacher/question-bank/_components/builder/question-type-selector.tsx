@@ -40,10 +40,10 @@ export function QuestionTypeSelector({
             onClick={() => onChange(option.value)}
             type="button"
           >
-            <p className="text-sm font-semibold text-[#183153]">
+            <p className="text-[13px] font-semibold text-[#183153]">
               {option.label}
             </p>
-            <p className="mt-1 text-sm leading-6 text-[#607391]">
+            <p className="mt-1 text-[13px] leading-6 text-[#607391]">
               {option.description}
             </p>
           </button>
