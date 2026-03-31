@@ -102,7 +102,10 @@ export default function TeacherShell({
 	}, []);
 
 	useEffect(() => {
-		setMobileNavOpen(false);
+		const frame = window.requestAnimationFrame(() => {
+			setMobileNavOpen(false);
+		});
+		return () => window.cancelAnimationFrame(frame);
 	}, [pathname]);
 
 	return (

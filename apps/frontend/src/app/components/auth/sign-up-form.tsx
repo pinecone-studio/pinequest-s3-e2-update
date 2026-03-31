@@ -144,7 +144,7 @@ function clerkDisplayNameFromEmail(emailAddr: string): {
 			.replace(/_+/g, "_")
 			.replace(/^_|_$/g, "")
 			.slice(0, 40) || "member";
-	let firstName = safe.slice(0, 38);
+	const firstName = safe.slice(0, 38);
 	let lastName = "User";
 	if (firstName.toLowerCase() === lastName.toLowerCase()) {
 		lastName = "Account";
