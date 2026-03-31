@@ -28,89 +28,135 @@ export function ExamSettingsForm({
   ) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f7fbff] p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
-          Шалгалтын тохиргоо
+    <section className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
+      <div className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1f2a44]">
+        Шалгалтын тохиргоо
       </div>
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-5">
-        <Field label="Шалгалтын гарчиг">
-          <input
-            className={inputClassName}
-            onChange={(event) => onUpdateExam("title", event.target.value)}
-            placeholder="10-р ангийн алгебрын шалгалт"
-            value={exam.title}
-          />
-        </Field>
-
-        <Field label="Анги">
-          <Select
-            onValueChange={(value) => onUpdateExam("grade", value)}
-            value={exam.grade}
-          >
-            <SelectTrigger className={inputClassName}>
-              <SelectValue placeholder="Анги сонгох" />
-            </SelectTrigger>
-            <SelectContent>
-              {gradeOptions.map((grade) => (
-                <SelectItem key={grade} value={grade}>
-                  {grade}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
-
-        <Field label="Хичээл">
-          <input
-            className={inputClassName}
-            list="exam-subject-options"
-            onChange={(event) => onUpdateExam("subject", event.target.value)}
-            value={exam.subject}
-          />
-          <datalist id="exam-subject-options">
-            {subjectOptions.map((subject) => (
-              <option key={subject} value={subject} />
-            ))}
-          </datalist>
-        </Field>
-
-        <Field label="Сэдэв">
-          <input
-            className={inputClassName}
-            list="exam-topic-options"
-            onChange={(event) => onUpdateExam("topic", event.target.value)}
-            value={exam.topic}
-          />
-          <datalist id="exam-topic-options">
-            {topicSuggestions.map((topic) => (
-              <option key={topic} value={topic} />
-            ))}
-          </datalist>
-        </Field>
-
-        <Field label="Үргэлжлэх хугацаа">
-          <div className="relative">
+      <div className="mt-4 flex items-end gap-4">
+        <div className="flex-[2]">
+          <Field label="">
             <input
-              className={`${inputClassName} pr-16`}
-              min={1}
-              onChange={(event) =>
-                onUpdateExam(
-                  "durationInMinutes",
-                  Number.isFinite(Number(event.target.value)) &&
-                    Number(event.target.value) > 0
-                    ? Number(event.target.value)
-                    : 1,
-                )
-              }
-              type="number"
-              value={exam.durationInMinutes ?? 40}
+              className={`${inputClassName} !h-10 w-full`}
+              onChange={(event) => onUpdateExam("title", event.target.value)}
+              placeholder="Шалгалтын гарчиг бичих"
+              value={exam.title}
             />
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#60728f]">
-              мин
-            </span>
+          </Field>
+        </div>
+
+        <div className="flex-[1]">
+          <Field label="">
+            <Select
+              onValueChange={(value) => onUpdateExam("grade", value)}
+              value={exam.grade}
+            >
+              <SelectTrigger className={`${inputClassName} !h-10 w-full`}>
+                <SelectValue placeholder="Анги сонголт" />
+              </SelectTrigger>
+              <SelectContent>
+                {gradeOptions.map((grade) => (
+                  <SelectItem key={grade} value={grade}>
+                    {grade}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        </div>
+
+        <div className="flex-[1.5]">
+          <Field label="">
+            <Select
+              onValueChange={(value) => onUpdateExam("subject", value)}
+              value={exam.subject}
+            >
+              <SelectTrigger className={`${inputClassName} !h-10 w-full`}>
+                <SelectValue placeholder="Хичээл сонголт" />
+              </SelectTrigger>
+              <SelectContent>
+                {subjectOptions.map((subject) => (
+                  <SelectItem key={subject} value={subject}>
+                    {subject}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        </div>
+
+        <div className="flex-[1.5]">
+          <div className="flex w-full flex-col justify-end">
+            <Select
+              onValueChange={(value) => onUpdateExam("topic", value)}
+              value={exam.topic}
+            >
+              <SelectTrigger className={`${inputClassName} !h-10 w-full`}>
+                <SelectValue placeholder="Сэдэв сонголт" />
+              </SelectTrigger>
+              <SelectContent>
+                {topicSuggestions.map((topic) => (
+                  <SelectItem key={topic} value={topic}>
+                    {topic}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </Field>
+        </div>
+
+        <div className="flex-[0.8]">
+          <Field label="">
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[#7b8aa7]">
+                <button
+                  type="button"
+                  aria-label="Минут багасгах"
+                  onClick={() =>
+                    onUpdateExam(
+                      "durationInMinutes",
+                      Math.max(1, (exam.durationInMinutes || 40) - 1),
+                    )
+                  }
+                  className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[#cdd6e6] text-[12px] leading-none text-[#7b8aa7] hover:border-[#9fbef5] hover:text-[#1f6feb]"
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  aria-label="Минут нэмэх"
+                  onClick={() =>
+                    onUpdateExam(
+                      "durationInMinutes",
+                      (exam.durationInMinutes || 40) + 1,
+                    )
+                  }
+                  className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[#cdd6e6] text-[12px] leading-none text-[#7b8aa7] hover:border-[#9fbef5] hover:text-[#1f6feb]"
+                >
+                  +
+                </button>
+              </div>
+              <input
+                className={`${inputClassName} !h-10 w-full !pl-[56px] !pr-[44px] !text-[#1f2a44] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                min={1}
+                onChange={(event) =>
+                  onUpdateExam(
+                    "durationInMinutes",
+                    Number.isFinite(Number(event.target.value)) &&
+                      Number(event.target.value) > 0
+                      ? Number(event.target.value)
+                      : 1,
+                  )
+                }
+                type="number"
+                value={exam.durationInMinutes ?? 40}
+              />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-[#60728f]">
+                мин
+              </span>
+            </div>
+          </Field>
+        </div>
       </div>
 
       <div className="mt-4 rounded-3xl border border-[#d7e6fb] bg-white/80 p-4">
