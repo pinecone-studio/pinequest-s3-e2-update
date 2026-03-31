@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
@@ -12,20 +14,34 @@ import { useEffect, useRef, useState } from "react";
 import type { User } from "@/app/lib/types";
 
 /** Header profile dropdown — same pattern as `teacher/teacher-shell` */
-export function ProfileMenu({ user }: { user: User }) {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const { signOut } = useClerk();
+export function ProfileMenu({
+	user,
+	variant = "default",
+}: {
+	user: User;
+	/** Mobile app bar — багшийн shell-тай ижил дөрвөлжин товч */
+	variant?: "default" | "appBar" | "onDark";
+}) {
+	const [open, setOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement | null>(null);
+	const { signOut } = useClerk();
 
-  useEffect(() => {
-    const onMouseDown = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
-  }, []);
+	useEffect(() => {
+		const onMouseDown = (event: MouseEvent) => {
+			if (!menuRef.current?.contains(event.target as Node)) {
+				setOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", onMouseDown);
+		return () => document.removeEventListener("mousedown", onMouseDown);
+	}, []);
+
+	const triggerClass =
+		variant === "appBar"
+			? "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-[#7DC8FF] text-black shadow-sm transition active:scale-[0.98] hover:opacity-95"
+			: variant === "onDark"
+				? "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white transition hover:bg-white/20 hover:border-white/50"
+				: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#c8d6ea] bg-white text-[#8a96ac] transition hover:border-[#4f9dff] hover:text-[#4f9dff]";
 
   return (
     <div className="relative shrink-0" ref={menuRef}>

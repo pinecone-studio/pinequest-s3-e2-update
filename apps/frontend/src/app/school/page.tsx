@@ -147,7 +147,7 @@ export default function SchoolDashboardPage() {
 
   return (
     <div className="space-y-6 text-2">
-      <section className="rounded-2xl border border-[#dbe5f0] bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h2 className="text-3 font-bold text-[#0f172a]">Сургуулийн самбар</h2>
@@ -161,7 +161,7 @@ export default function SchoolDashboardPage() {
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
           {summaryCards.map((card) => (
             <Link
               key={card.label}
@@ -208,21 +208,21 @@ export default function SchoolDashboardPage() {
       ) : null}
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
+        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-2 font-semibold text-[#0f172a]">
               Хүлээгдэж буй ажил
             </h3>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <Link
                 href="/school/requests"
-                className="inline-flex w-[250px] items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100"
+                className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
               >
                 Батлуулах хүсэлтүүд →
               </Link>
               <Link
                 href="/school/exams"
-                className="inline-flex w-[250px] items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100"
+                className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
               >
                 Шалгалт руу очих →
               </Link>
@@ -271,14 +271,14 @@ export default function SchoolDashboardPage() {
           </ul>
         </article>
 
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
+        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-2 font-semibold text-[#0f172a]">
               Сүүлийн үйл ажиллагаа
             </h3>
             <Link
               href="/school/results"
-              className="text-2 font-medium text-blue-700 hover:text-blue-800"
+              className="shrink-0 text-2 font-medium text-blue-700 hover:text-blue-800"
             >
               Үр дүн харах →
             </Link>
@@ -297,8 +297,8 @@ export default function SchoolDashboardPage() {
       </section>
 
       <section>
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
-          <h3 className="text-2 font-semibold text-[#0f172a]">
+        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
+          <h3 className="text-balance text-2 font-semibold text-[#0f172a]">
             Багшийн гүйцэтгэлийн үнэлгээ (нийт багш {sortedTeacherPerformance.length})
           </h3>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">

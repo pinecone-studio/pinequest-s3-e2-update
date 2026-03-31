@@ -60,7 +60,7 @@ export function QuestionBankPage({
 
   return (
     <div className="bg-[#fafafa] pb-10">
-      <div className="mx-auto max-w-[1184px] px-6 pt-[28px]">
+      <div className="mx-auto max-w-[1184px] px-4 pt-5 sm:px-6 sm:pt-[28px]">
         {!hasEnteredBank ? (
           <QuestionBankEntryPanel
             entryGrade={entrySelection.grade}

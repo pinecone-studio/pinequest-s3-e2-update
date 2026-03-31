@@ -7,7 +7,6 @@ import {
   SendHorizontal,
   Trash2,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -24,6 +23,7 @@ export function SavedExamCard({
   isActive,
   selectedClassId,
   onDelete,
+  onOpenMonitoring,
   onOpen,
   onSelectClass,
   onSend,
@@ -32,11 +32,11 @@ export function SavedExamCard({
   isActive: boolean;
   selectedClassId?: string;
   onDelete: () => void;
+  onOpenMonitoring: () => void;
   onOpen: () => void;
   onSelectClass: (classId: string) => void;
   onSend: () => void;
 }) {
-  const router = useRouter();
   const availableClasses = teacherClasses.filter(
     (klass) => klass.grade === savedExam.grade,
   );
@@ -53,9 +53,7 @@ export function SavedExamCard({
         <div className="min-w-0 flex-1">
           <SavedExamMeta savedExam={savedExam} />
           <SavedExamSendState
-            onOpenClass={(routeId) =>
-              router.push(`/teacher/class/${encodeURIComponent(routeId)}`)
-            }
+            onOpenMonitoring={onOpenMonitoring}
             sentClassIds={savedExam.sentClassIds ?? []}
           />
         </div>
@@ -171,11 +169,11 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
 }
 
 function SavedExamSendState({
+  onOpenMonitoring,
   sentClassIds,
-  onOpenClass,
 }: {
+  onOpenMonitoring: () => void;
   sentClassIds: string[];
-  onOpenClass: (routeId: string) => void;
 }) {
   if (sentClassIds.length === 0) return null;
   return (
@@ -189,21 +187,12 @@ function SavedExamSendState({
           </p>
         </div>
       </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {sentClassIds.map((classId) => {
           const klass = teacherClasses.find((item) => item.id === classId);
           if (!klass) return null;
 
-          return klass.routeId ? (
-            <button
-              className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9] transition hover:bg-[#dbeafe]"
-              key={classId}
-              onClick={() => onOpenClass(klass.routeId!)}
-              type="button"
-            >
-              Илгээсэн: {klass.name}
-            </button>
-          ) : (
+          return (
             <span
               className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]"
               key={classId}
@@ -212,6 +201,13 @@ function SavedExamSendState({
             </span>
           );
         })}
+        <button
+          className="rounded-full border border-[#cfe0fb] bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb] transition hover:bg-[#eef6ff]"
+          onClick={onOpenMonitoring}
+          type="button"
+        >
+          Хяналт руу орох
+        </button>
       </div>
     </div>
   );
