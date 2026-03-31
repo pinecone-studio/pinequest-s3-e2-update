@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  BookCopy,
-  CheckCircle2,
-  Eye,
-  SendHorizontal,
-  Trash2,
-} from "lucide-react";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -17,6 +10,8 @@ import {
 import { teacherClasses, type TeacherClass } from "../_lib/class-data";
 import { formatSavedDate } from "../_lib/utils";
 import type { SavedExamRecord } from "../_lib/types";
+import { TrashIcon } from "@/app/_icons/trashIcon";
+
 
 export function SavedExamCard({
   savedExam,
@@ -45,17 +40,13 @@ export function SavedExamCard({
     <article
       className={`rounded-3xl border p-5 transition ${
         isActive
-          ? "border-[#7fb3ff] bg-[#edf5ff] shadow-[0_14px_30px_rgba(79,157,255,0.12)]"
-          : "border-[#d8e2f0] bg-[#f9fcff]"
+          ? "border-[#7dc8ff] bg-white shadow-[0_14px_30px_rgba(79,157,255,0.08)]"
+          : "border-[#d8e2f0] bg-white"
       }`}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <SavedExamMeta savedExam={savedExam} />
-          <SavedExamSendState
-            onOpenMonitoring={onOpenMonitoring}
-            sentClassIds={savedExam.sentClassIds ?? []}
-          />
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -68,7 +59,7 @@ export function SavedExamCard({
               onValueChange={onSelectClass}
               value={selectedClassId ?? undefined}
             >
-              <SelectTrigger className="h-11 w-full rounded-2xl border border-[#d7e2f1] bg-white px-4 text-sm font-semibold text-[#365077] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10 focus-visible:border-[#4f9dff] focus-visible:ring-4 focus-visible:ring-[#4f9dff]/10">
+              <SelectTrigger className="h-11 w-full rounded-2xl border border-[#a7adb8] bg-white px-4 text-sm font-medium text-[#444] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10 focus-visible:border-[#4f9dff] focus-visible:ring-4 focus-visible:ring-[#4f9dff]/10">
                 <SelectValue placeholder="Анги сонгож илгээх" />
               </SelectTrigger>
               <SelectContent>
@@ -86,7 +77,37 @@ export function SavedExamCard({
           </div>
 
           <ActionButton
-            icon={<SendHorizontal className="mr-2 h-4 w-4" />}
+            disabled={
+              savedExam.approvalStatus === "pending" ||
+              savedExam.approvalStatus === "needs_fix"
+            }
+            kind="secondary"
+            label={
+              savedExam.approvalStatus === "pending"
+                ? "Зөвшөөрөл хүлээж байна"
+                : savedExam.approvalStatus === "needs_fix"
+                  ? "Засвар шаардлагатай"
+                : "Нээх"
+            }
+            onClick={onOpen}
+          />
+          <ActionButton
+            label="Засварлах"
+            onClick={onOpen}
+          />
+          <ActionButton
+            icon={<TrashIcon />}
+            kind="danger"
+            label="Устгах"
+            onClick={onDelete}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <SavedExamStats savedExam={savedExam} />
+          <ActionButton
             disabled={
               savedExam.approvalStatus === "pending" ||
               savedExam.approvalStatus === "needs_fix"
@@ -97,27 +118,15 @@ export function SavedExamCard({
                 ? "Зөвшөөрөл хүлээж байна"
                 : savedExam.approvalStatus === "needs_fix"
                   ? "Засвар шаардлагатай"
-                : "Илгээх"
+                  : "Илгээх"
             }
             onClick={onSend}
           />
-          <ActionButton
-            icon={<Eye className="mr-2 h-4 w-4" />}
-            label="Нээх"
-            onClick={onOpen}
-          />
-          <ActionButton
-            icon={<BookCopy className="mr-2 h-4 w-4" />}
-            label="Засварлах"
-            onClick={onOpen}
-          />
-          <ActionButton
-            icon={<Trash2 className="mr-2 h-4 w-4" />}
-            kind="danger"
-            label="Устгах"
-            onClick={onDelete}
-          />
         </div>
+        <SavedExamSendState
+          onOpenMonitoring={onOpenMonitoring}
+          sentClassIds={savedExam.sentClassIds ?? []}
+        />
       </div>
     </article>
   );
@@ -158,13 +167,18 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
       <h3 className="mt-3 text-lg font-semibold text-[#183153]">
         {savedExam.title}
       </h3>
-      <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[#60728f]">
-        <span>{savedExam.questionCount} асуулт</span>
-        <span>{savedExam.totalPoints} нийт оноо</span>
-        <span>{savedExam.durationInMinutes} минут</span>
-        <span>{formatSavedDate(savedExam.savedAt)} хадгалсан</span>
-      </div>
     </>
+  );
+}
+
+function SavedExamStats({ savedExam }: { savedExam: SavedExamRecord }) {
+  return (
+    <div className="flex flex-wrap items-center gap-4 font-normal text-[12px] text-[#122459]">
+      <span>{savedExam.questionCount} асуулт</span>
+      <span>{savedExam.totalPoints} нийт оноо</span>
+      <span>{savedExam.durationInMinutes} минут</span>
+      <span>{formatSavedDate(savedExam.savedAt)} хадгалсан</span>
+    </div>
   );
 }
 
@@ -177,38 +191,27 @@ function SavedExamSendState({
 }) {
   if (sentClassIds.length === 0) return null;
   return (
-    <div className="mt-3 space-y-3">
-      <div className="flex items-start gap-3 rounded-2xl border border-[#cfe0fb] bg-[#eef6ff] px-4 py-3 text-sm text-[#2f66b9]">
-        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
-        <div>
-          <p className="font-semibold">Шалгалт амжилттай илгээгдлээ.</p>
-          <p className="mt-1 text-[#54739f]">
-            Сонгосон ангид энэ шалгалтыг илгээсэн байна.
-          </p>
-        </div>
-      </div>
-      <div className="flex flex-wrap items-center gap-2">
-        {sentClassIds.map((classId) => {
-          const klass = teacherClasses.find((item) => item.id === classId);
-          if (!klass) return null;
+    <div className="flex flex-wrap items-center gap-2">
+      {sentClassIds.map((classId) => {
+        const klass = teacherClasses.find((item) => item.id === classId);
+        if (!klass) return null;
 
-          return (
-            <span
-              className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]"
-              key={classId}
-            >
-              Илгээсэн: {klass.name}
-            </span>
-          );
-        })}
-        <button
-          className="rounded-full border border-[#cfe0fb] bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb] transition hover:bg-[#eef6ff]"
-          onClick={onOpenMonitoring}
-          type="button"
-        >
-          Хяналт руу орох
-        </button>
-      </div>
+        return (
+          <span
+            className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]"
+            key={classId}
+          >
+            Илгээсэн: {klass.name}
+          </span>
+        );
+      })}
+      <button
+        className="rounded-full border border-[#cfe0fb] bg-white px-3 py-1 text-xs font-semibold text-[#1f6feb] transition hover:bg-[#eef6ff]"
+        onClick={onOpenMonitoring}
+        type="button"
+      >
+        Хяналт руу орох
+      </button>
     </div>
   );
 }
@@ -229,25 +232,25 @@ function ActionButton({
   onClick,
 }: {
   disabled?: boolean;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   kind?: "secondary" | "primary" | "danger";
   label: string;
   onClick: () => void;
 }) {
   const styles =
     kind === "primary"
-      ? "bg-[#1f6feb] text-white hover:bg-[#195fcc] disabled:bg-[#9fbceb] disabled:text-white"
+      ? "bg-[#2f9cf4] text-white hover:bg-[#2388da] disabled:bg-[#9fbceb] disabled:text-white"
       : kind === "danger"
-        ? "border-[#f0d0d0] bg-[#fff5f5] text-[#c95050] hover:bg-[#ffeaea] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]"
-        : "border-[#d7e2f1] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]";
+        ? "border-[#ffc6c6] bg-white text-[#ff7e7e] hover:bg-[#fff5f5] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]"
+        : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]";
   return (
     <button
-      className={`inline-flex h-11 items-center rounded-2xl border px-4 text-sm font-semibold transition disabled:cursor-not-allowed ${styles}`}
+      className={`inline-flex h-11 items-center gap-2 rounded-2xl border px-4 text-sm font-medium transition disabled:cursor-not-allowed ${styles}`}
       disabled={disabled}
       onClick={onClick}
       type="button"
     >
-      {icon}
+      {icon ? icon : null}
       {label}
     </button>
   );

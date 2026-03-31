@@ -32,6 +32,21 @@ import type {
   SavedExamRecord,
 } from "../_lib/types";
 
+const DEFAULT_SUBJECT_OPTIONS = [
+  "Монгол хэл",
+  "Математик",
+  "Англи хэл",
+  "Физик",
+  "Хими",
+  "Биологи",
+  "Газарзүй",
+  "Түүх",
+  "Нийгмийн ухаан",
+  "Мэдээлэл зүй",
+  "Урлаг",
+  "Биеийн тамир",
+];
+
 export function useTeacherExamPage() {
   const router = useRouter();
   const { data: testsData } =
@@ -67,20 +82,6 @@ export function useTeacherExamPage() {
 
     return Array.from(merged.values());
   }, [testsData?.getAllTests, transferredQuestions]);
-  const DEFAULT_SUBJECT_OPTIONS = [
-    "Монгол хэл",
-    "Математик",
-    "Англи хэл",
-    "Физик",
-    "Хими",
-    "Биологи",
-    "Газарзүй",
-    "Түүх",
-    "Нийгмийн ухаан",
-    "Мэдээлэл зүй",
-    "Урлаг",
-    "Биеийн тамир",
-  ];
   const subjectOptions = useMemo(
     () =>
       Array.from(
@@ -294,6 +295,13 @@ export function useTeacherExamPage() {
       ),
     );
 
+  const resetComposer = useCallback(() => {
+    setExam(INITIAL_FORM);
+    setSelectedBankIds([]);
+    setExamQuestions([]);
+    setActiveSavedExamId(null);
+  }, []);
+
   const persistExam = () => {
     if (examQuestionDetails.length === 0)
       return showToast("Хадгалахаас өмнө дор хаяж нэг асуулт нэмнэ үү.");
@@ -347,11 +355,7 @@ export function useTeacherExamPage() {
         questionCount: examQuestionDetails.length || 20,
       });
     }
-    setActiveSavedExamId(nextId);
-    setExam((current) => ({
-      ...current,
-      title: nextTitle,
-    }));
+    resetComposer();
     showToast(
       exam.requiresSchoolApproval
         ? "Шалгалтыг хадгалж, сургуулийн зөвшөөрлийн хүсэлт илгээлээ."

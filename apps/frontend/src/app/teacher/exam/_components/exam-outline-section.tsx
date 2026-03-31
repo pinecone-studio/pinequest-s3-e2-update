@@ -1,13 +1,14 @@
 "use client";
 
 import {
-  ArrowDown,
-  ArrowUp,
-  GripVertical,
-  Save,
-  Trash2,
-} from "lucide-react";
+  DIFFICULTY_LABELS,
+  QUESTION_TYPE_LABELS,
+  STATUS_LABELS,
+} from "../../question-bank/_lib/utils";
 import type { ExamQuestionDetail } from "../_lib/types";
+import { UpIcon } from "@/app/_icons/upIcon";
+import { DownIcon } from "@/app/_icons/downIcon";
+import { TrashIcon } from "@/app/_icons/trashIcon";
 
 export function ExamOutlineSection({
   examQuestionDetails,
@@ -16,7 +17,6 @@ export function ExamOutlineSection({
   onMoveQuestion,
   onPersistExam,
   onRemoveExamQuestion,
-  onUpdateAssignedPoints,
 }: {
   examQuestionDetails: ExamQuestionDetail[];
   requiresSchoolApproval: boolean;
@@ -24,38 +24,35 @@ export function ExamOutlineSection({
   onMoveQuestion: (examQuestionId: string, direction: "up" | "down") => void;
   onPersistExam: () => void;
   onRemoveExamQuestion: (examQuestionId: string) => void;
-  onUpdateAssignedPoints: (
-    examQuestionId: string,
-    assignedPoints: number,
-  ) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#cfe0fb] bg-[#eef6ff] p-5 shadow-sm">
-      <div className="flex items-center justify-between gap-3 border-b border-[#ecf1f7] pb-4">
+    <section className="mx-5 rounded-xl border border-[#E5E5E5] bg-[#EDF6FF] p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-4 pb-4">
         <div>
-          <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
-            <GripVertical className="h-4 w-4" />
+          <div className="text-[20px] font-medium uppercase tracking-[0.14em] text-[#122459]">
             Шалгалтын бүтэц
           </div>
-          <h2 className="mt-2 text-xl font-bold text-[#183153]">
+          <p className="mt-1 text-[16px] font-normal text-[#737373]">
             Сонгосон асуултууд
-          </h2>
+          </p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-semibold text-[#183153]">
+          <p className="text-[20px] font-medium text-[#122459]">
             {examQuestionDetails.length} асуулт
           </p>
-          <p className="text-sm text-[#5f7394]">{totalPoints} нийт оноо</p>
+          {examQuestionDetails.length > 0 ? (
+            <p className="text-sm text-[#5f7394]">{totalPoints} нийт оноо</p>
+          ) : null}
         </div>
       </div>
 
       <div className="mt-5 space-y-4">
         {examQuestionDetails.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
-            <p className="text-l font-semibold text-[#183153]">
+          <div className="rounded-[20px] h-29.75 border border-dashed border-[#404040]  px-5 py-8 text-center">
+            <p className="text-[20px] font-medium tracking-[0.04em] text-[#122459]">
               Шалгалтад асуулт хараахан нэмэгдээгүй байна
             </p>
-            <p className="mt-2 text-sm text-[#60728f]">
+            <p className="mt-3 text-[16px] font-normal text-[#262626]">
               Асуултын сангаас сонгоод энд нэмснээр шалгалтын эцсийн дарааллыг
               бүрдүүлнэ.
             </p>
@@ -64,82 +61,77 @@ export function ExamOutlineSection({
 
         {examQuestionDetails.map((item, index) => (
           <article
-            className="rounded-3xl border border-[#d2e1f7] bg-[#f8fbff] p-4"
+            className="rounded-[18px] border border-[#7dc8ff] bg-white p-5"
             key={item.examQuestionId}
           >
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#e8f1ff] text-sm font-bold text-[#1f6feb]">
-                {index + 1}
-              </div>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#3b5a8f]">
-                    {item.question.grade}
+                  <span className="inline-flex min-w-8 items-center justify-center rounded-md border border-[#475569] px-2 py-0.5 text-xs font-medium text-[#0f172a]">
+                    {index + 1}
                   </span>
-                  <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]">
-                    {item.question.topic}
-                  </span>
+                  <Badge>{STATUS_LABELS[item.question.status]}</Badge>
+                  <Badge>{QUESTION_TYPE_LABELS[item.question.questionType]}</Badge>
+                  <Badge>{DIFFICULTY_LABELS[item.question.difficulty]}</Badge>
                 </div>
-                <h3 className="mt-2 text-base font-semibold text-[#183153]">
+                <h3 className="mt-5 text-[19px] font-semibold text-[#2d2d2d]">
                   {item.question.title}
                 </h3>
-                <p className="mt-2 text-sm leading-6 text-[#566983]">
+                <p className="mt-3 text-[15px] leading-7 text-[#707070]">
                   {item.question.content.prompt}
                 </p>
               </div>
+              <div className="flex gap-7.5">
+                <div className="flex flex-wrap items-center gap-2 lg:justify-end ">
+                  <OutlineButton
+                    icon={<UpIcon />}
+                    label="Дээш"
+                    onClick={() => onMoveQuestion(item.examQuestionId, "up")}
+                  />
+                  <OutlineButton
+                    icon={<DownIcon />}
+                    label="Доош"
+                    onClick={() => onMoveQuestion(item.examQuestionId, "down")}
+                  />
+                </div>
+                <div>
+                  <OutlineButton
+                    danger
+                    icon={<TrashIcon />}
+                    label="Хасах"
+                    onClick={() => onRemoveExamQuestion(item.examQuestionId)}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <label className="flex items-center gap-3 text-sm font-medium text-[#365077]">
-                Оноо
-                <input
-                  className="h-11 w-24 rounded-2xl border border-[#d3deef] bg-white px-4 text-sm text-[#183153] outline-none transition focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10"
-                  min={1}
-                  onChange={(event) =>
-                    onUpdateAssignedPoints(
-                      item.examQuestionId,
-                      Number(event.target.value),
-                    )
-                  }
-                  type="number"
-                  value={item.assignedPoints}
-                />
-              </label>
-              <div className="flex flex-wrap items-center gap-2">
-                <OutlineButton
-                  icon={<ArrowUp className="mr-2 h-4 w-4" />}
-                  label="Дээш"
-                  onClick={() => onMoveQuestion(item.examQuestionId, "up")}
-                />
-                <OutlineButton
-                  icon={<ArrowDown className="mr-2 h-4 w-4" />}
-                  label="Доош"
-                  onClick={() => onMoveQuestion(item.examQuestionId, "down")}
-                />
-                <OutlineButton
-                  danger
-                  icon={<Trash2 className="mr-2 h-4 w-4" />}
-                  label="Хасах"
-                  onClick={() => onRemoveExamQuestion(item.examQuestionId)}
-                />
+            <div className="mt-5 flex justify-end">
+              <div className="inline-flex h-7.5 min-w-16.25 items-center justify-center gap-2 rounded-2xl border border-[#adadad] bg-white px-4">
+                <span className="text-[12px] font-medium text-[#262626]">
+                  {item.assignedPoints}
+                </span>
+                <span className="text-[12px] font-medium text-[#a5a5a5]">
+                  оноо
+                </span>
               </div>
             </div>
           </article>
         ))}
       </div>
 
-      <div className="mt-6 border-t border-[#ecf1f7] pt-5">
-        <button
-          className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-[#1f6feb] px-4 text-sm font-semibold text-white transition hover:bg-[#195fcc]"
-          onClick={onPersistExam}
-          type="button"
-        >
-          <Save className="mr-2 h-4 w-4" />
-          {requiresSchoolApproval
-            ? "Хадгалж, зөвшөөрөл хүсэх"
-            : "Шалгалт хадгалах"}
-        </button>
-      </div>
+      {examQuestionDetails.length > 0 ? (
+        <div className="mt-5 flex justify-end pt-4">
+          <button
+            className="inline-flex items-center justify-center rounded-2xl bg-[#29A4FF] px-6 py-3 text-[12px] font-medium text-[#EDF6FF] transition hover:bg-[#29A4FF]"
+            onClick={onPersistExam}
+            type="button"
+          >
+            {requiresSchoolApproval
+              ? "Хадгалж, зөвшөөрөл хүсэх"
+              : "Шалгалтад хадгалах"}
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -157,12 +149,20 @@ function OutlineButton({
 }) {
   return (
     <button
-      className={`inline-flex h-10 items-center rounded-xl border px-3 text-sm font-semibold transition ${danger ? "border-[#f0d0d0] bg-[#fff5f5] text-[#c95050] hover:bg-[#ffeaea]" : "border-[#d7e2f1] text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"}`}
+      className={`inline-flex h-8 items-center gap-2 rounded-[14px] border px-3 text-[12px] font-medium transition ${danger ? "border-[#F2ADAC] bg-white text-[#F2ADAC] hover:bg-[#fff5f5]" : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff]"}`}
       onClick={onClick}
       type="button"
     >
       {icon}
       {label}
     </button>
+  );
+}
+
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-md bg-[#d7ebff] px-3 py-1 text-xs font-medium text-[#355389]">
+      {children}
+    </span>
   );
 }
