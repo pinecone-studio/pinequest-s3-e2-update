@@ -58,3 +58,24 @@ export const GET_TESTS_BY_SUBJECT_AND_GRADE = gql`
     }
   }
 `;
+
+export const GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE = gql`
+  query GetOpenExerciesBySubjectAndGrade($input: OpenExerciesInput) {
+    getOpenExerciesBySubjectAndGrade(input: $input) {
+      id
+      subjectId
+      grade
+      topic
+      title
+      question
+      answer
+      imageUrl
+      difficulty
+      score
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;

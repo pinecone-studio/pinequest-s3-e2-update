@@ -20,3 +20,23 @@ export const CREATE_TESTS = gql`
     }
   }
 `;
+export const CREATE_OPEN_EXERCIES = gql`
+  mutation CreateOpenExercies($input: CreateOpenExerciesArgs!) {
+    createOpenExercies(input: $input) {
+      id
+      subjectId
+      grade
+      topic
+      title
+      question
+      answer
+      imageUrl
+      difficulty
+      score
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;

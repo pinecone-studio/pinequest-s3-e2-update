@@ -6,11 +6,16 @@ import { useCallback, useMemo, useState } from "react";
 import { useTeacher } from "../../teacher-shell";
 import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../../exam/_lib/constants";
 import type { PendingExamTransfer } from "../../exam/_lib/types";
-import { mapBackendTestsToQuestions } from "./backend-question-mappers";
+import {
+  mapBackendOpenExerciesToQuestions,
+  mapBackendTestsToQuestions,
+  type BackendOpenExercies,
+} from "./backend-question-mappers";
 import type { BackendTest } from "./get-tests";
-import { CREATE_TESTS } from "@/graphql/typeDefs/mutations";
+import { CREATE_OPEN_EXERCIES, CREATE_TESTS } from "@/graphql/typeDefs/mutations";
 import {
   GET_ALL_SUBJECTS,
+  GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE,
   GET_TESTS_BY_SUBJECT_AND_GRADE,
 } from "@/graphql/typeDefs/queries";
 import {
@@ -35,12 +40,20 @@ type CreateTestsResponse = {
   createTests: BackendTest & { teacherId: string };
 };
 
+type CreateOpenExerciesResponse = {
+  createOpenExercies: BackendOpenExercies;
+};
+
 type GetAllSubjectResponse = {
   getAllSubject: { id: string; name: string }[];
 };
 
 type GetTestsBySubjectAndGradeResponse = {
   getTestsBySybjectAndGrade: (BackendTest & { teacherId: string })[];
+};
+
+type GetOpenExerciesBySubjectAndGradeResponse = {
+  getOpenExerciesBySubjectAndGrade: BackendOpenExercies[];
 };
 
 function entryMatchesQuestion(
@@ -62,6 +75,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   const { data: subjectsData } =
     useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
   const [createTests] = useMutation<CreateTestsResponse>(CREATE_TESTS);
+  const [createOpenExercies] = useMutation<CreateOpenExerciesResponse>(
+    CREATE_OPEN_EXERCIES,
+  );
 
   const subjectItems = useMemo(
     () => subjectsData?.getAllSubject ?? [],
@@ -115,6 +131,19 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       },
     );
 
+  const { data: openExerciesData, refetch: refetchOpenExercies } =
+    useQuery<GetOpenExerciesBySubjectAndGradeResponse>(
+      GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE,
+      {
+        variables: {
+          input: shouldFetchTests
+            ? { subjectId: entrySelection.subjectId, grade: entryGradeInt }
+            : null,
+        },
+        skip: !shouldFetchTests,
+      },
+    );
+
   const [currentFilters, setCurrentFilters] = useState<QuestionFilters>(
     QUESTION_BANK_FILTER_DEFAULTS,
   );
@@ -140,13 +169,30 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   }, []);
 
   const remoteQuestions = useMemo(() => {
-    const backend = mapBackendTestsToQuestions(
+    const backendTests = mapBackendTestsToQuestions(
       testsData?.getTestsBySybjectAndGrade ?? [],
       subjectNameById,
     );
-    const base = backend.length > 0 ? backend : MOCK_QUESTIONS;
+    const backendOpenExercies = mapBackendOpenExerciesToQuestions(
+      openExerciesData?.getOpenExerciesBySubjectAndGrade ?? [],
+      subjectNameById,
+    ).map((q) => {
+      const owner = openExerciesData?.getOpenExerciesBySubjectAndGrade?.find(
+        (row) => row.id === q.id,
+      )?.teacherId;
+      return owner && owner === teacher.id ? { ...q, teacherName: teacher.name } : q;
+    });
+
+    const combined = [...backendTests, ...backendOpenExercies];
+    const base = combined.length > 0 ? combined : MOCK_QUESTIONS;
     return base;
-  }, [testsData?.getTestsBySybjectAndGrade, subjectNameById]);
+  }, [
+    testsData?.getTestsBySybjectAndGrade,
+    openExerciesData?.getOpenExerciesBySubjectAndGrade,
+    subjectNameById,
+    teacher.id,
+    teacher.name,
+  ]);
 
   const mergedQuestions = useMemo(() => {
     const byId = new Map<string, Question>();
@@ -334,55 +380,100 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       try {
         const subjectId = entrySelection.subjectId;
         const grade = parseGradeToInt(payload.grade);
-        const answers =
-          payload.questionType === "multiple_choice"
-            ? payload.options.map((o) => o.text)
-            : payload.correctAnswer
-              ? [payload.correctAnswer]
-              : [];
-
-        const result = await createTests({
-          variables: {
-            input: {
-              grade,
-              subjectId,
-              question: payload.content.prompt,
-              answers,
-              imageUrl: payload.imageUrl || "",
-              rightAnswer: payload.correctAnswer || "",
-              difficulty: payload.difficulty,
-              score: payload.points,
-              usageCount: 0,
-              notes:
-                payload.content.explanation || payload.content.guidance || "",
-              teacherId: teacher.id,
+        if (payload.questionType === "long_answer") {
+          const result = await createOpenExercies({
+            variables: {
+              input: {
+                grade,
+                subjectId,
+                topic: payload.topic || payload.subject,
+                title: payload.title,
+                question: payload.content.prompt,
+                answer: payload.correctAnswer || null,
+                imageUrl: payload.imageUrl || null,
+                difficulty: payload.difficulty,
+                score: payload.points,
+                notes:
+                  payload.content.explanation || payload.content.guidance || null,
+                teacherId: teacher.id,
+              },
             },
-          },
-        });
+          });
 
-        const created = result.data?.createTests;
-        if (created) {
-          // Ensure UI updates immediately even before refetch paints.
-          const [mapped] = mapBackendTestsToQuestions(
-            [created as BackendTest],
-            subjectNameById,
-          );
-          if (mapped) {
-            setUpserts((current) => {
-              const next = new Map(current);
-              next.set(mapped.id, {
-                ...mapped,
-                source: "school",
-                teacherName: teacher.name,
+          const created = result.data?.createOpenExercies;
+          if (created) {
+            const [mapped] = mapBackendOpenExerciesToQuestions(
+              [created],
+              subjectNameById,
+            );
+            if (mapped) {
+              setUpserts((current) => {
+                const next = new Map(current);
+                next.set(mapped.id, {
+                  ...mapped,
+                  source: "school",
+                  teacherName: teacher.name,
+                });
+                return next;
               });
-              return next;
-            });
+            }
           }
-        }
 
-        if (shouldFetchTests) {
-          // Keep list in sync with selected subject/grade.
-          refetchTests();
+          if (shouldFetchTests) {
+            // Keep list in sync with selected subject/grade.
+            refetchOpenExercies();
+          }
+        } else {
+          const answers =
+            payload.questionType === "multiple_choice"
+              ? payload.options.map((o) => o.text)
+              : payload.correctAnswer
+                ? [payload.correctAnswer]
+                : [];
+
+          const result = await createTests({
+            variables: {
+              input: {
+                grade,
+                subjectId,
+                question: payload.content.prompt,
+                answers,
+                imageUrl: payload.imageUrl || "",
+                rightAnswer: payload.correctAnswer || "",
+                difficulty: payload.difficulty,
+                score: payload.points,
+                usageCount: 0,
+                notes:
+                  payload.content.explanation || payload.content.guidance || "",
+                teacherId: teacher.id,
+              },
+            },
+          });
+
+          const created = result.data?.createTests;
+          if (created) {
+            // Ensure UI updates immediately even before refetch paints.
+            const [mapped] = mapBackendTestsToQuestions(
+              [created as BackendTest],
+              subjectNameById,
+            );
+            if (mapped) {
+              setUpserts((current) => {
+                const next = new Map(current);
+                next.set(mapped.id, {
+                  ...mapped,
+                  source: "school",
+                  teacherName: teacher.name,
+                });
+                return next;
+              });
+            }
+          }
+
+          if (shouldFetchTests) {
+            // Keep list in sync with selected subject/grade.
+            refetchTests();
+          }
         }
 
         setPublishSuccessDialogOpen(true);
@@ -396,12 +487,14 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     },
     [
       createTests,
+      createOpenExercies,
       mergedQuestions,
       entrySelection.grade,
       entrySelection.subject,
       teacher.name,
       teacher.id,
       refetchTests,
+      refetchOpenExercies,
       shouldFetchTests,
       showToast,
       subjectNameById,

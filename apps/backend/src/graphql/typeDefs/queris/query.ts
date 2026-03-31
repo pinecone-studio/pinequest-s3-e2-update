@@ -9,6 +9,11 @@ export const queryTypeDefs = /* GraphQL */ `
     schoolId: String!
   }
 
+  input OpenExerciesInput {
+    subjectId: String!
+    grade: Int!
+  }
+
   type Query {
     hello: String!
     getAllTests: [Test!]!
@@ -23,5 +28,6 @@ export const queryTypeDefs = /* GraphQL */ `
     getClassByTeacherAndSchoolId(
       input: ClassByTeacherAndSchoolIdInput!
     ): [Class!]
+    getOpenExerciesBySubjectAndGrade(input: OpenExerciesInput): [OpenExercies]
   }
 `;

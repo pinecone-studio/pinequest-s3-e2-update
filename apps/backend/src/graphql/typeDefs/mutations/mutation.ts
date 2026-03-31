@@ -13,6 +13,20 @@ export const mutationTypeDefs = /* GraphQL */ `
     teacherId: String!
   }
 
+  input CreateOpenExerciesArgs {
+    subjectId: String!
+    grade: Int!
+    topic: String!
+    title: String!
+    question: String!
+    answer: String
+    imageUrl: String
+    difficulty: String!
+    score: Int!
+    notes: String
+    teacherId: String!
+  }
+
   input CreateSubjectInput {
     name: String!
   }
@@ -20,5 +34,6 @@ export const mutationTypeDefs = /* GraphQL */ `
   type Mutation {
     createTests(input: CreateTestsInput!): Test!
     createSubject(input: CreateSubjectInput!): Subject!
+    createOpenExercies(input: CreateOpenExerciesArgs!): OpenExercies!
   }
 `;
