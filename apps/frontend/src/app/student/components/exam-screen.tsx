@@ -107,21 +107,24 @@ export function ExamScreen({
 
       {warning && (
         <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-100 bg-white border-2 border-gray-400 rounded-2xl flex flex-col">
-            <div className="w-full h-20 flex justify-end items-center">
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute left-1/2 top-1/2 flex max-h-[min(90dvh,28rem)] w-[min(calc(100vw-1.5rem),37.5rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border-2 border-gray-400 bg-white shadow-lg">
+            <div className="flex h-14 shrink-0 items-center justify-end sm:h-20">
               <button
-                className="w-10 h-10 border-2 border-black rounded-full mr-3 flex justify-center items-center cursor-pointer bg-gray-100 hover:bg-gray-200 duration-200"
+                type="button"
+                className="mr-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-gray-100 duration-200 hover:bg-gray-200 sm:mr-3"
                 onClick={() => setWarning(false)}
+                aria-label="Хаах"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="w-full h-full flex flex-col pt-10 items-center gap-10">
-              <p className="text-[30px] font-semibold flex justify-center items-center gap-5">
-                <AlertTriangle className="h-10 w-10" /> Анхааруулга
+            <div className="flex flex-col items-center gap-6 px-4 pb-8 pt-2 sm:gap-10 sm:px-6 sm:pt-6">
+              <p className="flex flex-wrap items-center justify-center gap-2 text-center text-xl font-semibold sm:gap-5 sm:text-[clamp(1.25rem,4vw,1.875rem)]">
+                <AlertTriangle className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" />{" "}
+                Анхааруулга
               </p>
-              <p className="text-[20px] font-semibold w-[85%] text-center">
+              <p className="max-w-prose text-center text-base font-semibold leading-snug text-pretty sm:text-lg">
                 Шалгалтын явцад дэлгэц солих, шинэ цонх нээх зэрэг хуулах
                 оролдлого гаргаж болохгүйг анхаарна уу. Энэ мэдэгдэл багшид
                 хандагдана.

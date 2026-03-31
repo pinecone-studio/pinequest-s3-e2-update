@@ -48,7 +48,7 @@ export function AddEmployeeDialog() {
                 await createTeacher(formData);
                 setOpen(false);
               }}
-              className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6 xl:items-end"
+              className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2"
             >
               <label className={labelClass}>
                 Овог
@@ -75,7 +75,7 @@ export function AddEmployeeDialog() {
                 <input name="specialty" placeholder="жишээ: Математик" className={inputClass} />
               </label>
 
-              <div className="flex items-end justify-end gap-2 xl:col-span-6">
+              <div className="flex items-end justify-end gap-2 sm:col-span-2">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}

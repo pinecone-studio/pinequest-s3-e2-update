@@ -8,6 +8,7 @@ import { getAllSubject } from "./subjectSchoolAndTeachers/getAllSubjects";
 import { getSchoolByClerkId } from "./subjectSchoolAndTeachers/getSchoolByClerkId";
 import { getTeachersBySchoolId } from "./subjectSchoolAndTeachers/getTeachersBySchoolId";
 import { getAllTests } from "./testAndOpenExircices/getAllTests";
+import { getOpenExerciesBySubjectAndGrade } from "./testAndOpenExircices/getOpenExerciesBySubjectAndGrade";
 import { getTestsBySybjectAndGrade } from "./testAndOpenExircices/getTestsBySubjectAndGrade";
 
 export const queryResolvers = {
@@ -22,4 +23,5 @@ export const queryResolvers = {
   getAllSubject,
   getTestsBySybjectAndGrade,
   getClassByTeacherAndSchoolId,
+  getOpenExerciesBySubjectAndGrade,
 };

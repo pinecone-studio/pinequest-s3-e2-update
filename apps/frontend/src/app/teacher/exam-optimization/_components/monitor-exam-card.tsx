@@ -18,6 +18,10 @@ export function MonitorExamCard({
 	isActive: boolean;
 	onOpen: () => void;
 }) {
+	const classSummary =
+		exam.classLabels.length > 2
+			? `${exam.classLabels.slice(0, 2).join(", ")} +${exam.classLabels.length - 2}`
+			: exam.classLabel;
 	const statusStyles = {
 		ongoing: {
 			badge: "bg-[#e8f3ff] text-[#1f6feb]",
@@ -48,12 +52,19 @@ export function MonitorExamCard({
 			}`}
 		>
 			<div className="flex flex-wrap items-center justify-between gap-3">
-				<span
-					className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${statusStyles.badge}`}
-				>
-					{statusStyles.icon}
-					{monitorStatusText(exam.status)}
-				</span>
+				<div className="flex flex-wrap items-center gap-2">
+					<span
+						className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${statusStyles.badge}`}
+					>
+						{statusStyles.icon}
+						{monitorStatusText(exam.status, exam.classLabels)}
+					</span>
+					{isActive ? (
+						<span className="inline-flex items-center rounded-full bg-[#1f6feb] px-3 py-1 text-xs font-semibold text-white">
+							Сонгогдсон
+						</span>
+					) : null}
+				</div>
 				<span className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7b8aa3]">
 					{exam.savedAtLabel}
 				</span>
@@ -68,7 +79,7 @@ export function MonitorExamCard({
 
 			<div className="mt-4 flex flex-wrap items-center gap-2">
 				<span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#3b5a8f]">
-					Илгээсэн анги: {exam.classLabel}
+					{exam.classLabels.length > 1 ? "Илгээсэн ангиуд" : "Илгээсэн анги"}: {classSummary}
 				</span>
 				<span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#2f66b9]">
 					{exam.questionCount} асуулт
@@ -79,7 +90,11 @@ export function MonitorExamCard({
 			</div>
 
 			<div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#1f6feb]">
-				{exam.status === "ongoing" ? "Хяналт руу орох" : "Дэлгэрэнгүй харах"}
+				{isActive
+					? "Сонгогдсон шалгалт"
+					: exam.status === "ongoing"
+						? "Хяналт руу орох"
+						: "Дэлгэрэнгүй харах"}
 				<ArrowRight className="h-4 w-4" />
 			</div>
 		</button>

@@ -1,20 +1,24 @@
+/** @format */
+
 import { Suspense } from "react";
-import { AuthCard } from "@/app/components/auth/auth-card";
 import { SignInForm } from "@/app/components/auth/sign-in-form";
 
 export default function SignInPage() {
-  return (
-    <AuthCard>
-      <Suspense
-        fallback={
-          <div
-            className="h-64 animate-pulse rounded-xl bg-gray-100"
-            aria-hidden
-          />
-        }
-      >
-        <SignInForm />
-      </Suspense>
-    </AuthCard>
-  );
+	return (
+		<Suspense
+			fallback={
+				<div
+					className="flex min-h-screen flex-col bg-[#f4f4ee]"
+					aria-busy="true"
+					aria-label="Уншиж байна"
+				>
+					<div className="mx-auto w-full max-w-md flex-1 px-5 py-6">
+						<div className="h-96 animate-pulse rounded-2xl bg-gray-200/70" />
+					</div>
+				</div>
+			}
+		>
+			<SignInForm />
+		</Suspense>
+	);
 }

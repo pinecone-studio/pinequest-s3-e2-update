@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 const QuestionBankPage = dynamic(
   () =>
-    import("../../_components/question-bank-page").then(
+    import("../../_components/bank/question-bank-page").then(
       (module) => module.QuestionBankPage,
     ),
   { ssr: false },
