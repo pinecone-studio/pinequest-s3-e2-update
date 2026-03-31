@@ -67,57 +67,34 @@ export function useTeacherExamPage() {
 
     return Array.from(merged.values());
   }, [testsData?.getAllTests, transferredQuestions]);
+  const DEFAULT_SUBJECT_OPTIONS = [
+    "Монгол хэл",
+    "Математик",
+    "Англи хэл",
+    "Физик",
+    "Хими",
+    "Биологи",
+    "Газарзүй",
+    "Түүх",
+    "Нийгмийн ухаан",
+    "Мэдээлэл зүй",
+    "Урлаг",
+    "Биеийн тамир",
+  ];
   const subjectOptions = useMemo(
     () =>
       Array.from(
-        new Set(questionBank.map((question) => question.subject)),
-      ).sort(),
+        new Set([
+          ...DEFAULT_SUBJECT_OPTIONS,
+          ...questionBank.map((question) => question.subject),
+        ]),
+      ).sort((a, b) => a.localeCompare(b, "mn", { sensitivity: "base" })),
     [questionBank],
   );
-  const topicSuggestions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          questionBank
-            .filter((question) =>
-              exam.subject
-                ? question.subject.toLowerCase() === exam.subject.toLowerCase()
-                : true,
-            )
-            .map((question) => question.topic),
-        ),
-      ).sort(),
-    [exam.subject, questionBank],
-  );
-  const filteredQuestions = useMemo(
-    () =>
-      [...questionBank]
-        .filter((question) => matchesSearch(question, search))
-        .sort(
-          (left, right) =>
-            scoreQuestion(right, exam) - scoreQuestion(left, exam) ||
-            right.usageCount - left.usageCount,
-        ),
-    [exam, questionBank, search],
-  );
-  const examQuestionDetails = useMemo(
-    () =>
-      examQuestions
-        .slice()
-        .sort((left, right) => left.order - right.order)
-        .map((item) => ({
-          ...item,
-          question: questionBank.find(
-            (question) => question.id === item.questionId,
-          ),
-        }))
-        .filter((item): item is ExamQuestionDetail => Boolean(item.question)),
-    [examQuestions, questionBank],
-  );
-  const totalPoints = examQuestionDetails.reduce(
-    (sum, item) => sum + item.assignedPoints,
-    0,
-  );
+  const topicSuggestions = useMemo(() => Array.from(new Set(questionBank.filter((question) => (exam.subject ? question.subject.toLowerCase() === exam.subject.toLowerCase() : true)).map((question) => question.topic))).sort(), [exam.subject, questionBank]);
+  const filteredQuestions = useMemo(() => [...questionBank].filter((question) => matchesSearch(question, search)).sort((left, right) => scoreQuestion(right, exam) - scoreQuestion(left, exam) || right.usageCount - left.usageCount), [exam, questionBank, search]);
+  const examQuestionDetails = useMemo(() => examQuestions.slice().sort((left, right) => left.order - right.order).map((item) => ({ ...item, question: questionBank.find((question) => question.id === item.questionId) })).filter((item): item is ExamQuestionDetail => Boolean(item.question)), [examQuestions, questionBank]);
+  const totalPoints = examQuestionDetails.reduce((sum, item) => sum + item.assignedPoints, 0);
 
   useEffect(() => {
     try {
