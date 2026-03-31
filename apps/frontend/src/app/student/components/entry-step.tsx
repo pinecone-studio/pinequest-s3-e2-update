@@ -4,6 +4,8 @@ type EntryStepProps = {
   studentEmail: string;
   classCode: string;
   canProceed: boolean;
+  classCodeHint?: string;
+  classCodeRequired?: boolean;
   onChangeLastName: (value: string) => void;
   onChangeFirstName: (value: string) => void;
   onChangeEmail: (value: string) => void;
@@ -18,6 +20,8 @@ export function EntryStep({
   studentEmail,
   classCode,
   canProceed,
+  classCodeHint,
+  classCodeRequired = false,
   onChangeLastName,
   onChangeFirstName,
   onChangeEmail,
@@ -65,7 +69,7 @@ export function EntryStep({
           </div>
           <div>
             <label className="text-3 font-semibold text-[#405173]">
-              Ангийн код (заавал биш)
+              Ангийн код {classCodeRequired ? <span className="text-[#ef4444]">*</span> : "(заавал биш)"}
             </label>
             <input
               className="mt-2 w-full rounded-xl border border-[#dbe3f0] bg-white px-4 py-3 text-3 outline-none transition focus:border-[#3b82f6]"
@@ -73,6 +77,9 @@ export function EntryStep({
               value={classCode}
               onChange={(event) => onChangeClassCode(event.target.value)}
             />
+            {classCodeHint ? (
+              <p className="mt-2 text-2 text-[#66789f]">{classCodeHint}</p>
+            ) : null}
           </div>
         </div>
 

@@ -1,6 +1,9 @@
 type PrecheckStepProps = {
   examTitle: string;
   durationMinutes: number;
+  canStart: boolean;
+  startButtonLabel: string;
+  statusText: string;
   studentEmail: string;
   onStart: () => void;
 };
@@ -8,6 +11,9 @@ type PrecheckStepProps = {
 export function PrecheckStep({
   examTitle,
   durationMinutes,
+  canStart,
+  startButtonLabel,
+  statusText,
   studentEmail,
   onStart,
 }: PrecheckStepProps) {
@@ -24,12 +30,16 @@ export function PrecheckStep({
             {examTitle}
           </p>
           <p className="text-3">
-            <span className="font-semibold text-[#3b4d73]">Хугацаа:</span>{" "}
+            <span className="font-semibold text-[#3b4d73]">Шалгалт үргэлжлэх хугацаа:</span>{" "}
             {durationMinutes} минут
           </p>
           <p className="text-3">
             <span className="font-semibold text-[#3b4d73]">И-мэйл:</span>{" "}
             {studentEmail}
+          </p>
+          <p className="text-3 sm:col-span-2">
+            <span className="font-semibold text-[#3b4d73]">Төлөв:</span>{" "}
+            {statusText}
           </p>
         </div>
 
@@ -43,10 +53,11 @@ export function PrecheckStep({
         <div className="mt-6 flex justify-end">
           <button
             type="button"
+            disabled={!canStart}
             onClick={onStart}
-            className="rounded-xl bg-[#2563eb] px-5 py-2.5 text-3 font-semibold text-white hover:bg-[#1d4ed8]"
+            className="rounded-xl bg-[#2563eb] px-5 py-2.5 text-3 font-semibold text-white hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#9dbaf6]"
           >
-            Шалгалт эхлүүлэх
+            {startButtonLabel}
           </button>
         </div>
       </div>

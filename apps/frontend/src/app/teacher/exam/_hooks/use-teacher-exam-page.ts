@@ -218,7 +218,15 @@ export function useTeacherExamPage() {
   };
 
   const selectClassForSavedExam = (savedExamId: string, classId: string) => setSelectedClassByExamId((current) => ({ ...current, [savedExamId]: classId }));
-  const sendSavedExamToClass = (savedExam: SavedExamRecord) => {
+  const openMonitoringForSavedExam = (savedExam: SavedExamRecord) => {
+    router.push(`/teacher/exam-optimization?examId=${encodeURIComponent(savedExam.id)}`);
+    showToast(`"${savedExam.title}" шалгалтын хяналт руу шилжлээ.`);
+  };
+
+  const sendSavedExamToClass = (
+    savedExam: SavedExamRecord,
+    openMonitoring = false,
+  ) => {
     if (savedExam.approvalStatus === "pending") {
       return showToast("Энэ шалгалт сургуулийн зөвшөөрөл хүлээж байна.");
     }
@@ -230,36 +238,29 @@ export function useTeacherExamPage() {
     const selectedClass = teacherClasses.find((item) => item.id === classId);
     if (!selectedClass) return showToast("Сонгосон анги олдсонгүй.");
 
-    if (selectedClass.routeId) {
-      const params = new URLSearchParams({
-        deliveryExamId: savedExam.id,
-        deliveryExamTitle: savedExam.title,
-        deliveryClassId: classId,
-      });
-      router.push(
-        `/teacher/class/${encodeURIComponent(selectedClass.routeId)}?${params.toString()}`,
-      );
-      return showToast(
-        `"${savedExam.title}" шалгалтыг ${selectedClass.name} ангид илгээх тохиргоо руу шилжлээ.`,
-      );
-    }
-
-    setSavedExams((current) =>
-      current.map((item) =>
-        item.id === savedExam.id
-          ? {
-              ...item,
-              sentClassIds: Array.from(
-                new Set([...(item.sentClassIds ?? []), classId]),
-              ),
-            }
-          : item,
-      ),
+    const nextSavedExams = savedExams.map((item) =>
+      item.id === savedExam.id
+        ? {
+            ...item,
+            sentClassIds: Array.from(new Set([...(item.sentClassIds ?? []), classId])),
+          }
+        : item,
     );
-    showToast(`"${savedExam.title}" шалгалтыг ${selectedClass.name} ангид илгээлээ.`);
+
+    setSavedExams(nextSavedExams);
+    window.localStorage.setItem(SAVED_EXAMS_STORAGE_KEY, JSON.stringify(nextSavedExams));
+
+    const monitoringUrl = `/teacher/exam-optimization?examId=${encodeURIComponent(savedExam.id)}`;
+    showToast(
+      openMonitoring
+        ? `"${savedExam.title}" шалгалтын хяналт руу шилжлээ.`
+        : `"${savedExam.title}" шалгалтыг ${selectedClass.name} ангид илгээлээ.`,
+    );
+
+    router.push(monitoringUrl);
   };
 
-  return { activeSavedExamId, addQuestionsToExam, deleteSavedExam, exam, examQuestionDetails, examQuestions, filteredQuestions, gradeOptions: EXAM_GRADE_OPTIONS, hasLoadedSavedExams, moveQuestion, openSavedExam, persistExam, removeExamQuestion, savedExams, search, selectedBankIds, selectedClassByExamId, selectClassForSavedExam, sendSavedExamToClass, setSearch, subjectOptions, toastMessage, toggleSelectQuestion, topicSuggestions, totalPoints, updateAssignedPoints, updateExam };
+  return { activeSavedExamId, addQuestionsToExam, deleteSavedExam, exam, examQuestionDetails, examQuestions, filteredQuestions, gradeOptions: EXAM_GRADE_OPTIONS, hasLoadedSavedExams, moveQuestion, openMonitoringForSavedExam, openSavedExam, persistExam, removeExamQuestion, savedExams, search, selectedBankIds, selectedClassByExamId, selectClassForSavedExam, sendSavedExamToClass, setSearch, subjectOptions, toastMessage, toggleSelectQuestion, topicSuggestions, totalPoints, updateAssignedPoints, updateExam };
 }
 
 function matchesSearch(question: Question, search: string) {
