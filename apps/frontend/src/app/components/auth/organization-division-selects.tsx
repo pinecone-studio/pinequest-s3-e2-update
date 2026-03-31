@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 type FieldErrors = {
   organizationRegion?: string;
@@ -27,6 +28,8 @@ type Props = {
   onSumChange: (value: string) => void;
   fieldErrors: FieldErrors;
   disabled?: boolean;
+  /** Нэвтрэх/бүртгүүлэх дэлгэцтэй ижил өнцөг, өндөр, цэнхэр focus */
+  compactAuth?: boolean;
 };
 
 type Option = string | { value: string; label: string };
@@ -40,6 +43,7 @@ function LabeledSelect({
   options,
   disabled,
   error,
+  compactAuth,
 }: {
   id: string;
   label: string;
@@ -49,20 +53,34 @@ function LabeledSelect({
   options: readonly Option[];
   disabled?: boolean;
   error?: string;
+  compactAuth?: boolean;
 }) {
   const triggerClass = error
     ? "border-red-500 focus:border-red-500 focus:ring-red-500/30"
     : undefined;
+  const authTrigger =
+    "h-14 rounded-[14px] border-gray-200 text-base shadow-sm data-[placeholder]:text-gray-400 " +
+    "focus:border-[#29B6FF] focus:ring-2 focus:ring-[#29B6FF]/30 focus:ring-offset-0 focus:outline-none";
 
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-900">
+      <label
+        htmlFor={id}
+        className={
+          compactAuth
+            ? "block text-xs font-medium text-gray-600"
+            : "block text-sm font-medium text-gray-900"
+        }
+      >
         {label}
       </label>
       <Select value={value || undefined} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger
           id={id}
-          className={triggerClass}
+          className={cn(
+            compactAuth && authTrigger,
+            triggerClass,
+          )}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
         >
@@ -99,6 +117,7 @@ export function OrganizationDivisionSelects({
   onSumChange,
   fieldErrors,
   disabled,
+  compactAuth,
 }: Props) {
   const regions = useMemo(() => listMockRegions(), []);
 
@@ -118,7 +137,11 @@ export function OrganizationDivisionSelects({
   }, [regions, regionValue]);
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2">
+    <div
+      className={
+        compactAuth ? "grid grid-cols-1 gap-4 sm:grid-cols-2" : "grid gap-5 sm:grid-cols-2"
+      }
+    >
       <LabeledSelect
         id="signup-org-region"
         label="Аймаг / хот"
@@ -131,6 +154,7 @@ export function OrganizationDivisionSelects({
         options={regionOptions}
         disabled={disabled}
         error={fieldErrors.organizationRegion}
+        compactAuth={compactAuth}
       />
       <LabeledSelect
         id="signup-org-sum"
@@ -143,6 +167,7 @@ export function OrganizationDivisionSelects({
         options={sumOptions}
         disabled={disabled || !regionValue}
         error={fieldErrors.organizationSum}
+        compactAuth={compactAuth}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth, useClerk, useSignUp } from "@clerk/nextjs";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -9,9 +10,11 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { IoChevronBack } from "react-icons/io5";
 import { AuthButton } from "@/app/components/auth/auth-button";
-import { AuthInput } from "@/app/components/auth/auth-input";
 import { GoogleIcon } from "@/app/components/auth/google-icon";
 import { OrganizationDivisionSelects } from "@/app/components/auth/organization-division-selects";
 import { saveSignUpProfileExtras } from "@/app/actions/sign-up-profile";
@@ -32,22 +35,89 @@ import {
 
 type Step = "credentials" | "verify";
 
+const primaryBlue =
+  "bg-[#29B6FF] hover:bg-[#20a8f2] active:bg-[#1899e6] text-white focus-visible:outline-[#29B6FF] focus-visible:outline-offset-2 cursor-pointer";
+const inputClass =
+  "h-14 w-full rounded-[14px] border border-gray-200 bg-white px-4 text-base text-gray-900 shadow-sm " +
+  "placeholder:text-gray-400 focus:border-[#29B6FF] focus:outline-none focus:ring-2 focus:ring-[#29B6FF]/30 " +
+  "disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500";
+
+type BackAction = { href: string } | { onBack: () => void };
+
+function SignUpScreenFrame({
+  title,
+  back,
+  children,
+  contentClassName = "flex flex-1 flex-col justify-start pt-4 sm:pt-6 sm:justify-center",
+}: {
+  title: string;
+  back: BackAction;
+  children: ReactNode;
+  contentClassName?: string;
+}) {
+  return (
+    <div className="flex min-h-screen flex-col bg-[#f7f7f7]">
+      <header className="relative flex h-14 shrink-0 items-center justify-center px-5 pt-[env(safe-area-inset-top)]">
+        {"href" in back ? (
+          <Link
+            href={back.href}
+            className="absolute left-5 flex h-10 w-10 items-center justify-center rounded-full text-gray-800 transition hover:bg-gray-200/80"
+            aria-label="Буцах"
+          >
+            <IoChevronBack className="h-6 w-6" aria-hidden />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={back.onBack}
+            className="absolute left-5 flex h-10 w-10 items-center justify-center rounded-full text-gray-800 transition hover:bg-gray-200/80"
+            aria-label="Буцах"
+          >
+            <IoChevronBack className="h-6 w-6" aria-hidden />
+          </button>
+        )}
+        <h1 className="text-lg font-bold tracking-tight text-gray-900">{title}</h1>
+      </header>
+
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-10">
+        <div className={contentClassName}>{children}</div>
+
+        <footer className="mt-auto flex shrink-0 items-center justify-center gap-2 pt-10 pb-[env(safe-area-inset-bottom)]">
+          <Image
+            src="/bee.png"
+            alt=""
+            width={40}
+            height={40}
+            className="h-9 w-9 object-contain"
+          />
+          <span className="text-lg font-black tracking-tight text-[#11161d]">UPDATE</span>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
 /**
- * Овог/нэр маягтаас авахгүй — Clerk-д имэйлийн хаягаас placeholder нэр өгнө.
+ * Овог/нэр маягтаас авахгүй — Clerk-д placeholder нэр дамжуулна.
+ * Ижил firstName + lastName ихэнх тохиолдолд FAPI 422 буцаадаг тул тусад нь өгнө.
  */
 function clerkDisplayNameFromEmail(emailAddr: string): {
   firstName: string;
   lastName: string;
 } {
-  const raw = emailAddr.split("@")[0]?.trim() || "user";
+  const raw = emailAddr.split("@")[0]?.trim() || "member";
   const safe =
     raw
       .replace(/[^a-zA-Z0-9._-]/g, "_")
       .replace(/_+/g, "_")
       .replace(/^_|_$/g, "")
-      .slice(0, 40) || "user";
-  // Clerk name validators often reject placeholder punctuation (e.g. "-").
-  return { firstName: safe, lastName: safe };
+      .slice(0, 40) || "member";
+  let firstName = safe.slice(0, 38);
+  let lastName = "User";
+  if (firstName.toLowerCase() === lastName.toLowerCase()) {
+    lastName = "Account";
+  }
+  return { firstName, lastName };
 }
 
 export function SignUpForm() {
@@ -56,7 +126,6 @@ export function SignUpForm() {
     () => safeAuthRedirect(searchParams.get(LOGIN_INTENT_QUERY_KEY)),
     [searchParams],
   );
-  /** Захиргаа / байгууллагын эхний бүртгэл — хаяг, бүртгэлийн дугаар заавал. */
   const isOrganizationSignup = afterAuthUrl === "/school";
 
   const { isLoaded, isSignedIn } = useAuth();
@@ -73,6 +142,8 @@ export function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [code, setCode] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmError, setConfirmError] = useState<string | null>(null);
@@ -100,18 +171,15 @@ export function SignUpForm() {
     [afterAuthUrl],
   );
 
-  /** Баталгаажуулалтын дараа `isSignedIn` түрүүлж идэвхжихэд доорх effect түрүүлж шилжвэл setActive-д үлдэнэ */
   const skipSignedInEffectRedirect = useRef(false);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
-    // verify алхамд setActive + бүтэн шилжилт зохион байгуулна.
     if (step === "verify") return;
     if (skipSignedInEffectRedirect.current) return;
     hardNavigateToAppPath(dashboardUrl);
   }, [dashboardUrl, isLoaded, isSignedIn, step]);
 
-  /** Clerk v7: `finalize`-ийн оронд `setActive(createdSessionId)` — session cookie зөв тавигдана. */
   const activateSessionAndSaveExtras = useCallback(
     async (
       orgAimag: string,
@@ -213,11 +281,11 @@ export function SignUpForm() {
 
     setFetching(true);
     try {
+      const emailTrimmed = email.trim();
       const { firstName: fnClerk, lastName: lnClerk } =
-        clerkDisplayNameFromEmail(email);
-      // Do not send `username` unless Username is enabled in Clerk — otherwise FAPI returns 422.
+        clerkDisplayNameFromEmail(emailTrimmed);
       const { error } = await signUp.password({
-        emailAddress: email,
+        emailAddress: emailTrimmed,
         password,
         firstName: fnClerk,
         lastName: lnClerk,
@@ -228,8 +296,6 @@ export function SignUpForm() {
         return;
       }
 
-      // Profile is saved after email verification (see onVerify). A mid-flow
-      // signUp.update here can trigger empty API bodies with some Clerk/dev setups.
       await signUp.verifications.sendEmailCode();
       setStep("verify");
     } finally {
@@ -346,47 +412,64 @@ export function SignUpForm() {
     }
   }
 
+  function backToCredentials() {
+    setStep("credentials");
+    setFormError(null);
+    setCode("");
+  }
+
   const signInHref = authSignInHref(afterAuthUrl);
 
   if (!isLoaded) {
     return (
-      <div className="h-48 animate-pulse rounded-xl bg-gray-100" aria-hidden />
+      <SignUpScreenFrame title="Бүртгүүлэх" back={{ href: "/" }}>
+        <div
+          className="h-96 animate-pulse rounded-2xl bg-gray-200/70"
+          aria-hidden
+        />
+      </SignUpScreenFrame>
     );
   }
 
-  /**
-   * verify алхмыг `isSignedIn`-ээс өмнө: код баталгаажсаны дараа Clerk `isSignedIn`-ийг эхлүүлдэг,
-   * харин `useEffect` verify үед шилжүүлдэггүй — хуучин дараалалд «Шилжиж байна» гогцоонд ороод байсан.
-   */
   if (step === "verify") {
     return (
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-          И-мэйл баталгаажуулах
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
+      <SignUpScreenFrame
+        title="И-мэйл баталгаажуулах"
+        back={{ onBack: backToCredentials }}
+      >
+        <p className="mb-6 text-center text-sm text-gray-600">
           Илгээсэн кодыг оруулна уу:{" "}
           <span className="font-medium text-gray-800">{email}</span>
         </p>
 
-        <form className="mt-8 space-y-5" onSubmit={onVerify} noValidate>
-          {/* Clerk bot protection: товчноос өмнө mount хийгдэх ёстой; verify мөрөн дээр мөн token шаардлагатай */}
+        <form className="flex flex-col gap-4" onSubmit={onVerify} noValidate>
           <div id="clerk-captcha" className="min-h-[1px]" />
 
-          <AuthInput
-            id="signup-code"
-            label="Баталгаажуулах код"
-            name="code"
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            placeholder="000000"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            error={codeError}
-            required
-            disabled={loading}
-          />
+          <div>
+            <label htmlFor="signup-code" className="sr-only">
+              Баталгаажуулах код
+            </label>
+            <input
+              id="signup-code"
+              name="code"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              placeholder="Баталгаажуулах код"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className={inputClass}
+              required
+              disabled={loading}
+              aria-invalid={Boolean(codeError)}
+              aria-describedby={codeError ? "signup-code-error" : undefined}
+            />
+            {codeError ? (
+              <p id="signup-code-error" className="mt-1.5 text-sm text-red-600" role="alert">
+                {codeError}
+              </p>
+            ) : null}
+          </div>
 
           {formError ? (
             <p className="text-sm text-red-600" role="alert">
@@ -394,66 +477,77 @@ export function SignUpForm() {
             </p>
           ) : null}
 
-          <AuthButton type="submit" disabled={loading}>
+          <AuthButton
+            type="submit"
+            disabled={loading}
+            className={`mt-1 h-14 rounded-[14px] text-base font-bold ${primaryBlue}`}
+          >
             {fetching ? "Баталгаажуулж байна…" : "Баталгаажуулах"}
           </AuthButton>
         </form>
 
         <button
           type="button"
-          className="mt-4 w-full text-center text-sm font-medium text-gray-600 hover:text-gray-900"
+          className="mt-5 w-full text-center text-sm font-medium text-gray-600 underline-offset-2 hover:text-gray-900 hover:underline"
           onClick={resendCode}
           disabled={loading}
         >
           Код дахин илгээх
         </button>
 
-        <p className="mt-8 text-center text-sm text-gray-500">
-          Бүртгэлтэй юу?{" "}
-          <Link
-            href={signInHref}
-            className="font-semibold text-gray-900 underline-offset-4 hover:underline"
-          >
-            Нэвтрэх
-          </Link>
-        </p>
-      </div>
+        <Link
+          href={signInHref}
+          className="mt-8 block text-center text-base font-bold text-gray-800 underline-offset-2 hover:underline"
+        >
+          Нэвтрэх
+        </Link>
+      </SignUpScreenFrame>
     );
   }
 
   if (isSignedIn) {
     return (
-      <div className="py-8 text-center text-sm text-gray-600">
-        Та аль хэдийн нэвтэрсэн байна. Шилжиж байна…
-      </div>
+      <SignUpScreenFrame title="Бүртгүүлэх" back={{ href: "/" }}>
+        <p className="text-center text-sm text-gray-600">
+          Та аль хэдийн нэвтэрсэн байна. Шилжиж байна…
+        </p>
+      </SignUpScreenFrame>
     );
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-        Бүртгүүлэх
-      </h1>
-      <p className="mt-1 text-sm text-gray-500">
-        {isOrganizationSignup
-          ? "Захиргааны бүртгэл — аймаг/хот, сум, бүртгэлийн дугаар заавал; доорх хаягийг нэмж болно."
-          : "И-мэйл, нууц үгээр бүртгүүлнэ. Бусад мэдээллийг дараа нь профайлаас бөглүүлж болно."}
-      </p>
+    <SignUpScreenFrame title="Бүртгүүлэх" back={{ href: "/" }}>
+      {isOrganizationSignup ? (
+        <p className="mb-5 text-center text-sm text-gray-500">
+          Захиргааны бүртгэл — аймаг/хот, сум, бүртгэлийн дугаар заавал.
+        </p>
+      ) : null}
 
-      <form className="mt-8 space-y-5" onSubmit={onCredentials} noValidate>
-        <AuthInput
-          id="signup-email"
-          label="И-мэйл"
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={emailError}
-          required
-          disabled={loading}
-        />
+      <form className="flex flex-col gap-4" onSubmit={onCredentials} noValidate>
+        <div>
+          <label htmlFor="signup-email" className="sr-only">
+            И-мэйл
+          </label>
+          <input
+            id="signup-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="Имэйл хаяг"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+            required
+            disabled={loading}
+            aria-invalid={Boolean(emailError)}
+            aria-describedby={emailError ? "signup-email-error" : undefined}
+          />
+          {emailError ? (
+            <p id="signup-email-error" className="mt-1.5 text-sm text-red-600" role="alert">
+              {emailError}
+            </p>
+          ) : null}
+        </div>
 
         {isOrganizationSignup ? (
           <>
@@ -469,60 +563,142 @@ export function SignUpForm() {
               onSumChange={setOrganizationSum}
               fieldErrors={fieldErrors}
               disabled={loading}
+              compactAuth
             />
-            <AuthInput
-              id="signup-org-detail"
-              label="Дэлгэрэнгүй хаяг"
-              name="organizationAddressDetail"
-              type="text"
-              autoComplete="street-address"
-              placeholder="Гудамж, байр, тоот (заавал биш)"
-              value={organizationAddressDetail}
-              onChange={(e) => setOrganizationAddressDetail(e.target.value)}
-              disabled={loading}
-            />
-            <AuthInput
-              id="signup-org-register"
-              label="Байгууллагын бүртгэлийн дугаар"
-              name="organizationRegister"
-              type="text"
-              autoComplete="off"
-              placeholder="Жишээ: 1234567"
-              value={organizationRegister}
-              onChange={(e) => setOrganizationRegister(e.target.value)}
-              error={fieldErrors.organizationRegister}
-              required
-              disabled={loading}
-            />
+            <div>
+              <label
+                htmlFor="signup-org-detail"
+                className="mb-1.5 block text-xs font-medium text-gray-600"
+              >
+                Дэлгэрэнгүй хаяг
+              </label>
+              <input
+                id="signup-org-detail"
+                name="organizationAddressDetail"
+                type="text"
+                autoComplete="street-address"
+                placeholder="Гудамж, байр, тоот (заавал биш)"
+                value={organizationAddressDetail}
+                onChange={(e) => setOrganizationAddressDetail(e.target.value)}
+                className={inputClass}
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="signup-org-register"
+                className="mb-1.5 block text-xs font-medium text-gray-600"
+              >
+                Байгууллагын бүртгэлийн дугаар
+              </label>
+              <input
+                id="signup-org-register"
+                name="organizationRegister"
+                type="text"
+                autoComplete="off"
+                placeholder="Жишээ: 1234567"
+                value={organizationRegister}
+                onChange={(e) => setOrganizationRegister(e.target.value)}
+                className={inputClass}
+                required
+                disabled={loading}
+                aria-invalid={Boolean(fieldErrors.organizationRegister)}
+                aria-describedby={
+                  fieldErrors.organizationRegister ? "signup-org-register-error" : undefined
+                }
+              />
+              {fieldErrors.organizationRegister ? (
+                <p
+                  id="signup-org-register-error"
+                  className="mt-1.5 text-sm text-red-600"
+                  role="alert"
+                >
+                  {fieldErrors.organizationRegister}
+                </p>
+              ) : null}
+            </div>
           </>
         ) : null}
 
-        <AuthInput
-          id="signup-password"
-          label="Нууц үг"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={passwordError}
-          required
-          disabled={loading}
-        />
-        <AuthInput
-          id="signup-confirm"
-          label="Нууц үг давтах"
-          name="confirm"
-          type="password"
-          autoComplete="new-password"
-          placeholder="••••••••"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          error={confirmError ?? undefined}
-          required
-          disabled={loading}
-        />
+        <div>
+          <label htmlFor="signup-password" className="sr-only">
+            Нууц үг
+          </label>
+          <div className="relative">
+            <input
+              id="signup-password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Нууц үг"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${inputClass} pr-12`}
+              required
+              disabled={loading}
+              aria-invalid={Boolean(passwordError)}
+              aria-describedby={passwordError ? "signup-password-error" : undefined}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+              onClick={() => setShowPassword((v) => !v)}
+              disabled={loading}
+              aria-label={showPassword ? "Нууц үг нуух" : "Нууц үг харуулах"}
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible className="h-5 w-5" aria-hidden />
+              ) : (
+                <AiOutlineEye className="h-5 w-5" aria-hidden />
+              )}
+            </button>
+          </div>
+          {passwordError ? (
+            <p id="signup-password-error" className="mt-1.5 text-sm text-red-600" role="alert">
+              {passwordError}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
+          <label htmlFor="signup-confirm" className="sr-only">
+            Нууц үг давтах
+          </label>
+          <div className="relative">
+            <input
+              id="signup-confirm"
+              name="confirm"
+              type={showConfirm ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Нууц үг давтах"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              className={`${inputClass} pr-12`}
+              required
+              disabled={loading}
+              aria-invalid={Boolean(confirmError)}
+              aria-describedby={confirmError ? "signup-confirm-error" : undefined}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+              onClick={() => setShowConfirm((v) => !v)}
+              disabled={loading}
+              aria-label={showConfirm ? "Нууц үг нуух" : "Нууц үг харуулах"}
+            >
+              {showConfirm ? (
+                <AiOutlineEyeInvisible className="h-5 w-5" aria-hidden />
+              ) : (
+                <AiOutlineEye className="h-5 w-5" aria-hidden />
+              )}
+            </button>
+          </div>
+          {confirmError ? (
+            <p id="signup-confirm-error" className="mt-1.5 text-sm text-red-600" role="alert">
+              {confirmError}
+            </p>
+          ) : null}
+        </div>
 
         {formError ? (
           <p className="text-sm text-red-600" role="alert">
@@ -530,46 +706,36 @@ export function SignUpForm() {
           </p>
         ) : null}
 
-        {/* Clerk bot protection — must be in the DOM before sign-up requests */}
         <div id="clerk-captcha" className="min-h-[1px]" />
 
-        <AuthButton type="submit" disabled={loading}>
+        <AuthButton
+          type="submit"
+          disabled={loading}
+          className={`mt-1 h-14 rounded-[14px] text-base font-bold ${primaryBlue}`}
+        >
           {fetching ? "Үргэлжлүүлж байна…" : "Бүртгүүлэх"}
         </AuthButton>
       </form>
 
       {!isOrganizationSignup ? (
-        <>
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center" aria-hidden>
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-xs font-medium uppercase tracking-wide text-gray-400">
-              <span className="bg-white px-3">эсвэл</span>
-            </div>
-          </div>
-
-          <AuthButton
-            type="button"
-            variant="social"
-            disabled={loading}
-            onClick={onGoogleSignUp}
-          >
-            <GoogleIcon />
-            Google-ээр үргэлжлүүлэх
-          </AuthButton>
-        </>
+        <AuthButton
+          type="button"
+          variant="social"
+          disabled={loading}
+          onClick={onGoogleSignUp}
+          className="mt-6 h-14 rounded-[14px] border-[#29B6FF] bg-white text-base font-semibold text-[#29B6FF] shadow-none hover:bg-[#f0f9ff] cursor-pointer"
+        >
+          <GoogleIcon />
+          Google-ээр бүртгүүлэх
+        </AuthButton>
       ) : null}
 
-      <p className="mt-8 text-center text-sm text-gray-500">
-        Бүртгэлтэй юу?{" "}
-        <Link
-          href={signInHref}
-          className="font-semibold text-gray-900 underline-offset-4 hover:underline"
-        >
-          Нэвтрэх
-        </Link>
-      </p>
-    </div>
+      <Link
+        href={signInHref}
+        className="mt-8 block text-center text-base font-bold text-gray-800 underline-offset-2 hover:underline"
+      >
+        Нэвтрэх
+      </Link>
+    </SignUpScreenFrame>
   );
 }
