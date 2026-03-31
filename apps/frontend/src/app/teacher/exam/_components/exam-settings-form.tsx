@@ -28,16 +28,16 @@ export function ExamSettingsForm({
   ) => void;
 }) {
   return (
-    <section className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
-      <div className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1f2a44]">
+    <section className="p-5">
+      <div className="text-[20px] font-medium uppercase tracking-[0.18em] text-[#122459]">
         Шалгалтын тохиргоо
       </div>
 
       <div className="mt-4 flex items-end gap-4">
-        <div className="flex-[2]">
+        <div className="flex-2">
           <Field label="">
             <input
-              className={`${inputClassName} !h-10 w-full`}
+              className={`${inputClassName} h-10! w-full`}
               onChange={(event) => onUpdateExam("title", event.target.value)}
               placeholder="Шалгалтын гарчиг бичих"
               value={exam.title}
@@ -45,13 +45,13 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
-        <div className="flex-[1]">
+        <div className="flex-1">
           <Field label="">
             <Select
               onValueChange={(value) => onUpdateExam("grade", value)}
               value={exam.grade}
             >
-              <SelectTrigger className={`${inputClassName} !h-10 w-full`}>
+              <SelectTrigger className={`${inputClassName} h-10! w-full`}>
                 <SelectValue placeholder="Анги сонголт" />
               </SelectTrigger>
               <SelectContent>
@@ -71,7 +71,7 @@ export function ExamSettingsForm({
               onValueChange={(value) => onUpdateExam("subject", value)}
               value={exam.subject}
             >
-              <SelectTrigger className={`${inputClassName} !h-10 w-full`}>
+              <SelectTrigger className={`${inputClassName} h-10! w-full`}>
                 <SelectValue placeholder="Хичээл сонголт" />
               </SelectTrigger>
               <SelectContent>
@@ -91,7 +91,7 @@ export function ExamSettingsForm({
               onValueChange={(value) => onUpdateExam("topic", value)}
               value={exam.topic}
             >
-              <SelectTrigger className={`${inputClassName} !h-10 w-full`}>
+              <SelectTrigger className={`${inputClassName} h-10! w-full`}>
                 <SelectValue placeholder="Сэдэв сонголт" />
               </SelectTrigger>
               <SelectContent>
@@ -118,7 +118,7 @@ export function ExamSettingsForm({
                       Math.max(1, (exam.durationInMinutes || 40) - 1),
                     )
                   }
-                  className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[#cdd6e6] text-[12px] leading-none text-[#7b8aa7] hover:border-[#9fbef5] hover:text-[#1f6feb]"
+                  className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]  "
                 >
                   −
                 </button>
@@ -131,13 +131,13 @@ export function ExamSettingsForm({
                       (exam.durationInMinutes || 40) + 1,
                     )
                   }
-                  className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[#cdd6e6] text-[12px] leading-none text-[#7b8aa7] hover:border-[#9fbef5] hover:text-[#1f6feb]"
+                  className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]  "
                 >
                   +
                 </button>
               </div>
               <input
-                className={`${inputClassName} !h-10 w-full !pl-[56px] !pr-[44px] !text-[#1f2a44] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                className={`${inputClassName} h-10! w-full pl-14 pr-11 text-[#262626] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                 min={1}
                 onChange={(event) =>
                   onUpdateExam(
@@ -151,7 +151,7 @@ export function ExamSettingsForm({
                 type="number"
                 value={exam.durationInMinutes ?? 40}
               />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-[#60728f]">
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-medium text-[#60728f]">
                 мин
               </span>
             </div>
@@ -159,7 +159,7 @@ export function ExamSettingsForm({
         </div>
       </div>
 
-      <div className="mt-4 rounded-3xl border border-[#d7e6fb] bg-white/80 p-4">
+      <div className="mt-4 rounded-xl border border-[#e5e5e5] bg-[#F5F5F5] p-4">
         <label className="flex cursor-pointer items-start gap-3">
           <input
             checked={exam.requiresSchoolApproval}
@@ -170,10 +170,10 @@ export function ExamSettingsForm({
             type="checkbox"
           />
           <div>
-            <p className="text-sm font-semibold text-[#183153]">
+            <p className="text-[20px] font-medium text-[#122459]">
               Сургуулийн зөвшөөрөл авах
             </p>
-            <p className="mt-1 text-sm leading-6 text-[#60728f]">
+            <p className="mt-1 text-[16px] font-normal leading-6 text-[#737373]">
               Хэрэв энэ шалгалт сургуулийн талаас баталгаажих шаардлагатай бол
               хадгалах үед зөвшөөрлийн хүсэлт илгээгдэнэ.
             </p>

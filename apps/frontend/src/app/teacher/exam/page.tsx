@@ -9,7 +9,7 @@ export default function TeacherExamPage() {
   const examPage = useTeacherExamPage();
 
   return (
-    <div className="space-y-6 rounded-[32px] bg-[#f8fbff] p-2 pb-8">
+    <div className="space-y-6  p-2 pb-8">
       {examPage.toastMessage ? (
         <div className="rounded-2xl border border-[#cfe0fb] bg-[#eef6ff] px-4 py-3 text-sm font-medium text-[#2f66b9]">
           {examPage.toastMessage}
@@ -32,7 +32,6 @@ export default function TeacherExamPage() {
           onMoveQuestion={examPage.moveQuestion}
           onPersistExam={examPage.persistExam}
           onRemoveExamQuestion={examPage.removeExamQuestion}
-          onUpdateAssignedPoints={examPage.updateAssignedPoints}
         />
 
         <SavedExamsSection
