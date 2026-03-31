@@ -52,6 +52,7 @@ export function QuestionBankPage({
     updateEntrySelection,
     updateFilters,
     clearQuestionSelection,
+    subjectItems,
   } = useQuestionBank(
     initialSubjectId && initialGrade
       ? { initialSubjectId, initialGrade }
@@ -65,6 +66,7 @@ export function QuestionBankPage({
           <QuestionBankEntryPanel
             entryGrade={entrySelection.grade}
             entrySubjectId={entrySelection.subjectId}
+            subjects={subjectItems}
             gradeOptions={gradeOptions}
             onEnter={() =>
               router.push(

@@ -6,6 +6,7 @@ import { QuestionBankEntrySelect } from "./question-bank-entry-select";
 type QuestionBankEntryPanelProps = {
   entryGrade: string;
   entrySubjectId: string;
+  subjects: { id: string; name: string }[];
   gradeOptions: string[];
   onEnter: () => void;
   onGradeSelect: (value: string) => void;
@@ -15,6 +16,7 @@ type QuestionBankEntryPanelProps = {
 export function QuestionBankEntryPanel({
   entryGrade,
   entrySubjectId,
+  subjects,
   gradeOptions,
   onEnter,
   onGradeSelect,
@@ -41,7 +43,7 @@ export function QuestionBankEntryPanel({
           label="Хичээл"
           onSubjectSelect={onSubjectSelect}
           placeholder="Хичээл сонгох"
-          useSubjectsQuery
+          subjects={subjects}
           value={entrySubjectId}
         />
         <QuestionBankEntrySelect

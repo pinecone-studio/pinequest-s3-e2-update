@@ -37,3 +37,24 @@ export const GET_STUDENT_BY_CLASS_ID = gql`
     }
   }
 `;
+
+export const GET_TESTS_BY_SUBJECT_AND_GRADE = gql`
+  query GetTestsBySybjectAndGrade($input: TestInput) {
+    getTestsBySybjectAndGrade(input: $input) {
+      id
+      grade
+      subjectId
+      question
+      answers
+      rightAnswer
+      imageUrl
+      difficulty
+      score
+      usageCount
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
