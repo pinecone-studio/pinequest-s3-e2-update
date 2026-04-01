@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ChevronRight, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import {
   GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
@@ -11,7 +12,7 @@ import {
   HARDCODED_SCHOOL_ID,
   HARDCODED_TEACHER_ID,
 } from "@/app/teacher/_lib/hardcoded-teacher-api";
-import { BeeRingProgressLoader } from "@/components/loaders/bee-ring-progress-loader";
+import { HoneyCircularLoader } from "@/components/loaders/honey-circular-loader";
 
 type ClassResponse = {
   getClassByTeacherAndSchoolId: ClassType[];
@@ -78,6 +79,7 @@ function DashboardClassCard({
 
 export default function TeacherDashboard() {
   const router = useRouter();
+  const [loaderProgress, setLoaderProgress] = useState(0);
 
   const { data, loading } = useQuery<ClassResponse>(
     GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
@@ -92,6 +94,31 @@ export default function TeacherDashboard() {
   );
 
   const classes = data?.getClassByTeacherAndSchoolId ?? [];
+
+  useEffect(() => {
+    if (!loading) return;
+    let cancelled = false;
+    let start = 0;
+    const tick = (now: number) => {
+      if (cancelled) return;
+      if (start === 0) {
+        start = now;
+        setLoaderProgress(0);
+        requestAnimationFrame(tick);
+        return;
+      }
+      const t = (now - start) / 1000;
+      const asymptote = 84 * (1 - Math.exp(-t / 9.5));
+      setLoaderProgress(
+        Math.min(88, asymptote + Math.sin(now / 1600) * 1.8),
+      );
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    return () => {
+      cancelled = true;
+    };
+  }, [loading]);
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
@@ -115,12 +142,14 @@ export default function TeacherDashboard() {
           </header>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white px-6 py-10">
-              <BeeRingProgressLoader
-                progress={0}
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-[#e8eef6] bg-[#f8fafc] px-6 py-12">
+              <HoneyCircularLoader
+                progress={loaderProgress}
+                backgroundImage="/busy-bee.png"
+                backgroundImageFit="contain"
                 label="Ачааллаж байна…"
                 showCenterPercent={false}
-                className="max-w-[240px] py-2"
+                className="max-w-[260px]"
               />
             </div>
           ) : !classes || classes.length === 0 ? (
