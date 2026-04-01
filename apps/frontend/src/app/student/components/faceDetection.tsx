@@ -15,7 +15,7 @@ export default function FaceCam() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const detectorRef = useRef<FaceDetector | null>(null);
 
-  // Hoisted function so it can be called in useEffect
+  // Hoisted function
   async function startDetection() {
     const video = webcamRef.current?.video;
     const canvas = canvasRef.current;
@@ -29,10 +29,12 @@ export default function FaceCam() {
 
       const result: FaceDetectorResult | undefined =
         await detectorRef.current.detect(video);
+
       const faces: Detection[] | undefined = result?.detections;
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -56,21 +58,17 @@ export default function FaceCam() {
   useEffect(() => {
     async function loadDetector() {
       const wasmFileset = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm",
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
       );
 
       const detector = await FaceDetector.createFromOptions(wasmFileset, {
-        baseOptions: {
-          modelAssetPath:
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/face_detector_short_range.task",
-        },
-        runningMode: "video",
+        baseOptions: { modelAssetPath: "/models/face_detector.tflite" },
+        runningMode: "IMAGE",
         minDetectionConfidence: 0.5,
-      } as FaceDetectorOptions);
-
+      });
       detectorRef.current = detector;
       console.log("FaceDetector loaded!");
-      startDetection(); // Safe now
+      startDetection();
     }
 
     loadDetector();
