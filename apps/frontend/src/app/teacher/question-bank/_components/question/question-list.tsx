@@ -38,7 +38,7 @@ export function QuestionList({
   }
 
   return (
-    <div className="max-h-[571px] space-y-[8px] overflow-y-auto pr-1">
+    <div className="min-h-[500px] max-h-[690px] space-y-[14px] overflow-y-auto pr-1">
       {questions.map((question, index) => (
         <QuestionCard
           key={question.id}

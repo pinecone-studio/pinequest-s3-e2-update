@@ -22,6 +22,7 @@ export function QuestionBankEntry({
   const {
     entrySelection,
     gradeOptions,
+    summary,
     subjectItems,
     toastMessage,
     updateEntrySelection,
@@ -44,7 +45,7 @@ export function QuestionBankEntry({
     label: grade,
   }));
 
-  const totalQuestions = 9;
+  const totalQuestions = summary.selectedScopeCount;
 
   const handleSubjectChange = (next: string) => {
     const subject = subjectItems.find((s) => s.id === next);
@@ -63,32 +64,27 @@ export function QuestionBankEntry({
   return (
     <div className="bg-white pb-12">
       <div className="mx-auto max-w-[1184px] space-y-5 px-6 pt-[28px]">
-        <div className="space-y-1">
-          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#1f2a44]">
-            БАГШИЙН АСУУЛТЫН САН
-          </p>
-          <p className="text-sm text-[#737373]">
-            Нэг удаа бэлдээд, дахин ашигла.
-          </p>
-        </div>
+        <section className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-[23px] font-bold uppercase leading-[28px] tracking-[0.1em] text-[#122459]">
+              БАГШИЙН АСУУЛТЫН САН
+            </p>
+            <p className="text-[14px] leading-[18px] tracking-[0.1em] text-[#737373]">
+              Нэг удаа бэлдээд, дахин ашигла.
+            </p>
+          </div>
 
-        <section className="rounded-2xl border border-[#e6edf8] bg-[#EDF6FF] px-6 py-5">
-          <div className="flex items-center gap-6">
-            <p className="text-4xl font-extrabold text-[#1f2a44]">
+          <div className="inline-flex h-[88px] min-w-[320px] items-center justify-center gap-4 rounded-[16px] bg-[#D7ECFF] px-8 sm:h-[76px] sm:min-w-[220px] sm:px-4">
+            <p className="text-[56px] font-medium leading-none text-[#122459] sm:text-[44px]">
               {totalQuestions}
             </p>
-            <div>
-              <p className="text-sm font-extrabold text-[#1f2a44]">
-                БҮХ АСУУЛТ
-              </p>
-              <p className="text-[11px] text-[#737373]">
-                Шалгалтад дахин ашиглана
-              </p>
-            </div>
+            <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-[20px] tracking-[0.08em] text-[#122459] sm:text-[16px] sm:tracking-[0.06em]">
+              БҮХ АСУУЛТ
+            </p>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-[#e5e7eb] bg-white px-5 py-4 sm:px-6">
+        <section className="rounded-2xl border border-[#e5e7eb] bg-[#FAFAFA] px-5 py-4 sm:px-6">
           <p className="text-sm font-semibold text-[#1f2a44]">
             Сонголтын хэсэг
           </p>

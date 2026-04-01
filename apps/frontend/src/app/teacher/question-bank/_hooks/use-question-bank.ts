@@ -68,6 +68,15 @@ function parseGradeToInt(gradeLabel: string) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function isOwnedByTeacher(
+  question: Question,
+  teacherId: string,
+  teacherName: string,
+) {
+  if (question.teacherId) return question.teacherId === teacherId;
+  return question.teacherName === teacherName;
+}
+
 export function useQuestionBank(options?: UseQuestionBankOptions) {
   const router = useRouter();
   const teacher = useTeacher();
@@ -171,7 +180,18 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
     const backendTests = mapBackendTestsToQuestions(
       testsData?.getTestsBySybjectAndGrade ?? [],
       subjectNameById,
-    );
+    ).map((q) => {
+      const owner = testsData?.getTestsBySybjectAndGrade?.find(
+        (row) => row.id === q.id,
+      )?.teacherId;
+      const isMine = Boolean(owner && owner === teacher.id);
+      return {
+        ...q,
+        source: owner ? "school" : "global",
+        teacherId: owner ?? null,
+        teacherName: isMine ? teacher.name : q.teacherName,
+      } satisfies Question;
+    });
     const backendOpenExercies = mapBackendOpenExerciesToQuestions(
       openExerciesData?.getOpenExerciesBySubjectAndGrade ?? [],
       subjectNameById,
@@ -179,7 +199,12 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       const owner = openExerciesData?.getOpenExerciesBySubjectAndGrade?.find(
         (row) => row.id === q.id,
       )?.teacherId;
-      return owner && owner === teacher.id ? { ...q, teacherName: teacher.name } : q;
+      const isMine = Boolean(owner && owner === teacher.id);
+      return {
+        ...q,
+        teacherId: owner ?? null,
+        teacherName: isMine ? teacher.name : q.teacherName,
+      } satisfies Question;
     });
 
     const combined = [...backendTests, ...backendOpenExercies];
@@ -219,10 +244,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 
   const myQuestions = useMemo(
     () =>
-      scopedQuestions.filter(
-        (q) => q.source === "school" && q.teacherName === teacher.name,
+      scopedQuestions.filter((q) =>
+        isOwnedByTeacher(q, teacher.id, teacher.name),
       ),
-    [scopedQuestions, teacher.name],
+    [scopedQuestions, teacher.id, teacher.name],
   );
 
   const filteredQuestions = useMemo(
@@ -332,10 +357,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
   const deleteQuestion = useCallback(
     (questionId: string) => {
       const target = mergedQuestions.find((q) => q.id === questionId);
-      if (
-        target &&
-        !(target.source === "school" && target.teacherName === teacher.name)
-      ) {
+      if (target && !isOwnedByTeacher(target, teacher.id, teacher.name)) {
         showToast("Зөвхөн өөрийн үүсгэсэн асуултыг устгана.");
         return;
       }
@@ -352,7 +374,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
         current === questionId ? null : current,
       );
     },
-    [mergedQuestions, showToast, teacher.name],
+    [mergedQuestions, showToast, teacher.id, teacher.name],
   );
 
   const submitQuestion = useCallback(
@@ -371,9 +393,30 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
         ...built,
         source: "school",
         teacherName: teacher.name,
+        teacherId: teacher.id,
         grade: entrySelection.grade || built.grade,
         subject: entrySelection.subject || built.subject,
       };
+
+      // Editing flow: update the existing local row immediately so option/count
+      // changes (e.g. 2 -> 4 choices) render on the same question card.
+      if (existing) {
+        setUpserts((current) => {
+          const next = new Map(current);
+          next.set(payload.id, payload);
+          return next;
+        });
+        setRemovedIds((current) => {
+          const next = new Set(current);
+          next.delete(payload.id);
+          return next;
+        });
+        setActiveQuestionId(payload.id);
+        setPublishSuccessDialogOpen(true);
+        setIsBuilderOpen(false);
+        setEditingValues(null);
+        return true;
+      }
 
       try {
         const subjectId = entrySelection.subjectId;
@@ -415,6 +458,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
                   ...mapped,
                   source: "school",
                   teacherName: teacher.name,
+                  teacherId: teacher.id,
                 });
                 return next;
               });
@@ -466,6 +510,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
                   ...mapped,
                   source: "school",
                   teacherName: teacher.name,
+                  teacherId: teacher.id,
                 });
                 return next;
               });
