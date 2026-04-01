@@ -7,6 +7,7 @@ import type {
   QuestionBuilderValues,
   QuestionValidationErrors,
 } from "../../_lib/types";
+import { hasTraditionalMongolianText } from "../../_lib/utils";
 import {
   BuilderField,
   builderInputClassName,
@@ -24,16 +25,18 @@ type QuestionBuilderAnswerSectionProps = {
   values: QuestionBuilderValues;
 };
 
-export function QuestionBuilderAnswerSection({
-  mode,
-  onAddOption,
-  onMarkCorrectOption: _onMarkCorrectOption,
-  onOptionChange,
-  onRemoveOption,
-  onRubricChange,
-  validationErrors,
-  values,
-}: QuestionBuilderAnswerSectionProps) {
+export function QuestionBuilderAnswerSection(
+  props: QuestionBuilderAnswerSectionProps,
+) {
+  const {
+    mode,
+    onAddOption,
+    onOptionChange,
+    onRemoveOption,
+    onRubricChange,
+    validationErrors,
+    values,
+  } = props;
   const [selectedOptionId, setSelectedOptionId] = useState("");
   const isNationalScript = values.subject === NATIONAL_SCRIPT_SUBJECT;
   const activeOptionId = values.options.some(
@@ -60,14 +63,31 @@ export function QuestionBuilderAnswerSection({
             {values.options.map((option, index) => (
               <div className="flex items-center gap-3" key={option.id}>
                 <div className="flex-1">
-                  <input
-                    className={builderInputClassName}
-                    onChange={(event) =>
-                      onOptionChange(option.id, event.target.value)
-                    }
-                    placeholder={`Хариултын сонголт ${index + 1}`}
-                    value={option.text}
-                  />
+                  {isNationalScript &&
+                  hasTraditionalMongolianText(option.text) ? (
+                    <textarea
+                      className={`${builderInputClassName} min-h-24 overflow-x-auto py-3 leading-8`}
+                      onChange={(event) =>
+                        onOptionChange(option.id, event.target.value)
+                      }
+                      placeholder={`Хариултын сонголт ${index + 1}`}
+                      style={{
+                        writingMode: "vertical-lr",
+                        textOrientation: "mixed",
+                        whiteSpace: "pre-wrap",
+                      }}
+                      value={option.text}
+                    />
+                  ) : (
+                    <input
+                      className={builderInputClassName}
+                      onChange={(event) =>
+                        onOptionChange(option.id, event.target.value)
+                      }
+                      placeholder={`Хариултын сонголт ${index + 1}`}
+                      value={option.text}
+                    />
+                  )}
                 </div>
                 {values.options.length > 2 ? (
                   <button
@@ -132,9 +152,22 @@ export function QuestionBuilderAnswerSection({
             label="Рубрик эсвэл үнэлгээний тэмдэглэл"
           >
             <textarea
-              className={`${builderInputClassName} min-h-32 py-3`}
+              className={`${builderInputClassName} py-3 ${
+                isNationalScript && hasTraditionalMongolianText(values.rubric)
+                  ? "min-h-40 overflow-x-auto leading-8"
+                  : "min-h-32"
+              }`}
               onChange={(event) => onRubricChange(event.target.value)}
               placeholder="Сайн, дунд, сул хариултад ямар агуулга байхыг тайлбарлана уу."
+              style={
+                isNationalScript && hasTraditionalMongolianText(values.rubric)
+                  ? {
+                      writingMode: "vertical-lr",
+                      textOrientation: "mixed",
+                      whiteSpace: "pre-wrap",
+                    }
+                  : undefined
+              }
               value={values.rubric}
             />
           </BuilderField>

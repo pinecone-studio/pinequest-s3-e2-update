@@ -25,6 +25,7 @@ import {
 import type { Question, QuestionFilters } from "../_lib/types";
 import {
   buildQuestionPayload,
+  createQuestionBuilderValues,
   filterAndSortQuestions,
   mapQuestionToBuilderValues,
   validateQuestion,
@@ -333,9 +334,22 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 
   const openCreateBuilder = useCallback(() => {
     setLastValidationErrors(undefined);
-    setEditingValues(null);
+    setEditingValues(
+      createQuestionBuilderValues("multiple_choice", {
+        grade: entrySelection.grade || undefined,
+        subject:
+          entrySelection.subject ||
+          subjectNameById.get(entrySelection.subjectId) ||
+          undefined,
+      }),
+    );
     setIsBuilderOpen(true);
-  }, []);
+  }, [
+    entrySelection.grade,
+    entrySelection.subject,
+    entrySelection.subjectId,
+    subjectNameById,
+  ]);
 
   const openEditBuilder = useCallback(
     (questionId: string) => {
