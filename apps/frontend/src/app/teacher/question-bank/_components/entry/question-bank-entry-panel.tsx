@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { QuestionBankEntrySelect } from "./question-bank-entry-select";
 
 type QuestionBankEntryPanelProps = {
@@ -22,53 +22,66 @@ export function QuestionBankEntryPanel({
   onGradeSelect,
   onSubjectSelect,
 }: QuestionBankEntryPanelProps) {
+  const totalQuestions = 9;
+
   return (
-    <section className="rounded-[28px] border border-[#e7e9ee] bg-white px-5 py-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:px-6 xl:min-w-0 xl:flex-1">
-      <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eef4ff] text-[#355caa]">
-          <Sparkles className="h-5 w-5" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold tracking-[-0.02em] text-[#111827]">
-            Системийн санд нэвтрэх
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-[#6b7280]">
-            Эхлээд хичээл болон ангиа сонгоод тухайн хүрээний асуултууд руу нэвтэрнэ.
+    <div className="space-y-[18px]">
+      <section className="flex w-full items-center justify-between gap-6">
+        <div className="min-w-0">
+          <h1 className="text-[23px] font-bold uppercase leading-[28px] tracking-[0.1em] text-[#122459]">
+            БАГШИЙН АСУУЛТЫН САН
+          </h1>
+          <p className="mt-[8px] text-[14px] leading-[18px] tracking-[0.1em] text-[#737373]">
+            Нэг удаа бэлдээд, дахин ашигла.
           </p>
         </div>
-      </div>
+        <div className="inline-flex h-[88px] min-w-[326px] items-center justify-center rounded-[16px] bg-[#D7ECFF] px-[28px]">
+          <span className="text-[56px] font-medium leading-none text-[#122459]">
+            {totalQuestions}
+          </span>
+          <div className="ml-[12px]">
+            <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-[20px] text-[#122459]">
+              БҮХ АСУУЛТ
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <QuestionBankEntrySelect
-          label="Хичээл"
-          onSubjectSelect={onSubjectSelect}
-          placeholder="Хичээл сонгох"
-          subjects={subjects}
-          value={entrySubjectId}
-        />
-        <QuestionBankEntrySelect
-          label="Анги"
-          onValueChange={onGradeSelect}
-          options={gradeOptions}
-          placeholder="Анги сонгох"
-          value={entryGrade}
-        />
-      </div>
+      <section className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] px-[26px] py-[22px]">
+        <h2 className="text-[53px] font-medium leading-[53px] text-[#323232]">
+          Сонголтын хэсэг
+        </h2>
 
-      <div className="mt-6 flex flex-col gap-3">
-        <button
-          className="inline-flex h-11 items-center justify-center self-start rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937] disabled:cursor-not-allowed disabled:bg-[#d1d5db]"
-          disabled={!entrySubjectId || !entryGrade}
-          onClick={onEnter}
-          type="button"
-        >
-          <ArrowRight className="mr-2 h-4 w-4" />
-          Системийн санд нэвтрэх
-        </button>
-        <p className="text-sm text-[#6b7280]">
-          Сонгосон хичээл, ангид тохирох асуултуудыг шууд шүүж харуулна.
-        </p>
-      </div>
-    </section>
+        <div className="mt-[16px] flex flex-wrap items-end gap-[16px]">
+          <div className="w-[243px]">
+            <QuestionBankEntrySelect
+              label="Хичээл"
+              onSubjectSelect={onSubjectSelect}
+              placeholder="Хичээл сонгох"
+              subjects={subjects}
+              value={entrySubjectId}
+            />
+          </div>
+          <div className="w-[243px]">
+            <QuestionBankEntrySelect
+              label="Анги"
+              onValueChange={onGradeSelect}
+              options={gradeOptions}
+              placeholder="Анги сонгох"
+              value={entryGrade}
+            />
+          </div>
+          <button
+            className="inline-flex h-[50px] items-center justify-center rounded-[16px] border border-[#7DC8FF] bg-[#EDF6FF] px-[24px] text-[22px] font-medium uppercase leading-none text-[#122459] transition hover:bg-[#e3f0ff] disabled:cursor-not-allowed disabled:border-[#d1d5db] disabled:bg-[#f3f4f6] disabled:text-[#9ca3af]"
+            disabled={!entrySubjectId || !entryGrade}
+            onClick={onEnter}
+            type="button"
+          >
+            <ArrowRight className="mr-2 h-4 w-4" />
+            АСУУЛТ САНД НЭВТРЭХ
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }

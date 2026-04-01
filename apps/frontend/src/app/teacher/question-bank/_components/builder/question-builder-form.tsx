@@ -16,6 +16,7 @@ import { useQuestionBuilderForm } from "../../_hooks/use-question-builder-form";
 type QuestionBuilderFormProps = {
   initialValues?: QuestionBuilderValues | null;
   onClose: () => void;
+  onDelete?: (questionId: string) => void;
   onSubmit: (values: QuestionBuilderValues) => void | Promise<void | boolean>;
   subjectOptions?: string[];
   validationErrors?: QuestionValidationErrors;
@@ -24,6 +25,7 @@ type QuestionBuilderFormProps = {
 export function QuestionBuilderForm({
   initialValues,
   onClose,
+  onDelete,
   onSubmit,
   subjectOptions = SUBJECT_OPTIONS as unknown as string[],
   validationErrors,
@@ -85,6 +87,14 @@ export function QuestionBuilderForm({
     };
 
     await onSubmit(finalValues);
+  };
+
+  const isEditing = Boolean(initialValues?.id);
+
+  const handleDelete = () => {
+    if (!initialValues?.id || !onDelete) return;
+    onDelete(initialValues.id);
+    onClose();
   };
 
   return (
@@ -166,7 +176,7 @@ export function QuestionBuilderForm({
         </div>
 
         <div className="sticky bottom-0 mt-auto border-t border-[#dce5f2] bg-white px-[14px] py-[16px]">
-          <div className="flex flex-col gap-[42px] sm:flex-row sm:justify-center">
+          <div className="flex flex-col gap-[16px] sm:flex-row sm:justify-center">
             <button
               className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] border border-[#3a9df2] bg-white px-[4px] text-[13px] font-semibold text-[#3a9df2] transition hover:bg-[#f4faff] sm:w-[278px]"
               onClick={onClose}
@@ -174,12 +184,21 @@ export function QuestionBuilderForm({
             >
               Цуцлах
             </button>
+            {isEditing ? (
+              <button
+                className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] border border-[#ff8e8e] bg-white px-[4px] text-[13px] font-semibold text-[#ef4444] transition hover:bg-[#fff5f5] sm:w-[278px]"
+                onClick={handleDelete}
+                type="button"
+              >
+                Устгах
+              </button>
+            ) : null}
             <button
               className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] bg-[#29A4FF] px-[4px] text-[13px] font-semibold text-white transition hover:bg-[#1f97f1] sm:w-[278px]"
               onClick={handleSubmit}
               type="button"
             >
-              Асуулт нэмэх
+              {isEditing ? "Засварлах" : "Асуулт нэмэх"}
             </button>
           </div>
         </div>

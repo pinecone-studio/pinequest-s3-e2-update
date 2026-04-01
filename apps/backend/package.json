@@ -14,6 +14,7 @@
     "build": "wrangler deploy --dry-run"
   },
   "dependencies": {
+    "@clerk/backend": "^3.2.3",
     "better-sqlite3": "^12.8.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",

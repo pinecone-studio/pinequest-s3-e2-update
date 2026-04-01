@@ -10,31 +10,27 @@ export function QuestionBankFigmaHero({
   totalQuestions,
 }: QuestionBankFigmaHeroProps) {
   return (
-    <section className="flex h-[82px] w-[1184px] items-center justify-between">
-      <div className="flex h-[58px] w-[408px] shrink-0 flex-col justify-between">
-        <h1 className="w-[408px] whitespace-nowrap text-[28px] font-bold uppercase leading-[30px] tracking-[0.1em] text-[#122459]">
+    <section className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-6">
+      <div className="min-w-0 justify-self-start">
+        <h1 className="whitespace-nowrap text-[23px] font-bold uppercase leading-[28px] tracking-[0.1em] text-[#122459]">
           БАГШИЙН АСУУЛТЫН САН
         </h1>
-        <p className="h-[17px] w-[284px] whitespace-nowrap text-[14px] font-medium leading-[17px] tracking-[0.1em] text-[#737373]">
-          Нэг удаа бэлдээд, ДАХИН АШИГЛА.
+        <p className="mt-[8px] whitespace-nowrap text-[14px] leading-[18px] tracking-[0.1em] text-[#737373]">
+          Нэг удаа бэлдээд, дахин ашигла.
         </p>
       </div>
 
-      <div className="mr-[164px] flex h-[54px] w-[240px] shrink-0 items-center rounded-[12px] bg-[#D7ECFF] px-[20px]">
-        <div className="flex w-full items-center justify-center gap-[18px]">
-          <div className="min-w-[24px] text-[38px] font-medium leading-[38px] text-[#122459]">
-            {totalQuestions}
-          </div>
-          <div className="flex items-center">
-            <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-[20px] text-[#122459]">
-              БҮХ АСУУЛТ
-            </p>
-          </div>
-        </div>
+      <div className="inline-flex h-[88px] min-w-[320px] items-center justify-center gap-4 rounded-[16px] bg-[#D7ECFF] px-8">
+        <p className="text-[56px] font-medium leading-none text-[#122459]">
+          {totalQuestions}
+        </p>
+        <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-[20px] tracking-[0.08em] text-[#122459]">
+          БҮХ АСУУЛТ
+        </p>
       </div>
 
       <button
-        className="mr-[38px] inline-flex h-[54px] w-[193px] shrink-0 items-center justify-center gap-[8px] whitespace-nowrap rounded-[12px] bg-[#29A4FF] px-[24px] text-[18px] font-medium leading-[22px] tracking-[0.1em] text-white transition hover:bg-[#29A4FF]"
+        className="inline-flex h-[54px] w-[193px] shrink-0 items-center justify-center gap-[8px] justify-self-end whitespace-nowrap rounded-[12px] bg-[#29A4FF] px-[24px] text-[18px] font-medium leading-[22px] tracking-[0.1em] text-white transition hover:bg-[#29A4FF]"
         onClick={onCreateQuestion}
         type="button"
       >

@@ -15,6 +15,10 @@ export const queryTypeDefs = /* GraphQL */ `
   }
 
   type Query {
+    """
+    Clerk user id from verified Bearer session token, or null if anonymous.
+    """
+    viewerClerkId: String
     hello: String!
     getAllTests: [Test!]!
     getClassBySchoolId(schoolId: String!): [Class!]
@@ -30,5 +34,9 @@ export const queryTypeDefs = /* GraphQL */ `
     ): [Class!]
     getOpenExerciesBySubjectAndGrade(input: OpenExerciesInput): [OpenExercies]
     getExamBySchoolId(schoolId: String!): [Exam!]
+    getTestById(testId: String!): [Test]
+    getOpenExerciesById(openExerciesId: String!): [OpenExercies]
+    getTestsByIds(ids: [String!]!): [Test!]!
+    getOpenExerciesByIds(ids: [String!]!): [OpenExercies!]!
   }
 `;

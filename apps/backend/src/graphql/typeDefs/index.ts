@@ -12,6 +12,7 @@ import { examCheatLogTypeDefs } from "./schema/examCheatLog";
 import { studentExamResultTypeDefs } from "./schema/studentExamResult";
 import { scalarJson } from "./scalarJson";
 
+/** Array merge so @graphql-tools/schema picks up every SDL block. */
 export const typeDefs = [
   scalarJson,
   openExerciesTypeDefs,
@@ -26,4 +27,4 @@ export const typeDefs = [
   subjectTypeDefs,
   queryTypeDefs,
   mutationTypeDefs,
-].join("\n");
+];

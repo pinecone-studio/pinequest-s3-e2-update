@@ -30,9 +30,7 @@ export default function ExamOptimizationPage() {
 	const [selectedExamId, setSelectedExamId] = useState<string | null | undefined>(
 		undefined,
 	);
-	const [selectedClassIdByExamId, setSelectedClassIdByExamId] = useState<
-		Record<string, string>
-	>({});
+	const [selectedClassIdByExamId] = useState<Record<string, string>>({});
 	const [monitoringByScope, setMonitoringByScope] = useState<Record<string, boolean>>(
 		() => {
 			const initialMonitoringState = readExamMonitoringStateMap();
@@ -57,7 +55,6 @@ export default function ExamOptimizationPage() {
 	const [activeStudents, setActiveStudents] = useState<ActiveStudentEntry[]>(
 		[],
 	);
-	const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
 	const [currentTime, setCurrentTime] = useState(() => Date.now());
 
 	const currentClassName = useMemo(() => {
@@ -175,10 +172,6 @@ export default function ExamOptimizationPage() {
 		if (!effectiveSelectedExamId) return null;
 		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;
 	}, [effectiveSelectedExamId, monitorExamCards]);
-	const visibleMonitorExamCards = useMemo(
-		() => (activeMonitorExam ? [activeMonitorExam] : monitorExamCards),
-		[activeMonitorExam, monitorExamCards],
-	);
 	const activeClassId = activeMonitorExam
 		? selectedClassIdByExamId[activeMonitorExam.id] ??
 			activeMonitorExam.classOptions[0]?.id ??
@@ -196,9 +189,6 @@ export default function ExamOptimizationPage() {
 	const isActiveMonitoring = activeMonitoringScope
 		? Boolean(monitoringByScope[activeMonitoringScope])
 		: false;
-	const hasStartedActiveScope = activeMonitoringScope
-		? Object.prototype.hasOwnProperty.call(monitoringByScope, activeMonitoringScope)
-		: false;
 	const activeScopeStartedAt = activeMonitoringScope
 		? monitorStartedAtByScope[activeMonitoringScope] ?? null
 		: null;
@@ -211,11 +201,13 @@ export default function ExamOptimizationPage() {
 
 	const monitorTotalStudents = useMemo(() => {
 		if (activeMonitorExam) {
+			let computed = 0;
 			if (activeClassId) {
 				const klass = teacherClasses.find((item) => item.id === activeClassId);
-				if (klass) return klass.studentCount;
+				if (klass) computed = klass.studentCount;
 			}
-			return filteredActiveStudents.length;
+			if (computed === 0) computed = filteredActiveStudents.length;
+			return Math.max(36, computed);
 		}
 		return 0;
 	}, [activeClassId, activeMonitorExam, filteredActiveStudents.length]);
@@ -230,6 +222,10 @@ export default function ExamOptimizationPage() {
 		() => formatRemainingDuration(remainingDurationMs),
 		[remainingDurationMs],
 	);
+	const monitoringElapsedSeconds = useMemo(() => {
+		if (!isActiveMonitoring || !activeScopeStartedAt) return 0;
+		return Math.max(0, Math.floor((currentTime - activeScopeStartedAt) / 1000));
+	}, [activeScopeStartedAt, currentTime, isActiveMonitoring]);
 
 	const readActiveStudents = useCallback((): ActiveStudentEntry[] => {
 		try {
@@ -245,7 +241,9 @@ export default function ExamOptimizationPage() {
 							typeof x.fullName === "string" &&
 							typeof x.email === "string" &&
 							typeof x.startedAt === "number" &&
-							(x.status === "active" || x.status === "disconnected"),
+							(x.status === "active" ||
+								x.status === "disconnected" ||
+								x.status === "submitted"),
 					);
 		} catch {
 			return MOCK_ACTIVE_STUDENTS;
@@ -272,27 +270,7 @@ export default function ExamOptimizationPage() {
 			...current,
 			[activeMonitoringScope]: true,
 		}));
-		setLastUpdatedAt(startedAt);
 	}, [activeMonitoringScope]);
-
-	const stopMonitoring = useCallback(() => {
-		if (!activeMonitoringScope) return;
-		const existingStartedAt =
-			monitorStartedAtByScope[activeMonitoringScope] ?? Date.now();
-		const currentStore = readExamMonitoringStateMap();
-		writeExamMonitoringStateMap({
-			...currentStore,
-			[activeMonitoringScope]: {
-				isStarted: false,
-				startedAt: existingStartedAt,
-			},
-		});
-		setMonitoringByScope((current) => ({
-			...current,
-			[activeMonitoringScope]: false,
-		}));
-		setLastUpdatedAt(Date.now());
-	}, [activeMonitoringScope, monitorStartedAtByScope]);
 
 	useEffect(() => {
 		if (
@@ -322,7 +300,6 @@ export default function ExamOptimizationPage() {
 					...current,
 					[activeMonitoringScope]: false,
 				}));
-				setLastUpdatedAt(now);
 				window.clearInterval(ticker);
 			}
 		}, 1000);
@@ -354,7 +331,6 @@ export default function ExamOptimizationPage() {
 		const sync = () => {
 			const next = readActiveStudents();
 			setActiveStudents(next);
-			setLastUpdatedAt(Date.now());
 		};
 
 		syncSavedExams();
@@ -376,39 +352,32 @@ export default function ExamOptimizationPage() {
 	}, [readActiveStudents]);
 
 	return (
-		<section className="px-6 py-8 sm:px-10 sm:py-10">
+		<section className="w-full overflow-x-hidden px-6 py-8 sm:px-10 sm:py-10">
 			<div className="mx-auto max-w-6xl space-y-10">
-				<MonitorExamsSection
-					activeExamId={activeMonitorExam?.id ?? null}
-					exams={visibleMonitorExamCards}
-					onClearSelection={() => setSelectedExamId(null)}
-					onOpenExam={(exam) => {
-						setSelectedExamId(exam.id);
-					}}
-					totalExamCount={monitorExamCards.length}
-				/>
+        {!activeMonitorExam ? (
+          <MonitorExamsSection
+            activeExamId={null}
+            exams={monitorExamCards}
+            onClearSelection={() => setSelectedExamId(null)}
+            onOpenExam={(exam) => {
+              setSelectedExamId(exam.id);
+            }}
+            totalExamCount={monitorExamCards.length}
+          />
+        ) : null}
 
 				{activeMonitorExam ? (
 					<MonitorDetailSection
-						activeCount={filteredActiveStudents.filter((student) => student.status === "active").length}
 						activeClassId={activeClassId}
 						activeClassLabel={activeClassLabel}
 						activeExam={activeMonitorExam}
 						activeStudents={filteredActiveStudents}
-						disconnectedCount={filteredActiveStudents.filter((student) => student.status === "disconnected").length}
-						hasStartedBefore={hasStartedActiveScope}
 						isMonitoring={isActiveMonitoring}
-						lastUpdatedAt={lastUpdatedAt}
+						monitoringElapsedSeconds={monitoringElapsedSeconds}
 						monitorTotalStudents={monitorTotalStudents}
 						remainingDurationLabel={remainingDurationLabel}
-						onSelectClass={(classId) =>
-							setSelectedClassIdByExamId((current) => ({
-								...current,
-								[activeMonitorExam.id]: classId,
-							}))
-						}
+            onBackToList={() => setSelectedExamId(null)}
 						onStartMonitoring={startMonitoring}
-						onStopMonitoring={stopMonitoring}
 					/>
 				) : null}
 			</div>
