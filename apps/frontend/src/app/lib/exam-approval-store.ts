@@ -19,6 +19,10 @@ export type ApprovalRequest = {
   examId: string;
   title: string;
   className: string;
+  requestedExamDate?: string;
+  requestedStartTime?: string;
+  requestedEndTime?: string;
+  requestedLocation?: string;
   subject: string;
   teacherName: string;
   materialTitle: string;
@@ -54,6 +58,10 @@ const seedRequests: ApprovalRequest[] = [
     examId: "exam-seed-10a",
     title: "Алгебр I улирал",
     className: "10А",
+    requestedExamDate: "2026-04-03",
+    requestedStartTime: "09:00",
+    requestedEndTime: "10:00",
+    requestedLocation: "203",
     subject: "Математик",
     teacherName: "Б.Эрдэнэ",
     materialTitle: "Хуваарь + бодлого A",
@@ -67,6 +75,10 @@ const seedRequests: ApprovalRequest[] = [
     examId: "exam-seed-9b",
     title: "Эх бичиг шалгалт",
     className: "9Б",
+    requestedExamDate: "2026-04-04",
+    requestedStartTime: "11:00",
+    requestedEndTime: "11:35",
+    requestedLocation: "205",
     subject: "Монгол хэл",
     teacherName: "О.Наранзул",
     materialTitle: "Уншлага + богино хариулт",
@@ -114,6 +126,10 @@ export function upsertPendingApprovalRequest(input: {
   examId: string;
   title: string;
   className: string;
+  requestedExamDate?: string;
+  requestedStartTime?: string;
+  requestedEndTime?: string;
+  requestedLocation?: string;
   subject: string;
   teacherName: string;
   materialTitle?: string;
@@ -126,6 +142,10 @@ export function upsertPendingApprovalRequest(input: {
     examId: input.examId,
     title: input.title,
     className: input.className,
+    requestedExamDate: input.requestedExamDate,
+    requestedStartTime: input.requestedStartTime,
+    requestedEndTime: input.requestedEndTime,
+    requestedLocation: input.requestedLocation,
     subject: input.subject,
     teacherName: input.teacherName,
     materialTitle: input.materialTitle || `${input.subject} шалгалтын материал`,

@@ -3,10 +3,15 @@ import type { Question } from "../../question-bank/_lib/types";
 export type ExamComposerState = {
   title: string;
   grade: string;
+  classGroup: string;
   subject: string;
   topic: string;
   durationInMinutes: number;
   requiresSchoolApproval: boolean;
+  approvalExamDate: string;
+  approvalStartTime: string;
+  approvalEndTime: string;
+  approvalLocation: string;
 };
 
 export type ExamQuestionItem = {
@@ -27,6 +32,7 @@ export type SavedExamRecord = {
   id: string;
   title: string;
   grade: string;
+  classGroup: string;
   subject: string;
   topic: string;
   durationInMinutes: number;
@@ -38,6 +44,10 @@ export type SavedExamRecord = {
   requiresSchoolApproval?: boolean;
   approvalStatus?: ExamApprovalStatus;
   sentClassIds?: string[];
+  approvalExamDate: string;
+  approvalStartTime: string;
+  approvalEndTime: string;
+  approvalLocation: string;
 };
 
 export type ExamQuestionDetail = ExamQuestionItem & { question: Question };

@@ -65,6 +65,19 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
+        <div className="w-[120px]">
+          <Field label="">
+            <input
+              className={`${inputClassName} h-10! w-full`}
+              onChange={(event) =>
+                onUpdateExam("classGroup", event.target.value.toUpperCase())
+              }
+              placeholder="Бүлэг"
+              value={exam.classGroup}
+            />
+          </Field>
+        </div>
+
         <div className="flex-[1.5]">
           <Field label="">
             <Select
@@ -180,6 +193,60 @@ export function ExamSettingsForm({
           </div>
         </label>
       </div>
+
+      {exam.requiresSchoolApproval ? (
+        <div className="mt-4 rounded-xl border border-[#dbe5f0] bg-white p-4">
+          <p className="text-[16px] font-semibold text-[#122459]">
+            Батлуулах хуваарийн мэдээлэл
+          </p>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <Field label="">
+              <input
+                type="date"
+                className={`${inputClassName} h-10! w-full`}
+                onChange={(event) =>
+                  onUpdateExam("approvalExamDate", event.target.value)
+                }
+                value={exam.approvalExamDate}
+              />
+            </Field>
+
+            <Field label="">
+              <input
+                className={`${inputClassName} h-10! w-full`}
+                onChange={(event) =>
+                  onUpdateExam("approvalLocation", event.target.value)
+                }
+                placeholder="Өрөө / Байршил (ж: 203)"
+                value={exam.approvalLocation}
+              />
+            </Field>
+
+            <Field label="">
+              <input
+                type="time"
+                className={`${inputClassName} h-10! w-full`}
+                onChange={(event) =>
+                  onUpdateExam("approvalStartTime", event.target.value)
+                }
+                value={exam.approvalStartTime}
+              />
+            </Field>
+
+            <Field label="">
+              <input
+                type="time"
+                className={`${inputClassName} h-10! w-full`}
+                onChange={(event) =>
+                  onUpdateExam("approvalEndTime", event.target.value)
+                }
+                value={exam.approvalEndTime}
+              />
+            </Field>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
