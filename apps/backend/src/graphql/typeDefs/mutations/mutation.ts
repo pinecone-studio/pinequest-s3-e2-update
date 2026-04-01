@@ -31,6 +31,23 @@ export const mutationTypeDefs = /* GraphQL */ `
     name: String!
   }
 
+  input AddStudentInput {
+    email: String
+    classId: String!
+    firstName: String!
+    lastName: String!
+  }
+
+  input StudentExamAuthInput {
+    examId: String!
+    studentCode: String!
+  }
+
+  type StudentExamAuthPayload {
+    token: String!
+    student: Student!
+  }
+
   input CreateExamArgs {
     grade: Int!
     subjectId: String!
@@ -56,5 +73,7 @@ export const mutationTypeDefs = /* GraphQL */ `
     createSubject(input: CreateSubjectInput!): Subject!
     createOpenExercies(input: CreateOpenExerciesArgs!): OpenExercies!
     createExam(input: CreateExamArgs!): Exam!
+    addStudent(input: AddStudentInput!): Student!
+    studentExamAuth(input: StudentExamAuthInput!): StudentExamAuthPayload!
   }
 `;

@@ -26,7 +26,7 @@ export function ExamOutlineSection({
   onRemoveExamQuestion: (examQuestionId: string) => void;
 }) {
   return (
-    <section className="mx-5 rounded-[12px] border border-[#d1d5db] bg-[#f3f4f6] p-5 shadow-sm">
+    <section className="mx-5 rounded-[12px] border border-[#d7e6fb] bg-[#EDF6FF] p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4 pb-4">
         <div>
           <div className="text-[20px] font-medium uppercase tracking-[0.14em] text-[#122459]">

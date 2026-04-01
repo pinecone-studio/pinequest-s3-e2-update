@@ -32,6 +32,7 @@ export type BackendTest = {
   score: number;
   usageCount: number | null;
   notes: string | null;
+  teacherId?: string | null;
   createdAt: string;
   updatedAt: string;
 };

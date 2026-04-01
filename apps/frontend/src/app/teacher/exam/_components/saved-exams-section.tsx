@@ -25,7 +25,7 @@ export function SavedExamsSection({
   onSendSavedExam: (savedExam: SavedExamRecord, openMonitoring?: boolean) => void;
 }) {
   return (
-    <section className="mx-5 rounded-xl border border-[#e5e5e5] bg-[#f3f4f6] p-5 shadow-sm">
+    <section className="mx-5 rounded-xl border border-[#d7e6fb] bg-[#EDF6FF] p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4  pb-4">
         <div>
           <div className="text-[15px] font-extrabold uppercase tracking-[0.14em] text-[#233e7c]">

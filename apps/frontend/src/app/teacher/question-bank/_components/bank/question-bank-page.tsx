@@ -1,7 +1,6 @@
 "use client";
 
 import { QuestionBuilderForm } from "../builder/question-builder-form";
-import { QuestionBankBulkToolbar } from "./question-bank-bulk-toolbar";
 import { QuestionBankEntryPanel } from "../entry/question-bank-entry-panel";
 import { QuestionBankFigmaControls } from "../question-bank-figma-controls";
 import { QuestionBankFigmaHero } from "../question-bank-figma-hero";
@@ -22,6 +21,7 @@ export function QuestionBankPage({
     clearFilters,
     closeBuilder,
     currentFilters,
+    deleteQuestion,
     entrySelection,
     activeQuestion,
     editingValues,
@@ -58,6 +58,11 @@ export function QuestionBankPage({
       : undefined,
   );
 
+  const myQuestionsByNewest = [...myQuestions].sort(
+    (left, right) =>
+      new Date(right.updatedAt || right.createdAt).getTime() -
+      new Date(left.updatedAt || left.createdAt).getTime(),
+  );
   const resultQuestionsByNewest = [...filteredQuestions].sort(
     (left, right) =>
       new Date(right.updatedAt || right.createdAt).getTime() -
@@ -68,7 +73,7 @@ export function QuestionBankPage({
   const myQuestionCount = myQuestions.length;
 
   return (
-    <div className="bg-[#fafafa] pb-[32px]">
+    <div className="pb-[32px]">
       <div className="mx-auto max-w-[1184px] px-[18px] pt-[14px]">
         {!hasEnteredBank ? (
           <QuestionBankEntryPanel
@@ -114,18 +119,11 @@ export function QuestionBankPage({
               </div>
             ) : null}
 
-            {selectedQuestionIds.length > 0 ? (
-              <QuestionBankBulkToolbar
-                count={selectedQuestionIds.length}
-                onClear={clearQuestionSelection}
-                onSendToExam={() => sendQuestionsToExam(selectedQuestionIds)}
-              />
-            ) : null}
-
             <QuestionBankFigmaResults
               activeQuestionId={activeQuestion?.id ?? null}
               getQuestionHeartCount={getQuestionHeartCount}
               myQuestionCount={myQuestionCount}
+              myQuestions={myQuestionsByNewest}
               onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
               onCreateQuestion={openCreateBuilder}
               onEditQuestion={openEditBuilder}
@@ -135,6 +133,9 @@ export function QuestionBankPage({
               previewQuestion={previewQuestion}
               questions={visibleQuestions}
               selectedQuestionIds={selectedQuestionIds}
+              selectedCount={selectedQuestionIds.length}
+              onClearSelection={clearQuestionSelection}
+              onSendSelectedToExam={() => sendQuestionsToExam(selectedQuestionIds)}
             />
           </div>
         )}
@@ -145,6 +146,7 @@ export function QuestionBankPage({
           initialValues={editingValues}
           key={editingValues?.id ?? "new-question"}
           onClose={closeBuilder}
+          onDelete={deleteQuestion}
           onSubmit={submitQuestion}
           subjectOptions={subjectOptions}
           validationErrors={lastValidationErrors}

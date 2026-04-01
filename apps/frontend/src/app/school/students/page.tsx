@@ -22,7 +22,7 @@ export default function SchoolStudentsPage() {
             <p className="mt-1 text-2 text-zinc-600">Нийт сурагч: {students.length}</p>
           </div>
           <Link
-            href="/school/classes"
+            href="/school/classes?grade=10"
             className="text-2 font-medium text-blue-700 hover:text-blue-800"
           >
             Ангиуд руу очих →

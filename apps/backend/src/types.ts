@@ -9,4 +9,6 @@ export interface Env {
   CLERK_JWT_KEY?: string;
   /** Clerk webhook signing secret (Dashboard → Webhooks → Endpoint signing secret). */
   CLERK_WEBHOOK_SIGNING_SECRET?: string;
+  /** HMAC secret for student exam tokens. */
+  EXAM_TOKEN_SECRET?: string;
 }

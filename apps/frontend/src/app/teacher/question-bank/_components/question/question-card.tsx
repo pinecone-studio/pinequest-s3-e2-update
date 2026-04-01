@@ -33,8 +33,13 @@ export function QuestionCard({
   return (
     <article
       className={cn(
-        "group flex min-h-[185px] flex-col rounded-[12px] border bg-white px-[22px] py-[14px]",
-        isSelected || isActive ? "border-[#7DC8FF]" : "border-[#E5E5E5]",
+        "group flex min-h-[185px] flex-col rounded-[12px] border px-[22px] py-[14px]",
+        isActive && !isSelected ? "min-h-[185px]" : "",
+        isSelected
+          ? "border-[#7DC8FF] bg-white"
+          : isActive
+            ? "border-[#7DC8FF] bg-[#DCEEFF]"
+            : "border-[#E5E5E5] bg-white",
       )}
     >
       <div className="flex items-start justify-between gap-[12px]">
@@ -64,7 +69,11 @@ export function QuestionCard({
         </button>
       </div>
 
-      <button className="mt-[16px] w-full text-left" onClick={onOpen} type="button">
+      <button
+        className="mt-[16px] w-full text-left"
+        onClick={onOpen}
+        type="button"
+      >
         <h3 className="line-clamp-2 text-[16px] font-medium leading-[20px] text-[#323232]">
           {question.title || "Квадрат функцийн оройг олох"}
         </h3>

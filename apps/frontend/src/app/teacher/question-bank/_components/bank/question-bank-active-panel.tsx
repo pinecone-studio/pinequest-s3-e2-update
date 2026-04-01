@@ -17,7 +17,7 @@ export function QuestionBankActivePanel({
 }: QuestionBankActivePanelProps) {
   if (!question) {
     return (
-      <section className="min-h-[527px] w-[381px] rounded-[10px] border border-[#7DC8FF] bg-[#F5F5F5] px-[22px] py-[27px]" />
+      <section className="min-h-[560px] w-[381px] rounded-[10px] border border-[#7DC8FF] bg-[#EDF6FF] px-[22px] py-[27px]" />
     );
   }
 
@@ -33,7 +33,7 @@ export function QuestionBankActivePanel({
   ];
 
   return (
-    <section className="min-h-[527px] w-[381px] rounded-[10px] border border-[#7DC8FF] bg-[#F5F5F5] px-[22px] py-[27px]">
+    <section className="min-h-[500px] w-[381px] rounded-[10px] border border-[#7DC8FF] bg-[#EDF6FF] px-[22px] py-[27px]">
       <p className="text-[14px] font-normal uppercase leading-[17px] text-[#7B7B7B]">
         АСУУЛТЫН ДЭЛГЭРЭНГҮЙ
       </p>
@@ -73,7 +73,7 @@ export function QuestionBankActivePanel({
         ))}
       </div>
 
-      <div className="mt-[18px] grid grid-cols-[1fr_auto] gap-x-[22px] gap-y-[12px] bg-[#DCEEFF] px-[20px] py-[18px]">
+      <div className="mt-[18px] grid grid-cols-[1fr_auto] gap-x-[22px] gap-y-[12px] bg-[#EDF6FF] px-[20px] py-[18px]">
         {metaItems.map(([label, value]) => (
           <div key={label} className="contents">
             <span className="text-[12px] leading-[15px] text-[#23407D]">
@@ -101,7 +101,7 @@ function TinyChip({
       className={`inline-flex h-[16px] items-center rounded-[5px] px-[14px] text-[8px] font-normal leading-[10px] ${
         tone === "filled"
           ? "bg-[#AED5FF] text-[#122459]"
-          : "border border-[#AED5FF] bg-[#F5F5F5] text-[#122459]"
+          : "border border-[#7DC8FF] bg-white text-[#122459]"
       }`}
     >
       {children}

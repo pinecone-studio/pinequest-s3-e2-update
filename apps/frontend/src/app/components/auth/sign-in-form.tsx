@@ -724,7 +724,7 @@ export function SignInForm() {
 
 						<div className="mt-8 flex items-center justify-center gap-2 pb-[env(safe-area-inset-bottom)]">
 							<Image
-								src="/bee.png"
+								src="/Herobee.png"
 								alt=""
 								width={40}
 								height={40}

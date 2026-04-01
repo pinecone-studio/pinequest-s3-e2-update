@@ -29,10 +29,17 @@ export default async function AdminClassesPage({
 }) {
   const sp = searchParams ? await searchParams : {};
   const rawGrade = sp.grade;
-  const parsedGrade = Number(
-    typeof rawGrade === "string" ? rawGrade : Array.isArray(rawGrade) ? rawGrade[0] : "",
-  );
-  const selectedGrade = Number.isNaN(parsedGrade) ? null : parsedGrade;
+  const gradeParam =
+    typeof rawGrade === "string"
+      ? rawGrade
+      : Array.isArray(rawGrade)
+        ? rawGrade[0]
+        : undefined;
+  const parsedGrade = gradeParam ? Number(gradeParam) : Number.NaN;
+  const selectedGrade =
+    Number.isNaN(parsedGrade) || parsedGrade < 6 || parsedGrade > 12
+      ? 10
+      : parsedGrade;
 
   const classList = store.listClasses();
   const teachers = store.listTeachers();

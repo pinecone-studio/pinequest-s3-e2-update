@@ -140,7 +140,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
       if (score) items.push({ exam, score });
     }
     return items.sort((a, b) =>
-      safeExamDateKey(b.exam.date).localeCompare(safeExamDateKey(a.exam.date)),
+      safeExamDateKey(a.exam.date).localeCompare(safeExamDateKey(b.exam.date)),
     );
   }, [pastExams, selectedId]);
 

@@ -1,4 +1,4 @@
-import { AlertTriangle } from "lucide-react";
+import Image from "next/image";
 
 type FinishConfirmationDialogProps = {
   isOpen: boolean;
@@ -10,46 +10,46 @@ type FinishConfirmationDialogProps = {
 
 export function FinishConfirmationDialog({
   isOpen,
-  answeredCount,
-  total,
   onCancel,
   onConfirm,
 }: FinishConfirmationDialogProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a]/40 px-4">
-      <div className="w-full max-w-md rounded-3xl border border-[#dbe3f0] bg-white p-6 shadow-[0_20px_50px_rgba(15,23,42,0.25)]">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#fff7ed]">
-            <AlertTriangle className="h-6 w-6 text-[#f59e0b]" />
-          </div>
-          <div>
-            <h4 className="text-5 font-bold text-[#1f2a44]">Шалгалтаа дуусгах уу?</h4>
-            <p className="mt-1 text-3 text-[#5f7090]">
-              Дуусгасны дараа хариултаа өөрчлөх боломжгүй.
-            </p>
-            <p className="mt-2 text-3 font-semibold text-[#334261]">
-              Хариулсан: {answeredCount}/{total}
-            </p>
-          </div>
-        </div>
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0f172a]/10 px-4 backdrop-blur-[8px]">
+      <div className="h-[510px] w-full max-w-[768px] rounded-[28px] bg-[#edf6ff] px-10 py-12 shadow-[0_24px_60px_rgba(15,23,42,0.16)]">
+        <div className="flex h-full flex-col items-center justify-center text-center">
+          <Image
+            src="/text.png"
+            alt="Bee"
+            width={160}
+            height={120}
+            priority
+            className="h-[120px] w-auto object-contain"
+          />
 
-        <div className="mt-6 flex items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-xl border border-[#dbe3f0] bg-white px-4 py-2 text-3 font-semibold text-[#445780] hover:bg-[#f6f9ff]"
-          >
-            Болих
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="rounded-xl bg-[#1d4ed8] px-4 py-2 text-3 font-semibold text-white hover:bg-[#1b43bd]"
-          >
-            Тийм, дуусгах
-          </button>
+          <h4 className="mt-8 text-[28px] font-medium leading-[1.2] text-[#111111]">
+            Шалгалтаа дуусгахдаа
+            <br />
+            итгэлтэй байна уу?
+          </h4>
+
+          <div className="mt-10 flex items-center gap-4">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="inline-flex h-[50px] min-w-[123px] items-center justify-center rounded-[20px] border border-[#29A4FF] bg-white px-8 py-3 text-[22px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
+            >
+              Буцах
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              className="inline-flex h-[50px] min-w-[169px] items-center justify-center rounded-[20px] bg-[#349AF2] px-8 py-3 text-[22px] font-medium text-white transition hover:bg-[#2488e0]"
+            >
+              Тийм
+            </button>
+          </div>
         </div>
       </div>
     </div>

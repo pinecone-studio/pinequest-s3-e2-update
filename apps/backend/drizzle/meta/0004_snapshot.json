@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "dd74b680-ba0f-4fcf-959a-23879adc939d",
+  "id": "87bc5758-57ce-4816-95be-a7572dc054f0",
   "prevId": "75772ff0-7520-4832-8a4f-28912967d264",
   "tables": {
     "class": {
@@ -558,7 +558,7 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "classId": {
@@ -596,6 +596,14 @@
           "notNull": false,
           "autoincrement": false
         },
+        "studentStatus": {
+          "name": "studentStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "text",
@@ -611,7 +619,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "student_studentCode_unique": {
+          "name": "student_studentCode_unique",
+          "columns": [
+            "studentCode"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
