@@ -19,6 +19,15 @@ export function combinedOrganizationAddress(
   return combinedWithDetail;
 }
 
+export function normSpaceCase(s: string): string {
+  return s
+    .normalize("NFC")
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/[—–−]/g, "-")
+    .toLowerCase();
+}
+
 /** `school.register` is integer; derive digits from org register string (e.g. УБ99112233). */
 export function registerDigitsAsInt(organizationRegister: string): number {
   const digits = organizationRegister.replace(/\D/g, "");
@@ -29,23 +38,82 @@ export function registerDigitsAsInt(organizationRegister: string): number {
 
 export type SchoolSignupInput = {
   email: string;
+  name: string;
   organizationAimag: string;
   organizationHot: string;
   organizationSum: string;
   organizationAddressDetail: string;
   organizationRegister: string;
+  organizationAddressMeta: string;
 };
+
+export function schoolNameExcludingLocationRedundant(
+  schoolNameRaw: string,
+  organizationAimag: string,
+  organizationHot: string,
+  organizationSum: string,
+  organizationAddressDetail: string,
+  organizationAddressMeta: string,
+  fullResolvedAddress?: string,
+): string {
+  const t = schoolNameRaw.trim();
+  if (!t) return "";
+
+  const regionLabel = [
+    organizationAimag.trim(),
+    organizationHot.trim(),
+    organizationSum.trim(),
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const lineFromFields =
+    combinedOrganizationAddress(
+      organizationAimag,
+      organizationHot,
+      organizationSum,
+      organizationAddressDetail,
+    ).trim() || "";
+
+  const orgAddr = organizationAddressMeta.trim();
+  const resolved = fullResolvedAddress?.trim() ?? "";
+
+  const tn = normSpaceCase(t);
+  if (!tn) return "";
+
+  if (
+    (orgAddr && tn === normSpaceCase(orgAddr)) ||
+    (regionLabel && tn === normSpaceCase(regionLabel))
+  ) {
+    return "";
+  }
+  if (lineFromFields && tn === normSpaceCase(lineFromFields)) return "";
+  if (resolved && resolved !== "—" && tn === normSpaceCase(resolved)) return "";
+
+  return t;
+}
 
 export function buildSchoolSignupRow(clerkUserId: string, input: SchoolSignupInput) {
   const email = input.email.trim();
-  const address =
-    combinedOrganizationAddress(
-      input.organizationAimag,
-      input.organizationHot,
-      input.organizationSum,
-      input.organizationAddressDetail,
-    ) || "—";
+  const fromDivisions = combinedOrganizationAddress(
+    input.organizationAimag,
+    input.organizationHot,
+    input.organizationSum,
+    input.organizationAddressDetail,
+  ).trim();
+  const metaLine = input.organizationAddressMeta.trim();
+  const address = fromDivisions || metaLine || "—";
 
+  const local = email.includes("@") ? email.split("@")[0]?.trim() ?? "" : email;
+  const schoolNameT = schoolNameExcludingLocationRedundant(
+    input.name,
+    input.organizationAimag,
+    input.organizationHot,
+    input.organizationSum,
+    input.organizationAddressDetail,
+    metaLine,
+    address === "—" ? "" : address,
+  );
   const regionLabel = [
     input.organizationAimag.trim(),
     input.organizationHot.trim(),
@@ -54,14 +122,25 @@ export function buildSchoolSignupRow(clerkUserId: string, input: SchoolSignupInp
     .filter(Boolean)
     .join(", ");
 
-  const local = email.includes("@") ? email.split("@")[0]?.trim() ?? "" : email;
-  const name =
-    regionLabel ||
+  let rowName =
+    schoolNameT ||
     (local.length > 0 ? local : `School ${clerkUserId.slice(-8)}`);
+
+  const addrNorm = address === "—" ? "" : address;
+  const rn = normSpaceCase(rowName);
+  if (
+    (addrNorm && rn === normSpaceCase(addrNorm)) ||
+    (regionLabel && rn === normSpaceCase(regionLabel)) ||
+    (fromDivisions && rn === normSpaceCase(fromDivisions)) ||
+    (metaLine && rn === normSpaceCase(metaLine))
+  ) {
+    rowName =
+      local.length > 0 ? local : `School ${clerkUserId.slice(-8)}`;
+  }
 
   return {
     email: email.length > 0 ? email : "unknown@local.invalid",
-    name,
+    name: rowName,
     address,
     register: registerDigitsAsInt(input.organizationRegister),
   };

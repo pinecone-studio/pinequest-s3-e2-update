@@ -21,7 +21,7 @@ export type User = {
   organizationAimag?: string;
   /** Хот (unsafeMetadata.organizationHot) */
   organizationHot?: string;
-  /** Сум (unsafeMetadata.organizationSum) */
+  /** Сум/дүүрэг (unsafeMetadata.organizationSum) */
   organizationSum?: string;
   /** Дэлгэрэнгүй хаяг (гудамж, байр, тоот) */
   organizationAddressDetail?: string;

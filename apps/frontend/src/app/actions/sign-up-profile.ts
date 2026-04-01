@@ -1,3 +1,5 @@
+/** @format */
+
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
@@ -5,57 +7,61 @@ import { mergeOrganizationFieldsIntoUnsafeMetadata } from "@/app/lib/sign-up-org
 
 /** Серверээр байгууллагын бүртгэлийн өгөгдлийг `unsafeMetadata` руу хадгална. Утас, насыг энд бичихгүй. */
 export async function saveSignUpProfileExtras(
-  organizationAimag: string,
-  organizationHot: string,
-  organizationSum: string,
-  organizationAddressDetail: string,
-  organizationRegister: string,
+	organizationAimag: string,
+	organizationHot: string,
+	organizationSum: string,
+	organizationAddressDetail: string,
+	organizationRegister: string,
+	organizationDisplayName: string,
 ): Promise<{ ok: true } | { ok: false; message: string }> {
-  const aimagT = organizationAimag.trim();
-  const hotT = organizationHot.trim();
-  const sumT = organizationSum.trim();
-  const detailT = organizationAddressDetail.trim();
-  const regT = organizationRegister.trim();
+	const aimagT = organizationAimag.trim();
+	const hotT = organizationHot.trim();
 
-  if (!aimagT && !hotT && !sumT && !detailT && !regT) {
-    return { ok: true };
-  }
+	const sumT = organizationSum.trim();
+	const detailT = organizationAddressDetail.trim();
+	const regT = organizationRegister.trim();
+	const nameT = organizationDisplayName.trim();
 
-  const sleep = (ms: number) =>
-    new Promise<void>((resolve) => {
-      setTimeout(resolve, ms);
-    });
+	if (!aimagT && !hotT && !sumT && !detailT && !regT && !nameT) {
+		return { ok: true };
+	}
 
-  /** `setActive` дараах server action дуудалтад session cookie хоцорч `auth()` хоосон байж болно. */
-  let userId: string | null = null;
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const a = await auth();
-    userId = a.userId;
-    if (userId) break;
-    await sleep(75 * (attempt + 1));
-  }
+	const sleep = (ms: number) =>
+		new Promise<void>((resolve) => {
+			setTimeout(resolve, ms);
+		});
 
-  if (!userId) {
-    return { ok: false, message: "Session not ready." };
-  }
+	/** `setActive` дараах server action дуудалтад session cookie хоцорч `auth()` хоосон байж болно. */
+	let userId: string | null = null;
+	for (let attempt = 0; attempt < 8; attempt++) {
+		const a = await auth();
+		userId = a.userId;
+		if (userId) break;
+		await sleep(75 * (attempt + 1));
+	}
 
-  try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-    const meta = mergeOrganizationFieldsIntoUnsafeMetadata(
-      user.unsafeMetadata as Record<string, unknown>,
-      organizationAimag,
-      organizationHot,
-      organizationSum,
-      organizationAddressDetail,
-      organizationRegister,
-    );
+	if (!userId) {
+		return { ok: false, message: "Session not ready." };
+	}
 
-    await client.users.updateUser(userId, {
-      unsafeMetadata: meta,
-    });
-    return { ok: true };
-  } catch {
-    return { ok: false, message: "Could not save profile extras." };
-  }
+	try {
+		const client = await clerkClient();
+		const user = await client.users.getUser(userId);
+		const meta = mergeOrganizationFieldsIntoUnsafeMetadata(
+			user.unsafeMetadata as Record<string, unknown>,
+			organizationAimag,
+			organizationHot,
+			organizationSum,
+			organizationAddressDetail,
+			organizationRegister,
+			organizationDisplayName,
+		);
+
+		await client.users.updateUser(userId, {
+			unsafeMetadata: meta,
+		});
+		return { ok: true };
+	} catch {
+		return { ok: false, message: "Could not save profile extras." };
+	}
 }

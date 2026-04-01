@@ -46,11 +46,15 @@ export async function handleClerkWebhook(request: Request, env: Env): Promise<Re
 
     const db = getDb(env);
     await upsertSchoolFromSignupInput(db, userId, input);
-    console.log("[clerk-webhook] school upserted", { userId });
+    console.log("[clerk-webhook] school upserted", {
+      userId,
+      hasMetadataName: Boolean(input.name.trim()),
+    });
     return new Response("ok", { status: 200 });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.error("[clerk-webhook] Error:", msg);
-    return new Response(msg, { status: 400 });
+    const stack = e instanceof Error ? e.stack : "";
+    console.error("[clerk-webhook] Error:", msg, stack);
+    return new Response(msg, { status: 500 });
   }
 }
