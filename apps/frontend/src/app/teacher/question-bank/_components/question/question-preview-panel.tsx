@@ -2,8 +2,13 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { Eye } from "lucide-react";
+import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
-import { formatDate } from "../../_lib/utils";
+import {
+  formatDate,
+  hasTraditionalMongolianText,
+  resolveQuestionTitle,
+} from "../../_lib/utils";
 import {
   DifficultyBadge,
   GradingTypeBadge,
@@ -27,6 +32,12 @@ export function QuestionPreviewPanel({
     );
   }
 
+  const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
+  const shouldRenderPromptVertical =
+    isNationalScript && hasTraditionalMongolianText(question.content.prompt);
+  const shouldRenderRubricVertical =
+    isNationalScript && hasTraditionalMongolianText(question.rubric);
+
   return (
     <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7c8ba4]">
@@ -43,9 +54,24 @@ export function QuestionPreviewPanel({
 
       <div className="mt-4">
         <h3 className="text-xl font-semibold text-[#183153]">
-          {question.title}
+          {resolveQuestionTitle(question.title, question.content.prompt)}
         </h3>
-        <p className="mt-2 text-sm leading-7 text-[#3b4d69]">
+        <p
+          className={`mt-2 text-sm text-[#3b4d69] ${
+            shouldRenderPromptVertical
+              ? "min-h-40 overflow-x-auto leading-8"
+              : "leading-7"
+          }`}
+          style={
+            shouldRenderPromptVertical
+              ? {
+                  writingMode: "vertical-lr",
+                  textOrientation: "mixed",
+                  whiteSpace: "pre-wrap",
+                }
+              : undefined
+          }
+        >
           {question.content.prompt}
         </p>
       </div>
@@ -71,7 +97,24 @@ export function QuestionPreviewPanel({
               }`}
               key={option.id}
             >
-              {option.text}
+              <div
+                className={
+                  isNationalScript && hasTraditionalMongolianText(option.text)
+                    ? "min-h-24 overflow-x-auto leading-8"
+                    : ""
+                }
+                style={
+                  isNationalScript && hasTraditionalMongolianText(option.text)
+                    ? {
+                        writingMode: "vertical-lr",
+                        textOrientation: "mixed",
+                        whiteSpace: "pre-wrap",
+                      }
+                    : undefined
+                }
+              >
+                {option.text}
+              </div>
             </div>
           ))}
         </div>
@@ -108,7 +151,22 @@ export function QuestionPreviewPanel({
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#92743a]">
             Рубрикийн тэмдэглэл
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#6d5622]">
+          <p
+            className={`mt-2 text-sm text-[#6d5622] ${
+              shouldRenderRubricVertical
+                ? "min-h-32 overflow-x-auto leading-8"
+                : "leading-6"
+            }`}
+            style={
+              shouldRenderRubricVertical
+                ? {
+                    writingMode: "vertical-lr",
+                    textOrientation: "mixed",
+                    whiteSpace: "pre-wrap",
+                  }
+                : undefined
+            }
+          >
             {question.rubric}
           </p>
         </div>

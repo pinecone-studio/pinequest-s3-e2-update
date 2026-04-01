@@ -42,6 +42,20 @@ export const DEFAULT_FILE_UPLOAD_CONFIG: QuestionFileUploadConfig = {
   maxFiles: 1,
 };
 
+export function hasTraditionalMongolianText(value: string) {
+  return /[\u1800-\u18AF]/.test(value);
+}
+
+export function resolveQuestionTitle(title: string, prompt: string) {
+  const normalizedTitle = title.trim();
+  if (normalizedTitle) return normalizedTitle;
+
+  const normalizedPrompt = prompt.trim();
+  if (!normalizedPrompt) return "";
+
+  return normalizedPrompt.split(/\r?\n/)[0]?.trim() ?? "";
+}
+
 export function createEmptyOption(index: number): QuestionOption {
   return {
     id: `option-${index + 1}`,
@@ -52,6 +66,7 @@ export function createEmptyOption(index: number): QuestionOption {
 
 export function createQuestionBuilderValues(
   type: QuestionType = "multiple_choice",
+  overrides?: Partial<Pick<QuestionBuilderValues, "grade" | "subject">>,
 ): QuestionBuilderValues {
   return {
     title: "",
@@ -70,8 +85,8 @@ export function createQuestionBuilderValues(
     formulaRaw: "",
     imageUrl: "",
     fileUploadConfig: DEFAULT_FILE_UPLOAD_CONFIG,
-    grade: "6-р анги",
-    subject: "Математик",
+    grade: overrides?.grade ?? "6-р анги",
+    subject: overrides?.subject ?? "Математик",
     subtopic: "",
     topic: "",
     difficulty: "medium",
@@ -198,7 +213,6 @@ export function validateQuestion(
 ): QuestionValidationErrors {
   const errors: QuestionValidationErrors = {};
 
-  if (!values.title.trim()) errors.title = "Асуултын гарчиг оруулна уу.";
   if (!values.prompt.trim())
     errors.prompt = "Сурагчид харагдах асуулгын текстийг оруулна уу.";
   if (!values.grade.trim()) errors.grade = "Анги сонгох эсвэл бичнэ үү.";
@@ -257,7 +271,7 @@ export function buildQuestionPayload(
     id:
       existingQuestion?.id ??
       `question-${Math.random().toString(36).slice(2, 10)}`,
-    title: values.title.trim(),
+    title: resolveQuestionTitle(values.title, values.prompt),
     questionType: values.questionType,
     source: existingQuestion?.source ?? "school",
     teacherName: existingQuestion?.teacherName,
