@@ -54,7 +54,7 @@ export function StudentRow({
               <form action={(formData) => { void Promise.resolve(removeStudentAction(formData)).then(() => router.refresh()); }} onClick={(e) => e.stopPropagation()}>
                 <input type="hidden" name="id" value={student.id} />
                 <input type="hidden" name="classId" value={classId} />
-                <button type="submit" aria-label="Delete" title="Delete" className="inline-flex items-center rounded-md border border-red-200 bg-red-50 p-1.5 text-red-700 hover:bg-red-100"><Trash2 className="h-3.5 w-3.5" /></button>
+                <button type="submit" aria-label="Delete" title="Delete" className="inline-flex items-center rounded-md border border-zinc-300 bg-white p-1.5 text-zinc-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"><Trash2 className="h-3.5 w-3.5" /></button>
               </form>
             </div>
           </div>

@@ -3,32 +3,22 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, X } from "lucide-react";
+import { AlertTriangle, BellRing } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   getApprovalRequestsClient,
   getApprovalUpdatedEventName,
 } from "@/app/lib/exam-approval-store";
-import { ExamSmartAlerts } from "@/app/school/exams/_components/ExamSmartAlerts";
 import { examAlerts } from "@/app/school/exams/_mock/school-exams";
 import {
   pendingActions,
-  recentActivities,
-  schoolSummary,
   teacherPerformance,
 } from "@/app/school/_mock/school-data";
 
 export default function SchoolDashboardPage() {
-  const [pendingPage, setPendingPage] = useState(1);
-  const [isAlertsDialogOpen, setIsAlertsDialogOpen] = useState(false);
   const [approvalRequests, setApprovalRequests] = useState<
     ReturnType<typeof getApprovalRequestsClient>
   >([]);
-  const [attendanceByTeacher, setAttendanceByTeacher] = useState<
-    Record<string, number>
-  >(() =>
-    Object.fromEntries(teacherPerformance.map((row) => [row.teacherName, 85])),
-  );
   const sortedTeacherPerformance = useMemo(
     () => [...teacherPerformance].sort((a, b) => b.avgScore - a.avgScore),
     [],
@@ -102,73 +92,44 @@ export default function SchoolDashboardPage() {
     return () => window.removeEventListener(eventName, sync);
   }, []);
 
+  const isTodayLabel = (value: string) => {
+    if (!value) return false;
+    if (value.includes("Өнөөдөр")) return true;
+    const match = value.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return false;
+    const [, year, month, day] = match;
+    const now = new Date();
+    return (
+      Number(year) === now.getFullYear() &&
+      Number(month) === now.getMonth() + 1 &&
+      Number(day) === now.getDate()
+    );
+  };
+
   const pendingItems = useMemo(
-    () => [
-      ...approvalRequests
-        .filter((item) => item.status === "pending")
-        .map((item) => ({
+    () =>
+      [
+        ...approvalRequests
+          .filter((item) => item.status === "pending")
+          .map((item) => ({
+            id: item.id,
+            title: `${item.className} ангийн ${item.subject} шалгалт батлуулах`,
+            owner: item.teacherName,
+            due: item.sentAt,
+            isNew: isTodayLabel(item.sentAt),
+            cardClass: "border-zinc-200 bg-white",
+          })),
+        ...pendingActions.map((item) => ({
           id: item.id,
-          title: `${item.className} ангийн ${item.subject} шалгалт батлуулах`,
-          owner: item.teacherName,
-          due: item.sentAt,
-          badge: item.unread ? "Шинэ" : "Дунд",
-          badgeClass: item.unread
-            ? "bg-blue-100 text-blue-700"
-            : "bg-amber-100 text-amber-700",
-          cardClass: item.unread
-            ? "border-blue-200 bg-blue-50"
-            : "border-zinc-200 bg-white",
+          title: item.title,
+          owner: item.owner,
+          due: item.due,
+          isNew: isTodayLabel(item.due),
+          cardClass: "border-zinc-200 bg-white",
         })),
-      ...pendingActions.map((item) => ({
-        id: item.id,
-        title: item.title,
-        owner: item.owner,
-        due: item.due,
-        badge: item.severity === "high" ? "Яаралтай" : "Дунд",
-        badgeClass:
-          item.severity === "high"
-            ? "bg-red-100 text-red-700"
-            : "bg-amber-100 text-amber-700",
-        cardClass: "border-zinc-200 bg-white",
-      })),
-    ],
+      ].sort((a, b) => Number(b.isNew) - Number(a.isNew)),
     [approvalRequests],
   );
-  const summaryCards = useMemo(
-    () => [
-      {
-        label: "Нийт ажилчид",
-        value: schoolSummary.totalTeachers,
-        href: "/school/teachers",
-      },
-      {
-        label: "Нийт анги",
-        value: schoolSummary.totalClasses,
-        href: "/school/classes?grade=10",
-      },
-      {
-        label: "Сурагчид",
-        value: schoolSummary.activeStudents,
-        href: "/school/students",
-      },
-      {
-        label: "Энэ сарын шалгалт",
-        value: schoolSummary.examsThisWeek,
-        href: "/school/exams",
-      },
-    ],
-    [],
-  );
-  const pageSize = 2;
-  const totalPendingPages = Math.max(
-    1,
-    Math.ceil(pendingItems.length / pageSize),
-  );
-  const pagedPendingItems = pendingItems.slice(
-    (pendingPage - 1) * pageSize,
-    pendingPage * pageSize,
-  );
-
   return (
     <div className="space-y-6 text-2">
       <section className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-6">
@@ -178,153 +139,103 @@ export default function SchoolDashboardPage() {
               Сургуулийн самбар
             </h2>
           </div>
-          <button
-            type="button"
-            onClick={() => setIsAlertsDialogOpen(true)}
-            className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-2 text-amber-900 transition hover:bg-amber-100"
-          >
-            ⚠ Давхцлын сануулга: {schoolSummary.conflictAlerts}
-          </button>
         </div>
-
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {summaryCards.map((card) => (
-            <Link
-              key={card.label}
-              href={card.href}
-              className="rounded-xl border border-[#e6edf5] bg-[#f8fbff] p-4 transition hover:border-blue-200 hover:bg-blue-50"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <p className="flex items-center gap-2 text-[20px] font-medium leading-[1.2] text-[#64748b]">
-                  <span>{card.label}</span>
-                  <span className="text-[25px] font-bold leading-none text-[#0f172a]">
-                    {card.value}
-                  </span>
-                </p>
-                <ArrowUpRight className="h-4 w-4 shrink-0 text-zinc-400" />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {isAlertsDialogOpen ? (
-        <div
-          className="fixed inset-0 z-50 bg-[#0f172a]/35 backdrop-blur-[1px]"
-          onClick={() => setIsAlertsDialogOpen(false)}
-        >
-          <div className="flex min-h-full items-center justify-center p-4">
-            <div
-              className="w-full max-w-6xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mb-2 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setIsAlertsDialogOpen(false)}
-                  className="inline-flex items-center gap-1 rounded-lg border border-white/30 bg-white/90 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-white"
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <h3 className="text-2 font-semibold text-[#0f172a]">
+                Хүлээгдэж буй ажил
+              </h3>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                <Link
+                  href="/school/requests"
+                  className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
                 >
-                  <X className="h-4 w-4" />
-                  Хаах
-                </button>
+                  Батлуулах хүсэлтүүд →
+                </Link>
               </div>
-              <ExamSmartAlerts alerts={examAlerts} />
             </div>
-          </div>
-        </div>
-      ) : null}
-
-      <section className="grid gap-4 lg:grid-cols-2">
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-2 font-semibold text-[#0f172a]">
-              Хүлээгдэж буй ажил
-            </h3>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <Link
-                href="/school/requests"
-                className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
-              >
-                Батлуулах хүсэлтүүд →
-              </Link>
-              <Link
-                href="/school/exams"
-                className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
-              >
-                Шалгалт руу очих →
-              </Link>
+            <ul className="mt-4 max-h-[250px] space-y-3 overflow-y-auto pr-1">
+              {pendingItems.map((item) => (
+                <li
+                  key={item.id}
+                  className={`rounded-lg border p-3 ${item.cardClass}`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-semibold text-zinc-950">{item.title}</p>
+                    {item.isNew ? (
+                      <span className="text-2 font-semibold text-blue-600">
+                        Шинэ
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 text-2 text-zinc-600">
+                    Хариуцагч: {item.owner} · Хугацаа: {item.due}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </article>
+          <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-2 font-semibold text-[#0f172a]">
+                  Анхааруулах зүйлс
+                </h3>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#dbe5f0] bg-[#f8fbff] px-3 py-1.5 text-2 font-medium text-[#456080]">
+                <BellRing className="h-4 w-4" />
+                Нээлттэй alert: {examAlerts.length}
+              </div>
             </div>
-          </div>
-          <ul className="mt-4 space-y-3">
-            {pagedPendingItems.map((item) => (
-              <li
-                key={item.id}
-                className={`rounded-lg border p-3 ${item.cardClass}`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-medium text-zinc-900">{item.title}</p>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-2 font-semibold ${item.badgeClass}`}
+            <div className="mt-4 max-h-[250px] space-y-3 overflow-y-auto pr-1">
+              {examAlerts.map((alert) => {
+                const isWarning = alert.type === "warning";
+                return (
+                  <article
+                    key={alert.id}
+                    className={`rounded-2xl border p-4 ${
+                      isWarning
+                        ? "border-amber-300 bg-white"
+                        : "border-blue-300 bg-white"
+                    }`}
                   >
-                    {item.badge}
-                  </span>
-                </div>
-                <p className="mt-1 text-2 text-zinc-600">
-                  Хариуцагч: {item.owner} · Хугацаа: {item.due}
-                </p>
-              </li>
-            ))}
-            {totalPendingPages > 1 ? (
-              <li className="flex items-center justify-end gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
-                  disabled={pendingPage === 1}
-                  className="rounded-md border border-zinc-300 px-3 py-1 text-2 text-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Өмнөх
-                </button>
-                <span className="text-2 text-zinc-600">
-                  {pendingPage} / {totalPendingPages}
-                </span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPendingPage((p) => Math.min(totalPendingPages, p + 1))
-                  }
-                  disabled={pendingPage === totalPendingPages}
-                  className="rounded-md border border-zinc-300 px-3 py-1 text-2 text-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Дараагийн
-                </button>
-              </li>
-            ) : null}
-          </ul>
-        </article>
-
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-2 font-semibold text-[#0f172a]">
-              Сүүлийн үйл ажиллагаа
-            </h3>
-            <Link
-              href="/school/results"
-              className="shrink-0 text-2 font-medium text-blue-700 hover:text-blue-800"
-            >
-              Үр дүн харах →
-            </Link>
-          </div>
-          <ul className="mt-4 space-y-3">
-            {recentActivities.map((line) => (
-              <li
-                key={line}
-                className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-2 text-zinc-700"
-              >
-                {line}
-              </li>
-            ))}
-          </ul>
-        </article>
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                          isWarning
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-blue-100 text-blue-700"
+                        }`}
+                      >
+                        <AlertTriangle className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
+                              isWarning
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-blue-100 text-blue-800"
+                            }`}
+                          >
+                            {alert.type}
+                          </span>
+                          <h4 className="text-2 font-semibold text-[#0f172a]">
+                            {alert.title}
+                          </h4>
+                        </div>
+                        <p className="mt-2 text-2 leading-6 text-[#5c6d87]">
+                          {alert.description}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </article>
+        </div>
       </section>
 
       <section>
@@ -340,12 +251,8 @@ export default function SchoolDashboardPage() {
                   <tr className="border-b border-zinc-200 text-left text-zinc-500">
                     <th className="sticky top-0 z-10 bg-white py-2 pl-3">№</th>
                     <th className="sticky top-0 z-10 bg-white py-2">Багш</th>
-                    <th className="sticky top-0 z-10 bg-white py-2">Шалгалт</th>
                     <th className="sticky top-0 z-10 bg-white py-2">
                       Дундаж дүн
-                    </th>
-                    <th className="sticky top-0 z-10 bg-white py-2 pr-3 text-center">
-                      Ирц
                     </th>
                   </tr>
                 </thead>
@@ -359,36 +266,13 @@ export default function SchoolDashboardPage() {
                       <td className="py-2 font-medium text-zinc-900">
                         {row.teacherName}
                       </td>
-                      <td className="py-2">{row.examsThisMonth}</td>
                       <td className="py-2">{row.avgScore}%</td>
-                      <td className="py-2 pr-3 text-center">
-                        <div className="inline-flex items-center gap-1.5">
-                          <input
-                            type="number"
-                            min={0}
-                            max={100}
-                            value={attendanceByTeacher[row.teacherName] ?? 0}
-                            onChange={(e) => {
-                              const raw = Number(e.target.value);
-                              const safe = Number.isNaN(raw)
-                                ? 0
-                                : Math.max(0, Math.min(100, raw));
-                              setAttendanceByTeacher((current) => ({
-                                ...current,
-                                [row.teacherName]: safe,
-                              }));
-                            }}
-                            className="w-[4.5rem] rounded-md border border-zinc-300 px-2 py-1 text-right text-2 text-zinc-900"
-                          />
-                          <span className="text-zinc-600">%</span>
-                        </div>
-                      </td>
                     </tr>
                   ))}
                   {sortedTeacherPerformance.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={3}
                         className="py-5 text-center text-zinc-500"
                       >
                         Багшийн үнэлгээний өгөгдөл алга.
@@ -424,13 +308,13 @@ export default function SchoolDashboardPage() {
                       >
                         <stop
                           offset="0%"
-                          stopColor="#4f46e5"
-                          stopOpacity="0.32"
+                          stopColor="#3b82f6"
+                          stopOpacity="0.28"
                         />
                         <stop
                           offset="100%"
-                          stopColor="#4f46e5"
-                          stopOpacity="0.06"
+                          stopColor="#3b82f6"
+                          stopOpacity="0.08"
                         />
                       </linearGradient>
                     </defs>
@@ -457,7 +341,7 @@ export default function SchoolDashboardPage() {
                     <path
                       d={lineChartModel.linePath}
                       fill="none"
-                      stroke="#5b50e6"
+                      stroke="#3b82f6"
                       strokeWidth={2.6}
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -486,7 +370,7 @@ export default function SchoolDashboardPage() {
                           cy={point.y}
                           r={4.6}
                           fill="#ffffff"
-                          stroke="#5b50e6"
+                          stroke="#3b82f6"
                           strokeWidth={2.2}
                         >
                           <title>{`${point.item.teacherName} · ${point.item.avgScore}%`}</title>
@@ -506,7 +390,7 @@ export default function SchoolDashboardPage() {
 
                   {hoveredChartPoint ? (
                     <div
-                      className="pointer-events-none absolute rounded-lg bg-[#3f46b4] px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
+                      className="pointer-events-none absolute rounded-lg bg-[#1d4ed8] px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
                       style={{
                         left: `${(hoveredChartPoint.x / lineChartModel.width) * 100}%`,
                         top: `${(hoveredChartPoint.y / lineChartModel.height) * 100}%`,
@@ -519,7 +403,7 @@ export default function SchoolDashboardPage() {
                   ) : null}
 
                   {lineChartModel.highlight ? (
-                    <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#eef0ff] px-3 py-2 text-2 text-[#3f46b4]">
+                    <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#eaf2ff] px-3 py-2 text-2 text-[#2563eb]">
                       <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white font-semibold">
                         1
                       </span>
