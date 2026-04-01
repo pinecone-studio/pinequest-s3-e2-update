@@ -5,10 +5,11 @@ type EntryStepProps = {
   studentFirstName: string;
   studentEmail: string;
   classCode: string;
-  canProceed: boolean;
   hasAcceptedRules: boolean;
   classCodeHint?: string;
   classCodeRequired?: boolean;
+  /** Хоосон биш байвал «Үргэлжлүүлэх»-ийн алдааг харуулна */
+  proceedError?: string | null;
   onChangeLastName: (value: string) => void;
   onChangeFirstName: (value: string) => void;
   onChangeEmail: (value: string) => void;
@@ -45,10 +46,10 @@ export function EntryStep({
   studentFirstName,
   studentEmail,
   classCode,
-  canProceed,
   hasAcceptedRules,
   classCodeHint,
   classCodeRequired = false,
+  proceedError = null,
   onChangeLastName,
   onChangeFirstName,
   onChangeEmail,
@@ -131,11 +132,11 @@ export function EntryStep({
                 checked={hasAcceptedRules}
                 className="peer sr-only"
                 type="checkbox"
-                onChange={(event) => onToggleAcceptedRules(event.target.checked)}
+                onChange={(event) =>
+                  onToggleAcceptedRules(event.target.checked)
+                }
               />
-              <span>
-                Журамыг уншиж танилцсан
-              </span>
+              <span>Журамыг уншиж танилцсан</span>
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-[7px] border border-[#a1a1a1] bg-transparent text-transparent transition peer-checked:border-[#18c964] peer-checked:bg-transparent peer-checked:text-[#18c964]">
                 <svg
                   aria-hidden="true"
@@ -164,10 +165,21 @@ export function EntryStep({
             <ul className="list-disc space-y-2 pl-6 font-normal text-[12px] text-[#DC2626]">
               <li>Tab солихыг хориглоно уу!</li>
               <li>Цаг дуусахад автоматаар хаагдах тул анхаарна уу!</li>
-              <li>Дуусгах товч дарсны дараа засварлах боломжгүйг анхаарна уу!</li>
+              <li>
+                Дуусгах товч дарсны дараа засварлах боломжгүйг анхаарна уу!
+              </li>
             </ul>
           </div>
         </section>
+
+        {proceedError ? (
+          <p
+            className="mt-6 text-center text-[15px] font-medium text-red-600"
+            role="alert"
+          >
+            {proceedError}
+          </p>
+        ) : null}
 
         <div className="mt-10 flex items-center justify-center gap-4">
           <button
@@ -179,13 +191,8 @@ export function EntryStep({
           </button>
           <button
             type="button"
-            disabled={!canProceed}
             onClick={onProceed}
-            className={`inline-flex h-9.5 min-w-43.75 items-center justify-center rounded-md px-4 py-2 text-[20px] font-medium text-white transition ${
-              canProceed
-                ? "bg-[#349af2] hover:bg-[#2689df]"
-                : "cursor-not-allowed bg-[#B8DCFF] text-white/90"
-            }`}
+            className="inline-flex h-9.5 min-w-43.75 items-center justify-center rounded-md bg-[#349af2] px-4 py-2 text-[20px] font-medium text-white transition hover:bg-[#2689df]"
           >
             Үргэлжлүүлэх
           </button>

@@ -91,7 +91,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
     return list.find((c) => c.id === classId);
   }, [classesData, classId]);
 
-  const { data: studentsData, loading: studentsLoading } =
+  const { data: studentsData, loading: studentsLoading, refetch: refetchStudents } =
     useQuery<StudentsByClassResponse>(GET_STUDENT_BY_CLASS_ID, {
       variables: { classId },
       skip: !apiClassRow,
@@ -228,7 +228,9 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
 
         {activeView === "students" ? (
           <TeacherClassStudentsView
+            classId={classId}
             className={clsLabel}
+            onStudentsChanged={() => void refetchStudents()}
             selectedId={selectedId}
             selectedStudentExams={selectedStudentExams}
             setSelectedId={setSelectedId}

@@ -1,30 +1,53 @@
 "use client";
 
+import { useMutation } from "@apollo/client/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { ADD_STUDENT } from "@/graphql/typeDefs/mutations";
+
+type AddStudentMutationData = {
+  addStudent: {
+    id: string;
+    email: string | null;
+    classId: string;
+    firstName: string;
+    lastName: string;
+    studentCode: string | null;
+  };
+};
 
 type TeacherClassAddStudentDialogProps = {
+  classId: string;
+  classLabel: string;
   initialName: string;
   onClose: () => void;
+  onSuccess?: () => void;
   open: boolean;
 };
 
 export function TeacherClassAddStudentDialog({
+  classId,
+  classLabel,
   initialName,
   onClose,
+  onSuccess,
   open,
 }: TeacherClassAddStudentDialogProps) {
   const [firstName, setFirstName] = useState(initialName);
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [studentClass, setStudentClass] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [addStudent, { loading }] = useMutation<AddStudentMutationData>(
+    ADD_STUDENT,
+  );
 
   useEffect(() => {
     if (!open) return;
     setFirstName(initialName);
     setLastName("");
     setEmail("");
-    setStudentClass("");
+    setErrorMessage(null);
   }, [initialName, open]);
 
   useEffect(() => {
@@ -42,6 +65,37 @@ export function TeacherClassAddStudentDialog({
       document.body.style.overflow = "";
     };
   }, [onClose, open]);
+
+  async function handleContinue() {
+    setErrorMessage(null);
+    const fn = firstName.trim();
+    const ln = lastName.trim();
+    if (!fn || !ln) {
+      setErrorMessage("Нэр, овгийг бөглөнө үү.");
+      return;
+    }
+
+    try {
+      await addStudent({
+        variables: {
+          input: {
+            classId,
+            firstName: fn,
+            lastName: ln,
+            email: email.trim() ? email.trim() : null,
+          },
+        },
+      });
+      onSuccess?.();
+      onClose();
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Сурагч бүртгэхэд алдаа гарлаа. Дахин оролдоно уу.";
+      setErrorMessage(msg);
+    }
+  }
 
   if (!open) return null;
 
@@ -109,21 +163,29 @@ export function TeacherClassAddStudentDialog({
 
           <label className="block">
             <input
-              className="h-12 w-full rounded-[10px] border border-[#a3a3a3] px-4 text-[16px] text-[#262626] outline-none transition placeholder:text-[#a3a3a3] focus:border-[#7DC8FF]"
-              onChange={(event) => setStudentClass(event.target.value)}
+              readOnly
+              className="h-12 w-full cursor-default rounded-[10px] border border-[#e5e7eb] bg-[#f8fafc] px-4 text-[16px] text-[#262626] outline-none"
               placeholder="Анги оруулах"
               type="text"
-              value={studentClass}
+              value={classLabel}
             />
           </label>
         </div>
 
+        {errorMessage ? (
+          <p className="mt-4 text-center text-[14px] text-red-600">
+            {errorMessage}
+          </p>
+        ) : null}
+
         <div className="mt-8 flex justify-center">
           <button
-            className="min-w-[228px] rounded-[10px] bg-[#B8DCFF] px-6 py-3 text-[16px] font-medium text-white transition hover:bg-[#a8d3ff]"
+            className="min-w-[228px] rounded-[10px] bg-[#B8DCFF] px-6 py-3 text-[16px] font-medium text-white transition hover:bg-[#a8d3ff] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={loading}
+            onClick={() => void handleContinue()}
             type="button"
           >
-            Үргэлжлүүлэх
+            {loading ? "Илгээж байна…" : "Үргэлжлүүлэх"}
           </button>
         </div>
       </div>

@@ -16,7 +16,9 @@ import { TeacherClassDownloadMenu } from "./teacher-class-download-menu";
 import { TeacherClassStudentHistoryDialog } from "./teacher-class-student-history-dialog";
 
 type TeacherClassStudentsViewProps = {
+  classId: string;
   className: string;
+  onStudentsChanged?: () => void;
   selectedId: string | null;
   selectedStudentExams: Array<{
     exam: PastExamRow;
@@ -29,7 +31,9 @@ type TeacherClassStudentsViewProps = {
 };
 
 export function TeacherClassStudentsView({
+  classId,
   className,
+  onStudentsChanged,
   selectedId,
   selectedStudentExams,
   setSelectedId,
@@ -142,8 +146,14 @@ export function TeacherClassStudentsView({
         student={selectedStudent}
       />
       <TeacherClassAddStudentDialog
+        classId={classId}
+        classLabel={className}
         initialName={draftStudentName}
         onClose={() => setAddStudentDialogOpen(false)}
+        onSuccess={() => {
+          onStudentsChanged?.();
+          setDraftStudentName("");
+        }}
         open={addStudentDialogOpen}
       />
     </div>
