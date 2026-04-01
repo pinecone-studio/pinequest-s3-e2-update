@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Flag } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type ExamActionsProps = {
   isFirst: boolean;
@@ -18,41 +18,37 @@ export function ExamActions({
   onNext,
 }: ExamActionsProps) {
   return (
-    <section className="rounded-2xl border border-[#dbe3f0] bg-white p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section className="inline-flex h-[86px] w-full  justify-center items-center rounded-[22px] border border-[#b8d9ff] px-4 py-4">
+      <div className="flex flex-nowrap items-center  justify-center gap-6">
         <button
           type="button"
           onClick={onPrevious}
           disabled={isFirst}
-          className="inline-flex items-center gap-2 rounded-xl border border-[#dbe3f0] bg-white px-4 py-2 text-3 font-semibold text-[#384b75] hover:bg-[#f6f9ff] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex h-[46px] w-[122px] shrink-0 items-center justify-center gap-2 rounded-[12px] border border-[#B8DCFF]  px-4 py-3 text-[18px] font-normal text-[#304670] transition hover:bg-[#e6eef8] disabled:cursor-not-allowed disabled:border-[#dbe3f0] disabled:bg-[#edf4fb] disabled:text-[#8ea1bf]"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3 w-3" />
           Өмнөх
         </button>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={onToggleFlag}
-            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-3 font-semibold transition ${
-              isFlagged
-                ? "border-[#f59e0b] bg-[#fffbeb] text-[#b45309]"
-                : "border-[#dbe3f0] bg-white text-[#384b75] hover:bg-[#f6f9ff]"
-            }`}
-          >
-            <Flag className="h-4 w-4" />
-            Тэмдэглэх
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            disabled={isLast}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 text-3 font-semibold text-white hover:bg-[#1e4fd8] disabled:cursor-not-allowed disabled:bg-[#9dbaf6]"
-          >
-            Дараах
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onToggleFlag}
+          className={`inline-flex h-11.5 w-[158px] shrink-0 items-center justify-center gap-2 rounded-[12px] border px-4 py-3 text-[18px] font-normal transition ${
+            isFlagged
+              ? "border-[#facc15] bg-[#FEFCE6] text-[#7a5800]"
+              : "border-[#facc15] bg-[#FEFCE6] text-[#7a5800] hover:bg-[#fffdf2]"
+          }`}
+        >
+          Тэмдэглэх
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={isLast}
+          className="inline-flex h-11.5 w-[126px] shrink-0 items-center justify-center gap-2 rounded-[12px] border border-[#29A4FF] bg-[#D7ECFF] px-4 py-3 text-[18px] font-normal text-[#304670] transition hover:bg-[#e1f0ff] disabled:cursor-not-allowed disabled:border-[#c7def6] disabled:bg-[#eef7ff] disabled:text-[#8ea1bf]"
+        >
+          Дараах
+          <ChevronRight className="h-3 w-3" />
+        </button>
       </div>
     </section>
   );
