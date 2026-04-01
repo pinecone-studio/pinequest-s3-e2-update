@@ -98,7 +98,7 @@ function TinyChip({
 }) {
   return (
     <span
-      className={`inline-flex h-[16px] items-center rounded-[5px] px-[14px] text-[8px] font-normal leading-[10px] ${
+      className={`inline-flex h-[24px] items-center rounded-[5px] px-[14px] text-[12px] font-normal leading-[14px] ${
         tone === "filled"
           ? "bg-[#AED5FF] text-[#122459]"
           : "border border-[#7DC8FF] bg-white text-[#122459]"

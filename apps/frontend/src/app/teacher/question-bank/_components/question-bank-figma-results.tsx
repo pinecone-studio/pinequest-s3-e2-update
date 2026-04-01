@@ -194,7 +194,7 @@ function Chip({
 }) {
   return (
     <span
-      className={`inline-flex h-[28px] items-center rounded-[8px] px-[16px] text-[10px] font-medium leading-[12px] ${
+      className={`inline-flex h-[28px] items-center rounded-[8px] px-[16px] text-[12px] font-medium leading-[14px] ${
         tone === "filled"
           ? "bg-[#AED5FF] text-[#122459]"
           : "border border-[#AED5FF] bg-white text-[#122459]"

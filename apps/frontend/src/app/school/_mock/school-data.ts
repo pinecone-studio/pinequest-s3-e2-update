@@ -15,7 +15,7 @@ export type SchoolExam = {
 };
 
 export const schoolSummary = {
-  totalTeachers: 28,
+  totalTeachers: 26,
   totalClasses: 34,
   activeStudents: 1264,
   examsThisWeek: 17,
