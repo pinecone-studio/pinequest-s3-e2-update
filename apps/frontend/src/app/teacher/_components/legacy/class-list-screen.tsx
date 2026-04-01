@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Users } from "lucide-react";
 import { store } from "@/app/lib/store";
-import { useTeacher } from "../teacher-shell";
+import { useTeacher } from "@/app/teacher/teacher-shell";
 
 export default function ClassListScreen() {
   const router = useRouter();

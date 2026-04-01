@@ -1,13 +1,11 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import TeacherClassDetail from "../../components/teacher-class-detail";
+import { TeacherClassDetail } from "@/app/teacher/_components/class-detail";
 
 export default function TeacherClassPage() {
   const params = useParams();
   const classId = params.classId;
-
-  console.log(classId);
 
   if (!classId) {
     return (
