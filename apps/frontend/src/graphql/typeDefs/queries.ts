@@ -58,3 +58,159 @@ export const GET_TESTS_BY_SUBJECT_AND_GRADE = gql`
     }
   }
 `;
+
+export const GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE = gql`
+  query GetOpenExerciesBySubjectAndGrade($input: OpenExerciesInput) {
+    getOpenExerciesBySubjectAndGrade(input: $input) {
+      id
+      subjectId
+      grade
+      topic
+      title
+      question
+      answer
+      imageUrl
+      difficulty
+      score
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const GET_EXAM_BY_SCHOOL_ID = gql`
+  query GetExamBySchoolId($schoolId: String!) {
+    getExamBySchoolId(schoolId: $schoolId) {
+      id
+      grade
+      subjectId
+      topic
+      title
+      date
+      location
+      duration
+      variation
+      testIds
+      openExerciseIds
+      notes
+      score
+      usageCount
+      isActive
+      needpermission
+      schoolId
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_EXAM_BY_ID = gql`
+  query GetExamById($examId: String!) {
+    getExamById(examId: $examId) {
+      id
+      grade
+      subjectId
+      topic
+      title
+      date
+      location
+      duration
+      variation
+      testIds
+      openExerciseIds
+      notes
+      score
+      usageCount
+      isActive
+      needpermission
+      schoolId
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_EXAM_QUESTION_ITEMS = gql`
+  query GetExamQuestionItems(
+    $testIds: [String!]!
+    $openExerciseIds: [String!]!
+  ) {
+    getTestsByIds(ids: $testIds) {
+      id
+      grade
+      subjectId
+      question
+      answers
+      rightAnswer
+      imageUrl
+      difficulty
+      score
+      usageCount
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+    getOpenExerciesByIds(ids: $openExerciseIds) {
+      id
+      subjectId
+      grade
+      topic
+      title
+      question
+      answer
+      imageUrl
+      difficulty
+      score
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_TEST_BY_ID = gql`
+  query GetTestById($testId: String!) {
+    getTestById(testId: $testId) {
+      id
+      grade
+      subjectId
+      question
+      answers
+      rightAnswer
+      imageUrl
+      difficulty
+      score
+      usageCount
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_OPEN_EXERCIES_BY_ID = gql`
+  query GetOpenExerciesById($openExerciesId: String!) {
+    getOpenExerciesById(openExerciesId: $openExerciesId) {
+      id
+      subjectId
+      grade
+      topic
+      title
+      question
+      answer
+      imageUrl
+      difficulty
+      score
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;

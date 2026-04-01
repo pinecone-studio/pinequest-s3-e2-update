@@ -14,7 +14,12 @@ export const examTypeDefs = /* GraphQL */ `
     notes: String
     score: Int
     usageCount: Int
+    isActive: Int
+    needpermission: Int
+    schoolId: String!
+    teacherId: String
     createdAt: String!
     updatedAt: String!
   }
 `;
+

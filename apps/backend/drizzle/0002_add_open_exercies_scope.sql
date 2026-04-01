@@ -1,0 +1,2 @@
+-- no-op
+-- Remote D1 already has `subjectId`, `grade`, `topic` on `openExercies`.

@@ -1,6 +1,5 @@
 "use client";
 
-import { History } from "lucide-react";
 import { SavedExamCard } from "./saved-exam-card";
 import type { SavedExamRecord } from "../_lib/types";
 
@@ -26,32 +25,25 @@ export function SavedExamsSection({
   onSendSavedExam: (savedExam: SavedExamRecord, openMonitoring?: boolean) => void;
 }) {
   return (
-    <section className="rounded-[28px] border border-[#d7e6fb] bg-[#f5faff] p-5 shadow-sm">
-      <div className="flex items-center justify-between gap-3 border-b border-[#ecf1f7] pb-4">
+    <section className="mx-5 rounded-xl border border-[#e5e5e5] bg-[#f3f4f6] p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-4  pb-4">
         <div>
-          <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#74839b]">
-            <History className="h-4 w-4" />
+          <div className="text-[15px] font-extrabold uppercase tracking-[0.14em] text-[#233e7c]">
             Хадгалсан шалгалтууд
           </div>
         </div>
         <div className="text-right">
-          <p className="text-sm font-semibold text-[#183153]">
+          <p className="text-[20px] font-medium text-[#122459]">
             {savedExams.length} шалгалт
-          </p>
-          <p className="text-sm text-[#5f7394]">
-            Хадгалсан шалгалтын жагсаалт
           </p>
         </div>
       </div>
 
       <div className="mt-5 grid gap-4">
         {hasLoadedSavedExams && savedExams.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-[#c6d9f8] bg-[#f4f9ff] px-5 py-8 text-center">
-            <p className="text-lg font-semibold text-[#183153]">
+          <div className="h-29.75 rounded-[20px] border border-dashed border-[#404040] px-5 py-8 text-center">
+            <p className="text-[20px] font-medium tracking-[0.04em] text-[#122459]">
               Хадгалсан шалгалт алга байна
-            </p>
-            <p className="mt-2 text-sm text-[#60728f]">
-              Доорх бүтээгчээр шалгалтаа хадгалмагц энд шууд харагдана.
             </p>
           </div>
         ) : null}

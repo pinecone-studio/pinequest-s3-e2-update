@@ -1,2 +1,2 @@
-ALTER TABLE `openExercies` ADD `teacherId` text;--> statement-breakpoint
-ALTER TABLE `test` ADD `teacherId` text NOT NULL;
+-- no-op
+-- Remote D1 already has `teacherId` on `openExercies` and `test`.

@@ -60,6 +60,9 @@ importers:
       '@mediapipe/tasks-vision':
         specifier: ^0.10.34
         version: 0.10.34
+      '@fontsource/google-sans':
+        specifier: ^5.2.1
+        version: 5.2.1
       '@opennextjs/cloudflare':
         specifier: ^1.17.3
         version: 1.17.3(next@16.2.1(@babel/core@7.29.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(wrangler@4.76.0)
@@ -1243,6 +1246,9 @@ packages:
 
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
+
+  '@fontsource/google-sans@5.2.1':
+    resolution: {integrity: sha512-FteXH18YS0288Bcrjefwyyp7hLwxd8yQBEcmjU/P0BED9c8n8kxwgna3gtMtYyFQx/wIkpyrzj8RaYQyl/4quw==}
 
   '@graphql-tools/executor@1.5.1':
     resolution: {integrity: sha512-n94Qcu875Mji9GQ52n5UbgOTxlgvFJicBPYD+FRks9HKIQpdNPjkkrKZUYNG51XKa+bf03rxNflm4+wXhoHHrA==}
@@ -5994,6 +6000,8 @@ snapshots:
       react-dom: 19.2.4(react@19.2.4)
 
   '@floating-ui/utils@0.2.11': {}
+
+  '@fontsource/google-sans@5.2.1': {}
 
   '@graphql-tools/executor@1.5.1(graphql@16.13.1)':
     dependencies:

@@ -2,6 +2,9 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const openExerciesTable = sqliteTable("openExercies", {
   id: text("id").primaryKey(),
+  subjectId: text("subjectId").notNull(),
+  grade: integer("grade").notNull(),
+  topic: text("topic"),
   title: text("title"),
   question: text("question"),
   answer: text("answer"),

@@ -13,12 +13,48 @@ export const mutationTypeDefs = /* GraphQL */ `
     teacherId: String!
   }
 
+  input CreateOpenExerciesArgs {
+    subjectId: String!
+    grade: Int!
+    topic: String!
+    title: String!
+    question: String!
+    answer: String
+    imageUrl: String
+    difficulty: String!
+    score: Int!
+    notes: String
+    teacherId: String!
+  }
+
   input CreateSubjectInput {
     name: String!
+  }
+
+  input CreateExamArgs {
+    grade: Int!
+    subjectId: String!
+    topic: String
+    title: String!
+    date: String!
+    location: String
+    duration: String
+    variation: String
+    testIds: [String]
+    openExerciseIds: [String]
+    notes: String
+    score: Int
+    usageCount: Int
+    isActive: Int
+    needpermission: Int
+    teacherId: String
+    schoolId: String!
   }
 
   type Mutation {
     createTests(input: CreateTestsInput!): Test!
     createSubject(input: CreateSubjectInput!): Subject!
+    createOpenExercies(input: CreateOpenExerciesArgs!): OpenExercies!
+    createExam(input: CreateExamArgs!): Exam!
   }
 `;

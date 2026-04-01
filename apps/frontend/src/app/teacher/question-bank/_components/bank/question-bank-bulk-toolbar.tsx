@@ -1,7 +1,5 @@
 "use client";
 
-import { CheckCircle2 } from "lucide-react";
-
 type QuestionBankBulkToolbarProps = {
   count: number;
   onClear: () => void;
@@ -16,7 +14,7 @@ export function QuestionBankBulkToolbar({
   if (count <= 0) return null;
 
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-[#f8fbff] px-5 py-4 shadow-sm">
+    <section className="rounded-[12px] border border-[#d1d5db] bg-[#f3f4f6] px-5 py-4 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-[#183153]">{count} асуулт сонгогдлоо</p>
@@ -33,12 +31,11 @@ export function QuestionBankBulkToolbar({
             Сонголт цэвэрлэх
           </button>
           <button
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937]"
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-[#29A4FF] px-4 text-sm font-semibold text-white transition hover:bg-[#1f97f1]"
             onClick={onSendToExam}
             type="button"
           >
-            <CheckCircle2 className="mr-2 h-4 w-4" />
-            Сонгосон асуултуудыг шалгалтанд нэмэх
+            Шалгалтанд нэмэх
           </button>
         </div>
       </div>

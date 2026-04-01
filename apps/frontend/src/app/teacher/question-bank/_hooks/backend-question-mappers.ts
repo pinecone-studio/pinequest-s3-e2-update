@@ -107,3 +107,69 @@ export function mapBackendTestsToQuestions(
     } satisfies Question;
   });
 }
+
+export type BackendOpenExercies = {
+  id: string;
+  subjectId: string;
+  grade: number;
+  topic: string | null;
+  title: string | null;
+  question: string | null;
+  answer: string | null;
+  imageUrl: string | null;
+  difficulty: string | null;
+  score: number;
+  notes: string | null;
+  teacherId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export function mapBackendOpenExerciesToQuestions(
+  rows: BackendOpenExercies[],
+  subjectNameById?: SubjectNameById,
+): Question[] {
+  return rows.map((row) => {
+    const subject = subjectNameFromId(row.subjectId, subjectNameById);
+    const prompt = row.question?.trim() || "(Агуулга байхгүй)";
+    const title =
+      row.title?.trim()?.slice(0, 120) ||
+      row.notes?.trim()?.slice(0, 120) ||
+      prompt.slice(0, 80) ||
+      "Асуулт";
+    const topic = row.topic?.trim() || row.notes?.trim() || title;
+
+    return {
+      id: row.id,
+      title,
+      questionType: "long_answer",
+      source: "school",
+      content: {
+        prompt,
+        guidance: "",
+        explanation: row.notes ?? "",
+      },
+      options: [],
+      correctAnswer: row.answer ?? "",
+      rubric: "",
+      formulaRaw: "",
+      formulaPreview: "",
+      imageUrl: row.imageUrl ?? "",
+      fileUploadConfig: {
+        acceptedFileTypes: [],
+        instructions: "",
+        maxFiles: 0,
+      },
+      grade: gradeLabel(row.grade),
+      subject,
+      topic,
+      difficulty: mapDifficulty(row.difficulty),
+      points: row.score > 0 ? row.score : 1,
+      status: "published",
+      gradingType: "hybrid",
+      usageCount: 0,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    } satisfies Question;
+  });
+}

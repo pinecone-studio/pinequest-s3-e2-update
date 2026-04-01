@@ -1,16 +1,25 @@
 "use client";
 
-import { NATIONAL_SCRIPT_SUBJECT, SUBTOPIC_OPTIONS } from "../../_lib/constants";
+import {
+  NATIONAL_SCRIPT_SUBJECT,
+  SUBTOPIC_OPTIONS,
+} from "../../_lib/constants";
 import type {
   QuestionBuilderValues,
   QuestionValidationErrors,
 } from "../../_lib/types";
 import {
   BuilderField,
-  BuilderSelectField,
   builderInputClassName,
 } from "./question-builder-form-fields";
 import { NationalScriptAssist } from "../shared/national-script-assist";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type QuestionBuilderDetailsSectionProps = {
   gradeOptions: string[];
@@ -41,64 +50,91 @@ export function QuestionBuilderDetailsSection({
     SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [];
 
   return (
-    <section className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
-      <div className="grid gap-4 xl:grid-cols-2">
-        <BuilderSelectField
-          error={validationErrors?.grade}
-          label="Анги"
-          onValueChange={onGradeChange}
-          options={gradeOptions.map((grade) => ({
-            label: grade,
-            value: grade,
-          }))}
-          placeholder="Анги сонгоно уу."
-          value={values.grade}
-        />
-
-        <BuilderField error={validationErrors?.title} label="Асуултын гарчиг">
-          <input
-            className={builderInputClassName}
-            onChange={(event) => onTitleChange(event.target.value)}
-            placeholder="Жишээ: Тригонометрийн уламжлал бодох"
-            value={values.title}
-          />
-        </BuilderField>
-
-        <BuilderField error={validationErrors?.subject} label="Хичээл">
-          <input
-            className={builderInputClassName}
-            list="question-bank-subjects"
-            onChange={(event) => onSubjectChange(event.target.value)}
-            placeholder="Математик"
-            value={values.subject}
-          />
-          <datalist id="question-bank-subjects">
+    <section>
+      <div className="grid gap-3 lg:grid-cols-[136px_120px_200px_228px]">
+        <Select onValueChange={onSubjectChange} value={values.subject}>
+          <SelectTrigger className="h-[46px] rounded-[12px] border-[#6cb4ff] bg-[#eef6ff] px-[10px] text-[13px] font-semibold text-[#183153] shadow-none focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
+            <SelectValue placeholder="Математик" />
+          </SelectTrigger>
+          <SelectContent>
             {subjectOptions.map((subject) => (
-              <option key={subject} value={subject} />
+              <SelectItem key={subject} value={subject}>
+                {subject}
+              </SelectItem>
             ))}
-          </datalist>
-        </BuilderField>
-      </div>
+          </SelectContent>
+        </Select>
 
-      <div className="mt-4">
-        <BuilderSelectField
+        <Select onValueChange={onGradeChange} value={values.grade}>
+          <SelectTrigger className="h-[46px] rounded-[12px] border-[#6cb4ff] bg-[#eef6ff] px-[10px] text-[13px] font-semibold text-[#183153] shadow-none focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
+            <SelectValue placeholder="10-р анги" />
+          </SelectTrigger>
+          <SelectContent>
+            {gradeOptions.map((grade) => (
+              <SelectItem key={grade} value={grade}>
+                {grade}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
           disabled={!subtopicOptions.length}
-          label="Дэд сэдэв"
           onValueChange={onSubtopicChange}
-          options={subtopicOptions.map((subtopic) => ({
-            label: subtopic,
-            value: subtopic,
-          }))}
-          placeholder="Хичээлээ сонгоно уу."
           value={values.subtopic}
+        >
+          <SelectTrigger className="h-[46px] rounded-[12px] border-[#d3deef] bg-[#fafafa] px-[14px] text-[13px] shadow-none focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
+            <SelectValue placeholder="Дэд сэдэв сонгоно уу." />
+          </SelectTrigger>
+          <SelectContent>
+            {subtopicOptions.map((subtopic) => (
+              <SelectItem key={subtopic} value={subtopic}>
+                {subtopic}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <input
+          className={`${builderInputClassName} h-[46px] rounded-[12px] bg-[#fafafa] px-[14px] shadow-none`}
+          onChange={(event) => onTitleChange(event.target.value)}
+          placeholder="Асуултын гарчиг бичих"
+          value={values.title}
         />
       </div>
 
+      {validationErrors?.grade ||
+      validationErrors?.subject ||
+      validationErrors?.title ? (
+        <div className="mt-2 space-y-1">
+          {validationErrors?.grade ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">
+              {validationErrors.grade}
+            </p>
+          ) : null}
+          {validationErrors?.subject ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">
+              {validationErrors.subject}
+            </p>
+          ) : null}
+          {validationErrors?.title ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">
+              {validationErrors.title}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className="mt-4">
-        <BuilderField error={validationErrors?.prompt} label="Асуулгын текст">
+        <BuilderField
+          error={validationErrors?.prompt}
+          gapClassName="space-y-0"
+          label="Асуулгын текст"
+          labelClassName="ml-1"
+        >
           <>
             <textarea
-              className={`${builderInputClassName} min-h-36 py-3`}
+              className={`${builderInputClassName} min-h-18 px-[20px] py-3`}
               onChange={(event) => onPromptChange(event.target.value)}
               placeholder="Сурагчид харагдах асуулгын текстээ энд бичнэ үү."
               value={values.prompt}
@@ -114,9 +150,13 @@ export function QuestionBuilderDetailsSection({
       </div>
 
       <div className="mt-4">
-        <BuilderField label="Тэмдэглэл">
+        <BuilderField
+          gapClassName="space-y-0"
+          label="Тэмдэглэл"
+          labelClassName="ml-1"
+        >
           <textarea
-            className={`${builderInputClassName} min-h-28 py-3`}
+            className={`${builderInputClassName} min-h-18 px-[20px] py-3`}
             onChange={(event) => onNotesChange(event.target.value)}
             placeholder="Нэмэлт тэмдэглэл, санамж, эсвэл энэ асуултыг дахин ашиглахтай холбоотой тайлбар."
             value={values.guidance || values.explanation}

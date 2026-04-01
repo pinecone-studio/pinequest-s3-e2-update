@@ -2,9 +2,10 @@
 
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import {
   createContext,
   useContext,
@@ -13,7 +14,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Menu, X } from "lucide-react";
 import { ProfileMenu } from "@/app/school/_components/profile-menu";
 import type { User } from "@/app/lib/types";
 
@@ -46,7 +46,7 @@ const menuItems: MenuItem[] = [
   {
     href: "/teacher/exam",
     label: "Шалгалт",
-    activePrefixes: ["/teacher/exam", "/teacher/exam-management"],
+    activePrefixes: ["/teacher/exam-management"],
   },
   {
     href: "/teacher/exam-optimization",
@@ -54,12 +54,18 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-function isMenuItemActive(pathname: string, href: string) {
-  if (href === "/teacher") {
-    return pathname === href;
+function isMenuItemActive(pathname: string, item: MenuItem) {
+  if (item.href === "/teacher") {
+    if (pathname === item.href) return true;
+  } else if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
+    return true;
   }
 
-  return pathname === href || pathname.startsWith(`${href}/`);
+  return (
+    item.activePrefixes?.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    ) ?? false
+  );
 }
 
 export default function TeacherShell({
@@ -71,42 +77,42 @@ export default function TeacherShell({
 }) {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const mobileNavRef = useRef<HTMLDivElement | null>(null);
+  const mobileShellRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleOutside = (event: MouseEvent) => {
-      if (!mobileNavRef.current) return;
-      if (!mobileNavRef.current.contains(event.target as Node)) {
+    const id = window.setTimeout(() => setMobileNavOpen(false), 0);
+    return () => window.clearTimeout(id);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onDown = (event: MouseEvent) => {
+      if (!mobileShellRef.current) return;
+      if (!mobileShellRef.current.contains(event.target as Node)) {
         setMobileNavOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleOutside);
-    return () => document.removeEventListener("mousedown", handleOutside);
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
   }, []);
-
-  useEffect(() => {
-    setMobileNavOpen(false);
-  }, [pathname]);
 
   return (
     <TeacherContext.Provider value={user}>
-      <div className="flex min-h-screen flex-col bg-[#f7fafc] text-[#1f2a44]">
+      <div className="flex min-h-screen flex-col bg-white text-[#1f2a44]">
         <header className="sticky top-0 z-40 h-[70px] border-b border-[#e3e7ee] bg-[#fdfdff]">
-          <div className="mx-auto h-full w-full max-w-[94.5rem] px-4 lg:px-10">
-            {/* Mobile: compact bar + slide-down nav */}
+          <div className="mx-auto h-full w-full max-w-378 px-4 lg:px-6">
             <div
-              className="relative flex h-full items-center lg:hidden"
-              ref={mobileNavRef}
+              className="relative flex h-full items-center justify-between lg:hidden"
+              ref={mobileShellRef}
             >
-              <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#cfe8ff] bg-gradient-to-br from-[#eef7ff] via-white to-[#f5f9ff] px-3 py-2.5 shadow-[0_4px_24px_rgba(29,111,235,0.08)]">
+              <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[#cfe8ff] bg-gradient-to-br from-[#eef7ff] via-white to-[#f5f9ff] px-3 py-2.5 shadow-[0_4px_24px_rgba(29,111,235,0.08)]">
                 <Link
                   href="/teacher"
-                  className="flex min-w-0 items-center gap-3 outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2 rounded-xl"
-                  aria-label="Нүүр хуудас — багшийн самбар"
+                  className="flex min-w-0 flex-1 items-center gap-3 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
+                  aria-label="Багшийн самбар — нүүр"
                 >
                   <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
                     <Image
-                      alt="Зөгий лого"
+                      alt="UPDATE logo"
                       className="object-contain"
                       fill
                       priority
@@ -147,18 +153,14 @@ export default function TeacherShell({
                 >
                   <ul className="flex flex-col gap-1">
                     {menuItems.map((item) => {
-                      const isActive =
-                        isMenuItemActive(pathname, item.href) ||
-                        item.activePrefixes?.some((prefix) =>
-                          isMenuItemActive(pathname, prefix),
-                        );
+                      const active = isMenuItemActive(pathname, item);
                       return (
                         <li key={item.href}>
                           <Link
                             href={item.href}
                             onClick={() => setMobileNavOpen(false)}
                             className={`block rounded-xl px-4 py-3.5 text-3 font-semibold transition ${
-                              isActive
+                              active
                                 ? "bg-[#EDF6FF] text-[#1f2a44] ring-1 ring-[#7DC8FF]/40"
                                 : "text-[#1f2a44] hover:bg-[#f4f8fc]"
                             }`}
@@ -174,43 +176,39 @@ export default function TeacherShell({
             </div>
 
             <div className="hidden h-[70px] items-center justify-between lg:flex">
-							<div className="min-w-0">
-								<Link
-									href="/teacher"
-									className="flex items-center gap-[10px] rounded-[20px] px-[14px] py-[6px] outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
-									aria-label="Багшийн нүүр рүү очих"
-								>
-									<Image
-										src="/bee.png"
-										alt="UPDATE logo"
-										width={44}
+              <div className="min-w-0">
+                <Link
+                  href="/teacher"
+                  className="flex items-center gap-[6px] rounded-[20px] px-[14px] py-[6px] outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
+                  aria-label="Багшийн нүүр рүү очих"
+                >
+                  <Image
+                    src="/bee.png"
+                    alt="UPDATE logo"
+                    width={44}
                     height={44}
                     className="h-10 w-10 object-contain"
                     priority
                   />
-									<h1 className="text-[22px] mt-2 font-extrabold leading-[100%] tracking-tight text-[#1d1f24]">
-										UPDATE
-									</h1>
-								</Link>
-							</div>
+                  <h1 className="mt-2 text-[22px] font-semibold leading-[100%] tracking-[0px] text-[#171717]">
+                    UPDATE
+                  </h1>
+                </Link>
+              </div>
 
               <nav
                 aria-label="Багшийн навигаци"
                 className="justify-self-center"
               >
-                <ul className="flex flex-row items-center gap-[50px]">
+                <ul className="flex flex-row items-center gap-[30px]">
                   {menuItems.map((item) => {
-                    const isActive =
-                      isMenuItemActive(pathname, item.href) ||
-                      item.activePrefixes?.some((prefix) =>
-                        isMenuItemActive(pathname, prefix),
-                      );
+                    const active = isMenuItemActive(pathname, item);
                     return (
                       <li key={item.href}>
                         <Link
                           href={item.href}
-                          className={`inline-flex h-[35px] items-center rounded-[6px] px-[6px] py-[6px] text-[17px] font-semibold text-[#262626] transition-colors gap-15 ${
-                            isActive
+                          className={`inline-flex h-[35px] items-center rounded-[6px] px-[12px] py-[6px] text-[17px] font-semibold text-[#262626] transition-colors ${
+                            active
                               ? "border border-[#d2cccc]"
                               : "border border-transparent hover:border-[#d2cccc]"
                           }`}
@@ -230,7 +228,7 @@ export default function TeacherShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-378 px-4 py-4 sm:py-6 lg:px-6">
+        <main className="mx-auto w-full max-w-378 flex-1 px-4 py-4 sm:py-6 lg:px-6">
           {children}
         </main>
       </div>

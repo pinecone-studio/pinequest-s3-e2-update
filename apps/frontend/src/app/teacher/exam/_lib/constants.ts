@@ -15,9 +15,9 @@ export const EXAM_GRADE_OPTIONS = [
 
 export const INITIAL_FORM: ExamComposerState = {
   title: "",
-  grade: "6-р анги",
-  subject: "Математик",
-  topic: "Бутархай",
+  grade: "",
+  subject: "",
+  topic: "",
   durationInMinutes: 40,
   requiresSchoolApproval: false,
 };
