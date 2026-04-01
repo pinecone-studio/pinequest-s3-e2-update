@@ -58,13 +58,13 @@ export default function FaceCam({
       if (!faceWarningSentRef.current) {
         if (numFaces > 1) {
           faceWarningSentRef.current = true;
-          setFaceDetectionWarning("More than one face detected!");
+          setFaceDetectionWarning("Олон сурагчид зэрэг орохгүй!");
         } else if (numFaces === 0 && !noFaceTimeoutRef.current) {
           // Start 3-second timer for no face
           noFaceTimeoutRef.current = setTimeout(() => {
             if (!faceWarningSentRef.current) {
               faceWarningSentRef.current = true;
-              setFaceDetectionWarning("No face detected for 3 seconds!");
+              setFaceDetectionWarning("Шалгалтад оролцохгүй байна!");
             }
           }, 3000);
         } else if (numFaces > 0 && noFaceTimeoutRef.current) {
