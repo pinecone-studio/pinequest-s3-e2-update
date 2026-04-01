@@ -9,12 +9,20 @@ export const getSchoolByClerkId = async (
 ) => {
   if (!args.clerkId) throw new Error("Cannot find clerkId");
   try {
-    return await ctx.db
+    const rows = await ctx.db
       .select()
       .from(schoolTable)
       .where(eq(schoolTable.clerkId, args.clerkId));
+    const row = rows[0];
+    if (!row) {
+      throw new Error("Энэ Clerk бүртгэлд харгалзах сургууль олдсонгүй.");
+    }
+    return row;
   } catch (err) {
     console.error("Cannot get school. Error;", err);
+    if (err instanceof Error && err.message) {
+      throw err;
+    }
     throw new Error("Cannot get school");
   }
 };

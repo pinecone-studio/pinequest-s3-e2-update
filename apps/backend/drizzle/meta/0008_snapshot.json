@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c91f3a22-8b0d-4e7c-9a1f-2d8e4c6b0a5d",
-  "prevId": "e774e9d6-d464-4a14-86c6-b5a1e5b50cb6",
+  "id": "490de884-a251-47b9-97f5-0061eacb58c4",
+  "prevId": "f0a8b1c2-3d4e-5f60-7890-abcdef012345",
   "tables": {
     "class": {
       "name": "class",
@@ -400,8 +400,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "schoolName": {
-          "name": "schoolName",
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -410,6 +410,20 @@
         "register": {
           "name": "register",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provinceOrCity": {
+          "name": "provinceOrCity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "soumOrDistrict": {
+          "name": "soumOrDistrict",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -558,7 +572,7 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "classId": {
@@ -596,6 +610,14 @@
           "notNull": false,
           "autoincrement": false
         },
+        "studentStatus": {
+          "name": "studentStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "text",
@@ -611,7 +633,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "student_studentCode_unique": {
+          "name": "student_studentCode_unique",
+          "columns": [
+            "studentCode"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -684,6 +714,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
+          "autoincrement": false
+        },
+        "classIds": {
+          "name": "classIds",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "firstName": {
