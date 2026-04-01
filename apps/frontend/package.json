@@ -14,9 +14,9 @@
 	"dependencies": {
 		"@apollo/client": "^4.1.6",
 		"@clerk/nextjs": "^7.0.6",
+		"@fontsource/google-sans": "^5.2.1",
 		"@mediapipe/face_detection": "^0.4.1646425229",
 		"@mediapipe/tasks-vision": "^0.10.34",
-		"@fontsource/google-sans": "^5.2.1",
 		"@opennextjs/cloudflare": "^1.17.3",
 		"@radix-ui/react-select": "^2.2.6",
 		"clsx": "^2.1.1",

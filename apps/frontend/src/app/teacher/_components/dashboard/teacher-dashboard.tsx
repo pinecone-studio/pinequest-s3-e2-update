@@ -11,6 +11,7 @@ import {
   HARDCODED_SCHOOL_ID,
   HARDCODED_TEACHER_ID,
 } from "@/app/teacher/_lib/hardcoded-teacher-api";
+import { BeeRingProgressLoader } from "@/components/loaders/bee-ring-progress-loader";
 
 type ClassResponse = {
   getClassByTeacherAndSchoolId: ClassType[];
@@ -114,10 +115,13 @@ export default function TeacherDashboard() {
           </header>
 
           {loading ? (
-            <div className="rounded-2xl border border-dashed border-white px-6 py-14 text-center">
-              <p className="text-4 font-semibold text-[#475569]">
-                Ачааллаж байна…
-              </p>
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white px-6 py-10">
+              <BeeRingProgressLoader
+                progress={0}
+                label="Ачааллаж байна…"
+                showCenterPercent={false}
+                className="max-w-[240px] py-2"
+              />
             </div>
           ) : !classes || classes.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-white px-6 py-14 text-center">

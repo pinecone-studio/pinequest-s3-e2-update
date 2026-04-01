@@ -80,8 +80,7 @@ function isOwnedByTeacher(
 export function useQuestionBank(options?: UseQuestionBankOptions) {
   const router = useRouter();
   const teacher = useTeacher();
-  const { data: subjectsData } =
-    useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+  const { data: subjectsData } = useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
   const [createTests] = useMutation<CreateTestsResponse>(CREATE_TESTS);
   const [createOpenExercies] = useMutation<CreateOpenExerciesResponse>(
     CREATE_OPEN_EXERCIES,
@@ -141,16 +140,16 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 
   const { data: openExerciesData, refetch: refetchOpenExercies } =
     useQuery<GetOpenExerciesBySubjectAndGradeResponse>(
-      GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE,
-      {
-        variables: {
-          input: shouldFetchTests
-            ? { subjectId: entrySelection.subjectId, grade: entryGradeInt }
-            : null,
-        },
-        skip: !shouldFetchTests,
+    GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE,
+    {
+      variables: {
+        input: shouldFetchTests
+          ? { subjectId: entrySelection.subjectId, grade: entryGradeInt }
+          : null,
       },
-    );
+      skip: !shouldFetchTests,
+    },
+  );
 
   const [currentFilters, setCurrentFilters] = useState<QuestionFilters>(
     QUESTION_BANK_FILTER_DEFAULTS,

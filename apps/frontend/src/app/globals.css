@@ -53,3 +53,33 @@ body {
 	font-size: 1rem;
 	line-height: 1.4;
 }
+
+/* BeehiveNectarLoader — bee on circular ring (--nectar-orbit-radius from component) */
+@keyframes nectar-bee-trip {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg)
+			translateY(calc(-1 * var(--nectar-orbit-radius, min(31vw, 126px)))) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg)
+			translateY(calc(-1 * var(--nectar-orbit-radius, min(31vw, 126px)))) rotate(-360deg);
+	}
+}
+
+.nectar-bee-trip {
+	animation: nectar-bee-trip var(--nectar-trip-duration, 3400ms) linear infinite;
+}
+
+.nectar-bee-settled {
+	animation: none;
+	transform: translate(-50%, -50%)
+		translateY(var(--nectar-bee-settled-y, min(19vw, 78px)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nectar-bee-trip {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}
+
