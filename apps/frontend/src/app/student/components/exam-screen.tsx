@@ -44,29 +44,32 @@ export function ExamScreen({
 
   const [warning, setWarning] = useState(false);
 
-  useEffect(() => {
-    const handleWindowChange = () => {
-      setWarning(true);
-    };
+  // useEffect(() => {
+  //   const handleWindowChange = () => {
+  //     setWarning(true);
+  //   };
 
-    const handleVisibility = () => {
-      if (document.hidden) {
-        handleWindowChange();
-      }
-    };
+  //   const handleVisibility = () => {
+  //     if (document.hidden) {
+  //       handleWindowChange();
+  //     }
+  //   };
 
-    window.addEventListener("blur", handleWindowChange);
-    document.addEventListener("visibilitychange", handleVisibility);
+  //   window.addEventListener("blur", handleWindowChange);
+  //   document.addEventListener("visibilitychange", handleVisibility);
 
-    return () => {
-      window.removeEventListener("blur", handleWindowChange);
-      document.removeEventListener("visibilitychange", handleVisibility);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("blur", handleWindowChange);
+  //     document.removeEventListener("visibilitychange", handleVisibility);
+  //   };
+  // }, []);
 
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-4 py-6 text-[#1f2a44] md:px-6 lg:px-8 relative">
-      <FaceCam />
+      <div className="absolute top-10 right-20">
+        <FaceCam />
+      </div>
+
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
         <ExamHeader
           title={examData.title}

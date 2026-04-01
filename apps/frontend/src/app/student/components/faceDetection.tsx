@@ -83,16 +83,26 @@ export default function FaceCam() {
       <Webcam
         audio={false}
         ref={webcamRef}
-        style={{ width: "640px", height: "480px" }}
+        style={{
+          position: "absolute",
+          width: "320px",
+          height: "240px",
+          borderRadius: "20px",
+          border: "3px solid #2563eb",
+          top: 0,
+          right: 0,
+        }}
       />
       <canvas
         ref={canvasRef}
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
-          width: "640px",
-          height: "480px",
+          right: 0,
+          width: "320px",
+          height: "240px",
+          borderRadius: "20px",
+          border: "3px solid #2563eb",
         }}
       />
     </div>
