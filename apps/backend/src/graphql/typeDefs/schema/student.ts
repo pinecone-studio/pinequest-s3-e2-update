@@ -1,7 +1,7 @@
 export const studentTypeDefs = /* GraphQL */ `
   type Student {
     id: ID!
-    email: String!
+    email: String
     classId: String!
     firstName: String!
     lastName: String!
