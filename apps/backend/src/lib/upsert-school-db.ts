@@ -27,6 +27,8 @@ export async function upsertSchoolFromSignupInput(
         email: row.email,
         name: row.name,
         register: row.register,
+        provinceOrCity: row.provinceOrCity,
+        soumOrDistrict: row.soumOrDistrict,
         address: row.address,
         updatedAt: now,
       })
@@ -40,6 +42,8 @@ export async function upsertSchoolFromSignupInput(
     email: row.email,
     name: row.name,
     register: row.register,
+    provinceOrCity: row.provinceOrCity,
+    soumOrDistrict: row.soumOrDistrict,
     address: row.address,
     createdAt: now,
     updatedAt: now,

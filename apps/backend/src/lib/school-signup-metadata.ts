@@ -36,6 +36,20 @@ export function registerDigitsAsInt(organizationRegister: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/** D1 `school.provinceOrCity`: аймаг + хот (form) */
+export function provinceOrCityFromSignupDivisions(
+  organizationAimag: string,
+  organizationHot: string,
+): string {
+  const parts = [organizationAimag.trim(), organizationHot.trim()].filter(Boolean);
+  return parts.join(", ") || "—";
+}
+
+/** D1 `school.soumOrDistrict`: сум / дүүрэг (form) */
+export function soumOrDistrictFromSignup(organizationSum: string): string {
+  return organizationSum.trim() || "—";
+}
+
 export type SchoolSignupInput = {
   email: string;
   name: string;
@@ -102,7 +116,10 @@ export function buildSchoolSignupRow(clerkUserId: string, input: SchoolSignupInp
     input.organizationAddressDetail,
   ).trim();
   const metaLine = input.organizationAddressMeta.trim();
-  const address = fromDivisions || metaLine || "—";
+  const fullLocationLine = (fromDivisions || metaLine).trim();
+
+  /** D1 `address`: зөвхөн дэлгэрэнгүй хаяг (organizationAddressDetail). */
+  const address = input.organizationAddressDetail.trim() || "—";
 
   const local = email.includes("@") ? email.split("@")[0]?.trim() ?? "" : email;
   const schoolNameT = schoolNameExcludingLocationRedundant(
@@ -112,7 +129,7 @@ export function buildSchoolSignupRow(clerkUserId: string, input: SchoolSignupInp
     input.organizationSum,
     input.organizationAddressDetail,
     metaLine,
-    address === "—" ? "" : address,
+    fullLocationLine || undefined,
   );
   const regionLabel = [
     input.organizationAimag.trim(),
@@ -143,5 +160,10 @@ export function buildSchoolSignupRow(clerkUserId: string, input: SchoolSignupInp
     name: rowName,
     address,
     register: registerDigitsAsInt(input.organizationRegister),
+    provinceOrCity: provinceOrCityFromSignupDivisions(
+      input.organizationAimag,
+      input.organizationHot,
+    ),
+    soumOrDistrict: soumOrDistrictFromSignup(input.organizationSum),
   };
 }

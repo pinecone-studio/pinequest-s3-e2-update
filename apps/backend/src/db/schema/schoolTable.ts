@@ -6,6 +6,9 @@ export const schoolTable = sqliteTable("school", {
   email: text("email").notNull(),
   name: text("name").notNull(),
   register: integer("register").notNull(),
+  provinceOrCity: text("provinceOrCity").notNull(),
+  soumOrDistrict: text("soumOrDistrict").notNull(),
+  /** Дэлгэрэнгүй хаяг (гудамж, байр, тоот) — form-ийн organizationAddressDetail */
   address: text("address").notNull(),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
