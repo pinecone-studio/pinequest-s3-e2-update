@@ -1,6 +1,7 @@
 "use client";
 
 import { Wrench } from "lucide-react";
+import { useState } from "react";
 import { NATIONAL_SCRIPT_SUBJECT } from "../_lib/constants";
 import type { Question } from "../_lib/types";
 import {
@@ -142,20 +143,20 @@ export function QuestionBankFigmaResults({
                   </div>
 
                   <div className="mt-[10px] flex flex-wrap gap-[6px]">
-                    <Chip tone="filled">Нэгтгэсэн</Chip>
-                    <Chip tone="outline">
+                    <TagChip>Нэгтгэсэн</TagChip>
+                    <TagChip>
                       {question.questionType === "multiple_choice"
                         ? "Сонгох асуулт"
                         : "Задгай"}
-                    </Chip>
-                    <Chip tone="outline">
+                    </TagChip>
+                    <TagChip>
                       {question.gradingType === "auto"
                         ? "Автомат үнэлгээ"
                         : "Гар үнэлгээ"}
-                    </Chip>
-                    <Chip tone="outline">
+                    </TagChip>
+                    <TagChip>
                       {DIFFICULTY_LABELS[question.difficulty]}
-                    </Chip>
+                    </TagChip>
                   </div>
 
                   <h3 className="mt-[14px] text-[16px] font-medium leading-[20px] text-[#323232]">
