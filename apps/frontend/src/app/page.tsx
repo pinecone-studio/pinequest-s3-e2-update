@@ -50,7 +50,7 @@ export default async function Home({
           <div className="max-w-xl lg:max-w-190">
             <header className="inline-flex items-center justify-center gap-2 sm:justify-start">
               <Image
-                src="/bee.png"
+                src="/Herobee.png"
                 alt="Bee logo"
                 width={50}
                 height={50}
@@ -64,22 +64,19 @@ export default async function Home({
 
             <div className="mt-8 flex flex-wrap items-center gap-3 sm:mt-12 sm:gap-4">
               <div className="flex items-center -space-x-3">
-                {[
-                  "/angarag.jpg",
-                  "/sor.jpg",
-                  "/purwe.jpg",
-                  "/ogo.jpg",
-                ].map((src, idx) => (
-                  <span
-                    key={src}
-                    className="h-12 w-12 rounded-full border-2 border-[#f4f4ee] bg-cover bg-center shadow-sm"
-                    style={{
-                      backgroundImage: `url('${src}')`,
-                      backgroundPosition: "center",
-                      zIndex: 10 - idx,
-                    }}
-                  />
-                ))}
+                {["/angarag.jpg", "/sor.jpg", "/purwe.jpg", "/ogo.jpg"].map(
+                  (src, idx) => (
+                    <span
+                      key={src}
+                      className="h-12 w-12 rounded-full border-2 border-[#f4f4ee] bg-cover bg-center shadow-sm"
+                      style={{
+                        backgroundImage: `url('${src}')`,
+                        backgroundPosition: "center",
+                        zIndex: 10 - idx,
+                      }}
+                    />
+                  ),
+                )}
               </div>
               <p className="text-[16px] font-medium text-[#122459]">
                 10,000+ сурагч, багш ашиглаж байна
@@ -90,10 +87,10 @@ export default async function Home({
               UPDATE Шалгалтын
               <br />
               Нэгдсэн Платформ
-            </h1> 
+            </h1>
             <p className="mt-4 max-w-xl text-[20px] font-medium leading-relaxed text-[#122459] sm:mt-6">
-              Шалгалт бэлтгэх, авах, үнэлэх бүх процессыг илүү ойлгомжтой, хурдан,
-              найдвартай болгоно.
+              Шалгалт бэлтгэх, авах, үнэлэх бүх процессыг илүү ойлгомжтой,
+              хурдан, найдвартай болгоно.
             </p>
 
             <article className="mt-8 w-full max-w-lg rounded-[14px] border border-[#D7ECFF] bg-[#D7ECFF] p-4  transition hover:border-[#D7ECFF]  sm:mt-10 sm:p-6 lg:max-w-125 lg:min-h-60">
@@ -109,7 +106,9 @@ export default async function Home({
                   <p className="text-[24px] font-semibold leading-tight text-[#481C00]">
                     Багш: С.Гантүшиг
                   </p>
-                  <p className="mt-1 font-medium text-[20px] text-[#122459]">16-р сургууль</p>
+                  <p className="mt-1 font-medium text-[20px] text-[#122459]">
+                    16-р сургууль
+                  </p>
                   <div className="mt-3 h-px max-w-xs bg-[#c8c4a8] sm:w-78" />
                 </div>
               </div>
@@ -120,7 +119,6 @@ export default async function Home({
                 <br />
               </p>
             </article>
-
           </div>
 
           <div className="mt-6 w-full lg:-ml-45 lg:flex lg:min-h-full lg:flex-col lg:justify-between">
@@ -152,7 +150,7 @@ export default async function Home({
                 className="absolute left-105 top-47 h-auto w-57 object-contain"
               />
               <Image
-                src="/bee.png"
+                src="/Herobee.png"
                 alt="Bee"
                 width={120}
                 height={120}
@@ -186,7 +184,7 @@ export default async function Home({
                 >
                   Багш
                 </Link>
-              </div> 
+              </div>
             </div>
           </div>
         </section>

@@ -147,8 +147,8 @@ export function MonitorDetailSection({
           <div className="rounded-xl border border-[#d9dee8] bg-white px-4 py-4 sm:px-6 sm:py-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-xl border border-[#bcd6f5] bg-[#d7ebff] px-5 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[14px] font-semibold text-[#1f2a44]">
+                <div className="flex items-center justify-start gap-3">
+                  <p className="text-[20px] font-semibold text-[#1f2a44]">
                     Нийт сурагч
                   </p>
                   <p className="text-[44px] font-semibold leading-none text-[#1f2a44]">
@@ -157,8 +157,8 @@ export function MonitorDetailSection({
                 </div>
               </div>
               <div className="rounded-xl border border-[#bcd6f5] bg-[#d7ebff] px-5 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[14px] font-semibold text-[#1f2a44]">
+                <div className="flex items-center justify-start gap-3">
+                  <p className="text-[20px] font-semibold text-[#1f2a44]">
                     Идэвхтэй
                   </p>
                   <p className="text-[44px] font-semibold leading-none text-[#1f2a44]">
@@ -167,8 +167,8 @@ export function MonitorDetailSection({
                 </div>
               </div>
               <div className="rounded-xl border border-[#f2cf66] bg-[#fff8df] px-5 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[14px] font-semibold text-[#5b3a15]">
+                <div className="flex items-center justify-start gap-3">
+                  <p className="text-[20px] font-semibold text-[#5b3a15]">
                     Анхааруулга
                   </p>
                   <p className="text-[44px] font-semibold leading-none text-[#5b3a15]">
@@ -176,9 +176,9 @@ export function MonitorDetailSection({
                   </p>
                 </div>
               </div>
-              <div className="rounded-xl border border-[#f3b3b3] bg-[#fff4f4] px-5 py-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[14px] font-semibold text-[#d62828]">
+              <div className="rounded-xl border border-[#f3b3b3] px-5 py-3">
+                <div className="flex items-center justify-start gap-3">
+                  <p className="text-[20px] font-semibold text-[#d62828]">
                     Салсан
                   </p>
                   <p className="text-[44px] font-semibold leading-none text-[#d62828]">
@@ -238,7 +238,7 @@ export function MonitorDetailSection({
                   type="button"
                   disabled={isRunning || isTimeUp}
                   onClick={onStartMonitoring}
-                  className="rounded-xl bg-[#39a8ff] px-6 py-3 text-[20px] font-bold text-white transition hover:bg-[#2198f5] disabled:cursor-not-allowed disabled:bg-[#9ecff8]"
+                  className="rounded-xl bg-[#39a8ff] px-6 py-3 text-[25px] font-bold text-white transition hover:bg-[#2198f5] disabled:cursor-not-allowed disabled:bg-[#9ecff8]"
                 >
                   {isTimeUp
                     ? "Дууссан"

@@ -12,8 +12,7 @@ import {
 } from "@/app/school/action";
 import { getPastExamsForClass } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
-import { ClassPastExamsTable } from "./_components/class-past-exams-table";
-import { ClassStudentHistoryPanel } from "./_components/class-student-history-panel";
+import { ClassLinkedExamResults } from "./_components/class-linked-exam-results";
 import { TeacherAssignmentPicker } from "./_components/teacher-assignment-picker";
 
 const field =
@@ -111,7 +110,14 @@ export default async function AdminClassDetailPage({
         </section>
       </div>
 
-      <ClassPastExamsTable classNameLabel={c.name} rows={pastExams} />
+      <ClassLinkedExamResults
+        classId={c.id}
+        classNameLabel={c.name}
+        students={roster}
+        fallbackPastExams={pastExams}
+        updateStudentAction={updateStudent}
+        removeStudentAction={removeStudent}
+      />
 
       <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
         <h3 className="text-sm font-semibold text-zinc-900">Сурагч нэмэх</h3>
@@ -150,14 +156,6 @@ export default async function AdminClassDetailPage({
         </form>
       </section>
 
-      <ClassStudentHistoryPanel
-        classNameLabel={c.name}
-        classId={c.id}
-        students={roster}
-        pastExams={pastExams}
-        updateStudentAction={updateStudent}
-        removeStudentAction={removeStudent}
-      />
     </div>
   );
 }

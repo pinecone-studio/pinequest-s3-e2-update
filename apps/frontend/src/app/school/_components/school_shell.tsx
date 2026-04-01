@@ -13,14 +13,15 @@ import type { User } from "@/app/lib/types";
 const links = [
   { href: "/school", label: "Нүүр" },
   { href: "/school/teachers", label: "Хүний нөөц" },
-  { href: "/school/classes", label: "Ангиуд" },
+  { href: "/school/classes?grade=10", label: "Ангиуд" },
   { href: "/school/exams", label: "Шалгалт" },
   { href: "/school/results", label: "Үр дүн" },
 ] as const;
 
 function isActive(pathname: string, href: string) {
-  if (href === "/school") return pathname === "/school";
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const baseHref = href.split("?")[0] ?? href;
+  if (baseHref === "/school") return pathname === "/school";
+  return pathname === baseHref || pathname.startsWith(`${baseHref}/`);
 }
 
 export function SchoolShell({
