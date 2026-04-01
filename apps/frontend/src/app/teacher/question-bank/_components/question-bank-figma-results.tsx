@@ -15,6 +15,7 @@ import { QuestionList } from "./question/question-list";
 type QuestionBankFigmaResultsProps = {
   activeQuestionId: string | null;
   getQuestionHeartCount: (question: Question) => number;
+  likedQuestionIds: string[];
   myQuestionCount: number;
   myQuestions: Question[];
   onAddToExam: (questionId: string) => void;
@@ -34,6 +35,7 @@ type QuestionBankFigmaResultsProps = {
 export function QuestionBankFigmaResults({
   activeQuestionId,
   getQuestionHeartCount,
+  likedQuestionIds,
   myQuestionCount,
   myQuestions,
   onAddToExam,
@@ -49,25 +51,65 @@ export function QuestionBankFigmaResults({
   onClearSelection,
   onSendSelectedToExam,
 }: QuestionBankFigmaResultsProps) {
+  const [activeCategory, setActiveCategory] = useState<"bank" | "management">(
+    "bank",
+  );
+
   return (
     <div className="space-y-[18px]">
-      <section className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] px-[20px] py-[20px]">
-        <div className="flex items-start justify-between gap-[18px]">
-          <div className="min-w-0">
-            <h2 className="text-[24px] font-medium leading-[29px] tracking-[0.01em] text-[#122459]">
-              Миний үүсгэсэн асуултууд
-            </h2>
-            <p className="mt-[4px] text-[14px] font-normal leading-[17px] text-[#737373]">
-              Таны өөрөө нэмсэн, засварлах боломжтой асуултууд.
-            </p>
-          </div>
-          <span className="shrink-0 pt-[1px] text-[24px] font-medium leading-[29px] text-[#122459]">
-            {myQuestionCount} асуулт
-          </span>
+      <section className="space-y-[20px] rounded-[10px] border border-[#ECECEC] bg-white px-[28px] pb-[28px] pt-[26px]">
+        <div className="grid grid-cols-2 overflow-hidden rounded-[6px] bg-[#f3f3f3]">
+          <button
+            className={`h-[56px] text-[26px] font-medium uppercase tracking-[0.08em] ${
+              activeCategory === "bank"
+                ? "bg-[#e9e9e9] text-[#122459]"
+                : "bg-white text-[#122459]"
+            }`}
+            onClick={() => setActiveCategory("bank")}
+            type="button"
+          >
+            АСУУЛТЫН САН
+          </button>
+          <button
+            className={`h-[56px] text-[26px] font-medium uppercase tracking-[0.08em] ${
+              activeCategory === "management"
+                ? "bg-[#e9e9e9] text-[#122459]"
+                : "bg-white text-[#122459]"
+            }`}
+            onClick={() => setActiveCategory("management")}
+            type="button"
+          >
+            АСУУЛТЫН УДИРДЛАГА
+          </button>
         </div>
 
-        {myQuestions.length === 0 ? (
-          <div className="mt-[12px] rounded-[12px] border border-dashed border-[#404040] px-[20px] py-[42px] text-center">
+        {activeCategory === "bank" ? (
+          <div className="grid grid-cols-[minmax(0,1.78fr)_381px] items-start gap-[22px]">
+            <QuestionList
+              activeQuestionId={activeQuestionId}
+              getQuestionHeartCount={getQuestionHeartCount}
+              likedQuestionIds={likedQuestionIds}
+              onAddToExam={onAddToExam}
+              onCreateQuestion={onCreateQuestion}
+              onDeleteQuestion={() => {}}
+              onEditQuestion={onEditQuestion}
+              onOpenQuestion={onOpenQuestion}
+              onToggleQuestionSelection={onToggleSelection}
+              onToggleLike={onToggleLike}
+              questions={questions}
+              selectedQuestionIds={selectedQuestionIds}
+            />
+            <div className="space-y-[12px] pt-[4px]">
+              <QuestionBankBulkToolbar
+                count={selectedCount}
+                onClear={onClearSelection}
+                onSendToExam={onSendSelectedToExam}
+              />
+              <QuestionBankActivePanel question={previewQuestion} />
+            </div>
+          </div>
+        ) : myQuestions.length === 0 ? (
+          <div className="rounded-[10px] border border-dashed border-[#404040] px-[20px] py-[42px] text-center">
             <p className="text-[24px] font-medium leading-[30px] text-[#122459]">
               Одоогоор таны үүсгэсэн асуулт алга байна.
             </p>
@@ -213,37 +255,6 @@ export function QuestionBankFigmaResults({
           </div>
         )}
       </section>
-
-      <section className="space-y-[20px] rounded-[12px] border border-[#E5E5E5] bg-white px-[28px] pb-[28px] pt-[26px]">
-        <h2 className="text-[26px] font-medium uppercase leading-[31px] tracking-[0.08em] text-[#122459]">
-          АСУУЛТЫН САН
-        </h2>
-
-        <div className="grid grid-cols-[minmax(0,1.78fr)_381px] items-start gap-[22px]">
-          <QuestionList
-            activeQuestionId={activeQuestionId}
-            getQuestionHeartCount={getQuestionHeartCount}
-            likedQuestionIds={[]}
-            onAddToExam={onAddToExam}
-            onCreateQuestion={onCreateQuestion}
-            onDeleteQuestion={() => {}}
-            onEditQuestion={onEditQuestion}
-            onOpenQuestion={onOpenQuestion}
-            onToggleQuestionSelection={onToggleSelection}
-            onToggleLike={onToggleLike}
-            questions={questions}
-            selectedQuestionIds={selectedQuestionIds}
-          />
-          <div className="space-y-[12px] pt-[4px]">
-            <QuestionBankBulkToolbar
-              count={selectedCount}
-              onClear={onClearSelection}
-              onSendToExam={onSendSelectedToExam}
-            />
-            <QuestionBankActivePanel question={previewQuestion} />
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
@@ -257,20 +268,10 @@ function MetaRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Chip({
-  children,
-  tone,
-}: {
-  children: React.ReactNode;
-  tone: "filled" | "outline";
-}) {
+function TagChip({ children }: { children: React.ReactNode }) {
   return (
     <span
-      className={`inline-flex h-[28px] items-center rounded-[8px] px-[16px] text-[12px] font-medium leading-[14px] ${
-        tone === "filled"
-          ? "bg-[#AED5FF] text-[#122459]"
-          : "border border-[#AED5FF] bg-white text-[#122459]"
-      }`}
+      className="inline-flex h-[26px] items-center rounded-[8px] border border-[#ECECEC] bg-white px-[16px] text-[12px] font-normal leading-[14px] text-[#0A0A0A]"
     >
       {children}
     </span>

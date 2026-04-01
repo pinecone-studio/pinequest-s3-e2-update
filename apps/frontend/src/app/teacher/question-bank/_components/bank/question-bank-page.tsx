@@ -31,6 +31,7 @@ export function QuestionBankPage({
     hasEnteredBank,
     isBuilderOpen,
     lastValidationErrors,
+    likedQuestionIds,
     myQuestions,
     openCreateBuilder,
     openBulkImport,
@@ -122,6 +123,7 @@ export function QuestionBankPage({
             <QuestionBankFigmaResults
               activeQuestionId={activeQuestion?.id ?? null}
               getQuestionHeartCount={getQuestionHeartCount}
+              likedQuestionIds={likedQuestionIds}
               myQuestionCount={myQuestionCount}
               myQuestions={myQuestionsByNewest}
               onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
