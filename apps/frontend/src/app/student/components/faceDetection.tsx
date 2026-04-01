@@ -5,7 +5,6 @@ import Webcam from "react-webcam";
 import {
   FaceDetector,
   FaceDetectorResult,
-  FaceDetectorOptions,
   Detection,
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
