@@ -9,7 +9,7 @@ import { SetContextLink } from "@apollo/client/link/context";
 export function getGraphqlUri() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
   if (!backendUrl) {
-    return "http://localhost:8787/graphql";
+    return "https://backend.pureverdenej93.workers.dev";
   }
 
   return backendUrl.endsWith("/graphql")
@@ -22,9 +22,7 @@ export type CreateApolloClientOptions = {
   getToken?: () => Promise<string | null>;
 };
 
-function normalizeHeaders(
-  headers: unknown,
-): Record<string, string> {
+function normalizeHeaders(headers: unknown): Record<string, string> {
   if (!headers || typeof headers !== "object") return {};
   const out: Record<string, string> = {};
   for (const [k, v] of Object.entries(headers as Record<string, unknown>)) {
