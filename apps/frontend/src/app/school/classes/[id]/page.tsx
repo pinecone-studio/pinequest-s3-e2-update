@@ -2,20 +2,17 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Pencil } from "lucide-react";
 import {
   assignTeachersToClass,
   deleteClass,
   removeStudent,
-  updateClass,
   updateStudent,
 } from "@/app/school/action";
 import { getPastExamsForClass } from "@/app/lib/class-past-exams-mock";
 import { store } from "@/app/lib/store";
 import { ClassLinkedExamResults } from "./_components/class-linked-exam-results";
 import { TeacherAssignmentPicker } from "./_components/teacher-assignment-picker";
-
-const field =
-  "mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900";
 
 export default async function AdminClassDetailPage({
   params,
@@ -33,6 +30,9 @@ export default async function AdminClassDetailPage({
     c.teacherIds
       .map((teacherId) => teachers.find((teacher) => teacher.id === teacherId)?.name)
       .find(Boolean) ?? "-";
+  const classMatch = c.name.trim().match(/^(\d+)\s*([A-Za-zА-Яа-яӨөҮүЁё])?/u);
+  const gradeLabel = classMatch?.[1] ?? c.name;
+  const groupLabel = (classMatch?.[2] ?? "-").toUpperCase();
 
   return (
     <div className="space-y-10">
@@ -64,37 +64,32 @@ export default async function AdminClassDetailPage({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
         <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-zinc-900">Ангийн нэр</h3>
-          <div className="mt-3 space-y-1 text-sm text-zinc-600">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold text-zinc-900">Ангийн мэдээлэл</h3>
+            <button
+              type="button"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              title="Засах"
+              aria-label="Ангийн мэдээлэл засах"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="mt-3 space-y-2 text-sm text-zinc-600">
             <p>
-              <span className="font-medium text-zinc-800">{c.name}</span> даасан багш:{" "}
+              Анги: <span className="font-medium text-zinc-900">{gradeLabel}</span>
+            </p>
+            <p>
+              Бүлэг: <span className="font-medium text-zinc-900">{groupLabel}</span>
+            </p>
+            <p>
+              Анги даасан багш:{" "}
               <span className="text-zinc-900">{homeroomTeacherName}</span>
             </p>
             <p>
               Нийт сурагч: <span className="font-medium text-zinc-900">{roster.length}</span>
             </p>
           </div>
-          <form
-            action={updateClass}
-            className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
-          >
-            <input type="hidden" name="id" value={c.id} />
-            <label className="block min-w-0 flex-1">
-              <span className="text-xs font-medium text-zinc-500">Нэр</span>
-              <input
-                name="name"
-                required
-                defaultValue={c.name}
-                className={field}
-              />
-            </label>
-            <button
-              type="submit"
-              className="rounded-lg border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
-            >
-              Нэр өөрчлөх
-            </button>
-          </form>
         </section>
 
         <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
