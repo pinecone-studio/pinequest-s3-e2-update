@@ -67,3 +67,19 @@ export const CREATE_EXAM = gql`
     }
   }
 `;
+
+export const ADD_STUDENT = gql`
+  mutation AddStudent($input: AddStudentInput!) {
+    addStudent(input: $input) {
+      id
+      email
+      classId
+      firstName
+      lastName
+      studentCode
+      studentExamResultIds
+      createdAt
+      updatedAt
+    }
+  }
+`;
