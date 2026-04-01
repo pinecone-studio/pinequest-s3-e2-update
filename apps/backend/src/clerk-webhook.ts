@@ -4,7 +4,10 @@ import { schoolSignupInputFromUserJson } from "./lib/school-user-webhook";
 import { upsertSchoolFromSignupInput } from "./lib/upsert-school-db";
 import type { Env } from "./types";
 
-export async function handleClerkWebhook(request: Request, env: Env): Promise<Response> {
+export async function handleClerkWebhook(
+  request: Request,
+  env: Env,
+): Promise<Response> {
   const signingSecret = env.CLERK_WEBHOOK_SIGNING_SECRET?.trim();
   if (!signingSecret) {
     console.error(
