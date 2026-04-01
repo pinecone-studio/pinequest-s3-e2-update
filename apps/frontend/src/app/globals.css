@@ -58,11 +58,13 @@ body {
 @keyframes nectar-bee-trip {
 	from {
 		transform: translate(-50%, -50%) rotate(0deg)
-			translateY(calc(-1 * var(--nectar-orbit-radius, min(31vw, 126px)))) rotate(0deg);
+			translateY(calc(-1 * var(--nectar-orbit-radius, min(31vw, 126px))))
+			rotate(0deg);
 	}
 	to {
 		transform: translate(-50%, -50%) rotate(360deg)
-			translateY(calc(-1 * var(--nectar-orbit-radius, min(31vw, 126px)))) rotate(-360deg);
+			translateY(calc(-1 * var(--nectar-orbit-radius, min(31vw, 126px))))
+			rotate(-360deg);
 	}
 }
 
@@ -82,4 +84,3 @@ body {
 		animation-iteration-count: 1 !important;
 	}
 }
-

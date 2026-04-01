@@ -6,15 +6,19 @@ const CY = 100;
 /** Orbit radius in viewBox units (matches former ring + bee offset). */
 const BEE_ORBIT_R = 89;
 
-const SWARM_BEE_COUNT = 8;
 /** One full orbit; higher = slower spin. */
-const SWARM_DURATION_S = 4.2;
+const ORBIT_DURATION_S = 4.2;
+
+/** Scale for bee drawing (1 = former default size). */
+const BEE_GLYPH_SCALE = 1.65;
+/** Y of body center in coords after BeeGlyph’s translate(-10,-10). */
+const BEE_GLYPH_ANCHOR_Y = 2;
 
 export type BeeRingProgressLoaderProps = {
-  /** 0–100; drives aria and optional center “N %”. Bees orbit continuously. */
+  /** 0–100; drives aria and optional center “N %”. Bee orbits continuously. */
   progress: number;
   className?: string;
-  /** Caption under the swarm (e.g. “Collecting data…”). */
+  /** Caption under the ring (e.g. “Collecting data…”). */
   label?: string;
   /** When false, the caption is hidden. Default true. */
   showLabel?: boolean;
@@ -22,23 +26,8 @@ export type BeeRingProgressLoaderProps = {
   showCenterPercent?: boolean;
 };
 
-/** +1 = clockwise, −1 = counter-clockwise in SVG coords. */
-function orbitDirectionForBee(i: number): 1 | -1 {
-  const pattern: (1 | -1)[] = [1, -1, -1, 1, 1, -1, -1, 1, 1, -1, 1, -1];
-  return pattern[i % pattern.length];
-}
-
-function orbitDurationSec(beeIndex: number): string {
-  const spread = 0.85 + (beeIndex % 5) * 0.065 + (beeIndex % 3) * 0.04;
-  return (SWARM_DURATION_S * spread).toFixed(2);
-}
-
-function orbitBeginDelaySec(beeIndex: number): string {
-  return (beeIndex * 0.11).toFixed(2);
-}
-
 /**
- * Bees on the same circle, each with its own direction, speed, and phase.
+ * Single bee on a circle; outer spin + inner counter-spin keeps the glyph upright.
  */
 export function BeeRingProgressLoader({
   progress: progressRaw,
@@ -48,12 +37,12 @@ export function BeeRingProgressLoader({
   showCenterPercent = true,
 }: BeeRingProgressLoaderProps) {
   const progress = Math.min(100, Math.max(0, progressRaw));
-  const step = 360 / SWARM_BEE_COUNT;
+  const dur = `${ORBIT_DURATION_S}s`;
 
   return (
     <div
       className={[
-        "flex w-full max-w-[min(280px,85vw)] flex-col items-center gap-5",
+        "flex w-full max-w-[min(280px,85vw)] flex-col items-center gap-4",
         className,
       ].join(" ")}
       role="progressbar"
@@ -63,7 +52,7 @@ export function BeeRingProgressLoader({
       aria-label={showLabel && label ? label : "Loading progress"}
     >
       <div
-        className="relative w-full drop-shadow-[0_10px_32px_rgba(217,119,6,0.18)]"
+        className="relative w-full drop-shadow-[0_8px_28px_rgba(29,111,235,0.14)]"
         style={{ aspectRatio: "1 / 1" }}
       >
         <svg
@@ -73,52 +62,83 @@ export function BeeRingProgressLoader({
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden
         >
+          <defs>
+            <linearGradient
+              id="bee-orbit-ring"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="#E8F4FF" />
+              <stop offset="50%" stopColor="#CFE8FF" />
+              <stop offset="100%" stopColor="#EEF6FF" />
+            </linearGradient>
+          </defs>
           <g transform={`translate(${CX} ${CY})`}>
-            {Array.from({ length: SWARM_BEE_COUNT }, (_, i) => {
-              const dir = orbitDirectionForBee(i);
-              const dur = orbitDurationSec(i);
-              const begin = `${orbitBeginDelaySec(i)}s`;
-              const a0 = i * step;
-              return (
-                <g key={i}>
-                  <g>
-                    <animateTransform
-                      attributeName="transform"
-                      attributeType="XML"
-                      type="rotate"
-                      from={`${a0} 0 0`}
-                      to={`${a0 + 360 * dir} 0 0`}
-                      dur={dur}
-                      begin={begin}
-                      repeatCount="indefinite"
-                    />
-                    <g transform={`translate(0 ${-BEE_ORBIT_R})`}>
-                      <g>
-                        <animateTransform
-                          attributeName="transform"
-                          attributeType="XML"
-                          type="rotate"
-                          from={`${-a0} 0 0`}
-                          to={`${-a0 - 360 * dir} 0 0`}
-                          dur={dur}
-                          begin={begin}
-                          repeatCount="indefinite"
-                        />
-                        <BeeGlyphSwarm />
-                      </g>
-                    </g>
+            <circle
+              r={BEE_ORBIT_R}
+              fill="none"
+              stroke="url(#bee-orbit-ring)"
+              strokeWidth="2.25"
+              strokeDasharray="5 14"
+              strokeLinecap="round"
+              opacity={0.92}
+            >
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                from="0 0 0"
+                to="360 0 0"
+                dur="48s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            <circle
+              r={BEE_ORBIT_R - 5}
+              fill="none"
+              stroke="#7DC8FF"
+              strokeWidth="0.65"
+              opacity={0.35}
+            />
+            <g>
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                from="0 0 0"
+                to="360 0 0"
+                dur={dur}
+                repeatCount="indefinite"
+              />
+              <g transform={`translate(0 ${-BEE_ORBIT_R})`}>
+                <g>
+                  <animateTransform
+                    attributeName="transform"
+                    attributeType="XML"
+                    type="rotate"
+                    from="0 0 0"
+                    to="-360 0 0"
+                    dur={dur}
+                    repeatCount="indefinite"
+                  />
+                  <g
+                    transform={`translate(0 ${BEE_GLYPH_ANCHOR_Y}) scale(${BEE_GLYPH_SCALE}) translate(0 ${-BEE_GLYPH_ANCHOR_Y})`}
+                  >
+                    <BeeGlyph />
                   </g>
                 </g>
-              );
-            })}
+              </g>
+            </g>
           </g>
         </svg>
 
         {showCenterPercent ? (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="text-[clamp(1.75rem,6vw,2.35rem)] font-semibold tabular-nums tracking-tight text-amber-950/90">
+            <span className="text-[clamp(1.75rem,6vw,2.35rem)] font-semibold tabular-nums tracking-tight text-[#122459]">
               {Math.round(progress)}
-              <span className="text-[0.55em] font-semibold text-amber-800/75">
+              <span className="text-[0.55em] font-semibold text-[#2f66b9]">
                 %
               </span>
             </span>
@@ -127,7 +147,7 @@ export function BeeRingProgressLoader({
       </div>
 
       {showLabel && label ? (
-        <p className="max-w-xs text-center text-sm font-medium text-amber-900/70">
+        <p className="max-w-xs text-center text-sm font-medium leading-snug text-[#4a5875]">
           {label}
         </p>
       ) : null}
@@ -135,8 +155,8 @@ export function BeeRingProgressLoader({
   );
 }
 
-/** Bee drawn for the swarm (small, centered on anchor). */
-function BeeGlyphSwarm() {
+/** Bee centered on anchor — navy outline + sky wings (UPDATE palette). */
+function BeeGlyph() {
   return (
     <g transform="translate(-10,-10)" fill="none">
       <ellipse
@@ -144,48 +164,50 @@ function BeeGlyphSwarm() {
         cy="12"
         rx="4.5"
         ry="5.5"
-        fill="#fbbf24"
-        stroke="#b45309"
-        strokeWidth="1"
+        fill="#fcd34d"
+        stroke="#122459"
+        strokeWidth="1.05"
       />
       <line
         x1="7"
         y1="10"
         x2="13"
         y2="10"
-        stroke="#1c1917"
+        stroke="#122459"
         strokeWidth="1"
+        strokeLinecap="round"
       />
       <line
         x1="7.5"
         y1="13"
         x2="13"
         y2="13"
-        stroke="#1c1917"
+        stroke="#122459"
         strokeWidth="1"
+        strokeLinecap="round"
       />
       <ellipse
         cx="7.5"
         cy="7.2"
         rx="3.2"
         ry="1.85"
-        fill="#fffbeb"
-        opacity="0.88"
-        stroke="#fcd34d"
-        strokeWidth="0.45"
+        fill="#EEF6FF"
+        opacity={0.96}
+        stroke="#7DC8FF"
+        strokeWidth="0.5"
       />
       <ellipse
         cx="14.5"
         cy="7.5"
         rx="3.3"
         ry="2"
-        fill="#fffbeb"
-        opacity="0.88"
-        stroke="#fcd34d"
-        strokeWidth="0.45"
+        fill="#EEF6FF"
+        opacity={0.96}
+        stroke="#7DC8FF"
+        strokeWidth="0.5"
       />
-      <circle cx="14" cy="6" r="0.95" fill="#1c1917" />
-      <circle cx="14.3" cy="5.75" r="0.25" fill="#fef3c7" />
+      <circle cx="14" cy="6" r="0.95" fill="#122459" />
+      <circle cx="14.3" cy="5.75" r="0.25" fill="#EEF6FF" />
     </g>
   );
 }
