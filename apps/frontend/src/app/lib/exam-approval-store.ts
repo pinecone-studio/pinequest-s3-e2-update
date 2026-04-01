@@ -169,3 +169,16 @@ export function updateApprovalRequestStatus(
   );
   setApprovalRequestsClient(next);
 }
+
+export function markAllApprovalRequestsRead() {
+  const list = getApprovalRequestsClient();
+  let changed = false;
+  const next = list.map((item) => {
+    if (item.unread) {
+      changed = true;
+      return { ...item, unread: false };
+    }
+    return item;
+  });
+  if (changed) setApprovalRequestsClient(next);
+}

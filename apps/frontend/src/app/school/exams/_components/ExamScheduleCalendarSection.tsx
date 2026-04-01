@@ -139,6 +139,13 @@ function parseProgress(notes: string) {
   return match ? match[1].replace(/\s+/g, "") : null;
 }
 
+function formatRoom(value: string) {
+  const room = value.trim();
+  if (!room) return "Тодорхойгүй";
+  if (room.toLowerCase().includes("тоот")) return room;
+  return `${room} тоот`;
+}
+
 function timeToMinutes(time: string) {
   const [h, m] = time.split(":").map(Number);
   return h * 60 + m;
@@ -170,7 +177,7 @@ const STATUS_META: Record<
   scheduled: {
     label: "Товлогдсон",
     cellCardClass: "border-l-blue-500 bg-blue-50/95",
-    chipClass: "bg-blue-100 text-blue-700",
+    chipClass: "bg-[#dbe7ff] text-[#4d6aa8]",
     panelClass: "border-blue-200 bg-blue-50/70",
   },
   ongoing: {
@@ -610,10 +617,17 @@ export function ExamScheduleCalendarSection({
               }
 
               return (
-                <button
-                  type="button"
+                <div
+                  role="button"
+                  tabIndex={0}
                   key={dateKey}
                   onClick={() => setSelectedDate(dateKey)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedDate(dateKey);
+                    }
+                  }}
                   className={`group relative min-h-[118px] rounded-xl border p-2.5 text-left transition ${
                     isSelected
                       ? "border-[#3b82f6] bg-[#eff6ff]"
@@ -661,7 +675,10 @@ export function ExamScheduleCalendarSection({
                         <p className="truncate text-[10px] text-[#475569]">
                           {item.className} анги · {item.startTime}-{item.endTime}
                         </p>
-                        <p className="truncate text-[10px] text-[#64748b]">{item.teacherName}</p>
+                        <p className="inline-flex items-center gap-1 truncate text-[10px] text-[#64748b]">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          {formatRoom(item.location)}
+                        </p>
                         {item.progress ? <p className="text-[10px] font-medium text-[#334155]">{item.progress}</p> : null}
                       </div>
                     ))}
@@ -672,7 +689,7 @@ export function ExamScheduleCalendarSection({
                       </p>
                     ) : null}
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -800,7 +817,7 @@ export function ExamScheduleCalendarSection({
                     <button
                       type="button"
                       onClick={() => openCreateForDate(selectedDate)}
-                      className="w-full rounded-xl bg-[#2563eb] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
+                      className="w-full rounded-xl bg-[#4d73c9] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#4266b6]"
                     >
                       Шалгалт нэмэх
                     </button>
@@ -866,7 +883,7 @@ export function ExamScheduleCalendarSection({
                     <button
                       type="button"
                       onClick={() => openCreateForDate(selectedDate)}
-                      className="mt-2 w-full rounded-xl bg-[#2563eb] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
+                      className="mt-2 w-full rounded-xl bg-[#4d73c9] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#4266b6]"
                     >
                       Шалгалт нэмэх
                     </button>
