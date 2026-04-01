@@ -15,6 +15,10 @@ export const queryTypeDefs = /* GraphQL */ `
   }
 
   type Query {
+    """
+    Clerk user id from verified Bearer session token, or null if anonymous.
+    """
+    viewerClerkId: String
     hello: String!
     getAllTests: [Test!]!
     getClassBySchoolId(schoolId: String!): [Class!]

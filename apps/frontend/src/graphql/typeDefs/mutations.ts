@@ -20,6 +20,7 @@ export const CREATE_TESTS = gql`
     }
   }
 `;
+
 export const CREATE_OPEN_EXERCIES = gql`
   mutation CreateOpenExercies($input: CreateOpenExerciesArgs!) {
     createOpenExercies(input: $input) {

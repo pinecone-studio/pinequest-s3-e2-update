@@ -4,6 +4,7 @@ import { getStudentByClassId } from "./classAndStudent/getStudentByClassId";
 import { getAllExams } from "./exam/getAllExams";
 import { getExamById } from "./exam/getExamById";
 import { hello } from "./hello";
+import { viewerClerkId } from "./viewer-clerk-id";
 import { getAllSubject } from "./subjectSchoolAndTeachers/getAllSubjects";
 import { getSchoolByClerkId } from "./subjectSchoolAndTeachers/getSchoolByClerkId";
 import { getTeachersBySchoolId } from "./subjectSchoolAndTeachers/getTeachersBySchoolId";
@@ -12,6 +13,7 @@ import { getOpenExerciesBySubjectAndGrade } from "./testAndOpenExircices/getOpen
 import { getTestsBySybjectAndGrade } from "./testAndOpenExircices/getTestsBySubjectAndGrade";
 
 export const queryResolvers = {
+  viewerClerkId,
   hello,
   getAllTests,
   getStudentByClassId,
