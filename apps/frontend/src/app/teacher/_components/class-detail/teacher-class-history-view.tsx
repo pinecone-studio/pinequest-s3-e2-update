@@ -55,7 +55,7 @@ export function TeacherClassHistoryView({
       <hr className="mt-5 h-px w-full border-0 bg-[#d9dee8]" />
 
       {filteredPastExams.length === 0 ? (
-        <div className="mt-6 rounded-sm border border-dashed border-[#f3e1a4] bg-[#EDF6FF] px-4 py-10 text-center text-4 text-[#122459]">
+        <div className="mt-6 rounded-xl border border-dashed border-[#f3e1a4] bg-[#EDF6FF] px-4 py-10 text-center text-4 text-[#122459]">
           {historyQuery.trim()
             ? "Хайлтад тохирох шалгалт олдсонгүй."
             : "Энэ ангийн шалгалтын статистик одоогоор алга."}
