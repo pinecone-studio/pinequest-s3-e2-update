@@ -116,7 +116,7 @@ export default function TeacherShell({
                       className="object-contain"
                       fill
                       priority
-                      src="/bee.png"
+                      src="/Herobee.png"
                     />
                   </span>
                   <div className="min-w-0 text-left">
@@ -183,7 +183,7 @@ export default function TeacherShell({
                   aria-label="Багшийн нүүр рүү очих"
                 >
                   <Image
-                    src="/HeroBee.png"
+                    src="/Herobee.png"
                     alt="UPDATE logo"
                     width={44}
                     height={44}
