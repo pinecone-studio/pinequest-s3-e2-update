@@ -1,39 +1,120 @@
 "use client";
 
 import { ArrowUpRight, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  classPerformance,
   recentActivities,
   schoolExams,
 } from "@/app/school/_mock/school-data";
 
+type CalendarScheduleItem = {
+  id: string;
+  examTitle: string;
+  className: string;
+  location: string;
+  examDate: string;
+  startTime: string;
+  endTime: string;
+  notes: string;
+};
+
+const CALENDAR_STORAGE_KEY = "pinequest.schoolExamSchedule.v1";
+
+function extractGradeValue(className: string) {
+  const match = className.match(/\d+/);
+  return match ? match[0] : className;
+}
+
+function readCalendarSchedules() {
+  if (typeof window === "undefined") return [] as CalendarScheduleItem[];
+  try {
+    const raw = window.localStorage.getItem(CALENDAR_STORAGE_KEY);
+    const parsed = raw ? (JSON.parse(raw) as CalendarScheduleItem[]) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item) =>
+        item &&
+        typeof item.id === "string" &&
+        typeof item.examTitle === "string" &&
+        typeof item.className === "string" &&
+        typeof item.examDate === "string" &&
+        typeof item.startTime === "string" &&
+        typeof item.endTime === "string",
+    );
+  } catch {
+    return [];
+  }
+}
+
+function getCalendarStatus(item: CalendarScheduleItem, now = new Date()) {
+  const note = item.notes.toLowerCase();
+  if (note.includes("ноорог") || note.includes("draft")) return "draft" as const;
+  if (note.includes("шалгаж") || note.includes("grading")) return "grading" as const;
+  const start = new Date(`${item.examDate}T${item.startTime}:00`);
+  const end = new Date(`${item.examDate}T${item.endTime}:00`);
+  if (now < start) return "scheduled" as const;
+  if (now >= start && now <= end) return "ongoing" as const;
+  return "completed" as const;
+}
+
+function formatLocation(location: string) {
+  const value = location.trim();
+  if (!value) return "Тодорхойгүй";
+  if (value.toLowerCase().includes("тоот")) return value;
+  return `${value} тоот`;
+}
+
 export default function SchoolResultsPage() {
+  const [calendarSchedules, setCalendarSchedules] = useState<CalendarScheduleItem[]>([]);
   const [selectedQuarterOverview, setSelectedQuarterOverview] = useState("all");
   const [selectedClassOverview, setSelectedClassOverview] = useState("all");
   const [selectedSubjectOverview, setSelectedSubjectOverview] = useState("all");
   const [selectedSummary, setSelectedSummary] = useState<
-    "completed" | "grading" | "pass" | "attention"
+    "completed" | "scheduled" | "pass" | "attention"
     | null
   >(null);
-  const completedCount = schoolExams.filter((x) => x.stage === "completed").length;
-  const gradingCount = schoolExams.filter((x) => x.stage === "grading").length;
-  const averagePassRate = Math.round(
-    classPerformance.reduce((sum, row) => sum + row.passRate, 0) / classPerformance.length
-  );
-  const attentionClasses = [...classPerformance]
-    .sort((a, b) => a.passRate - b.passRate)
-    .slice(0, 2);
-  const classSubjectMeta = useMemo(() => {
-    const map = new Map<string, { teacherName: string; date: string }>();
-    for (const exam of schoolExams) {
-      const key = `${exam.className}__${exam.subject}`;
-      if (!map.has(key)) {
-        map.set(key, { teacherName: exam.teacherName, date: exam.startAt });
-      }
-    }
-    return map;
+  useEffect(() => {
+    const sync = () => setCalendarSchedules(readCalendarSchedules());
+    sync();
+    window.addEventListener("storage", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      document.removeEventListener("visibilitychange", sync);
+    };
   }, []);
+
+  const currentMonthPrefix = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+  const currentMonthSchedules = useMemo(
+    () => calendarSchedules.filter((item) => item.examDate.startsWith(currentMonthPrefix)),
+    [calendarSchedules, currentMonthPrefix],
+  );
+
+  const calendarCompletedExams = useMemo(
+    () =>
+      [...currentMonthSchedules]
+        .filter((item) => getCalendarStatus(item) === "completed")
+        .sort((a, b) => {
+          const aTs = new Date(`${a.examDate}T${a.startTime}:00`).getTime();
+          const bTs = new Date(`${b.examDate}T${b.startTime}:00`).getTime();
+          return bTs - aTs;
+        }),
+    [currentMonthSchedules],
+  );
+
+  const completedCount = calendarCompletedExams.length;
+  const calendarScheduledExams = useMemo(
+    () =>
+      [...currentMonthSchedules]
+        .filter((item) => getCalendarStatus(item) === "scheduled")
+        .sort((a, b) => {
+          const aTs = new Date(`${a.examDate}T${a.startTime}:00`).getTime();
+          const bTs = new Date(`${b.examDate}T${b.startTime}:00`).getTime();
+          return aTs - bTs;
+        }),
+    [currentMonthSchedules],
+  );
+  const scheduledCount = calendarScheduledExams.length;
   const quarterOf = (startAt: string) => {
     const month = Number(startAt.slice(5, 7));
     if (Number.isNaN(month) || month < 1 || month > 12) return "Q1";
@@ -48,9 +129,12 @@ export default function SchoolResultsPage() {
   }, [selectedQuarterOverview]);
   const classOptionsOverview = useMemo(
     () =>
-      Array.from(new Set(quarterFilteredExams.map((exam) => exam.className))).sort((a, b) =>
-        a.localeCompare(b, "mn")
-      ),
+      Array.from(new Set(quarterFilteredExams.map((exam) => extractGradeValue(exam.className)))).sort((a, b) => {
+        const aNum = Number(a);
+        const bNum = Number(b);
+        if (Number.isFinite(aNum) && Number.isFinite(bNum)) return bNum - aNum;
+        return a.localeCompare(b, "mn");
+      }),
     [quarterFilteredExams]
   );
   const subjectOptionsOverview = useMemo(
@@ -104,13 +188,33 @@ export default function SchoolResultsPage() {
         averagePercent: Math.round(row.totalScorePercent / row.examCount),
         highestScorePercent: row.highestScorePercent,
       }))
-      .filter((row) => selectedClassOverview === "all" || row.className === selectedClassOverview)
+      .filter(
+        (row) =>
+          selectedClassOverview === "all" ||
+          extractGradeValue(row.className) === selectedClassOverview,
+      )
       .filter((row) => selectedSubjectOverview === "all" || row.subject === selectedSubjectOverview)
       .sort((a, b) => {
         if (a.className !== b.className) return a.className.localeCompare(b.className, "mn");
         return a.subject.localeCompare(b.subject, "mn");
       });
   }, [quarterFilteredExams, selectedClassOverview, selectedSubjectOverview]);
+  const averagePassRate = useMemo(() => {
+    if (aggregatedByClassSubjectOverview.length === 0) return 0;
+    return Math.round(
+      aggregatedByClassSubjectOverview.reduce((sum, row) => sum + row.averagePercent, 0) /
+        aggregatedByClassSubjectOverview.length,
+    );
+  }, [aggregatedByClassSubjectOverview]);
+  const attentionRows = useMemo(
+    () =>
+      aggregatedByClassSubjectOverview.filter((row) => row.averagePercent < 80),
+    [aggregatedByClassSubjectOverview],
+  );
+  const attentionClassCount = useMemo(
+    () => new Set(attentionRows.map((row) => row.className)).size,
+    [attentionRows],
+  );
 
   return (
     <div className="space-y-6">
@@ -134,14 +238,14 @@ export default function SchoolResultsPage() {
             </button>
             <button
               type="button"
-              onClick={() => setSelectedSummary("grading")}
+              onClick={() => setSelectedSummary("scheduled")}
               className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-xs uppercase tracking-wide text-zinc-500">Шалгаж буй</p>
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Товлогдсон шалгалт</p>
                 <ArrowUpRight className="h-4 w-4 text-zinc-400" />
               </div>
-              <p className="mt-2 text-2xl font-bold">{gradingCount}</p>
+              <p className="mt-2 text-2xl font-bold">{scheduledCount}</p>
             </button>
             <button
               type="button"
@@ -163,7 +267,7 @@ export default function SchoolResultsPage() {
                 <p className="text-xs uppercase tracking-wide text-red-600">Анхаарах</p>
                 <ArrowUpRight className="h-4 w-4 text-red-400" />
               </div>
-              <p className="mt-2 text-2xl font-bold text-red-700">{attentionClasses.length} анги</p>
+              <p className="mt-2 text-2xl font-bold text-red-700">{attentionClassCount} анги</p>
             </button>
           </div>
           <article className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
@@ -197,7 +301,7 @@ export default function SchoolResultsPage() {
                 <div>
                   <p className="text-lg font-semibold text-zinc-900">
                     {selectedSummary === "completed" ? "Дууссан шалгалтын дэлгэрэнгүй" : null}
-                    {selectedSummary === "grading" ? "Шалгаж буй шалгалтын дэлгэрэнгүй" : null}
+                    {selectedSummary === "scheduled" ? "Товлогдсон шалгалтын дэлгэрэнгүй" : null}
                     {selectedSummary === "pass" ? "Дундаж тэнцэлтийн дэлгэрэнгүй" : null}
                     {selectedSummary === "attention" ? "Анхаарах ангийн дэлгэрэнгүй" : null}
                   </p>
@@ -215,68 +319,82 @@ export default function SchoolResultsPage() {
               <div className="mt-3 max-h-[65vh] overflow-y-auto pr-1">
                 {selectedSummary === "completed" ? (
                   <ul className="space-y-2 text-sm text-zinc-700">
-                    {schoolExams
-                      .filter((exam) => exam.stage === "completed")
-                      .map((exam) => (
-                        <li key={exam.id} className="rounded-md border border-zinc-200 bg-white px-3 py-2">
-                          <p className="font-medium text-zinc-900">
-                            {exam.className} · {exam.subject} · {exam.title}
-                          </p>
-                          <p className="mt-1 text-zinc-600">
-                            Огноо: {exam.startAt} · Багш: {exam.teacherName}
-                          </p>
-                        </li>
-                      ))}
+                    {calendarCompletedExams.map((exam) => (
+                      <li key={exam.id} className="rounded-md border border-zinc-200 bg-white px-3 py-2">
+                        <p className="font-medium text-zinc-900">
+                          {exam.className} · {exam.examTitle}
+                        </p>
+                        <p className="mt-1 text-zinc-600">
+                          Огноо: {exam.examDate} · Цаг: {exam.startTime}-{exam.endTime}
+                        </p>
+                        <p className="mt-1 text-zinc-600">
+                          Анги: {exam.className} · Байршил: {formatLocation(exam.location)}
+                        </p>
+                      </li>
+                    ))}
+                    {calendarCompletedExams.length === 0 ? (
+                      <li className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-500">
+                        Календарь дээр дууссан шалгалт алга.
+                      </li>
+                    ) : null}
                   </ul>
                 ) : null}
-                {selectedSummary === "grading" ? (
+                {selectedSummary === "scheduled" ? (
                   <ul className="space-y-2 text-sm text-zinc-700">
-                    {schoolExams
-                      .filter((exam) => exam.stage === "grading")
-                      .map((exam) => (
-                        <li key={exam.id} className="rounded-md border border-zinc-200 bg-white px-3 py-2">
-                          <p className="font-medium text-zinc-900">
-                            {exam.className} · {exam.subject} · {exam.title}
-                          </p>
-                          <p className="mt-1 text-zinc-600">
-                            Огноо: {exam.startAt} · Багш: {exam.teacherName}
-                          </p>
-                        </li>
-                      ))}
+                    {calendarScheduledExams.map((exam) => (
+                      <li key={exam.id} className="rounded-md border border-zinc-200 bg-white px-3 py-2">
+                        <p className="font-medium text-zinc-900">
+                          {exam.className} · {exam.examTitle}
+                        </p>
+                        <p className="mt-1 text-zinc-600">
+                          Огноо: {exam.examDate} · Цаг: {exam.startTime}-{exam.endTime}
+                        </p>
+                        <p className="mt-1 text-zinc-600">
+                          Анги: {exam.className} · Байршил: {formatLocation(exam.location)}
+                        </p>
+                      </li>
+                    ))}
+                    {calendarScheduledExams.length === 0 ? (
+                      <li className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-500">
+                        Энэ сард товлогдсон шалгалт алга.
+                      </li>
+                    ) : null}
                   </ul>
                 ) : null}
                 {selectedSummary === "pass" ? (
                   <ul className="space-y-2 text-sm text-zinc-700">
-                    {classPerformance.map((row) => {
-                      const meta = classSubjectMeta.get(`${row.className}__${row.weakSubject}`);
-                      return (
-                        <li key={row.className} className="rounded-md border border-zinc-200 bg-white px-3 py-2">
-                          <p className="font-medium text-zinc-900">
-                            {row.className} · Тэнцэлт {row.passRate}% · Дундаж {row.averageScore}%
-                          </p>
-                          <p className="mt-1 text-zinc-600">
-                            Огноо: {meta?.date ?? "-"} · Багш: {meta?.teacherName ?? "-"}
-                          </p>
-                        </li>
-                      );
-                    })}
+                    {aggregatedByClassSubjectOverview.map((row) => (
+                      <li key={`${row.className}-${row.subject}`} className="rounded-md border border-zinc-200 bg-white px-3 py-2">
+                        <p className="font-medium text-zinc-900">
+                          {row.className} · {row.subject} · Тэнцэлт {row.averagePercent}%
+                        </p>
+                        <p className="mt-1 text-zinc-600">Дээд оноо: {row.highestScorePercent}%</p>
+                      </li>
+                    ))}
+                    {aggregatedByClassSubjectOverview.length === 0 ? (
+                      <li className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-500">
+                        Сонгосон шүүлтүүрт тохирох өгөгдөл алга.
+                      </li>
+                    ) : null}
                   </ul>
                 ) : null}
                 {selectedSummary === "attention" ? (
                   <ul className="space-y-2 text-sm text-zinc-700">
-                    {attentionClasses.map((row) => {
-                      const meta = classSubjectMeta.get(`${row.className}__${row.weakSubject}`);
-                      return (
-                        <li key={row.className} className="rounded-md border border-red-200 bg-white px-3 py-2">
-                          <p className="font-medium text-zinc-900">
-                            {row.className} · Тэнцэлт {row.passRate}% · Анхаарах хичээл: {row.weakSubject}
-                          </p>
-                          <p className="mt-1 text-zinc-600">
-                            Огноо: {meta?.date ?? "-"} · Багш: {meta?.teacherName ?? "-"}
-                          </p>
-                        </li>
-                      );
-                    })}
+                    {attentionRows.map((row) => (
+                      <li key={`${row.className}-${row.subject}`} className="rounded-md border border-red-200 bg-white px-3 py-2">
+                        <p className="font-medium text-zinc-900">
+                          {row.className} · {row.subject}
+                        </p>
+                        <p className="mt-1 text-zinc-600">
+                          Тэнцэлт: {row.averagePercent}% · Дээд оноо: {row.highestScorePercent}%
+                        </p>
+                      </li>
+                    ))}
+                    {attentionRows.length === 0 ? (
+                      <li className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-500">
+                        Дундаж тэнцэлт 80%-аас бага анги алга.
+                      </li>
+                    ) : null}
                   </ul>
                 ) : null}
               </div>
@@ -322,9 +440,9 @@ export default function SchoolResultsPage() {
                 className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
               >
                 <option value="all">Бүх анги</option>
-                {classOptionsOverview.map((className) => (
-                  <option key={className} value={className}>
-                    {className}
+                {classOptionsOverview.map((grade) => (
+                  <option key={grade} value={grade}>
+                    {grade}
                   </option>
                 ))}
               </select>
@@ -389,7 +507,7 @@ export default function SchoolResultsPage() {
                     Дундаж
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="h-2 w-2 rounded-full bg-[#69b89a]" />
                     Дээд оноо
                   </span>
                 </div>
@@ -415,7 +533,7 @@ export default function SchoolResultsPage() {
                             </p>
                             <div className="flex h-full items-end rounded-md bg-zinc-200/70">
                               <div
-                                className="w-full rounded-md bg-emerald-500"
+                                className="w-full rounded-md bg-[#69b89a]"
                                 style={{ height: `${Math.max(row.highestScorePercent, 2)}%` }}
                               />
                             </div>

@@ -2,12 +2,13 @@
 
 "use client";
 
-import Link from "next/link";
-import { AlertTriangle, BellRing } from "lucide-react";
+import { AlertTriangle, BellRing, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
+  type ApprovalRequest,
   getApprovalRequestsClient,
   getApprovalUpdatedEventName,
+  updateApprovalRequestStatus,
 } from "@/app/lib/exam-approval-store";
 import { examAlerts } from "@/app/school/exams/_mock/school-exams";
 import {
@@ -83,13 +84,22 @@ export default function SchoolDashboardPage() {
     teacherName: string;
     avgScore: number;
   } | null>(null);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [approvalComments, setApprovalComments] = useState<Record<string, string>>({});
+  const [approvalExpanded, setApprovalExpanded] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const sync = () => setApprovalRequests(getApprovalRequestsClient());
     sync();
     const eventName = getApprovalUpdatedEventName();
     window.addEventListener(eventName, sync);
-    return () => window.removeEventListener(eventName, sync);
+    window.addEventListener("storage", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      window.removeEventListener(eventName, sync);
+      window.removeEventListener("storage", sync);
+      document.removeEventListener("visibilitychange", sync);
+    };
   }, []);
 
   const isTodayLabel = (value: string) => {
@@ -106,6 +116,28 @@ export default function SchoolDashboardPage() {
     );
   };
 
+  const parseDueTime = (value: string) => {
+    if (!value) return 0;
+    if (value.includes("Өнөөдөр")) {
+      const now = new Date();
+      const match = value.match(/(\d{1,2}):(\d{2})/);
+      const hours = match ? Number(match[1]) : 23;
+      const minutes = match ? Number(match[2]) : 59;
+      const date = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        hours,
+        minutes,
+        0,
+        0,
+      );
+      return date.getTime();
+    }
+    const parsed = new Date(value).getTime();
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
   const pendingItems = useMemo(
     () =>
       [
@@ -116,7 +148,8 @@ export default function SchoolDashboardPage() {
             title: `${item.className} ангийн ${item.subject} шалгалт батлуулах`,
             owner: item.teacherName,
             due: item.sentAt,
-            isNew: isTodayLabel(item.sentAt),
+            dueTs: parseDueTime(item.sentAt),
+            isNew: Boolean(item.unread),
             cardClass: "border-zinc-200 bg-white",
           })),
         ...pendingActions.map((item) => ({
@@ -124,12 +157,37 @@ export default function SchoolDashboardPage() {
           title: item.title,
           owner: item.owner,
           due: item.due,
+          dueTs: parseDueTime(item.due),
           isNew: isTodayLabel(item.due),
           cardClass: "border-zinc-200 bg-white",
         })),
-      ].sort((a, b) => Number(b.isNew) - Number(a.isNew)),
+      ].sort((a, b) => b.dueTs - a.dueTs),
     [approvalRequests],
   );
+  const pendingApprovalRequests = useMemo(
+    () =>
+      approvalRequests
+        .filter((item) => item.status === "pending")
+        .sort((a, b) => parseDueTime(b.sentAt) - parseDueTime(a.sentAt)),
+    [approvalRequests],
+  );
+
+  const approveRequest = (id: string) => {
+    updateApprovalRequestStatus(id, "approved");
+    setApprovalRequests(getApprovalRequestsClient());
+  };
+
+  const rejectRequest = (id: string) => {
+    const note = (approvalComments[id] || "").trim();
+    if (!note) return;
+    updateApprovalRequestStatus(id, "needs_fix", note);
+    setApprovalRequests(getApprovalRequestsClient());
+  };
+
+  const toggleRequestDetail = (id: string) => {
+    setApprovalExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <div className="space-y-6 text-2">
       <section className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-6">
@@ -147,12 +205,13 @@ export default function SchoolDashboardPage() {
                 Хүлээгдэж буй ажил
               </h3>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                <Link
-                  href="/school/requests"
+                <button
+                  type="button"
+                  onClick={() => setIsApprovalModalOpen(true)}
                   className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
                 >
                   Батлуулах хүсэлтүүд →
-                </Link>
+                </button>
               </div>
             </div>
             <ul className="mt-4 max-h-[250px] space-y-3 overflow-y-auto pr-1">
@@ -419,6 +478,140 @@ export default function SchoolDashboardPage() {
           </div>
         </article>
       </section>
+
+      {isApprovalModalOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 p-4 backdrop-blur-sm"
+          onClick={() => setIsApprovalModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-3xl rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-3 font-bold text-[#0f172a]">Батлуулах хүсэлтүүд</h3>
+                <p className="mt-1 text-2 text-zinc-600">
+                  Хүлээгдэж буй хүсэлт: {pendingApprovalRequests.length}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsApprovalModalOpen(false)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-50"
+                aria-label="Хаах"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-4 max-h-[70vh] space-y-3 overflow-y-auto pr-1">
+              {pendingApprovalRequests.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-2 text-zinc-500">
+                  Хүлээгдэж буй хүсэлт алга.
+                </p>
+              ) : (
+                pendingApprovalRequests.map((item) => (
+                  <ApprovalRequestCard
+                    key={item.id}
+                    comments={approvalComments}
+                    expanded={approvalExpanded}
+                    onApprove={approveRequest}
+                    onReject={rejectRequest}
+                    onToggleDetail={toggleRequestDetail}
+                    onUpdateComment={(id, value) =>
+                      setApprovalComments((prev) => ({ ...prev, [id]: value }))
+                    }
+                    request={item}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
+  );
+}
+
+function ApprovalRequestCard({
+  request,
+  comments,
+  expanded,
+  onToggleDetail,
+  onUpdateComment,
+  onApprove,
+  onReject,
+}: {
+  request: ApprovalRequest;
+  comments: Record<string, string>;
+  expanded: Record<string, boolean>;
+  onToggleDetail: (id: string) => void;
+  onUpdateComment: (id: string, value: string) => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+}) {
+  return (
+    <article className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <p className="font-semibold text-zinc-900">
+        {request.teacherName} · {request.className} · {request.subject}
+      </p>
+      <div className="mt-2 space-y-1 text-2 text-zinc-700">
+        <p>Шалгалт: {request.title}</p>
+        <p>Илгээсэн: {request.sentAt}</p>
+      </div>
+
+      <div className="mt-3">
+        <button
+          type="button"
+          onClick={() => onToggleDetail(request.id)}
+          className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-2 font-medium text-blue-700 hover:bg-blue-100"
+        >
+          {expanded[request.id] ? "Дэлгэрэнгүйг хаах" : "Дэлгэрэнгүй харах"}
+        </button>
+      </div>
+
+      {expanded[request.id] ? (
+        <div className="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+          <p className="font-medium text-zinc-800">Асуулт, хариулт ({request.questions.length})</p>
+          <div className="mt-2 max-h-60 space-y-2 overflow-y-auto pr-1">
+            {request.questions.map((qa) => (
+              <div key={`${request.id}-q-${qa.id}`} className="rounded-lg border border-[#c9d5ea] bg-white p-3">
+                <p className="text-2 font-semibold text-[#5f739b]">Асуулт {qa.id}</p>
+                <p className="mt-1 text-2 font-semibold text-[#24314f]">{qa.question}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="mt-3">
+        <label className="block text-2 font-medium text-zinc-600">
+          Тайлбар (дутуу бол заавал бичнэ)
+          <textarea
+            value={comments[request.id] ?? ""}
+            onChange={(e) => onUpdateComment(request.id, e.target.value)}
+            rows={2}
+            className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+          />
+        </label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => onApprove(request.id)}
+            className="inline-flex items-center rounded-lg border border-emerald-500 bg-white px-3 py-2 text-2 font-semibold text-emerald-700 hover:bg-emerald-50"
+          >
+            Батлах
+          </button>
+          <button
+            type="button"
+            onClick={() => onReject(request.id)}
+            className="inline-flex items-center rounded-lg border border-red-500 bg-white px-3 py-2 text-2 font-semibold text-red-700 hover:bg-red-50"
+          >
+            Буцаах
+          </button>
+        </div>
+      </div>
+    </article>
   );
 }
