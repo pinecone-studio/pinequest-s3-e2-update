@@ -19,7 +19,7 @@ import {
 } from "./_lib/monitoring";
 import { teacherClasses } from "../exam/_lib/class-data";
 import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
-import { formatSavedDate, normalizeSavedExamRecord } from "../exam/_lib/utils";
+import { normalizeSavedExamRecord } from "../exam/_lib/utils";
 import type { SavedExamRecord } from "../exam/_lib/types";
 
 export default function ExamOptimizationPage() {
@@ -165,7 +165,7 @@ export default function ExamOptimizationPage() {
 					classLabels.length > 0 ? classLabels.join(", ") : "Анги оноогоогүй",
 				classLabels,
 				classOptions,
-				savedAtLabel: formatSavedDate(exam.savedAt),
+				savedAtLabel: formatMonitorSavedAt(exam.savedAt),
 			};
 		});
 	}, [currentClassName, savedExams]);
@@ -414,4 +414,16 @@ export default function ExamOptimizationPage() {
 			</div>
 		</section>
 	);
+}
+
+function formatMonitorSavedAt(dateString: string) {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = String(date.getHours()).padStart(2, "0");
+  const minute = String(date.getMinutes()).padStart(2, "0");
+
+  return `${month}/${day} өдөр, ${hour}:${minute} цаг`;
 }

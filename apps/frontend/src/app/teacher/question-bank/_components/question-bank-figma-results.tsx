@@ -9,6 +9,7 @@ type QuestionBankFigmaResultsProps = {
   getQuestionHeartCount: (question: Question) => number;
   myQuestionCount: number;
   onAddToExam: (questionId: string) => void;
+  onCreateQuestion: () => void;
   onEditQuestion: (questionId: string) => void;
   onOpenQuestion: (questionId: string) => void;
   onToggleLike: (questionId: string) => void;
@@ -26,6 +27,7 @@ export function QuestionBankFigmaResults({
   selectedQuestionIds,
   getQuestionHeartCount,
   onAddToExam,
+  onCreateQuestion,
   onEditQuestion,
   onOpenQuestion,
   onToggleLike,
@@ -47,9 +49,6 @@ export function QuestionBankFigmaResults({
             {myQuestionCount} асуулт
           </span>
         </div>
-        <div className="mt-[18px] flex h-[88px] items-center justify-center rounded-[12px] border border-dashed border-[#A3A3A3] bg-white px-[20px] text-center text-[18px] font-normal leading-[22px] tracking-[0.01em] text-[#122459]">
-          Одоогоор таны үүсгэсэн асуулт алга байна.
-        </div>
       </section>
 
       <div className="grid grid-cols-[minmax(0,1.78fr)_minmax(224px,0.9fr)] items-start gap-[14px]">
@@ -58,7 +57,7 @@ export function QuestionBankFigmaResults({
           getQuestionHeartCount={getQuestionHeartCount}
           likedQuestionIds={[]}
           onAddToExam={onAddToExam}
-          onCreateQuestion={() => {}}
+          onCreateQuestion={onCreateQuestion}
           onDeleteQuestion={() => {}}
           onEditQuestion={onEditQuestion}
           onOpenQuestion={onOpenQuestion}

@@ -445,6 +445,7 @@ export function useTeacherExamPage() {
       .filter((item) => item.question.questionType === "long_answer")
       .map((item) => item.question.id);
 
+    let createdExamId: string | null = null;
     try {
       const result = await createExam({
         variables: {
@@ -471,31 +472,40 @@ export function useTeacherExamPage() {
       });
 
       const created = result.data?.createExam;
-      if (created) {
-        setActiveSavedExamId(created.id);
-        showToast(
-          exam.requiresSchoolApproval
-            ? "Шалгалтыг хадгалж, сургуулийн зөвшөөрлийн хүсэлт илгээлээ."
-            : "Шалгалтыг амжилттай хадгаллаа.",
-        );
-        refetchExams();
+      if (!created) {
+        showToast("Шалгалт хадгалагдсангүй. Дахин оролдоно уу.");
+        return;
       }
+
+      createdExamId = created.id;
+      setActiveSavedExamId(created.id);
+
+      if (exam.requiresSchoolApproval) {
+        upsertPendingApprovalRequest({
+          examId: created.id,
+          title: nextTitle,
+          className: exam.grade.trim() || "Тодорхойгүй анги",
+          subject: exam.subject.trim() || "Тодорхойгүй хичээл",
+          teacherName: teacher.name || "Багш",
+          materialTitle: `${exam.subject.trim() || "Шалгалт"} материал`,
+          sentAt: now.slice(0, 16).replace("T", " "),
+          questionCount: examQuestionDetails.length,
+        });
+      }
+
+      showToast(
+        exam.requiresSchoolApproval
+          ? "Шалгалтыг хадгалж, сургуулийн зөвшөөрлийн хүсэлт илгээлээ."
+          : "Шалгалтыг амжилттай хадгаллаа.",
+      );
+      refetchExams();
     } catch {
       showToast("Шалгалт хадгалахад алдаа гарлаа. Дахин оролдоно уу.");
       return;
     }
-    if (exam.requiresSchoolApproval) {
-      upsertPendingApprovalRequest({
-        examId: activeSavedExamId ?? `saved-exam-${now}`,
-        title: nextTitle,
-        className: exam.grade.trim() || "Тодорхойгүй анги",
-        subject: exam.subject.trim() || "Тодорхойгүй хичээл",
-        teacherName: "Б.Эрдэнэ",
-        materialTitle: `${exam.subject.trim() || "Шалгалт"} материал`,
-        sentAt: now.slice(0, 16).replace("T", " "),
-        questionCount: examQuestionDetails.length || 20,
-      });
-    }
+
+    if (!createdExamId) return;
+
     setExam((current) => ({
       ...current,
       title: nextTitle,

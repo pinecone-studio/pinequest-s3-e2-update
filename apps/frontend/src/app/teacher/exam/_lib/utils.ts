@@ -25,4 +25,4 @@ export function formatSavedDate(dateString: string) {
 }
 
 export const inputClassName =
-  "h-12 w-full rounded-xl border border-[#A1A1A1] bg-white px-4 text-[12px] text-[#183153] outline-none transition placeholder:text-[#A1A1A1] data-[placeholder]:text-[#A1A1A1] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10";
+  "h-12 w-full rounded-xl border border-[#7f7f7f] bg-white px-4 text-[12px] text-[#183153] outline-none transition placeholder:text-[#A1A1A1] data-[placeholder]:text-[#A1A1A1] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10";

@@ -25,7 +25,7 @@ export function SavedExamsSection({
   onSendSavedExam: (savedExam: SavedExamRecord, openMonitoring?: boolean) => void;
 }) {
   return (
-    <section className="mx-5 rounded-xl border border-[#e5e5e5] bg-[#eef6ff] p-5 shadow-sm">
+    <section className="mx-5 rounded-xl border border-[#e5e5e5] bg-[#f3f4f6] p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4  pb-4">
         <div>
           <div className="text-[15px] font-extrabold uppercase tracking-[0.14em] text-[#233e7c]">
@@ -36,9 +36,6 @@ export function SavedExamsSection({
           <p className="text-[20px] font-medium text-[#122459]">
             {savedExams.length} шалгалт
           </p>
-          <p className="text-[16px] text-[#122459] font-medium">
-            Хадгалсан шалгалтын жагсаалт
-          </p>
         </div>
       </div>
 
@@ -47,9 +44,6 @@ export function SavedExamsSection({
           <div className="h-29.75 rounded-[20px] border border-dashed border-[#404040] px-5 py-8 text-center">
             <p className="text-[20px] font-medium tracking-[0.04em] text-[#122459]">
               Хадгалсан шалгалт алга байна
-            </p>
-            <p className="mt-3 text-[16px] font-normal text-[#262626]">
-              Доорх бүтээгчээр шалгалтаа хадгалмагц энд шууд харагдана.
             </p>
           </div>
         ) : null}

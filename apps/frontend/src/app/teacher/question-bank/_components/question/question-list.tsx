@@ -38,11 +38,11 @@ export function QuestionList({
   }
 
   return (
-    <div className="space-y-[8px]">
-      {questions.slice(0, 3).map((question, index) => (
+    <div className="max-h-[571px] space-y-[8px] overflow-y-auto pr-1">
+      {questions.map((question, index) => (
         <QuestionCard
           key={question.id}
-          compactAction={index === 2}
+          compactAction={index === questions.length - 1}
           question={question}
           heartCount={getQuestionHeartCount(question)}
           isActive={question.id === activeQuestionId}

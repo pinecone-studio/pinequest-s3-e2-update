@@ -107,8 +107,8 @@ export function ExamSettingsForm({
 
         <div className="flex-[0.8]">
           <Field label="">
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[#7b8aa7]">
+            <div className="flex h-10 w-full items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-3">
+              <div className="inline-flex items-center gap-1">
                 <button
                   type="button"
                   aria-label="Минут багасгах"
@@ -118,7 +118,7 @@ export function ExamSettingsForm({
                       Math.max(1, (exam.durationInMinutes || 40) - 1),
                     )
                   }
-                  className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]  "
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]"
                 >
                   −
                 </button>
@@ -131,29 +131,29 @@ export function ExamSettingsForm({
                       (exam.durationInMinutes || 40) + 1,
                     )
                   }
-                  className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]  "
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]"
                 >
                   +
                 </button>
+                <input
+                  className="w-7 bg-transparent text-right text-[12px] font-normal text-[#262626] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min={1}
+                  onChange={(event) =>
+                    onUpdateExam(
+                      "durationInMinutes",
+                      Number.isFinite(Number(event.target.value)) &&
+                        Number(event.target.value) > 0
+                        ? Number(event.target.value)
+                        : 1,
+                    )
+                  }
+                  type="number"
+                  value={exam.durationInMinutes ?? 40}
+                />
+                <span className="text-[12px] font-medium text-[#60728f]">
+                  мин
+                </span>
               </div>
-              <input
-                className={`${inputClassName} h-10! w-full pl-14 pr-11 text-[#262626] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-                min={1}
-                onChange={(event) =>
-                  onUpdateExam(
-                    "durationInMinutes",
-                    Number.isFinite(Number(event.target.value)) &&
-                      Number(event.target.value) > 0
-                      ? Number(event.target.value)
-                      : 1,
-                  )
-                }
-                type="number"
-                value={exam.durationInMinutes ?? 40}
-              />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-medium text-[#60728f]">
-                мин
-              </span>
             </div>
           </Field>
         </div>

@@ -44,14 +44,6 @@ export function QuestionBuilderAdditionalSection({
         <div className="space-y-6">
           {includesImage ? (
             <div className="rounded-[12px] border border-[#dce5f2] bg-[#f8fbff] p-4">
-              <div className="mb-3">
-                <h3 className="text-[13px] font-semibold text-[#183153]">
-                  Зургийн хэсэг
-                </h3>
-                <p className="text-[13px] text-[#6d7f9c]">
-                  Асуултад зураг нэмэх бол эндээс upload хийнэ.
-                </p>
-              </div>
               <ImageUploader
                 error={imageError}
                 imageUrl={imageUrl}
