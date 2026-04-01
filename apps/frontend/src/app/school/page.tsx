@@ -9,7 +9,6 @@ import {
   getApprovalRequestsClient,
   getApprovalUpdatedEventName,
 } from "@/app/lib/exam-approval-store";
-import { RequestApprovalDialog } from "@/app/school/_components/request-approval-dialog";
 import { ExamSmartAlerts } from "@/app/school/exams/_components/ExamSmartAlerts";
 import { examAlerts } from "@/app/school/exams/_mock/school-exams";
 import {
@@ -18,14 +17,6 @@ import {
   schoolSummary,
   teacherPerformance,
 } from "@/app/school/_mock/school-data";
-
-const summaryCards = [
-  { label: "Нийт ажилчид", value: schoolSummary.totalTeachers, href: "/school/teachers" },
-  { label: "Нийт анги", value: schoolSummary.totalClasses, href: "/school/classes" },
-  { label: "Идэвхтэй сурагч", value: schoolSummary.activeStudents, href: "/school/students" },
-  { label: "Энэ сарын шалгалт", value: schoolSummary.examsThisWeek, href: "/school/exams" },
-  { label: "Өнөөдрийн шалгалт", value: schoolSummary.ongoingExams, href: "/school/exams" },
-];
 
 export default function SchoolDashboardPage() {
   const [pendingPage, setPendingPage] = useState(1);
@@ -36,18 +27,18 @@ export default function SchoolDashboardPage() {
   const [attendanceByTeacher, setAttendanceByTeacher] = useState<
     Record<string, number>
   >(() =>
-    Object.fromEntries(teacherPerformance.map((row) => [row.teacherName, 85]))
+    Object.fromEntries(teacherPerformance.map((row) => [row.teacherName, 85])),
   );
   const sortedTeacherPerformance = useMemo(
     () => [...teacherPerformance].sort((a, b) => b.avgScore - a.avgScore),
-    []
+    [],
   );
   const topScoreTeachers = useMemo(
     () =>
       sortedTeacherPerformance.filter(
-        (row) => row.avgScore >= 80 && row.avgScore <= 100
+        (row) => row.avgScore >= 80 && row.avgScore <= 100,
       ),
-    [sortedTeacherPerformance]
+    [sortedTeacherPerformance],
   );
   const lineChartModel = useMemo(() => {
     const items = topScoreTeachers;
@@ -69,7 +60,11 @@ export default function SchoolDashboardPage() {
         points: [] as { x: number; y: number; item: (typeof items)[number] }[],
         linePath: "",
         areaPath: "",
-        highlight: null as null | { x: number; y: number; item: (typeof items)[number] },
+        highlight: null as null | {
+          x: number;
+          y: number;
+          item: (typeof items)[number];
+        },
       };
     }
 
@@ -87,7 +82,8 @@ export default function SchoolDashboardPage() {
     const first = points[0];
     const last = points[points.length - 1];
     const areaPath = `${linePath} L ${last.x} ${height - paddingBottom} L ${first.x} ${height - paddingBottom} Z`;
-    const highlight = [...points].sort((a, b) => b.item.avgScore - a.item.avgScore)[0] ?? null;
+    const highlight =
+      [...points].sort((a, b) => b.item.avgScore - a.item.avgScore)[0] ?? null;
 
     return { width, height, items, points, linePath, areaPath, highlight };
   }, [topScoreTeachers]);
@@ -136,13 +132,41 @@ export default function SchoolDashboardPage() {
         cardClass: "border-zinc-200 bg-white",
       })),
     ],
-    [approvalRequests]
+    [approvalRequests],
+  );
+  const summaryCards = useMemo(
+    () => [
+      {
+        label: "Нийт ажилчид",
+        value: schoolSummary.totalTeachers,
+        href: "/school/teachers",
+      },
+      {
+        label: "Нийт анги",
+        value: schoolSummary.totalClasses,
+        href: "/school/classes?grade=10",
+      },
+      {
+        label: "Сурагчид",
+        value: schoolSummary.activeStudents,
+        href: "/school/students",
+      },
+      {
+        label: "Энэ сарын шалгалт",
+        value: schoolSummary.examsThisWeek,
+        href: "/school/exams",
+      },
+    ],
+    [],
   );
   const pageSize = 2;
-  const totalPendingPages = Math.max(1, Math.ceil(pendingItems.length / pageSize));
+  const totalPendingPages = Math.max(
+    1,
+    Math.ceil(pendingItems.length / pageSize),
+  );
   const pagedPendingItems = pendingItems.slice(
     (pendingPage - 1) * pageSize,
-    pendingPage * pageSize
+    pendingPage * pageSize,
   );
 
   return (
@@ -150,7 +174,9 @@ export default function SchoolDashboardPage() {
       <section className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="text-3 font-bold text-[#0f172a]">Сургуулийн самбар</h2>
+            <h2 className="text-3 font-bold text-[#0f172a]">
+              Сургуулийн самбар
+            </h2>
           </div>
           <button
             type="button"
@@ -161,7 +187,7 @@ export default function SchoolDashboardPage() {
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {summaryCards.map((card) => (
             <Link
               key={card.label}
@@ -169,15 +195,16 @@ export default function SchoolDashboardPage() {
               className="rounded-xl border border-[#e6edf5] bg-[#f8fbff] p-4 transition hover:border-blue-200 hover:bg-blue-50"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-2 font-medium text-[#64748b]">{card.label}</p>
+                <p className="flex items-center gap-2 text-[20px] font-medium leading-[1.2] text-[#64748b]">
+                  <span>{card.label}</span>
+                  <span className="text-[25px] font-bold leading-none text-[#0f172a]">
+                    {card.value}
+                  </span>
+                </p>
                 <ArrowUpRight className="h-4 w-4 shrink-0 text-zinc-400" />
               </div>
-              <p className="mt-2 text-4 font-bold text-[#0f172a]">
-                {card.value}
-              </p>
             </Link>
           ))}
-          <RequestApprovalDialog />
         </div>
       </section>
 
@@ -236,7 +263,9 @@ export default function SchoolDashboardPage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-medium text-zinc-900">{item.title}</p>
-                  <span className={`rounded-full px-2 py-0.5 text-2 font-semibold ${item.badgeClass}`}>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-2 font-semibold ${item.badgeClass}`}
+                  >
                     {item.badge}
                   </span>
                 </div>
@@ -260,7 +289,9 @@ export default function SchoolDashboardPage() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setPendingPage((p) => Math.min(totalPendingPages, p + 1))}
+                  onClick={() =>
+                    setPendingPage((p) => Math.min(totalPendingPages, p + 1))
+                  }
                   disabled={pendingPage === totalPendingPages}
                   className="rounded-md border border-zinc-300 px-3 py-1 text-2 text-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -299,7 +330,8 @@ export default function SchoolDashboardPage() {
       <section>
         <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
           <h3 className="text-balance text-2 font-semibold text-[#0f172a]">
-            Багшийн гүйцэтгэлийн үнэлгээ (нийт багш {sortedTeacherPerformance.length})
+            Багшийн гүйцэтгэлийн үнэлгээ (нийт багш{" "}
+            {sortedTeacherPerformance.length})
           </h3>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <div className="max-h-[260px] overflow-x-auto overflow-y-auto rounded-xl border border-zinc-200 lg:h-[420px] lg:max-h-none">
@@ -309,15 +341,24 @@ export default function SchoolDashboardPage() {
                     <th className="sticky top-0 z-10 bg-white py-2 pl-3">№</th>
                     <th className="sticky top-0 z-10 bg-white py-2">Багш</th>
                     <th className="sticky top-0 z-10 bg-white py-2">Шалгалт</th>
-                    <th className="sticky top-0 z-10 bg-white py-2">Дундаж дүн</th>
-                    <th className="sticky top-0 z-10 bg-white py-2 pr-3 text-center">Ирц</th>
+                    <th className="sticky top-0 z-10 bg-white py-2">
+                      Дундаж дүн
+                    </th>
+                    <th className="sticky top-0 z-10 bg-white py-2 pr-3 text-center">
+                      Ирц
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {sortedTeacherPerformance.map((row, index) => (
-                    <tr key={row.teacherName} className="border-b border-zinc-100">
+                    <tr
+                      key={row.teacherName}
+                      className="border-b border-zinc-100"
+                    >
                       <td className="py-2 pl-3 text-zinc-500">{index + 1}</td>
-                      <td className="py-2 font-medium text-zinc-900">{row.teacherName}</td>
+                      <td className="py-2 font-medium text-zinc-900">
+                        {row.teacherName}
+                      </td>
                       <td className="py-2">{row.examsThisMonth}</td>
                       <td className="py-2">{row.avgScore}%</td>
                       <td className="py-2 pr-3 text-center">
@@ -346,7 +387,10 @@ export default function SchoolDashboardPage() {
                   ))}
                   {sortedTeacherPerformance.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="py-5 text-center text-zinc-500">
+                      <td
+                        colSpan={5}
+                        className="py-5 text-center text-zinc-500"
+                      >
                         Багшийн үнэлгээний өгөгдөл алга.
                       </td>
                     </tr>
@@ -356,9 +400,13 @@ export default function SchoolDashboardPage() {
             </div>
 
             <div className="flex flex-col rounded-xl border border-zinc-200 bg-zinc-50 p-4 lg:h-[420px]">
-              <p className="font-medium text-zinc-800">Багшийн үнэлгээний шугаман график</p>
+              <p className="font-medium text-zinc-800">
+                Багшийн үнэлгээний шугаман график
+              </p>
               {lineChartModel.points.length === 0 ? (
-                <p className="mt-3 text-2 text-zinc-500">80-100%-ийн багш алга байна.</p>
+                <p className="mt-3 text-2 text-zinc-500">
+                  80-100%-ийн багш алга байна.
+                </p>
               ) : (
                 <div className="relative mt-3 flex-1 rounded-lg border border-zinc-200 bg-white p-3">
                   <svg
@@ -367,9 +415,23 @@ export default function SchoolDashboardPage() {
                     onMouseLeave={() => setHoveredChartPoint(null)}
                   >
                     <defs>
-                      <linearGradient id="teacher-score-area" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.32" />
-                        <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.06" />
+                      <linearGradient
+                        id="teacher-score-area"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor="#4f46e5"
+                          stopOpacity="0.32"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#4f46e5"
+                          stopOpacity="0.06"
+                        />
                       </linearGradient>
                     </defs>
 
@@ -388,7 +450,10 @@ export default function SchoolDashboardPage() {
                       );
                     })}
 
-                    <path d={lineChartModel.areaPath} fill="url(#teacher-score-area)" />
+                    <path
+                      d={lineChartModel.areaPath}
+                      fill="url(#teacher-score-area)"
+                    />
                     <path
                       d={lineChartModel.linePath}
                       fill="none"
@@ -410,11 +475,29 @@ export default function SchoolDashboardPage() {
                           })
                         }
                       >
-                        <circle cx={point.x} cy={point.y} r={11} fill="transparent" />
-                        <circle cx={point.x} cy={point.y} r={4.6} fill="#ffffff" stroke="#5b50e6" strokeWidth={2.2}>
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r={11}
+                          fill="transparent"
+                        />
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r={4.6}
+                          fill="#ffffff"
+                          stroke="#5b50e6"
+                          strokeWidth={2.2}
+                        >
                           <title>{`${point.item.teacherName} · ${point.item.avgScore}%`}</title>
                         </circle>
-                        <text x={point.x} y={lineChartModel.height - 10} textAnchor="middle" fontSize="10.5" fill="#5f6b7f">
+                        <text
+                          x={point.x}
+                          y={lineChartModel.height - 10}
+                          textAnchor="middle"
+                          fontSize="10.5"
+                          fill="#5f6b7f"
+                        >
                           {index + 1}
                         </text>
                       </g>
@@ -430,7 +513,8 @@ export default function SchoolDashboardPage() {
                         transform: "translate(-50%, -120%)",
                       }}
                     >
-                      {hoveredChartPoint.teacherName} · {hoveredChartPoint.avgScore}%
+                      {hoveredChartPoint.teacherName} ·{" "}
+                      {hoveredChartPoint.avgScore}%
                     </div>
                   ) : null}
 

@@ -183,7 +183,7 @@ export default function TeacherShell({
                   aria-label="Багшийн нүүр рүү очих"
                 >
                   <Image
-                    src="/bee.png"
+                    src="/HeroBee.png"
                     alt="UPDATE logo"
                     width={44}
                     height={44}

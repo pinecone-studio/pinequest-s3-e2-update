@@ -6,7 +6,7 @@ import type { User } from "@/app/lib/types";
 const links = [
 	{ href: "/school", label: "Самбар" },
 	{ href: "/school/teachers", label: "Багш нар" },
-	{ href: "/school/classes", label: "Ангиуд" },
+	{ href: "/school/classes?grade=10", label: "Ангиуд" },
 ] as const;
 
 export function AdminShell({
