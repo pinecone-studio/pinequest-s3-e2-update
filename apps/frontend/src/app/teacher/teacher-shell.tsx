@@ -17,6 +17,7 @@ import {
 import { ProfileMenu } from "@/app/school/_components/profile-menu";
 import type { User } from "@/app/lib/types";
 import { TeacherClerkLinkEffect } from "@/app/teacher/_components/teacher-clerk-link-effect";
+import { TeacherDbProvider } from "@/app/teacher/_components/teacher-db-context";
 
 const TeacherContext = createContext<User | null>(null);
 
@@ -99,6 +100,7 @@ export default function TeacherShell({
   return (
     <TeacherContext.Provider value={user}>
       <TeacherClerkLinkEffect />
+      <TeacherDbProvider>
       <div className="flex min-h-screen flex-col bg-white text-[#1f2a44]">
         <header className="sticky top-0 z-40 h-[70px] border-b border-[#e3e7ee] bg-[#fdfdff]">
           <div className="mx-auto h-full w-full max-w-378 px-4 lg:px-6">
@@ -234,6 +236,7 @@ export default function TeacherShell({
           {children}
         </main>
       </div>
+      </TeacherDbProvider>
     </TeacherContext.Provider>
   );
 }

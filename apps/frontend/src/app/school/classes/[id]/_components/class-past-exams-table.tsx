@@ -2,7 +2,7 @@
 
 import { ChevronDown, ChevronUp, Download, Search } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 import { downloadFullExamStatisticsXls } from "./class-past-exams-table/helpers";
 import { PastExamExpandedContent } from "./class-past-exams-table/past-exam-expanded-content";
 import { PastExamStudentPopover } from "./class-past-exams-table/past-exam-student-popover";

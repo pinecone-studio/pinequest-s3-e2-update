@@ -34,4 +34,7 @@ export const resolvers = {
     classIds: (parent: { classIds?: unknown }) =>
       parseTeacherClassIdsJson(parent.classIds),
   },
+  StudentExamResult: {
+    examCheatLogs: () => [],
+  },
 };

@@ -44,6 +44,8 @@ export type SavedExamRecord = {
   requiresSchoolApproval?: boolean;
   approvalStatus?: ExamApprovalStatus;
   sentClassIds?: string[];
+  /** classId -> овог нэвтрэхүйн нэр (сурагчийн хуудасны код тааруулахад). */
+  sentClassLabels?: Record<string, string>;
   approvalExamDate: string;
   approvalStartTime: string;
   approvalEndTime: string;

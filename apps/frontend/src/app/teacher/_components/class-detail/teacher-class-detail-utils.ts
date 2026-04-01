@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  buildPastExamFullStatisticsExportHtml,
-  type PastExamRow,
-  type PastExamStudentScore,
-} from "@/app/lib/class-past-exams-mock";
+import { buildPastExamFullStatisticsExportHtml } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
 import { SAVED_EXAMS_STORAGE_KEY } from "@/app/teacher/exam/_lib/constants";
 import type { SavedExamRecord } from "@/app/teacher/exam/_lib/types";

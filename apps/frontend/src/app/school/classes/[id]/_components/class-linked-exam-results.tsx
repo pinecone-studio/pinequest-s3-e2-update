@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 import { getLivePastExamsForClassClient } from "@/app/lib/class-past-exams-live";
 import type { Student } from "@/app/lib/types";
 import { ClassPastExamsTable } from "./class-past-exams-table";

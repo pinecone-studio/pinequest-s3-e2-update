@@ -38,6 +38,7 @@ export default function TeacherExamPage() {
           activeSavedExamId={examPage.activeSavedExamId}
           hasLoadedSavedExams={examPage.hasLoadedSavedExams}
           savedExams={examPage.savedExams}
+          teacherClasses={examPage.teacherClasses}
           selectedClassByExamId={examPage.selectedClassByExamId}
           onDeleteSavedExam={examPage.deleteSavedExam}
           onOpenMonitoring={examPage.openMonitoringForSavedExam}

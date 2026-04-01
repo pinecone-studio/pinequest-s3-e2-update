@@ -9,9 +9,14 @@ import {
   upsertPendingApprovalRequest,
 } from "@/app/lib/exam-approval-store";
 import { CREATE_EXAM } from "@/graphql/typeDefs/mutations";
-import { GET_ALL_SUBJECTS, GET_EXAM_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
+import {
+  GET_ALL_SUBJECTS,
+  GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+  GET_EXAM_BY_SCHOOL_ID,
+} from "@/graphql/typeDefs/queries";
+import { useTeacherDb } from "../../_components/teacher-db-context";
 import { useTeacher } from "../../teacher-shell";
-import { teacherClasses } from "../_lib/class-data";
+import { mapGqlTeacherClasses } from "../../_lib/teacher-class-options";
 import { mapBackendTestsToQuestions } from "../../question-bank/_hooks/backend-question-mappers";
 import {
   GET_ALL_TESTS_QUERY,
@@ -89,14 +94,39 @@ function parseGradeCode(grade: string) {
   return matched ? matched[0] : grade.trim();
 }
 
+type ClassesByTeacherResponse = {
+  getClassByTeacherAndSchoolId: Array<{
+    id: string;
+    grade: number;
+    section: string;
+  }>;
+};
+
 export function useTeacherExamPage() {
   const router = useRouter();
-  const teacher = useTeacher();
+  const clerkUser = useTeacher();
+  const { teacher: dbTeacher } = useTeacherDb();
+  const teacherId = dbTeacher?.id ?? "";
+  const schoolId = dbTeacher?.schoolId ?? "";
+
   const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
   const { data: subjectsData } =
     useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
 
-  const schoolId = ("schoolId" in teacher ? teacher.schoolId : undefined) ?? "school-1";
+  const { data: classesData } = useQuery<ClassesByTeacherResponse>(
+    GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+    {
+      variables: { input: { teacherId, schoolId } },
+      skip: !teacherId || !schoolId,
+      fetchPolicy: "cache-and-network",
+    },
+  );
+
+  const teacherClasses = useMemo(
+    () => mapGqlTeacherClasses(classesData?.getClassByTeacherAndSchoolId ?? []),
+    [classesData?.getClassByTeacherAndSchoolId],
+  );
+
   const { data: examsData, refetch: refetchExams } =
     useQuery<GetExamBySchoolIdResponse>(GET_EXAM_BY_SCHOOL_ID, {
       variables: { schoolId },
@@ -429,6 +459,11 @@ export function useTeacherExamPage() {
     );
 
   const persistExam = async () => {
+    if (!dbTeacher?.id) {
+      return showToast(
+        "Сургуулийн багшийн бүртгэл олдсонгүй. И-мэйлээр уригдаад linkTeacherClerk дууссаны дараа дахин оролдоно уу.",
+      );
+    }
     if (examQuestionDetails.length === 0)
       return showToast("Хадгалахаас өмнө дор хаяж нэг асуулт нэмнэ үү.");
 
@@ -490,7 +525,7 @@ export function useTeacherExamPage() {
             isActive: 1,
             needpermission: exam.requiresSchoolApproval ? 1 : 0,
             schoolId,
-            teacherId: teacher.id,
+            teacherId: dbTeacher.id,
           },
         },
       });
@@ -511,7 +546,7 @@ export function useTeacherExamPage() {
           title: nextTitle,
           className: classCode || exam.grade.trim() || "Тодорхойгүй анги",
           subject: exam.subject.trim() || "Тодорхойгүй хичээл",
-          teacherName: teacher.name || "Багш",
+          teacherName: clerkUser.name || "Багш",
           materialTitle: `${exam.subject.trim() || "Шалгалт"} материал`,
           sentAt: now.slice(0, 16).replace("T", " "),
           questionCount: examQuestionDetails.length,
@@ -613,6 +648,10 @@ export function useTeacherExamPage() {
             sentClassIds: Array.from(
               new Set([...(item.sentClassIds ?? []), classId]),
             ),
+            sentClassLabels: {
+              ...(item.sentClassLabels ?? {}),
+              [classId]: selectedClass.name,
+            },
           }
         : item,
     );
@@ -640,6 +679,7 @@ export function useTeacherExamPage() {
     gradeOptions: EXAM_GRADE_OPTIONS,
     hasLoadedSavedExams,
     moveQuestion,
+    teacherClasses,
     openMonitoringForSavedExam,
     openSavedExam,
     persistExam,

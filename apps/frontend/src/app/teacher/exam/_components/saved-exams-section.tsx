@@ -2,11 +2,13 @@
 
 import { SavedExamCard } from "./saved-exam-card";
 import type { SavedExamRecord } from "../_lib/types";
+import type { TeacherClassOption } from "../../_lib/teacher-class-options";
 
 export function SavedExamsSection({
   activeSavedExamId,
   hasLoadedSavedExams,
   savedExams,
+  teacherClasses,
   selectedClassByExamId,
   onDeleteSavedExam,
   onOpenMonitoring,
@@ -17,6 +19,7 @@ export function SavedExamsSection({
   activeSavedExamId: string | null;
   hasLoadedSavedExams: boolean;
   savedExams: SavedExamRecord[];
+  teacherClasses: TeacherClassOption[];
   selectedClassByExamId: Record<string, string>;
   onDeleteSavedExam: (savedExamId: string) => void;
   onOpenMonitoring: (savedExam: SavedExamRecord) => void;
@@ -53,6 +56,7 @@ export function SavedExamsSection({
             isActive={activeSavedExamId === savedExam.id}
             key={savedExam.id}
             savedExam={savedExam}
+            teacherClasses={teacherClasses}
             selectedClassId={selectedClassByExamId[savedExam.id]}
             onDelete={() => onDeleteSavedExam(savedExam.id)}
             onOpenMonitoring={() => onOpenMonitoring(savedExam)}

@@ -5,20 +5,17 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client/react";
-import {
-  getPastExamsForClass,
-  type PastExamRow,
-  type PastExamStudentScore,
-} from "@/app/lib/class-past-exams-mock";
+import { buildPastExamRowsFromApi } from "@/app/lib/class-past-exams-from-api";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
 import {
+  GET_ALL_SUBJECTS,
   GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+  GET_EXAMS_BY_IDS,
   GET_STUDENT_BY_CLASS_ID,
+  GET_STUDENT_EXAM_RESULTS_BY_CLASS_ID,
 } from "@/graphql/typeDefs/queries";
-import {
-  HARDCODED_SCHOOL_ID,
-  HARDCODED_TEACHER_ID,
-} from "@/app/teacher/_lib/hardcoded-teacher-api";
+import { useTeacherDb } from "@/app/teacher/_components/teacher-db-context";
 import { ClassDetailAccessDenied } from "./class-detail-access-denied";
 import { ClassDetailDeliveryFeedback } from "./class-detail-delivery-feedback";
 import { ClassDetailHero } from "./class-detail-hero";
@@ -53,6 +50,32 @@ type StudentsByClassResponse = {
   getStudentByClassId: GqlStudentRow[];
 };
 
+type ExamResultsResponse = {
+  getStudentExamResultsByClassId: Array<{
+    id: string;
+    examId: string;
+    studentId: string;
+    totalScore: number | null;
+    actualScore: number | null;
+    status: string | null;
+  }>;
+};
+
+type ExamsByIdsResponse = {
+  getExamsByIds: Array<{
+    id: string;
+    subjectId: string;
+    title: string | null;
+    date: string | null;
+    score: number | null;
+    grade: number;
+  }>;
+};
+
+type AllSubjectsResponse = {
+  getAllSubject: Array<{ id: string; name: string }>;
+};
+
 function mapGqlStudentToApp(s: GqlStudentRow): Student {
   return {
     id: s.id,
@@ -66,6 +89,9 @@ function mapGqlStudentToApp(s: GqlStudentRow): Student {
 export default function TeacherClassDetail({ classId }: { classId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { teacher: dbTeacher, loading: teacherDbLoading } = useTeacherDb();
+  const teacherId = dbTeacher?.id ?? "";
+  const schoolId = dbTeacher?.schoolId ?? "";
   const studentNumber = searchParams.get("student");
   const classPath = `/teacher/class/${encodeURIComponent(classId)}`;
   const pendingExamDelivery = useMemo(() => {
@@ -76,14 +102,25 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
     return { classId: deliveryClassId, examId, examTitle };
   }, [searchParams]);
 
+  const { data: subjectsData } = useQuery<AllSubjectsResponse>(GET_ALL_SUBJECTS);
+
+  const subjectNameById = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const s of subjectsData?.getAllSubject ?? []) {
+      m.set(s.id, s.name);
+    }
+    return m;
+  }, [subjectsData?.getAllSubject]);
+
   const { data: classesData, loading: classesLoading } =
     useQuery<ClassesByTeacherResponse>(GET_CLASS_BY_TEACHER_AND_SCHOOL_ID, {
       variables: {
         input: {
-          teacherId: HARDCODED_TEACHER_ID,
-          schoolId: HARDCODED_SCHOOL_ID,
+          teacherId,
+          schoolId,
         },
       },
+      skip: !teacherId || !schoolId,
     });
 
   const apiClassRow = useMemo(() => {
@@ -97,6 +134,27 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
       skip: !apiClassRow,
     });
 
+  const { data: resultsData, loading: resultsLoading } =
+    useQuery<ExamResultsResponse>(GET_STUDENT_EXAM_RESULTS_BY_CLASS_ID, {
+      variables: { classId },
+      skip: !apiClassRow,
+      fetchPolicy: "cache-and-network",
+    });
+
+  const examIds = useMemo(() => {
+    const raw = resultsData?.getStudentExamResultsByClassId ?? [];
+    return [...new Set(raw.map((r) => r.examId).filter(Boolean))];
+  }, [resultsData?.getStudentExamResultsByClassId]);
+
+  const { data: examsData, loading: examsLoading } = useQuery<ExamsByIdsResponse>(
+    GET_EXAMS_BY_IDS,
+    {
+      variables: { ids: examIds },
+      skip: !apiClassRow || examIds.length === 0,
+      fetchPolicy: "cache-and-network",
+    },
+  );
+
   const students = useMemo(
     () =>
       (studentsData?.getStudentByClassId ?? []).map(mapGqlStudentToApp),
@@ -108,15 +166,29 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
     : "";
 
   const pageLoading =
-    classesLoading || (!!apiClassRow && studentsLoading);
+    teacherDbLoading ||
+    classesLoading ||
+    (!!apiClassRow && studentsLoading) ||
+    (!!apiClassRow && (resultsLoading || (examIds.length > 0 && examsLoading)));
 
-  const pastExams = useMemo(
-    () =>
-      apiClassRow && clsLabel
-        ? getPastExamsForClass(classId, students)
-        : [],
-    [apiClassRow, classId, clsLabel, students],
-  );
+  const pastExams = useMemo(() => {
+    if (!apiClassRow || !clsLabel) return [];
+    return buildPastExamRowsFromApi(
+      classId,
+      students,
+      resultsData?.getStudentExamResultsByClassId ?? [],
+      examsData?.getExamsByIds ?? [],
+      subjectNameById,
+    );
+  }, [
+    apiClassRow,
+    classId,
+    clsLabel,
+    students,
+    resultsData?.getStudentExamResultsByClassId,
+    examsData?.getExamsByIds,
+    subjectNameById,
+  ]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<ClassDetailView>("students");

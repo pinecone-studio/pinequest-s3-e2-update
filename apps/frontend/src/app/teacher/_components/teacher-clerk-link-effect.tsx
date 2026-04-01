@@ -5,13 +5,16 @@
 import { useMutation } from "@apollo/client/react";
 import { useEffect, useRef } from "react";
 import { LINK_TEACHER_CLERK } from "@/graphql/typeDefs/mutations";
+import { GET_VIEWER_TEACHER } from "@/graphql/typeDefs/queries";
 
 /**
  * Сургуулийн админ `addTeacher`-ээр урьсан багш: ижил и-мэйлээр Clerk-ээр нэвтрэхэд
  * энэ mutation нэг удаа амжилттай дуудагдаж `teacher.clerkId`-г бөглөнө.
  */
 export function TeacherClerkLinkEffect() {
-  const [linkTeacherClerk] = useMutation(LINK_TEACHER_CLERK);
+  const [linkTeacherClerk] = useMutation(LINK_TEACHER_CLERK, {
+    refetchQueries: [{ query: GET_VIEWER_TEACHER }],
+  });
   const ran = useRef(false);
 
   useEffect(() => {

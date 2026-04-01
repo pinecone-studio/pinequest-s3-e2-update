@@ -2,7 +2,7 @@
 
 import { ChevronDown, Download } from "lucide-react";
 import type { Student } from "@/app/lib/types";
-import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import { downloadSingleStudentPastExamXls, shortStudentName } from "./helpers";
 
 export function StudentExamHistory({

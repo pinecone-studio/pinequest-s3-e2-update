@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Student } from "@/app/lib/types";
-import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import { shortStudentName } from "./helpers";
 import { StudentExamHistory } from "./student-exam-history";
 
