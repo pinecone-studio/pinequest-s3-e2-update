@@ -163,7 +163,7 @@ export function OrganizationDivisionSelects({
 			/>
 			<LabeledSelect
 				id="signup-org-sum"
-				label="Сум"
+				label="Сум/Дүүрэг"
 				placeholder={
 					regionValue ? "Сонгоно уу" : "Эхлээд аймаг / хот сонгоно уу"
 				}

@@ -5,12 +5,14 @@ export function hasAnyOrganizationSignupField(
   organizationSum: string,
   organizationAddressDetail: string,
   organizationRegister: string,
+  organizationDisplayName: string,
 ): boolean {
   return Boolean(
     organizationAimag.trim() ||
       organizationHot.trim() ||
       organizationSum.trim() ||
       organizationAddressDetail.trim() ||
-      organizationRegister.trim(),
+      organizationRegister.trim() ||
+      organizationDisplayName.trim(),
   );
 }

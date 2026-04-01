@@ -9,12 +9,14 @@ export function mergeOrganizationFieldsIntoUnsafeMetadata(
   organizationSum: string,
   organizationAddressDetail: string,
   organizationRegister: string,
+  organizationDisplayName: string,
 ): Record<string, unknown> {
   const aimagT = organizationAimag.trim();
   const hotT = organizationHot.trim();
   const sumT = organizationSum.trim();
   const detailT = organizationAddressDetail.trim();
   const regT = organizationRegister.trim();
+  const nameT = organizationDisplayName.trim();
   const combined = [aimagT, hotT, sumT].filter(Boolean).join(", ");
   const combinedWithDetail =
     combined && detailT
@@ -28,6 +30,11 @@ export function mergeOrganizationFieldsIntoUnsafeMetadata(
   if (detailT) meta.organizationAddressDetail = detailT;
   if (combinedWithDetail) meta.organizationAddress = combinedWithDetail;
   if (regT) meta.organizationRegister = regT;
+  if (nameT) {
+    meta.organizationSchoolName = nameT;
+    meta.name = nameT;
+    delete meta.schoolName;
+  }
   return meta;
 }
 
@@ -37,12 +44,14 @@ export function hasAnyOrganizationSignupField(
   organizationSum: string,
   organizationAddressDetail: string,
   organizationRegister: string,
+  organizationDisplayName: string,
 ): boolean {
   return Boolean(
     organizationAimag.trim() ||
       organizationHot.trim() ||
       organizationSum.trim() ||
       organizationAddressDetail.trim() ||
-      organizationRegister.trim(),
+      organizationRegister.trim() ||
+      organizationDisplayName.trim(),
   );
 }

@@ -29,6 +29,48 @@
       "when": 1774956704700,
       "tag": "0003_many_domino",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1775021177285,
+      "tag": "0004_modern_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1775021190011,
+      "tag": "0005_petite_ghost_rider",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1775021431748,
+      "tag": "0006_calm_purple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1775022211223,
+      "tag": "0007_strong_grim_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1775022800000,
+      "tag": "0008_rename_school_name",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1775023600000,
+      "tag": "0009_revert_school_column_to_name",
+      "breakpoints": true
     }
   ]
 }

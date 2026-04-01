@@ -1,11 +1,26 @@
 import type { WebhookEvent } from "@clerk/backend/webhooks";
 import { hasAnyOrganizationSignupField } from "./school-signup-metadata-helpers";
-import type { SchoolSignupInput } from "./school-signup-metadata";
+import {
+  combinedOrganizationAddress,
+  normSpaceCase,
+  schoolNameExcludingLocationRedundant,
+  type SchoolSignupInput,
+} from "./school-signup-metadata";
 
 type UserWebhookData = Extract<
   WebhookEvent,
   { type: "user.created" | "user.updated" }
 >["data"];
+
+/** Clerk may expose `unsafe_metadata` (webhook JSON) and/or `unsafeMetadata` (some SDK shapes). */
+function unsafeMetadataFromUser(user: UserWebhookData): Record<string, unknown> {
+  const u = user as Record<string, unknown>;
+  const asObj = (v: unknown): Record<string, unknown> =>
+    v !== null && typeof v === "object" && !Array.isArray(v)
+      ? (v as Record<string, unknown>)
+      : {};
+  return { ...asObj(u.unsafe_metadata), ...asObj(u.unsafeMetadata) };
+}
 
 function metaString(
   meta: Record<string, unknown>,
@@ -27,18 +42,47 @@ function primaryEmail(user: UserWebhookData): string {
   return (email ?? "").trim();
 }
 
-/**
- * Builds school signup input from Clerk `user.*` webhook JSON.
- * Returns null when org fields are absent (same idea as skipping teacher-only profiles).
- */
+function organizationDisplayNameFromMeta(meta: Record<string, unknown>): string {
+  const orgAddr = metaString(meta, "organizationAddress", "organization_address").trim();
+  const aimag = metaString(meta, "organizationAimag", "organization_aimag").trim();
+  const hot = metaString(meta, "organizationHot", "organization_hot").trim();
+  const sum = metaString(meta, "organizationSum", "organization_sum").trim();
+  const detail = metaString(
+    meta,
+    "organizationAddressDetail",
+    "organization_address_detail",
+  ).trim();
+  const combinedLine = combinedOrganizationAddress(aimag, hot, sum, detail).trim();
+
+  const looksLikeLocationOnly = (s: string): boolean => {
+    const n = normSpaceCase(s);
+    if (!n) return false;
+    if (orgAddr && n === normSpaceCase(orgAddr)) return true;
+    if (combinedLine && n === normSpaceCase(combinedLine)) return true;
+    const regionOnly = [aimag, hot, sum].filter(Boolean).join(", ");
+    if (regionOnly && n === normSpaceCase(regionOnly)) return true;
+    return false;
+  };
+
+  const fromCanonical = metaString(
+    meta,
+    "organizationSchoolName",
+    "organization_school_name",
+  ).trim();
+  if (fromCanonical && !looksLikeLocationOnly(fromCanonical)) {
+    return fromCanonical;
+  }
+  const fromName = metaString(meta, "name", "name").trim();
+  if (fromName && !looksLikeLocationOnly(fromName)) return fromName;
+  const legacy = metaString(meta, "schoolName", "school_name").trim();
+  if (legacy && !looksLikeLocationOnly(legacy)) return legacy;
+  return "";
+}
+
 export function schoolSignupInputFromUserJson(
   user: UserWebhookData,
 ): SchoolSignupInput | null {
-  const raw = user.unsafe_metadata;
-  const meta =
-    raw && typeof raw === "object" && !Array.isArray(raw)
-      ? (raw as Record<string, unknown>)
-      : {};
+  const meta = unsafeMetadataFromUser(user);
 
   const organizationAimag = metaString(meta, "organizationAimag", "organization_aimag");
   const organizationHot = metaString(meta, "organizationHot", "organization_hot");
@@ -53,7 +97,7 @@ export function schoolSignupInputFromUserJson(
     "organizationRegister",
     "organization_register",
   );
-  /** Set by `mergeOrganizationFieldsIntoUnsafeMetadata` when region parts are filled. */
+  const nameRaw = organizationDisplayNameFromMeta(meta);
   const organizationAddress = metaString(
     meta,
     "organizationAddress",
@@ -64,6 +108,14 @@ export function schoolSignupInputFromUserJson(
     ? organizationAddressDetail
     : organizationAddress;
 
+  const hasOrgCore =
+    Boolean(organizationAimag.trim()) ||
+    Boolean(organizationHot.trim()) ||
+    Boolean(organizationSum.trim()) ||
+    Boolean(organizationAddressDetail.trim()) ||
+    Boolean(organizationRegister.trim()) ||
+    Boolean(organizationAddress.trim());
+
   const hasOrg =
     hasAnyOrganizationSignupField(
       organizationAimag,
@@ -71,21 +123,42 @@ export function schoolSignupInputFromUserJson(
       organizationSum,
       addressDetailEffective,
       organizationRegister,
+      nameRaw,
     ) || Boolean(organizationAddress.trim());
 
-  if (!hasOrg) {
+  /** Avoid upserting a school row from metadata `name` alone when org/address keys are missing (partial webhook). */
+  if (!hasOrg || !hasOrgCore) {
     return null;
   }
 
   const email = primaryEmail(user);
   if (!email) return null;
 
-  return {
-    email,
+  const fromDivisions = combinedOrganizationAddress(
     organizationAimag,
     organizationHot,
     organizationSum,
-    organizationAddressDetail: addressDetailEffective,
+    organizationAddressDetail,
+  ).trim();
+  const resolvedLocationLine = (fromDivisions || organizationAddress.trim()).trim();
+  const name = schoolNameExcludingLocationRedundant(
+    nameRaw,
+    organizationAimag,
+    organizationHot,
+    organizationSum,
+    organizationAddressDetail,
+    organizationAddress,
+    resolvedLocationLine || undefined,
+  );
+
+  return {
+    email,
+    name,
+    organizationAimag,
+    organizationHot,
+    organizationSum,
+    organizationAddressDetail: organizationAddressDetail,
+    organizationAddressMeta: organizationAddress,
     organizationRegister,
   };
 }

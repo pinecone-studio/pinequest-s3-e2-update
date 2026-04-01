@@ -64,7 +64,7 @@ const authPanelClass =
 
 /** Сургуулийн бүртгэл — илүү олон талбарт зай их */
 const authPanelClassSchool =
-	"box-border mx-auto flex h-[min(780px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] max-h-[min(780px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] min-h-0 w-full max-w-[540px] flex-col overflow-hidden rounded-none border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)] sm:mx-4 sm:h-[780px] sm:max-h-[min(780px,calc(100dvh-2rem))] sm:rounded-2xl";
+	"box-border mx-auto flex h-[min(860px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] max-h-[min(860px,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1rem))] min-h-0 w-full max-w-[540px] flex-col overflow-hidden rounded-none border border-gray-200/80 bg-white shadow-[0_8px_32px_rgba(15,20,27,0.06)] sm:mx-4 sm:h-[860px] sm:max-h-[min(860px,calc(100dvh-2rem))] sm:rounded-2xl";
 
 type BackAction = { href: string } | { onBack: () => void };
 
@@ -187,6 +187,7 @@ export function SignUpForm() {
 	const [organizationAddressDetail, setOrganizationAddressDetail] =
 		useState("");
 	const [organizationRegister, setOrganizationRegister] = useState("");
+	const [schoolName, setSchoolName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirm, setConfirm] = useState("");
@@ -199,6 +200,7 @@ export function SignUpForm() {
 		organizationRegion?: string;
 		organizationSum?: string;
 		organizationRegister?: string;
+		schoolName?: string;
 	}>({});
 
 	const loading = !isLoaded || fetching;
@@ -237,6 +239,7 @@ export function SignUpForm() {
 			orgSum: string,
 			orgDetail: string,
 			orgReg: string,
+			orgSchoolName: string,
 			signupEmail: string,
 		) => {
 			if (!activeSignUp || activeSignUp.status !== "complete") return;
@@ -253,6 +256,7 @@ export function SignUpForm() {
 			const s = orgSum.trim();
 			const d = orgDetail.trim();
 			const r = orgReg.trim();
+			const sn = orgSchoolName.trim();
 
 			await clerk.setActive({ session: sessionId });
 
@@ -261,7 +265,7 @@ export function SignUpForm() {
 					setTimeout(resolve, ms);
 				});
 
-			if (hasAnyOrganizationSignupField(a, h, s, d, r)) {
+			if (hasAnyOrganizationSignupField(a, h, s, d, r, sn)) {
 				let saved = false;
 				for (let i = 0; i < 30 && !saved; i++) {
 					const u = clerk.user;
@@ -274,6 +278,7 @@ export function SignUpForm() {
 								s,
 								d,
 								r,
+								sn,
 							),
 						});
 						saved = true;
@@ -286,7 +291,14 @@ export function SignUpForm() {
 				 * Browser-only `user.update` often does not trigger the same delivery to Workers.
 				 */
 				try {
-					const serverSave = await saveSignUpProfileExtras(a, h, s, d, r);
+					const serverSave = await saveSignUpProfileExtras(
+						a,
+						h,
+						s,
+						d,
+						r,
+						sn,
+					);
 					if (!serverSave.ok) {
 						console.error(
 							"[sign-up] saveSignUpProfileExtras:",
@@ -319,11 +331,14 @@ export function SignUpForm() {
 		const nextErrors: typeof fieldErrors = {};
 
 		if (isOrganizationSignup) {
+			if (!schoolName.trim()) {
+				nextErrors.schoolName = "Сургуулийн нэр оруулна уу.";
+			}
 			if (!organizationAimag.trim() || !organizationHot.trim()) {
 				nextErrors.organizationRegion = "Аймаг / хот сонгоно уу.";
 			}
 			if (!organizationSum.trim()) {
-				nextErrors.organizationSum = "Сум сонгоно уу.";
+				nextErrors.organizationSum = "Сум/дүүрэг сонгоно уу.";
 			}
 			if (!organizationRegister.trim()) {
 				nextErrors.organizationRegister =
@@ -381,6 +396,7 @@ export function SignUpForm() {
 		const orgSum = organizationSum.trim();
 		const orgDetail = organizationAddressDetail.trim();
 		const orgReg = organizationRegister.trim();
+		const orgSchoolName = schoolName.trim();
 
 		setFetching(true);
 		skipSignedInEffectRedirect.current = true;
@@ -417,6 +433,7 @@ export function SignUpForm() {
 				orgSum,
 				orgDetail,
 				orgReg,
+				orgSchoolName,
 				email.trim(),
 			);
 		} catch (caught: unknown) {
@@ -597,7 +614,8 @@ export function SignUpForm() {
 		>
 			{isOrganizationSignup ? (
 				<p className="mb-5 text-center text-sm text-gray-500">
-					Захиргааны бүртгэл — аймаг/хот, сум, бүртгэлийн дугаар заавал.
+					Сургуулийн нэр болон захиргааны бүртгэл — аймаг/хот, сум/дүүрэг,
+					бүртгэлийн дугаар заавал.
 				</p>
 			) : null}
 
@@ -633,6 +651,41 @@ export function SignUpForm() {
 
 				{isOrganizationSignup ? (
 					<>
+						<div>
+							<label
+								htmlFor="signup-school-name"
+								className="mb-1.5 block text-xs font-medium text-gray-600"
+							>
+								Сургуулийн нэр
+							</label>
+							<input
+								id="signup-school-name"
+								name="schoolName"
+								type="text"
+								autoComplete="organization"
+								placeholder="Жишээ: ЕБС № 45"
+								value={schoolName}
+								onChange={(e) => setSchoolName(e.target.value)}
+								className={inputClass}
+								required
+								disabled={loading}
+								aria-invalid={Boolean(fieldErrors.schoolName)}
+								aria-describedby={
+									fieldErrors.schoolName
+										? "signup-school-name-error"
+										: undefined
+								}
+							/>
+							{fieldErrors.schoolName ? (
+								<p
+									id="signup-school-name-error"
+									className="mt-1.5 text-sm text-red-600"
+									role="alert"
+								>
+									{fieldErrors.schoolName}
+								</p>
+							) : null}
+						</div>
 						<OrganizationDivisionSelects
 							organizationAimag={organizationAimag}
 							organizationHot={organizationHot}
