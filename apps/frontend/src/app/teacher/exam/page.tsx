@@ -1,5 +1,6 @@
 "use client";
 
+import { BeeRingProgressLoader } from "@/components/loaders/bee-ring-progress-loader";
 import { ExamOutlineSection } from "./_components/exam-outline-section";
 import { ExamSettingsForm } from "./_components/exam-settings-form";
 import { SavedExamsSection } from "./_components/saved-exams-section";
@@ -7,6 +8,19 @@ import { useTeacherExamPage } from "./_hooks/use-teacher-exam-page";
 
 export default function TeacherExamPage() {
   const examPage = useTeacherExamPage();
+
+  if (examPage.isExamPageBootLoading) {
+    return (
+      <div className="flex min-h-[min(520px,72vh)] flex-col items-center justify-center px-4 py-12">
+        <BeeRingProgressLoader
+          progress={examPage.examPageBootProgress}
+          label="Өгөгдөл ачааллаж байна…"
+          showCenterPercent={false}
+          className="justify-center"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6  p-2 pb-8">

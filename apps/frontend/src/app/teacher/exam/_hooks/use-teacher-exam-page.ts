@@ -87,13 +87,13 @@ function parseDurationMinutes(duration: string | null | undefined): number {
 export function useTeacherExamPage() {
   const router = useRouter();
   const teacher = useTeacher();
-  const { data: testsData } =
+  const { data: testsData, loading: testsLoading } =
     useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
-  const { data: subjectsData } =
+  const { data: subjectsData, loading: subjectsLoading } =
     useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
 
   const schoolId = ("schoolId" in teacher ? teacher.schoolId : undefined) ?? "school-1";
-  const { data: examsData, refetch: refetchExams } =
+  const { data: examsData, loading: examsLoading, refetch: refetchExams } =
     useQuery<GetExamBySchoolIdResponse>(GET_EXAM_BY_SCHOOL_ID, {
       variables: { schoolId },
       skip: !schoolId,
@@ -595,16 +595,26 @@ export function useTeacherExamPage() {
     router.push(monitoringUrl);
   };
 
+  const isExamPageBootLoading =
+    subjectsLoading || testsLoading || examsLoading;
+  const examPageBootProgress =
+    ((!subjectsLoading ? 1 : 0) +
+      (!testsLoading ? 1 : 0) +
+      (!examsLoading ? 1 : 0)) *
+    (100 / 3);
+
   return {
     activeSavedExamId,
     addQuestionsToExam,
     deleteSavedExam,
     exam,
+    examPageBootProgress,
     examQuestionDetails,
     examQuestions,
     filteredQuestions,
     gradeOptions: EXAM_GRADE_OPTIONS,
     hasLoadedSavedExams,
+    isExamPageBootLoading,
     moveQuestion,
     openMonitoringForSavedExam,
     openSavedExam,
