@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { STUDENTS_BY_CODE } from "../data/students-by-code";
+import { STUDENTS_BY_CODE } from "@/app/teacher/data/students-by-code";
 import { store } from "@/app/lib/store";
 
 type ReviewScreenProps = {

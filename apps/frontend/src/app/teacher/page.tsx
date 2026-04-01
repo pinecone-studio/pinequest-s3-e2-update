@@ -1,4 +1,4 @@
-import TeacherDashboard from "./components/teacher-dashboard";
+import { TeacherDashboard } from "@/app/teacher/_components/dashboard";
 
 export default function TeacherPage() {
   return <TeacherDashboard />;

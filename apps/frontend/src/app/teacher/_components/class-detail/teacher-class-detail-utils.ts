@@ -6,9 +6,9 @@ import {
   type PastExamStudentScore,
 } from "@/app/lib/class-past-exams-mock";
 import type { Student } from "@/app/lib/types";
-import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
-import type { SavedExamRecord } from "../exam/_lib/types";
-import { normalizeSavedExamRecord } from "../exam/_lib/utils";
+import { SAVED_EXAMS_STORAGE_KEY } from "@/app/teacher/exam/_lib/constants";
+import type { SavedExamRecord } from "@/app/teacher/exam/_lib/types";
+import { normalizeSavedExamRecord } from "@/app/teacher/exam/_lib/utils";
 
 export function escapeHtml(s: string) {
   return s
