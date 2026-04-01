@@ -8,6 +8,59 @@ export const GET_ALL_SUBJECTS = gql`
     }
   }
 `;
+
+export const GET_VIEWER_TEACHER = gql`
+  query ViewerTeacher {
+    viewerTeacher {
+      id
+      clerkId
+      email
+      schoolId
+      firstName
+      lastName
+      role
+      myClassId
+      classIds
+    }
+  }
+`;
+
+export const GET_STUDENT_EXAM_RESULTS_BY_CLASS_ID = gql`
+  query GetStudentExamResultsByClassId($classId: String!) {
+    getStudentExamResultsByClassId(classId: $classId) {
+      id
+      examId
+      studentId
+      teacherId
+      status
+      notes
+      testScore
+      openExerciseScore
+      totalScore
+      actualScore
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_EXAMS_BY_IDS = gql`
+  query GetExamsByIds($ids: [String!]!) {
+    getExamsByIds(ids: $ids) {
+      id
+      grade
+      subjectId
+      topic
+      title
+      date
+      score
+      schoolId
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const GET_CLASS_BY_TEACHER_AND_SCHOOL_ID = gql`
   query GetClassByTeacherAndSchoolId($input: ClassByTeacherAndSchoolIdInput!) {
     getClassByTeacherAndSchoolId(input: $input) {
@@ -263,3 +316,5 @@ export const GET_TEACHERS_BY_SCHOOL_ID = gql`
     }
   }
 `;
+
+

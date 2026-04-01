@@ -1,5 +1,5 @@
 import type { Student } from "@/app/lib/types";
-import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 
 export function shortStudentName(student: Student) {
   const last = student.lastName.trim();

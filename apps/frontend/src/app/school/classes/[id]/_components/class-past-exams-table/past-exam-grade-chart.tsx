@@ -1,6 +1,6 @@
 import { BarChart3 } from "lucide-react";
 import { useMemo } from "react";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 import {
   LETTER_GRADE_ORDER,
   LETTER_GRADE_STYLES,

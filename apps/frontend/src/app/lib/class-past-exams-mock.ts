@@ -1,68 +1,21 @@
 /** @format */
 
+import type {
+	PastExamMostFailedQuestion,
+	PastExamQuestionAggregate,
+	PastExamQuestionAttempt,
+	PastExamRow,
+	PastExamStudentScore,
+} from "./class-past-exams-types";
 import type { Student } from "./types";
 
-/** Нэг асуулт дээрх сурагчийн хариулт, оноо */
-export type PastExamQuestionAttempt = {
-	order: number;
-	question: string;
-	studentAnswer: string;
-	pointsEarned: number;
-	pointsMax: number;
-};
-
-/** Нэг сурагчийн нэг шалгалтын оноо болон асуулт бүрийн дэлгэрэнгүй */
-export type PastExamStudentScore = {
-	studentId: string;
-	studentNumber: string;
-	firstName: string;
-	lastName: string;
-	score: number;
-	passed: boolean;
-	attempts: PastExamQuestionAttempt[];
-};
-
-/** Ангийн түвшинд: хамгийн олон сурагч алдсан асуулт + загварын зөв хариулт */
-export type PastExamMostFailedQuestion = {
-	order: number;
-	question: string;
-	correctAnswer: string;
-	failCount: number;
-	totalStudents: number;
-};
-
-/** Асуулт бүрийн ангийн нэгтгэл (тайлангийн хувьд) */
-export type PastExamQuestionAggregate = {
-	order: number;
-	question: string;
-	correctAnswer: string;
-	pointsMax: number;
-	/** Бүрэн оноо авсан сурагчийн тоо */
-	fullCreditCount: number;
-	/** Хэсэгчилсэн оноо (0 болон дээд онооны хооронд) */
-	partialCreditCount: number;
-	/** Тэг оноо */
-	zeroCount: number;
-	/** Бүрэн оноо аваагүй (эргэлзээтэй эсвэл буруу) */
-	failedCount: number;
-	totalStudents: number;
-};
-
-/** Жишээ өмнөх шалгалтын мөр — анги бүрийн сурагчдаар тооцоолсон дүн */
-export type PastExamRow = {
-	id: string;
-	/** EXAM_BLUEPRINTS түлхүүр (жишээ нь pe-1) — тайлан гаргахад */
-	blueprintId: string;
-	subject: string;
-	examTitle: string;
-	date: string;
-	maxScore: number;
-	passed: number;
-	total: number;
-	studentScores: PastExamStudentScore[];
-	/** Сурагчдын хамгийн ихээр алдсан нэг асуулт (бүх сурагч бүрэн оноо авсан бол null) */
-	mostFailedQuestion: PastExamMostFailedQuestion | null;
-};
+export type {
+	PastExamMostFailedQuestion,
+	PastExamQuestionAggregate,
+	PastExamQuestionAttempt,
+	PastExamRow,
+	PastExamStudentScore,
+} from "./class-past-exams-types";
 
 type QuestionBlueprint = {
 	prompt: string;

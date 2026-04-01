@@ -13,6 +13,10 @@ export function normalizeSavedExamRecord(savedExam: SavedExamRecord): SavedExamR
       ? savedExam.approvalStatus ?? "pending"
       : "not_required",
     sentClassIds: Array.isArray(savedExam.sentClassIds) ? savedExam.sentClassIds : [],
+    sentClassLabels:
+      savedExam.sentClassLabels && typeof savedExam.sentClassLabels === "object"
+        ? savedExam.sentClassLabels
+        : {},
     approvalExamDate: savedExam.approvalExamDate ?? "",
     approvalStartTime: savedExam.approvalStartTime ?? "09:00",
     approvalEndTime: savedExam.approvalEndTime ?? "10:00",

@@ -19,10 +19,16 @@ export const queryTypeDefs = /* GraphQL */ `
     Clerk user id from verified Bearer session token, or null if anonymous.
     """
     viewerClerkId: String
+    """
+    Нэвтэрсэн Clerk хэрэглэгчийн D1 дэх багшийн мөр (clerkId таарсан).
+    Урьсан багш хараахан linkTeacherClerk хийгээгүй бол null.
+    """
+    viewerTeacher: Teacher
     hello: String!
     getAllTests: [Test!]!
     getClassBySchoolId(schoolId: String!): [Class!]
     getStudentByClassId(classId: String!): [Student!]
+    getStudentExamResultsByClassId(classId: String!): [StudentExamResult!]!
     getSchoolByClerkId(clerkId: String!): School!
     getTeachersBySchoolId(schoolId: String!): [Teacher!]
     getAllExams: [Exam!]
@@ -34,6 +40,7 @@ export const queryTypeDefs = /* GraphQL */ `
     ): [Class!]
     getOpenExerciesBySubjectAndGrade(input: OpenExerciesInput): [OpenExercies]
     getExamBySchoolId(schoolId: String!): [Exam!]
+    getExamsByIds(ids: [String!]!): [Exam!]!
     getTestById(testId: String!): [Test]
     getOpenExerciesById(openExerciesId: String!): [OpenExercies]
     getTestsByIds(ids: [String!]!): [Test!]!

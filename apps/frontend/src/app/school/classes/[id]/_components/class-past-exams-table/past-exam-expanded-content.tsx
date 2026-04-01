@@ -1,7 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 import {
   downloadSingleStudentPastExamXls,
   sortPastExamStudents,

@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { teacherClasses, type TeacherClass } from "../_lib/class-data";
+import type { TeacherClassOption } from "../../_lib/teacher-class-options";
 import { formatSavedDate } from "../_lib/utils";
 import type { SavedExamRecord } from "../_lib/types";
 import { TrashIcon } from "@/app/_icons/trashIcon";
@@ -16,6 +16,7 @@ import { TrashIcon } from "@/app/_icons/trashIcon";
 export function SavedExamCard({
   savedExam,
   isActive,
+  teacherClasses,
   selectedClassId,
   onDelete,
   onOpenMonitoring,
@@ -25,6 +26,7 @@ export function SavedExamCard({
 }: {
   savedExam: SavedExamRecord;
   isActive: boolean;
+  teacherClasses: TeacherClassOption[];
   selectedClassId?: string;
   onDelete: () => void;
   onOpenMonitoring: () => void;
@@ -126,6 +128,8 @@ export function SavedExamCard({
         <SavedExamSendState
           onOpenMonitoring={onOpenMonitoring}
           sentClassIds={savedExam.sentClassIds ?? []}
+          sentClassLabels={savedExam.sentClassLabels}
+          teacherClasses={teacherClasses}
         />
       </div>
     </article>
@@ -185,23 +189,29 @@ function SavedExamStats({ savedExam }: { savedExam: SavedExamRecord }) {
 function SavedExamSendState({
   onOpenMonitoring,
   sentClassIds,
+  sentClassLabels,
+  teacherClasses,
 }: {
   onOpenMonitoring: () => void;
   sentClassIds: string[];
+  sentClassLabels?: Record<string, string>;
+  teacherClasses: TeacherClassOption[];
 }) {
   if (sentClassIds.length === 0) return null;
   return (
     <div className="flex flex-wrap items-center gap-2">
       {sentClassIds.map((classId) => {
-        const klass = teacherClasses.find((item) => item.id === classId);
-        if (!klass) return null;
+        const displayName =
+          sentClassLabels?.[classId] ??
+          teacherClasses.find((item) => item.id === classId)?.name;
+        if (!displayName) return null;
 
         return (
           <span
             className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]"
             key={classId}
           >
-            Илгээсэн: {klass.name}
+            Илгээсэн: {displayName}
           </span>
         );
       })}
@@ -216,10 +226,12 @@ function SavedExamSendState({
   );
 }
 
-function ClassOption({ klass }: { klass: TeacherClass }) {
+function ClassOption({ klass }: { klass: TeacherClassOption }) {
   return (
     <SelectItem value={klass.id}>
-      {klass.name} · {klass.studentCount} сурагч
+      {klass.studentCount > 0
+        ? `${klass.name} · ${klass.studentCount} сурагч`
+        : klass.name}
     </SelectItem>
   );
 }
