@@ -45,7 +45,7 @@ export function QuestionBankFigmaResults({
   onSendSelectedToExam,
 }: QuestionBankFigmaResultsProps) {
   return (
-    <div className="space-y-[14px]">
+    <div className="space-y-[18px]">
       <section className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] px-[20px] py-[20px]">
         <div className="flex items-start justify-between gap-[18px]">
           <div className="min-w-0">
@@ -148,30 +148,36 @@ export function QuestionBankFigmaResults({
         )}
       </section>
 
-      <div className="grid grid-cols-[minmax(0,1.78fr)_minmax(224px,0.9fr)] items-start gap-[14px]">
-        <QuestionList
-          activeQuestionId={activeQuestionId}
-          getQuestionHeartCount={getQuestionHeartCount}
-          likedQuestionIds={[]}
-          onAddToExam={onAddToExam}
-          onCreateQuestion={onCreateQuestion}
-          onDeleteQuestion={() => {}}
-          onEditQuestion={onEditQuestion}
-          onOpenQuestion={onOpenQuestion}
-          onToggleQuestionSelection={onToggleSelection}
-          onToggleLike={onToggleLike}
-          questions={questions}
-          selectedQuestionIds={selectedQuestionIds}
-        />
-        <div className="space-y-[14px]">
-          <QuestionBankBulkToolbar
-            count={selectedCount}
-            onClear={onClearSelection}
-            onSendToExam={onSendSelectedToExam}
+      <section className="space-y-[20px] rounded-[12px] border border-[#E5E5E5] bg-white px-[28px] pb-[28px] pt-[26px]">
+        <h2 className="text-[26px] font-medium uppercase leading-[31px] tracking-[0.08em] text-[#122459]">
+          АСУУЛТЫН САН
+        </h2>
+
+        <div className="grid grid-cols-[minmax(0,1.78fr)_381px] items-start gap-[22px]">
+          <QuestionList
+            activeQuestionId={activeQuestionId}
+            getQuestionHeartCount={getQuestionHeartCount}
+            likedQuestionIds={[]}
+            onAddToExam={onAddToExam}
+            onCreateQuestion={onCreateQuestion}
+            onDeleteQuestion={() => {}}
+            onEditQuestion={onEditQuestion}
+            onOpenQuestion={onOpenQuestion}
+            onToggleQuestionSelection={onToggleSelection}
+            onToggleLike={onToggleLike}
+            questions={questions}
+            selectedQuestionIds={selectedQuestionIds}
           />
-          <QuestionBankActivePanel question={previewQuestion} />
+          <div className="space-y-[12px] pt-[4px]">
+            <QuestionBankBulkToolbar
+              count={selectedCount}
+              onClear={onClearSelection}
+              onSendToExam={onSendSelectedToExam}
+            />
+            <QuestionBankActivePanel question={previewQuestion} />
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
