@@ -56,6 +56,7 @@ export const addStudent = async (
           classId: args.input.classId,
           firstName: args.input.firstName,
           lastName: args.input.lastName,
+          studentStatus: "active",
           studentCode,
           studentExamResultIds: [],
           createdAt: now,
