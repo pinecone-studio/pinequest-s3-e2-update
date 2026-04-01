@@ -4,7 +4,7 @@
 
 import { useQuery } from "@apollo/client/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
 	createExamMonitoringScopeKey,
 	readExamMonitoringStateMap,
@@ -40,6 +40,8 @@ type GetExamBySchoolIdResponse = {
 
 export default function ExamOptimizationPage() {
 	const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
+	const pathname = usePathname();
+	const router = useRouter();
 	const searchParams = useSearchParams();
 
 	const { data: subjectsData } = useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
@@ -75,8 +77,9 @@ export default function ExamOptimizationPage() {
 	}, [demoClassOptions, examsData?.getExamBySchoolId, subjectNameById]);
 
 	const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
-	const [selectedExamId, setSelectedExamId] = useState<string | null | undefined>(
-		undefined,
+	const initialSelectedExamId = searchParams.get("examId");
+	const [selectedExamId, setSelectedExamId] = useState<string | null>(
+		initialSelectedExamId,
 	);
 	const [selectedClassIdByExamId] = useState<Record<string, string>>({});
 	const [monitoringByScope, setMonitoringByScope] = useState<Record<string, boolean>>(
@@ -221,12 +224,36 @@ export default function ExamOptimizationPage() {
 	}, [savedExams]);
 
 	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
-		if (apiMonitorCards.length > 0) return apiMonitorCards;
-		if (localStorageMonitorCards.length > 0) return localStorageMonitorCards;
-		return fallbackMockExamCards;
+		if (apiMonitorCards.length === 0 && localStorageMonitorCards.length === 0) {
+			return fallbackMockExamCards;
+		}
+
+		const mergedCards = [
+			...localStorageMonitorCards,
+			...apiMonitorCards,
+		];
+		const seenIds = new Set<string>();
+
+		return mergedCards.filter((card) => {
+			if (seenIds.has(card.id)) return false;
+			seenIds.add(card.id);
+			return true;
+		});
 	}, [apiMonitorCards, fallbackMockExamCards, localStorageMonitorCards]);
 
-	const effectiveSelectedExamId = selectedExamId ?? searchParams.get("examId");
+	useEffect(() => {
+		if (!initialSelectedExamId) return;
+
+		const nextParams = new URLSearchParams(searchParams.toString());
+		nextParams.delete("examId");
+		const nextUrl = nextParams.toString()
+			? `${pathname}?${nextParams.toString()}`
+			: pathname;
+
+		router.replace(nextUrl, { scroll: false });
+	}, [initialSelectedExamId, pathname, router, searchParams]);
+
+	const effectiveSelectedExamId = selectedExamId;
 	const activeMonitorExam = useMemo(() => {
 		if (!effectiveSelectedExamId) return null;
 		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;

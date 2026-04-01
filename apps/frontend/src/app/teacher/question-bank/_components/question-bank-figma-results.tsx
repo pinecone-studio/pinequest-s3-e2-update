@@ -1,9 +1,13 @@
 "use client";
 
 import { Wrench } from "lucide-react";
-import { useState } from "react";
+import { NATIONAL_SCRIPT_SUBJECT } from "../_lib/constants";
 import type { Question } from "../_lib/types";
-import { DIFFICULTY_LABELS } from "../_lib/utils";
+import {
+  DIFFICULTY_LABELS,
+  hasTraditionalMongolianText,
+  resolveQuestionTitle,
+} from "../_lib/utils";
 import { QuestionBankActivePanel } from "./bank/question-bank-active-panel";
 import { QuestionBankBulkToolbar } from "./bank/question-bank-bulk-toolbar";
 import { QuestionList } from "./question/question-list";
@@ -111,70 +115,143 @@ export function QuestionBankFigmaResults({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto pb-[6px]">
-            <div className="flex min-w-max gap-[10px]">
-              {myQuestions.map((question) => (
-              <article
-                className="w-[332px] shrink-0 rounded-[10px] border border-[#ECECEC] bg-white p-[24px]"
-                key={question.id}
-              >
-                <div className="flex items-start justify-between gap-[10px]">
-                  <p className="text-[13px] font-normal uppercase leading-[16px] text-[#7B7B7B]">
-                    АСУУЛТЫН ДЭЛГЭРЭНГҮЙ
-                  </p>
-                  <button
-                    className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[8px] border border-[#ECECEC] text-[#122459] transition hover:bg-[#f8fafc]"
-                    onClick={() => onEditQuestion(question.id)}
-                    type="button"
-                  >
-                    <Wrench className="h-[18px] w-[18px]" />
-                  </button>
-                </div>
+          <div className="mt-[12px] flex items-stretch gap-[14px] overflow-x-auto pb-[4px]">
+            {myQuestions.map((question) => {
+              const isNationalScript =
+                question.subject === NATIONAL_SCRIPT_SUBJECT;
+              const shouldRenderPromptVertical =
+                isNationalScript &&
+                hasTraditionalMongolianText(question.content.prompt);
 
-                <div className="mt-[16px] flex flex-wrap gap-[10px]">
-                  <TagChip>{question.questionType === "multiple_choice" ? "Сонгох асуулт" : "Задгай"}</TagChip>
-                  <TagChip>{question.gradingType === "auto" ? "Автомат үнэлгээ" : "Гар үнэлгээ"}</TagChip>
-                  <TagChip>{DIFFICULTY_LABELS[question.difficulty]}</TagChip>
-                </div>
-
-                <h3 className="mt-[18px] text-[16px] font-medium leading-[22px] text-[#323232]">
-                  {question.title || "Асуултын дэлгэрэнгүй"}
-                </h3>
-                <p className="mt-[10px] text-[12px] leading-[18px] text-[#323232]">
-                  {question.content.prompt}
-                </p>
-
-                {question.questionType === "multiple_choice" ? (
-                  <div className="mt-[14px] space-y-[8px]">
-                    {question.options.slice(0, 4).map((option, index) => (
-                      <div
-                        className={`flex h-[24px] items-center rounded-[4px] border px-[10px] text-[11px] leading-[13px] ${
-                          option.isCorrect
-                            ? "border-[#7DC8FF] bg-[#75B8ED] text-[#122459]"
-                            : "border-[#ECECEC] bg-white text-[#122459]"
-                        }`}
-                        key={option.id}
-                      >
-                        <span className="mr-[8px] shrink-0">{index + 1}.</span>
-                        <span className="truncate">{option.text}</span>
-                      </div>
-                    ))}
+              return (
+                <article
+                  className="basis-[calc((100%-28px)/3)] shrink-0 rounded-[12px] border border-[#7DC8FF] bg-[#FAFAFA] p-[16px]"
+                  key={question.id}
+                >
+                  <div className="flex items-start justify-between gap-[10px]">
+                    <p className="text-[13px] font-normal uppercase leading-[16px] text-[#7B7B7B]">
+                      АСУУЛТЫН ДЭЛГЭРЭНГҮЙ
+                    </p>
+                    <button
+                      className="inline-flex h-[48px] w-[48px] items-center justify-center rounded-[14px] border border-[#7DC8FF] text-[#122459] transition hover:bg-[#eaf4ff]"
+                      onClick={() => onEditQuestion(question.id)}
+                      type="button"
+                    >
+                      <Wrench className="h-[22px] w-[22px]" />
+                    </button>
                   </div>
-                ) : null}
 
-                <div className="mt-[18px] grid grid-cols-[1fr_auto] gap-x-[12px] gap-y-[8px]">
-                  <MetaRow label="Сургууль" value="16" />
-                  <MetaRow label="Багш" value={question.teacherName ?? "О.Наранзул"} />
-                  <MetaRow label="Анги" value={question.grade} />
-                  <MetaRow label="Хичээл" value={question.subject} />
-                  <MetaRow label="Сэдэв" value={question.subtopic?.trim() || question.topic} />
-                  <MetaRow label="Оноо" value={`${question.points}`} />
-                  <MetaRow label="Ашигласан тоо" value={`${question.usageCount}`} />
-                  <MetaRow label="Шинэчилсэн" value={question.updatedAt} />
-                </div>
-              </article>
-              ))}
-            </div>
+                  <div className="mt-[10px] flex flex-wrap gap-[6px]">
+                    <Chip tone="filled">Нэгтгэсэн</Chip>
+                    <Chip tone="outline">
+                      {question.questionType === "multiple_choice"
+                        ? "Сонгох асуулт"
+                        : "Задгай"}
+                    </Chip>
+                    <Chip tone="outline">
+                      {question.gradingType === "auto"
+                        ? "Автомат үнэлгээ"
+                        : "Гар үнэлгээ"}
+                    </Chip>
+                    <Chip tone="outline">
+                      {DIFFICULTY_LABELS[question.difficulty]}
+                    </Chip>
+                  </div>
+
+                  <h3 className="mt-[14px] text-[16px] font-medium leading-[20px] text-[#323232]">
+                    {resolveQuestionTitle(
+                      question.title,
+                      question.content.prompt,
+                    ) || "Асуултын гарчиг"}
+                  </h3>
+                  <p
+                    className={`mt-[10px] text-[14px] text-[#7B7B7B] ${
+                      shouldRenderPromptVertical
+                        ? "min-h-32 overflow-x-auto leading-8"
+                        : "line-clamp-2 leading-[22px]"
+                    }`}
+                    style={
+                      shouldRenderPromptVertical
+                        ? {
+                            writingMode: "vertical-lr",
+                            textOrientation: "mixed",
+                            whiteSpace: "pre-wrap",
+                          }
+                        : undefined
+                    }
+                  >
+                    {question.content.prompt}
+                  </p>
+
+                  {question.questionType === "multiple_choice" ? (
+                    <div className="mt-[12px] space-y-[8px]">
+                      {question.options.slice(0, 4).map((option, index) => (
+                        <div
+                          className={`rounded-[6px] border px-[16px] text-[12px] leading-[15px] ${
+                            option.isCorrect
+                              ? "border-[#7DC8FF] bg-[#75B8ED] text-[#122459]"
+                              : "border-[#B8D9FF] bg-white text-[#122459]"
+                          }`}
+                          key={option.id}
+                        >
+                          <div
+                            className={`flex ${
+                              isNationalScript
+                                ? "min-h-24 items-start gap-[12px] py-[10px]"
+                                : "h-[38px] items-center"
+                            }`}
+                          >
+                            <span className="shrink-0">{index + 1}.</span>
+                            <span
+                              className={
+                                isNationalScript &&
+                                hasTraditionalMongolianText(option.text)
+                                  ? "overflow-x-auto leading-7"
+                                  : ""
+                              }
+                              style={
+                                isNationalScript &&
+                                hasTraditionalMongolianText(option.text)
+                                  ? {
+                                      writingMode: "vertical-lr",
+                                      textOrientation: "mixed",
+                                      whiteSpace: "pre-wrap",
+                                    }
+                                  : undefined
+                              }
+                            >
+                              {option.text}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div className="mt-[12px]">
+                    <div className="grid grid-cols-[1fr_auto] gap-x-[16px] gap-y-[8px] bg-[#DCEEFF] px-[16px] py-[14px]">
+                      <MetaRow label="Сургууль" value="21" />
+                      <MetaRow
+                        label="Багш"
+                        value={question.teacherName ?? "—"}
+                      />
+                      <MetaRow label="Анги" value={question.grade} />
+                      <MetaRow label="Хичээл" value={question.subject} />
+                      <MetaRow
+                        label="Сэдэв"
+                        value={question.subtopic?.trim() || question.topic}
+                      />
+                      <MetaRow label="Оноо" value={`${question.points}`} />
+                      <MetaRow
+                        label="Ашигласан тоо"
+                        value={`${question.usageCount}`}
+                      />
+                      <MetaRow label="Шинэчилсэн" value={question.updatedAt} />
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

@@ -4,6 +4,7 @@ import { ArrowUpRight, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   classPerformance,
+  recentActivities,
   schoolExams,
 } from "@/app/school/_mock/school-data";
 
@@ -118,51 +119,66 @@ export default function SchoolResultsPage() {
         <p className="mt-1 text-sm text-zinc-600">
           Багшийн оруулсан явц, дүн, үнэлгээний статусыг school түвшинд нэгтгэнэ.
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <button
-            type="button"
-            onClick={() => setSelectedSummary("completed")}
-            className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-xs uppercase tracking-wide text-zinc-500">Дууссан шалгалт</p>
-              <ArrowUpRight className="h-4 w-4 text-zinc-400" />
-            </div>
-            <p className="mt-2 text-2xl font-bold">{completedCount}</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSummary("grading")}
-            className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-xs uppercase tracking-wide text-zinc-500">Шалгаж буй</p>
-              <ArrowUpRight className="h-4 w-4 text-zinc-400" />
-            </div>
-            <p className="mt-2 text-2xl font-bold">{gradingCount}</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSummary("pass")}
-            className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-xs uppercase tracking-wide text-zinc-500">Дундаж тэнцэлт</p>
-              <ArrowUpRight className="h-4 w-4 text-zinc-400" />
-            </div>
-            <p className="mt-2 text-2xl font-bold">{averagePassRate}%</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSummary("attention")}
-            className="rounded-xl border border-red-200 bg-red-50 p-4 text-left transition hover:bg-red-100"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-xs uppercase tracking-wide text-red-600">Анхаарах</p>
-              <ArrowUpRight className="h-4 w-4 text-red-400" />
-            </div>
-            <p className="mt-2 text-2xl font-bold text-red-700">{attentionClasses.length} анги</p>
-          </button>
+        <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_1.2fr]">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => setSelectedSummary("completed")}
+              className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Дууссан шалгалт</p>
+                <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+              </div>
+              <p className="mt-2 text-2xl font-bold">{completedCount}</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedSummary("grading")}
+              className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Шалгаж буй</p>
+                <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+              </div>
+              <p className="mt-2 text-2xl font-bold">{gradingCount}</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedSummary("pass")}
+              className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Дундаж тэнцэлт</p>
+                <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+              </div>
+              <p className="mt-2 text-2xl font-bold">{averagePassRate}%</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedSummary("attention")}
+              className="rounded-xl border border-red-200 bg-red-50 p-4 text-left transition hover:bg-red-100"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs uppercase tracking-wide text-red-600">Анхаарах</p>
+                <ArrowUpRight className="h-4 w-4 text-red-400" />
+              </div>
+              <p className="mt-2 text-2xl font-bold text-red-700">{attentionClasses.length} анги</p>
+            </button>
+          </div>
+          <article className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+            <h3 className="text-base font-semibold text-[#0f172a]">Сүүлийн үйл ажиллагаа</h3>
+            <ul className="mt-3 space-y-3">
+              {recentActivities.map((line) => (
+                <li
+                  key={line}
+                  className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700"
+                >
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </article>
         </div>
 
       </section>

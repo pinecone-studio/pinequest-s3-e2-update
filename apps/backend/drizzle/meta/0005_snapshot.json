@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e85617ab-127f-4435-978f-51eb8d398d5b",
-  "prevId": "dd74b680-ba0f-4fcf-959a-23879adc939d",
+  "id": "2d9a77d4-90d3-4cda-a65f-42fd71a73eb8",
+  "prevId": "f0a8b1c2-3d4e-5f60-7890-abcdef012345",
   "tables": {
     "class": {
       "name": "class",
@@ -421,48 +421,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "schoolName": {
-          "name": "schoolName",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "organizationAimag": {
-          "name": "organizationAimag",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "organizationHot": {
-          "name": "organizationHot",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "organizationSum": {
-          "name": "organizationSum",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "organizationAddressDetail": {
-          "name": "organizationAddressDetail",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "organizationRegister": {
-          "name": "organizationRegister",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "createdAt": {
           "name": "createdAt",
           "type": "text",
@@ -600,7 +558,7 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "classId": {
@@ -638,6 +596,14 @@
           "notNull": false,
           "autoincrement": false
         },
+        "studentStatus": {
+          "name": "studentStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "text",
@@ -653,7 +619,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "student_studentCode_unique": {
+          "name": "student_studentCode_unique",
+          "columns": [
+            "studentCode"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

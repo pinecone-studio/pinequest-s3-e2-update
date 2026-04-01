@@ -5,6 +5,8 @@ export const schoolTypeDefs = /* GraphQL */ `
     email: String!
     name: String!
     register: Int
+    provinceOrCity: String!
+    soumOrDistrict: String!
     address: String!
     createdAt: String!
     updatedAt: String!

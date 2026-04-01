@@ -93,11 +93,13 @@ function writeSchedules(next: ExamScheduleItem[]) {
 type ExamScheduleCalendarSectionProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  embedded?: boolean;
 };
 
 export function ExamScheduleCalendarSection({
   open,
   onOpenChange,
+  embedded = false,
 }: ExamScheduleCalendarSectionProps) {
   const [schedules, setSchedules] = useState<ExamScheduleItem[]>(readSchedules);
   const [shownYear, setShownYear] = useState(today.getFullYear());
@@ -109,7 +111,7 @@ export function ExamScheduleCalendarSection({
   const [formError, setFormError] = useState<string | null>(null);
   const [form, setForm] = useState<ExamScheduleForm>(emptyForm(selectedDate));
 
-  const isCalendarOpen = open ?? internalOpen;
+  const isCalendarOpen = embedded ? true : open ?? internalOpen;
 
   const monthGrid = useMemo(
     () => getMonthGrid(shownYear, shownMonth),
@@ -227,9 +229,12 @@ export function ExamScheduleCalendarSection({
 
   if (!isCalendarOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-5xl rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-2xl">
+  const calendarContent = (
+      <div
+        className={`w-full rounded-2xl border border-[#dbe5f0] bg-white p-5 ${
+          embedded ? "h-full shadow-sm" : "max-w-6xl shadow-2xl"
+        }`}
+      >
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold text-[#0f172a]">Шалгалтын календарь</h3>
@@ -237,16 +242,18 @@ export function ExamScheduleCalendarSection({
               Өдөр дээр дарж тухайн өдөрт шалгалтын хуваарь үүсгэнэ.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={closeCalendar}
-            className="rounded-md border border-[#dbe5f0] p-1.5 text-[#334155] transition hover:bg-[#f1f5f9]"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          {!embedded ? (
+            <button
+              type="button"
+              onClick={closeCalendar}
+              className="rounded-md border border-[#dbe5f0] p-1.5 text-[#334155] transition hover:bg-[#f1f5f9]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          ) : null}
         </div>
 
-        <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_280px]">
           <div>
             <div className="flex items-center justify-between rounded-xl border border-[#dbe5f0] bg-[#f8fafc] px-3 py-2.5">
               <button
@@ -287,6 +294,15 @@ export function ExamScheduleCalendarSection({
                 const isSelected = dateKey === selectedDate;
                 const isToday = dateKey === toDateKey(today);
 
+                if (!isCurrentMonth) {
+                  return (
+                    <div
+                      key={dateKey}
+                      className="min-h-[88px] rounded-lg border border-[#dbe5f0] bg-[#f8fafc]"
+                    />
+                  );
+                }
+
                 return (
                   <button
                     type="button"
@@ -296,7 +312,7 @@ export function ExamScheduleCalendarSection({
                       isSelected
                         ? "border-blue-500 bg-blue-50"
                         : "border-[#dbe5f0] bg-white hover:bg-[#f8fafc]"
-                    } ${!isCurrentMonth ? "opacity-50" : ""}`}
+                    }`}
                   >
                     <p className={`text-xs font-bold ${isToday ? "text-blue-700" : "text-[#0f172a]"}`}>
                       {day.getDate()}
@@ -338,7 +354,7 @@ export function ExamScheduleCalendarSection({
               }).format(parseDateKey(selectedDate))}
             </p>
             <p className="mt-1 text-xs text-[#64748b]">
-              Өдөр дээр дарвал шинэ хуваарь хадгалах popup нээгдэнэ.
+              Өдөр дээр дарвал шинэ хуваарь хадгалах хэсэг нээгдэнэ.
             </p>
             <div className="mt-2 space-y-2 max-h-64 overflow-y-auto pr-1">
               {selectedDaySchedules.length === 0 ? (
@@ -390,7 +406,17 @@ export function ExamScheduleCalendarSection({
           </div>
         </div>
       </div>
+  );
 
+  return (
+    <>
+      {embedded ? (
+        calendarContent
+      ) : (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          {calendarContent}
+        </div>
+      )}
       {isCreateOpen ? (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-4">
           <div className="w-full max-w-xl rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-2xl">
@@ -507,6 +533,6 @@ export function ExamScheduleCalendarSection({
           </div>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }

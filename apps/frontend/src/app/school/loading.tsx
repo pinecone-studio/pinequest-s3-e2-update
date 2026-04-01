@@ -1,17 +1,29 @@
+/** @format */
+
 "use client";
 
-import { BeehiveNectarLoader } from "@/components/loaders/beehive-nectar-loader";
+import { useEffect } from "react";
+import { SchoolLoaderExperience } from "@/app/school/_components/school-loader-experience";
+import {
+  SCHOOL_LOADER_HOLD_EVENT,
+  SCHOOL_LOADER_MIN_MS,
+} from "@/app/school/_lib/school-loader-min-ms";
 
 export default function SchoolLoading() {
-  return (
-    <div className="flex min-h-[min(800px,calc(100vh-4rem))] flex-1 flex-col items-center justify-center py-20">
-      <BeehiveNectarLoader
-        progress={0}
-        label="Самбар ачааллаж байна…"
-        orbitMaxPx={148}
-        tripDurationMs={4000}
-        className="min-h-0 justify-center gap-6"
-      />
-    </div>
-  );
+  useEffect(() => {
+    const start = performance.now();
+    return () => {
+      const elapsed = performance.now() - start;
+      const remaining = Math.max(0, SCHOOL_LOADER_MIN_MS - elapsed);
+      if (remaining > 0) {
+        window.dispatchEvent(
+          new CustomEvent(SCHOOL_LOADER_HOLD_EVENT, {
+            detail: { remaining },
+          }),
+        );
+      }
+    };
+  }, []);
+
+  return <SchoolLoaderExperience />;
 }

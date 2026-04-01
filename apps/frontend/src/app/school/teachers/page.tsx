@@ -1,23 +1,46 @@
 /** @format */
 
+"use client";
+
 import Link from "next/link";
 import { Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { removeTeacher } from "@/app/school/action";
 import { store } from "@/app/lib/store";
 import { AddEmployeeDialog } from "./_components/add-employee-dialog";
 
 export default function AdminTeachersPage() {
+  const [search, setSearch] = useState("");
   const teachers = store.listTeachers();
   const allClasses = store.listClasses();
   const gradeRangeRegex = /^(?:[6-9]|1[0-2])/;
-  const homeroomCandidates = allClasses.filter((c) => gradeRangeRegex.test(c.name));
-  const fallbackPool = homeroomCandidates.length > 0 ? homeroomCandidates : allClasses;
+  const fallbackClasses = allClasses.filter((c) => gradeRangeRegex.test(c.name));
 
   const pickDeterministicIndex = (seed: string, length: number) => {
     let hash = 0;
     for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
     return length === 0 ? 0 : hash % length;
   };
+
+  const formatNameWithInitial = (fullName: string) => {
+    const cleaned = fullName.trim().replace(/\s+/g, " ");
+    if (!cleaned) return "-";
+    const parts = cleaned.split(" ");
+    if (parts.length === 1) return parts[0];
+    const lastNameInitial = parts[0].charAt(0).toUpperCase();
+    const firstName = parts[parts.length - 1];
+    return `${lastNameInitial}.${firstName}`;
+  };
+
+  const keyword = search.trim().toLowerCase();
+  const filteredTeachers =
+    keyword.length === 0
+      ? teachers
+      : teachers.filter((t) => {
+          const position = (t.position?.trim() || "Багш").toLowerCase();
+          const name = t.name.toLowerCase();
+          return name.includes(keyword) || position.includes(keyword);
+        });
 
   return (
     <div className="space-y-10">
@@ -26,10 +49,18 @@ export default function AdminTeachersPage() {
       </div>
 
       <section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-3 border-b border-zinc-100 px-6 py-4">
+        <div className="flex flex-col gap-3 border-b border-zinc-100 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
           <h3 className="text-sm font-semibold text-zinc-900">
-            Бүх ажилтан ({teachers.length})
+            Бүх ажилтан ({filteredTeachers.length})
           </h3>
+          <div className="w-full lg:max-w-md lg:flex-1">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Нэр, албан тушаалаар хайх..."
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
           <AddEmployeeDialog />
         </div>
         <div className="hidden grid-cols-[84px_minmax(240px,1fr)_minmax(220px,1fr)_170px_180px_180px] items-center gap-3 border-b border-zinc-100 bg-zinc-50 px-6 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500 lg:grid">
@@ -42,21 +73,18 @@ export default function AdminTeachersPage() {
         </div>
 
         <ul className="divide-y divide-zinc-100">
-          {teachers.map((t, index) => {
+          {filteredTeachers.map((t, index) => {
             const classItems = store.getClassesForTeacher(t.id);
-            const fallbackClass =
-              fallbackPool.length > 0
-                ? fallbackPool[index % fallbackPool.length]?.name
-                : "10А";
+            const position = t.position?.trim() || "Багш";
+            const isTeacherPosition = position.toLowerCase().includes("багш");
             const candidateClasses =
-              classItems.length > 0
-                ? classItems.filter((c) => gradeRangeRegex.test(c.name))
-                : [];
+              classItems.length > 0 ? classItems.filter((c) => gradeRangeRegex.test(c.name)) : [];
             const selectedPool = candidateClasses.length > 0 ? candidateClasses : classItems;
+            const teacherPool = selectedPool.length > 0 ? selectedPool : fallbackClasses;
             const homeroomClass =
-              selectedPool.length > 0
-                ? selectedPool[pickDeterministicIndex(t.id, selectedPool.length)]?.name
-                : fallbackClass;
+              isTeacherPosition && teacherPool.length > 0
+                ? teacherPool[pickDeterministicIndex(t.id, teacherPool.length)]?.name
+                : "-";
 
             return (
               <li key={t.id} className="px-4 py-4 sm:px-6">
@@ -69,7 +97,7 @@ export default function AdminTeachersPage() {
 
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-zinc-900">
-                      {t.name}
+                      {formatNameWithInitial(t.name)}
                     </p>
                   </div>
 
@@ -78,7 +106,7 @@ export default function AdminTeachersPage() {
                   </div>
 
                   <div className="text-sm text-zinc-700">
-                    {t.position?.trim() || "Багш"}
+                    {position}
                   </div>
 
                   <div className="text-center text-sm text-zinc-700">{homeroomClass}</div>
@@ -96,7 +124,7 @@ export default function AdminTeachersPage() {
                       <input type="hidden" name="id" value={t.id} />
                       <button
                         type="submit"
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-200 text-red-600 transition hover:bg-red-50"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                         title="Устгах"
                         aria-label={`${t.name} устгах`}
                       >

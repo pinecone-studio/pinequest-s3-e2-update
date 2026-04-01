@@ -2,8 +2,13 @@
 
 import { Bookmark, Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
-import { DIFFICULTY_LABELS } from "../../_lib/utils";
+import {
+  DIFFICULTY_LABELS,
+  hasTraditionalMongolianText,
+  resolveQuestionTitle,
+} from "../../_lib/utils";
 
 type QuestionCardProps = {
   compactAction?: boolean;
@@ -30,7 +35,9 @@ export function QuestionCard({
   onToggleSelect,
   onToggleLike,
 }: QuestionCardProps) {
-  const promptLines = splitPromptLines(question.content.prompt);
+  const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
+  const shouldRenderPromptVertical =
+    isNationalScript && hasTraditionalMongolianText(question.content.prompt);
 
   return (
     <article
@@ -64,14 +71,28 @@ export function QuestionCard({
         onClick={onOpen}
         type="button"
       >
-        <h3 className="line-clamp-2 text-[20px] font-semibold leading-[120%] tracking-[0.04em] text-[#323232]">
-          {question.title || "Квадрат функцийн оройг олох"}
+        <h3 className="line-clamp-2 text-[18px] font-medium leading-[22px] text-[#323232]">
+          {resolveQuestionTitle(question.title, question.content.prompt) ||
+            "Квадрат функцийн оройг олох"}
         </h3>
-        <div className="mt-[14px] space-y-[2px] text-[14px] font-medium leading-[20px] text-[#323232]">
-          {promptLines.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
-        </div>
+        <p
+          className={`mt-[14px] text-[12px] text-[#323232] ${
+            shouldRenderPromptVertical
+              ? "min-h-28 overflow-x-auto leading-7"
+              : "line-clamp-2 leading-[18px]"
+          }`}
+          style={
+            shouldRenderPromptVertical
+              ? {
+                  writingMode: "vertical-lr",
+                  textOrientation: "mixed",
+                  whiteSpace: "pre-wrap",
+                }
+              : undefined
+          }
+        >
+          {question.content.prompt}
+        </p>
       </button>
 
       <div className="mt-[18px] flex flex-wrap items-center gap-[10px]">

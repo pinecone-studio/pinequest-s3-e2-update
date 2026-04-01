@@ -8,6 +8,7 @@ import type {
   QuestionBuilderValues,
   QuestionValidationErrors,
 } from "../../_lib/types";
+import { hasTraditionalMongolianText } from "../../_lib/utils";
 import {
   BuilderField,
   builderInputClassName,
@@ -48,6 +49,9 @@ export function QuestionBuilderDetailsSection({
 }: QuestionBuilderDetailsSectionProps) {
   const subtopicOptions =
     SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [];
+  const isNationalScriptSubject = values.subject === NATIONAL_SCRIPT_SUBJECT;
+  const shouldRenderPromptVertical =
+    isNationalScriptSubject && hasTraditionalMongolianText(values.prompt);
 
   return (
     <section>
@@ -134,9 +138,22 @@ export function QuestionBuilderDetailsSection({
         >
           <>
             <textarea
-              className={`${builderInputClassName} min-h-18 px-[20px] py-3`}
+              className={`${builderInputClassName} px-[20px] py-3 ${
+                shouldRenderPromptVertical
+                  ? "min-h-56 overflow-x-auto leading-8"
+                  : "min-h-18"
+              }`}
               onChange={(event) => onPromptChange(event.target.value)}
               placeholder="Сурагчид харагдах асуулгын текстээ энд бичнэ үү."
+              style={
+                shouldRenderPromptVertical
+                  ? {
+                      writingMode: "vertical-lr",
+                      textOrientation: "mixed",
+                      whiteSpace: "pre-wrap",
+                    }
+                  : undefined
+              }
               value={values.prompt}
             />
             {values.subject === NATIONAL_SCRIPT_SUBJECT ? (
