@@ -3,7 +3,8 @@ import { examTable } from "../../../../db/schema";
 import { GraphQLUserContext } from "../../../context";
 
 function parseIds(value: unknown): string[] {
-  if (Array.isArray(value)) return value.filter((x): x is string => typeof x === "string");
+  if (Array.isArray(value))
+    return value.filter((x): x is string => typeof x === "string");
   if (typeof value !== "string") return [];
   try {
     const parsed = JSON.parse(value) as unknown;

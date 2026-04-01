@@ -2,6 +2,7 @@
 
 "use client";
 
+import { useQuery } from "@apollo/client/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -9,8 +10,15 @@ import {
 	readExamMonitoringStateMap,
 	writeExamMonitoringStateMap,
 } from "@/app/lib/exam-monitoring-store";
+import { GET_ALL_SUBJECTS, GET_EXAM_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
+import { HARDCODED_SCHOOL_ID } from "../_lib/hardcoded-teacher-api";
 import { MonitorDetailSection } from "./_components/monitor-detail-section";
 import { MonitorExamsSection } from "./_components/monitor-exams-section";
+import {
+	mapBackendExamsToMonitorCards,
+	formatMonitorSavedAt,
+	type BackendExamMonitorRow,
+} from "./_lib/backend-exams-to-monitor-cards";
 import {
 	MOCK_ACTIVE_STUDENTS,
 	formatRemainingDuration,
@@ -22,9 +30,49 @@ import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
 import { normalizeSavedExamRecord } from "../exam/_lib/utils";
 import type { SavedExamRecord } from "../exam/_lib/types";
 
+type GetAllSubjectResponse = {
+	getAllSubject: { id: string; name: string }[];
+};
+
+type GetExamBySchoolIdResponse = {
+	getExamBySchoolId: BackendExamMonitorRow[];
+};
+
 export default function ExamOptimizationPage() {
 	const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
 	const searchParams = useSearchParams();
+
+	const { data: subjectsData } = useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+	const { data: examsData } = useQuery<GetExamBySchoolIdResponse>(
+		GET_EXAM_BY_SCHOOL_ID,
+		{
+			variables: { schoolId: HARDCODED_SCHOOL_ID },
+			fetchPolicy: "cache-and-network",
+		},
+	);
+
+	const subjectNameById = useMemo(() => {
+		const map = new Map<string, string>();
+		for (const s of subjectsData?.getAllSubject ?? []) {
+			map.set(s.id, s.name);
+		}
+		return map;
+	}, [subjectsData?.getAllSubject]);
+
+	const demoClassOptions = useMemo(
+		() => teacherClasses.map((k) => ({ id: k.id, label: k.name })),
+		[],
+	);
+
+	const apiMonitorCards = useMemo(() => {
+		const rows = examsData?.getExamBySchoolId;
+		if (!rows?.length) return [];
+		return mapBackendExamsToMonitorCards(
+			rows,
+			subjectNameById,
+			demoClassOptions,
+		);
+	}, [demoClassOptions, examsData?.getExamBySchoolId, subjectNameById]);
 
 	const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
 	const [selectedExamId, setSelectedExamId] = useState<string | null | undefined>(
@@ -85,50 +133,55 @@ export default function ExamOptimizationPage() {
 		return bestGrade;
 	}, [activeStudents]);
 
-	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
-		if (savedExams.length === 0) {
-			return [
-				{
-					id: "monitor-mock-1",
-					title: "10-р ангийн математикийн сорил",
-					grade: "10-р анги",
-					subject: "Математик",
-					topic: "Квадрат функц",
-					status: "ongoing",
-					durationInMinutes: 40,
-					questionCount: 12,
-					totalPoints: 24,
-					classLabel: currentClassName,
-					classLabels: currentClassName === "—" ? [] : [currentClassName],
-					classOptions:
-						currentClassName === "—"
-							? []
-							: [{ id: "mock-class-10a", label: currentClassName }],
-					savedAtLabel: "Одоо явагдаж байна",
-				},
-				{
-					id: "monitor-mock-2",
-					title: "9-р ангийн логикийн шалгалт",
-					grade: "9-р анги",
-					subject: "Математик",
-					topic: "Логарифм",
-					status: "completed",
-					durationInMinutes: 30,
-					questionCount: 10,
-					totalPoints: 20,
-					classLabel: "9B",
-					classLabels: ["9B"],
-					classOptions: [{ id: "mock-class-9b", label: "9B" }],
-					savedAtLabel: "Өнөөдөр дууссан",
-				},
-			];
-		}
+	const fallbackMockExamCards = useMemo<MonitorExamCardItem[]>(() => {
+		return [
+			{
+				id: "monitor-mock-1",
+				title: "10-р ангийн математикийн сорил",
+				grade: "10-р анги",
+				subject: "Математик",
+				topic: "Квадрат функц",
+				status: "ongoing",
+				durationInMinutes: 40,
+				questionCount: 12,
+				totalPoints: 24,
+				classLabel: currentClassName,
+				classLabels: currentClassName === "—" ? [] : [currentClassName],
+				classOptions:
+					currentClassName === "—"
+						? []
+						: [{ id: "mock-class-10a", label: currentClassName }],
+				savedAtLabel: "Одоо явагдаж байна",
+			},
+			{
+				id: "monitor-mock-2",
+				title: "9-р ангийн логикийн шалгалт",
+				grade: "9-р анги",
+				subject: "Математик",
+				topic: "Логарифм",
+				status: "completed",
+				durationInMinutes: 30,
+				questionCount: 10,
+				totalPoints: 20,
+				classLabel: "9B",
+				classLabels: ["9B"],
+				classOptions: [{ id: "mock-class-9b", label: "9B" }],
+				savedAtLabel: "Өнөөдөр дууссан",
+			},
+		];
+	}, [currentClassName]);
+
+	const localStorageMonitorCards = useMemo<MonitorExamCardItem[]>(() => {
+		if (savedExams.length === 0) return [];
 
 		const firstSentExamId =
-			savedExams.find((item) => (item.sentClassIds ?? []).length > 0)?.id ?? null;
+			savedExams.find((item) => (item.sentClassIds ?? []).length > 0)?.id ??
+			null;
 		const resolveClassLabel = (classId?: string) => {
 			if (!classId) return "Анги оноогоогүй";
-			return teacherClasses.find((klass) => klass.id === classId)?.name ?? classId;
+			return (
+				teacherClasses.find((klass) => klass.id === classId)?.name ?? classId
+			);
 		};
 
 		return savedExams.map((exam) => {
@@ -165,7 +218,13 @@ export default function ExamOptimizationPage() {
 				savedAtLabel: formatMonitorSavedAt(exam.savedAt),
 			};
 		});
-	}, [currentClassName, savedExams]);
+	}, [savedExams]);
+
+	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
+		if (apiMonitorCards.length > 0) return apiMonitorCards;
+		if (localStorageMonitorCards.length > 0) return localStorageMonitorCards;
+		return fallbackMockExamCards;
+	}, [apiMonitorCards, fallbackMockExamCards, localStorageMonitorCards]);
 
 	const effectiveSelectedExamId = selectedExamId ?? searchParams.get("examId");
 	const activeMonitorExam = useMemo(() => {
@@ -383,16 +442,4 @@ export default function ExamOptimizationPage() {
 			</div>
 		</section>
 	);
-}
-
-function formatMonitorSavedAt(dateString: string) {
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return dateString;
-
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hour = String(date.getHours()).padStart(2, "0");
-  const minute = String(date.getMinutes()).padStart(2, "0");
-
-  return `${month}/${day} өдөр, ${hour}:${minute} цаг`;
 }
