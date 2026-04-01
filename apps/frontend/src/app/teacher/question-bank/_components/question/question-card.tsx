@@ -2,13 +2,8 @@
 
 import { Bookmark, Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
-import {
-  DIFFICULTY_LABELS,
-  hasTraditionalMongolianText,
-  resolveQuestionTitle,
-} from "../../_lib/utils";
+import { DIFFICULTY_LABELS, resolveQuestionTitle } from "../../_lib/utils";
 
 type QuestionCardProps = {
   compactAction?: boolean;
@@ -35,20 +30,15 @@ export function QuestionCard({
   onToggleSelect,
   onToggleLike,
 }: QuestionCardProps) {
-  const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
-  const shouldRenderPromptVertical =
-    isNationalScript && hasTraditionalMongolianText(question.content.prompt);
+  const promptLines = splitPromptLines(question.content.prompt);
 
   return (
     <article
       className={cn(
         "group relative flex min-h-[248px] flex-col rounded-[10px] border px-[28px] pb-[20px] pt-[24px]",
-        isActive && !isSelected ? "min-h-[185px]" : "",
-        isSelected
+        isSelected || isActive
           ? "border-[#7DC8FF] bg-white"
-          : isActive
-            ? "border-[#7DC8FF] bg-white"
-            : "border-[#ECECEC] bg-white",
+          : "border-[#ECECEC] bg-white",
       )}
     >
       <button
@@ -71,28 +61,15 @@ export function QuestionCard({
         onClick={onOpen}
         type="button"
       >
-        <h3 className="line-clamp-2 text-[18px] font-medium leading-[22px] text-[#323232]">
+        <h3 className="line-clamp-2 text-[20px] font-semibold leading-[120%] tracking-[0.04em] text-[#323232]">
           {resolveQuestionTitle(question.title, question.content.prompt) ||
             "Квадрат функцийн оройг олох"}
         </h3>
-        <p
-          className={`mt-[14px] text-[12px] text-[#323232] ${
-            shouldRenderPromptVertical
-              ? "min-h-28 overflow-x-auto leading-7"
-              : "line-clamp-2 leading-[18px]"
-          }`}
-          style={
-            shouldRenderPromptVertical
-              ? {
-                  writingMode: "vertical-lr",
-                  textOrientation: "mixed",
-                  whiteSpace: "pre-wrap",
-                }
-              : undefined
-          }
-        >
-          {question.content.prompt}
-        </p>
+        <div className="mt-[14px] space-y-[2px] text-[14px] leading-[20px] text-[#323232]">
+          {promptLines.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
       </button>
 
       <div className="mt-[18px] flex flex-wrap items-center gap-[10px]">
