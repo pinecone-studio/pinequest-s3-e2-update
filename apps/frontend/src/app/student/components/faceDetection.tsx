@@ -5,17 +5,25 @@ import Webcam from "react-webcam";
 import {
   FaceDetector,
   FaceDetectorResult,
-  FaceDetectorOptions,
   Detection,
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
 
-export default function FaceCam() {
+type FaceCamProps = {
+  setFaceDetectionWarning: (msg: string | null) => void;
+  faceDetectionWarning: string | null;
+};
+
+export default function FaceCam({
+  setFaceDetectionWarning,
+  faceDetectionWarning,
+}: FaceCamProps) {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const detectorRef = useRef<FaceDetector | null>(null);
+  const faceWarningSentRef = useRef(false); // tracks if a warning is active
+  const noFaceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Hoisted function
   async function startDetection() {
     const video = webcamRef.current?.video;
     const canvas = canvasRef.current;
@@ -29,8 +37,8 @@ export default function FaceCam() {
 
       const result: FaceDetectorResult | undefined =
         await detectorRef.current.detect(video);
-
       const faces: Detection[] | undefined = result?.detections;
+      const numFaces = faces?.length || 0;
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -38,16 +46,33 @@ export default function FaceCam() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      console.log("Detections:", faces?.length || 0);
-
       faces?.forEach((det) => {
         const box = det.boundingBox;
         if (!box) return;
-
         ctx.strokeStyle = "red";
         ctx.lineWidth = 2;
         ctx.strokeRect(box.originX, box.originY, box.width, box.height);
       });
+
+      // Only trigger warning if none active
+      if (!faceWarningSentRef.current) {
+        if (numFaces > 1) {
+          faceWarningSentRef.current = true;
+          setFaceDetectionWarning("Олон сурагчид зэрэг орохгүй!");
+        } else if (numFaces === 0 && !noFaceTimeoutRef.current) {
+          // Start 3-second timer for no face
+          noFaceTimeoutRef.current = setTimeout(() => {
+            if (!faceWarningSentRef.current) {
+              faceWarningSentRef.current = true;
+              setFaceDetectionWarning("Шалгалтад оролцохгүй байна!");
+            }
+          }, 3000);
+        } else if (numFaces > 0 && noFaceTimeoutRef.current) {
+          // Cancel timer if face appears
+          clearTimeout(noFaceTimeoutRef.current);
+          noFaceTimeoutRef.current = null;
+        }
+      }
 
       requestAnimationFrame(detectFrame);
     };
@@ -66,6 +91,7 @@ export default function FaceCam() {
         runningMode: "IMAGE",
         minDetectionConfidence: 0.5,
       });
+
       detectorRef.current = detector;
       console.log("FaceDetector loaded!");
       startDetection();
@@ -76,24 +102,42 @@ export default function FaceCam() {
     return () => {
       detectorRef.current?.close();
       detectorRef.current = null;
+      if (noFaceTimeoutRef.current) clearTimeout(noFaceTimeoutRef.current);
     };
   }, []);
 
+  // Reset the lock when user closes warning
+  useEffect(() => {
+    if (!faceDetectionWarning) {
+      faceWarningSentRef.current = false;
+    }
+  }, [faceDetectionWarning]);
+
   return (
-    <div style={{ position: "relative", width: "640px", height: "480px" }}>
+    <div style={{ position: "relative", width: "320px", height: "240px" }}>
       <Webcam
         audio={false}
         ref={webcamRef}
-        style={{ width: "640px", height: "480px" }}
+        style={{
+          position: "absolute",
+          width: "320px",
+          height: "240px",
+          borderRadius: "20px",
+          border: "3px solid #2563eb",
+          top: 0,
+          right: 0,
+        }}
       />
       <canvas
         ref={canvasRef}
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
-          width: "640px",
-          height: "480px",
+          right: 0,
+          width: "320px",
+          height: "240px",
+          borderRadius: "20px",
+          border: "3px solid #2563eb",
         }}
       />
     </div>
