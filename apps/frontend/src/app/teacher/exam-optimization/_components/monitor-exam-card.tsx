@@ -33,7 +33,9 @@ export function MonitorExamCard({
         {exam.title}
       </h3>
       <p className="mt-3 text-[14px] leading-[1.4] text-[#737373]">
-        y = x^2 - 6x + 5 функцийн оройн координат аль нь вэ?
+        {exam.topic?.trim()
+          ? exam.topic
+          : [exam.subject, exam.grade].filter(Boolean).join(" · ") || "—"}
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
