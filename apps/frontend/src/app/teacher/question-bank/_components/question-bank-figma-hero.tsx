@@ -20,12 +20,12 @@ export function QuestionBankFigmaHero({
         </p>
       </div>
 
-      <div className="inline-flex h-[88px] min-w-[320px] items-center justify-center gap-4 rounded-[16px] bg-[#D7ECFF] px-8">
-        <p className="text-[56px] font-medium leading-none text-[#122459]">
+      <div className="inline-flex h-[56px] w-[149px] items-center justify-center gap-[10px] rounded-[12px] bg-[#D7ECFF] px-[18px]">
+        <p className="text-[20px] font-medium leading-none tracking-[-0.02em] text-[#122459]">
           {totalQuestions}
         </p>
-        <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-[20px] tracking-[0.08em] text-[#122459]">
-          БҮХ АСУУЛТ
+        <p className="whitespace-nowrap text-[20px] font-medium uppercase leading-none tracking-[-0.02em] text-[#122459]">
+          АСУУЛТ
         </p>
       </div>
 
