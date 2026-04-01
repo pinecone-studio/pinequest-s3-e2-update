@@ -84,6 +84,11 @@ function parseDurationMinutes(duration: string | null | undefined): number {
   return Number.isFinite(n) && n > 0 ? n : 40;
 }
 
+function parseGradeCode(grade: string) {
+  const matched = grade.match(/\d+/);
+  return matched ? matched[0] : grade.trim();
+}
+
 export function useTeacherExamPage() {
   const router = useRouter();
   const teacher = useTeacher();
@@ -213,6 +218,7 @@ export function useTeacherExamPage() {
           id: row.id,
           title: row.title ?? "",
           grade: gradeLabel(row.grade),
+          classGroup: "",
           subject: subjectName,
           topic: row.topic ?? "",
           durationInMinutes,
@@ -230,6 +236,10 @@ export function useTeacherExamPage() {
           requiresSchoolApproval: Boolean(row.needpermission),
           approvalStatus: row.needpermission ? "pending" : "not_required",
           sentClassIds: [],
+          approvalExamDate: "",
+          approvalStartTime: "09:00",
+          approvalEndTime: "10:00",
+          approvalLocation: "",
         });
       });
   }, [examsData?.getExamBySchoolId, questionBank, subjectNameById]);
@@ -423,6 +433,21 @@ export function useTeacherExamPage() {
     if (examQuestionDetails.length === 0)
       return showToast("Хадгалахаас өмнө дор хаяж нэг асуулт нэмнэ үү.");
 
+    if (exam.requiresSchoolApproval) {
+      if (!exam.approvalExamDate) {
+        return showToast("Батлуулах огноо сонгоно уу.");
+      }
+      if (!exam.approvalLocation.trim()) {
+        return showToast("Байршил/өрөө оруулна уу.");
+      }
+      if (!exam.approvalStartTime || !exam.approvalEndTime) {
+        return showToast("Эхлэх, дуусах цаг оруулна уу.");
+      }
+      if (exam.approvalEndTime <= exam.approvalStartTime) {
+        return showToast("Дуусах цаг нь эхлэх цагаас хойш байх ёстой.");
+      }
+    }
+
     const generatedTitle = [
       exam.subject.trim() || "Шалгалт",
       exam.topic.trim() || "Ерөнхий сэдэв",
@@ -481,15 +506,20 @@ export function useTeacherExamPage() {
       setActiveSavedExamId(created.id);
 
       if (exam.requiresSchoolApproval) {
+        const classCode = `${parseGradeCode(exam.grade)}${exam.classGroup.trim().toUpperCase()}`;
         upsertPendingApprovalRequest({
           examId: created.id,
           title: nextTitle,
-          className: exam.grade.trim() || "Тодорхойгүй анги",
+          className: classCode || exam.grade.trim() || "Тодорхойгүй анги",
           subject: exam.subject.trim() || "Тодорхойгүй хичээл",
           teacherName: teacher.name || "Багш",
           materialTitle: `${exam.subject.trim() || "Шалгалт"} материал`,
           sentAt: now.slice(0, 16).replace("T", " "),
           questionCount: examQuestionDetails.length,
+          requestedExamDate: exam.approvalExamDate,
+          requestedStartTime: exam.approvalStartTime,
+          requestedEndTime: exam.approvalEndTime,
+          requestedLocation: exam.approvalLocation.trim(),
         });
       }
 
@@ -517,10 +547,15 @@ export function useTeacherExamPage() {
     setExam({
       title: next.title,
       grade: next.grade,
+      classGroup: next.classGroup,
       subject: next.subject,
       topic: next.topic,
       durationInMinutes: next.durationInMinutes,
       requiresSchoolApproval: Boolean(next.requiresSchoolApproval),
+      approvalExamDate: next.approvalExamDate,
+      approvalStartTime: next.approvalStartTime,
+      approvalEndTime: next.approvalEndTime,
+      approvalLocation: next.approvalLocation,
     });
     setExamQuestions(
       next.questions.map((item, index) => ({ ...item, order: index })),

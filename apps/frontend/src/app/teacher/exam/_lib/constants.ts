@@ -16,8 +16,13 @@ export const EXAM_GRADE_OPTIONS = [
 export const INITIAL_FORM: ExamComposerState = {
   title: "",
   grade: "",
+  classGroup: "",
   subject: "",
   topic: "",
   durationInMinutes: 40,
   requiresSchoolApproval: false,
+  approvalExamDate: "",
+  approvalStartTime: "09:00",
+  approvalEndTime: "10:00",
+  approvalLocation: "",
 };
