@@ -36,6 +36,22 @@ import {
 
 type Step = "credentials" | "verify";
 
+/** Narrow shape from `useSignUp().signUp` after verify (passed in fresh to avoid stale closure). */
+type SignUpAfterVerify = {
+	status: string;
+	createdSessionId: string | null;
+	reload?: () => Promise<unknown>;
+};
+
+/** Redirect query can be correct while React state is one render behind — read live URL. */
+function schoolSignupIntentFromCurrentUrl(): boolean {
+	if (typeof window === "undefined") return false;
+	const raw = new URLSearchParams(window.location.search).get(
+		LOGIN_INTENT_QUERY_KEY,
+	);
+	return safeAuthRedirect(raw) === "/school";
+}
+
 const primaryBlue =
 	"bg-[#29B6FF] hover:bg-[#20a8f2] active:bg-[#1899e6] text-white focus-visible:outline-[#29B6FF] focus-visible:outline-offset-2 cursor-pointer";
 const inputClass =
@@ -214,17 +230,20 @@ export function SignUpForm() {
 
 	const activateSessionAndSaveExtras = useCallback(
 		async (
+			/** Pass the `signUp` from `onVerify` after verify succeeds — avoids stale `useCallback` closure. */
+			activeSignUp: SignUpAfterVerify,
 			orgAimag: string,
 			orgHot: string,
 			orgSum: string,
 			orgDetail: string,
 			orgReg: string,
+			signupEmail: string,
 		) => {
-			if (!signUp || signUp.status !== "complete") return;
-			let sessionId = signUp.createdSessionId;
+			if (!activeSignUp || activeSignUp.status !== "complete") return;
+			let sessionId = activeSignUp.createdSessionId;
 			if (!sessionId) {
-				await clerkTryReloadSessionResource(signUp);
-				sessionId = signUp.createdSessionId;
+				await clerkTryReloadSessionResource(activeSignUp);
+				sessionId = activeSignUp.createdSessionId;
 			}
 			if (!sessionId) {
 				throw new Error("Session үүсээгүй байна. Дахин оролдоно уу.");
@@ -237,11 +256,12 @@ export function SignUpForm() {
 
 			await clerk.setActive({ session: sessionId });
 
+			const sleep = (ms: number) =>
+				new Promise<void>((resolve) => {
+					setTimeout(resolve, ms);
+				});
+
 			if (hasAnyOrganizationSignupField(a, h, s, d, r)) {
-				const sleep = (ms: number) =>
-					new Promise<void>((resolve) => {
-						setTimeout(resolve, ms);
-					});
 				let saved = false;
 				for (let i = 0; i < 30 && !saved; i++) {
 					const u = clerk.user;
@@ -261,18 +281,28 @@ export function SignUpForm() {
 					}
 					await sleep(50);
 				}
-				if (!saved) {
-					try {
-						await saveSignUpProfileExtras(a, h, s, d, r);
-					} catch {
-						// Сервер талд session харагдахгүй үлдвэл алгасна
+				/**
+				 * Clerk `user.updated` webhooks fire reliably off the Backend API.
+				 * Browser-only `user.update` often does not trigger the same delivery to Workers.
+				 */
+				try {
+					const serverSave = await saveSignUpProfileExtras(a, h, s, d, r);
+					if (!serverSave.ok) {
+						console.error(
+							"[sign-up] saveSignUpProfileExtras:",
+							serverSave.message,
+						);
 					}
+				} catch (err) {
+					console.error("[sign-up] saveSignUpProfileExtras:", err);
 				}
 			}
 
+			/** School row is synced to D1 via Clerk `user.updated` webhook (unsafeMetadata). */
+
 			hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
 		},
-		[afterAuthUrl, clerk, signUp],
+		[afterAuthUrl, clerk, isOrganizationSignup],
 	);
 
 	async function onCredentials(e: React.FormEvent<HTMLFormElement>) {
@@ -381,11 +411,13 @@ export function SignUpForm() {
 			}
 
 			await activateSessionAndSaveExtras(
+				signUp,
 				orgAimag,
 				orgHot,
 				orgSum,
 				orgDetail,
 				orgReg,
+				email.trim(),
 			);
 		} catch (caught: unknown) {
 			skipSignedInEffectRedirect.current = false;

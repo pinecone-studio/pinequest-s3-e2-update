@@ -1,9 +1,20 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { ApolloProvider } from "@apollo/client/react";
-import { getApolloClient } from "../../../apollo-client";
+import { useMemo, type ReactNode } from "react";
+import { createApolloClient } from "../../../apollo-client";
 
 export function AppApolloProvider({ children }: { children: ReactNode }) {
-  return <ApolloProvider client={getApolloClient()}>{children}</ApolloProvider>;
+  const { getToken } = useAuth();
+
+  const client = useMemo(
+    () =>
+      createApolloClient({
+        getToken: async () => (await getToken()) ?? null,
+      }),
+    [getToken],
+  );
+
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

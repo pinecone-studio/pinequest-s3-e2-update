@@ -1,20 +1,64 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { SetContextLink } from "@apollo/client/link/context";
 
-function getGraphqlUri() {
+export function getGraphqlUri() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
   if (!backendUrl) {
     return "http://localhost:8787/graphql";
   }
 
-  return backendUrl.endsWith("/graphql") ? backendUrl : `${backendUrl.replace(/\/+$/, "")}/graphql`;
+  return backendUrl.endsWith("/graphql")
+    ? backendUrl
+    : `${backendUrl.replace(/\/+$/, "")}/graphql`;
 }
 
-export function createApolloClient() {
+export type CreateApolloClientOptions = {
+  /** Clerk session JWT; omitted on SSR / when anonymous. */
+  getToken?: () => Promise<string | null>;
+};
+
+function normalizeHeaders(
+  headers: unknown,
+): Record<string, string> {
+  if (!headers || typeof headers !== "object") return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(headers as Record<string, unknown>)) {
+    if (v === undefined || v === null) continue;
+    out[k] = String(v);
+  }
+  return out;
+}
+
+export function createApolloClient(options?: CreateApolloClientOptions) {
+  const httpLink = new HttpLink({
+    uri: getGraphqlUri(),
+  });
+
+  const authLink = new SetContextLink(async (prevContext) => {
+    const getToken = options?.getToken;
+    let token: string | null = null;
+    if (getToken) {
+      try {
+        token = await getToken();
+      } catch {
+        token = null;
+      }
+    }
+    const headers = {
+      ...normalizeHeaders(prevContext.headers),
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    };
+    return { headers };
+  });
+
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: new HttpLink({
-      uri: getGraphqlUri(),
-    }),
+    link: ApolloLink.from([authLink, httpLink]),
     cache: new InMemoryCache(),
     defaultOptions: {
       watchQuery: {
@@ -25,20 +69,6 @@ export function createApolloClient() {
       },
     },
   });
-}
-
-let browserApolloClient: ApolloClient | null = null;
-
-export function getApolloClient() {
-  if (typeof window === "undefined") {
-    return createApolloClient();
-  }
-
-  if (!browserApolloClient) {
-    browserApolloClient = createApolloClient();
-  }
-
-  return browserApolloClient;
 }
 
 export const graphqlEndpoint = getGraphqlUri();
