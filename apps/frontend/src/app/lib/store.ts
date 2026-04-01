@@ -49,6 +49,62 @@ let users: User[] = [
   },
 ];
 
+const SEEDED_TEACHER_TARGET = 26;
+const SEEDED_TEACHER_CURRENT = users.filter((u) => u.role === "teacher").length;
+if (SEEDED_TEACHER_CURRENT < SEEDED_TEACHER_TARGET) {
+  const seededEmployees: Array<{
+    name: string;
+    position: string;
+    specialty: string;
+  }> = [
+    { name: "Төгөлдөр Батсайхан", position: "Багш", specialty: "Физик" },
+    { name: "Мөнхзаяа Даваа", position: "Багш", specialty: "Хими" },
+    { name: "Саруул Гантулга", position: "Багш", specialty: "Биологи" },
+    { name: "Номуун Эрдэнэбат", position: "Багш", specialty: "Монгол хэл" },
+    { name: "Билгүүн Отгонбаатар", position: "Багш", specialty: "Информатик" },
+    { name: "Энэрэл Мөнхсайхан", position: "Багш", specialty: "Газарзүй" },
+    { name: "Хүслэн Чинзориг", position: "Багш", specialty: "Түүх" },
+    { name: "Наранчимэг Баярцогт", position: "Багш", specialty: "Орос хэл" },
+    { name: "Энхжин Болормаа", position: "Багш", specialty: "Дүрслэх урлаг" },
+    { name: "Тэмүүлэн Лхагвасүрэн", position: "Багш", specialty: "Биеийн тамир" },
+    { name: "Амарсанаа Содбаатар", position: "Багш", specialty: "Технологи" },
+    { name: "Ганзориг Бямбасүрэн", position: "Багш", specialty: "Нийгмийн ухаан" },
+    { name: "Уянга Дэлгэрмаа", position: "Сургалтын менежер", specialty: "Хөтөлбөр, үнэлгээ" },
+    { name: "Мишээл Энх-Амгалан", position: "Нийгмийн ажилтан", specialty: "Сурагчийн хөгжил" },
+    { name: "Наранзул Батдэлгэр", position: "Номын санч", specialty: "Номын сан" },
+    { name: "Отгонжаргал Жавхлан", position: "Нягтлан бодогч", specialty: "Санхүү" },
+    { name: "Хонгорзул Түвшинбаяр", position: "Эмч", specialty: "Сургуулийн эмнэлэг" },
+    { name: "Бат-Эрдэнэ Төмөрбаатар", position: "Манаач", specialty: "Аюулгүй байдал" },
+    { name: "Солонго Цэрэннадмид", position: "Цэвэрлэгч", specialty: "Үйлчилгээ" },
+    { name: "Гэрэлмаа Нямсүрэн", position: "Цэвэрлэгч", specialty: "Үйлчилгээ" },
+    { name: "Мөнгөншагай Пүрэвдорж", position: "Лаборант", specialty: "Байгалийн ухаан" },
+    { name: "Баясгалан Отгонбаяр", position: "IT инженер", specialty: "Систем, сүлжээ" },
+    { name: "Эрдэнэчимэг Сүхбат", position: "Нарийн бичиг", specialty: "Захиргаа" },
+  ];
+
+  const extraTeachers: User[] = Array.from(
+    { length: SEEDED_TEACHER_TARGET - SEEDED_TEACHER_CURRENT },
+    (_, index) => {
+      const teacherNumber = SEEDED_TEACHER_CURRENT + index + 1;
+      const seeded = seededEmployees[index] ?? {
+        name: `Ажилтан ${teacherNumber}`,
+        position: "Ажилтан",
+        specialty: "Ерөнхий",
+      };
+      return {
+        id: `user-teacher-${teacherNumber}`,
+        email: `teacher${teacherNumber}@demo.mn`,
+        name: seeded.name,
+        role: "teacher",
+        registerNumber: `УБ${String(90010000 + teacherNumber).padStart(8, "0")}`,
+        position: seeded.position,
+        specialty: seeded.specialty,
+      };
+    },
+  );
+  users = [...users, ...extraTeachers];
+}
+
 let classes: SchoolClass[] = [
   {
     id: "class-1",

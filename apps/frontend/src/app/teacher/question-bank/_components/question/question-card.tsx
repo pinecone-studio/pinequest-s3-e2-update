@@ -125,7 +125,7 @@ function Chip({
   return (
     <span
       className={cn(
-        "inline-flex h-[20px] items-center rounded-[5px] px-[14px] text-[8px] font-medium leading-[10px]",
+        "inline-flex h-[24px] items-center rounded-[5px] px-[14px] text-[12px] font-medium leading-[14px]",
         tone === "blue"
           ? "bg-[#D7ECFF] text-[#5172A6]"
           : "bg-[#F1F3F7] text-[#2F4A87]",

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  addStudent,
   assignTeachersToClass,
   deleteClass,
   removeStudent,
@@ -30,6 +29,10 @@ export default async function AdminClassDetailPage({
   const teachers = store.listTeachers();
   const roster = store.listStudentsInClass(c.id);
   const pastExams = getPastExamsForClass(c.id, roster);
+  const homeroomTeacherName =
+    c.teacherIds
+      .map((teacherId) => teachers.find((teacher) => teacher.id === teacherId)?.name)
+      .find(Boolean) ?? "-";
 
   return (
     <div className="space-y-10">
@@ -62,6 +65,15 @@ export default async function AdminClassDetailPage({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
         <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h3 className="text-sm font-semibold text-zinc-900">Ангийн нэр</h3>
+          <div className="mt-3 space-y-1 text-sm text-zinc-600">
+            <p>
+              <span className="font-medium text-zinc-800">{c.name}</span> даасан багш:{" "}
+              <span className="text-zinc-900">{homeroomTeacherName}</span>
+            </p>
+            <p>
+              Нийт сурагч: <span className="font-medium text-zinc-900">{roster.length}</span>
+            </p>
+          </div>
           <form
             action={updateClass}
             className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
@@ -118,43 +130,6 @@ export default async function AdminClassDetailPage({
         updateStudentAction={updateStudent}
         removeStudentAction={removeStudent}
       />
-
-      <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h3 className="text-sm font-semibold text-zinc-900">Сурагч нэмэх</h3>
-        <form
-          action={addStudent}
-          className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          <input type="hidden" name="classId" value={c.id} />
-          <label className="block sm:col-span-2">
-            <span className="text-xs font-medium text-zinc-500">
-              Регистрийн дугаар
-            </span>
-            <input
-              name="studentNumber"
-              required
-              placeholder="жишээ: УБ99112233"
-              className={field}
-            />
-          </label>
-          <label className="block">
-            <span className="text-xs font-medium text-zinc-500">Овог</span>
-            <input name="lastName" required className={field} />
-          </label>
-          <label className="block">
-            <span className="text-xs font-medium text-zinc-500">Нэр</span>
-            <input name="firstName" required className={field} />
-          </label>
-          <div className="sm:col-span-2 lg:col-span-4">
-            <button
-              type="submit"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-            >
-              Ангид нэмэх
-            </button>
-          </div>
-        </form>
-      </section>
 
     </div>
   );
