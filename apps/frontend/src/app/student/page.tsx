@@ -15,7 +15,6 @@ import { CompletedScreen } from "./components/completed-screen";
 import { EntryStep } from "./components/entry-step";
 import { ExamScreen } from "./components/exam-screen";
 import { FinishConfirmationDialog } from "./components/finish-confirmation-dialog";
-import { PrecheckStep } from "./components/precheck-step";
 import { examData } from "./mock-data";
 import type { ExamData, ExamPhase, OptionId } from "./types";
 import { formatTimer } from "./utils";
@@ -26,6 +25,7 @@ export default function StudentExamPage() {
 	const [studentFirstName, setStudentFirstName] = useState("");
 	const [studentEmail, setStudentEmail] = useState("");
 	const [classCode, setClassCode] = useState("");
+	const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
 	const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
 	const [monitoringStateMap, setMonitoringStateMap] =
 		useState<ExamMonitoringScopeStateMap>({});
@@ -104,6 +104,7 @@ export default function StudentExamPage() {
 		studentLastName.trim().length > 1 &&
 		studentFirstName.trim().length > 1 &&
 		isEmailValid &&
+		hasAcceptedRules &&
 		(!requiresDeliveredClass ||
 			(normalizedClassCode.length > 0 && isSelectedClassDelivered));
 	const canStartExam = usesTeacherControlledStart
@@ -114,22 +115,7 @@ export default function StudentExamPage() {
 					remainingSeconds > 0,
 		  )
 		: true;
-	const precheckStatusText = activeSavedExam
-		? !normalizedClassCode
-			? "Илгээсэн ангийн кодоо оруулна уу."
-			: !isSelectedClassDelivered
-				? "Энэ ангид тухайн шалгалт илгээгдээгүй байна."
-				: !isTeacherStarted
-					? "Багш шалгалтыг эхлүүлэхийг хүлээж байна."
-					: remainingSeconds > 0
-						? `Шалгалт эхэлсэн. Үлдсэн хугацаа: ${timerText}`
-						: "Шалгалтын хугацаа дууссан байна."
-		: "Шалгалт эхлэхэд бэлэн байна.";
-	const startButtonLabel = usesTeacherControlledStart
-		? canStartExam
-			? "Шалгалтад орох"
-			: "Багш эхлүүлэхийг хүлээнэ үү"
-		: "Шалгалт эхлүүлэх";
+	const canProceedToExam = canProceed && canStartExam;
 	const classCodeHint = activeSavedExam
 		? normalizedClassCode.length === 0
 			? "Шалгалт илгээгдсэн ангийг оруулна уу. Жишээ: 10A"
@@ -227,13 +213,15 @@ export default function StudentExamPage() {
 				studentFirstName={studentFirstName}
 				studentEmail={studentEmail}
 				classCode={classCode}
-				canProceed={canProceed}
+				canProceed={canProceedToExam}
+				hasAcceptedRules={hasAcceptedRules}
 				classCodeHint={classCodeHint}
 				classCodeRequired={requiresDeliveredClass}
 				onChangeLastName={setStudentLastName}
 				onChangeFirstName={setStudentFirstName}
 				onChangeEmail={setStudentEmail}
 				onChangeClassCode={setClassCode}
+				onToggleAcceptedRules={setHasAcceptedRules}
 				onApplyDemo={() => {
 					const demoClassName =
 						activeSavedExam && (activeSavedExam.sentClassIds ?? []).length > 0
@@ -246,22 +234,9 @@ export default function StudentExamPage() {
 					setStudentFirstName("Элзий-Орших");
 					setStudentEmail("student@school.mn");
 					setClassCode(demoClassName);
+					setHasAcceptedRules(true);
 				}}
-				onProceed={() => setPhase("precheck")}
-			/>
-		);
-	}
-
-	if (phase === "precheck") {
-		return (
-			<PrecheckStep
-				examTitle={resolvedExamData.title}
-				durationMinutes={resolvedExamData.durationMinutes}
-				canStart={canStartExam}
-				startButtonLabel={startButtonLabel}
-				statusText={precheckStatusText}
-				studentEmail={studentEmail}
-				onStart={handleStartExam}
+				onProceed={handleStartExam}
 			/>
 		);
 	}
@@ -287,6 +262,7 @@ export default function StudentExamPage() {
 				onToggleFlag={handleToggleFlag}
 				onJump={(questionId) => setCurrentQuestionIndex(questionId - 1)}
 				onFinish={() => setShowFinishDialog(true)}
+				isFinishDialogOpen={showFinishDialog}
 			/>
 
 			<FinishConfirmationDialog

@@ -1,5 +1,4 @@
 import type { OptionId } from "../types";
-import { NavigatorLegend } from "./navigator-legend";
 
 type QuestionNavigatorProps = {
   total: number;
@@ -16,53 +15,37 @@ export function QuestionNavigator({
   currentQuestionId,
   answers,
   flagged,
-  answeredCount,
   onJump,
-  onFinish,
 }: QuestionNavigatorProps) {
   return (
-    <section className="rounded-3xl border border-[#dbe3f0] bg-white p-6 shadow-[0_10px_26px_rgba(27,39,80,0.06)]">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h3 className="text-4 font-bold text-[#1f2a44]">Асуултууд</h3>
-        <NavigatorLegend />
-      </div>
+    <section className="min-h-43 w-full rounded-xl border border-[#b8d9ff] bg-[#eef7ff] px-6 py-3">
+      <h3 className="text-[18px] font-normal text-[#1a2e68]">Асуултууд</h3>
 
-      <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 sm:gap-3 md:grid-cols-8 lg:grid-cols-10">
+      <div className="mt-3 grid grid-cols-10 gap-3">
         {Array.from({ length: total }, (_, idx) => idx + 1).map((id) => {
           const isCurrent = id === currentQuestionId;
           const isAnswered = Boolean(answers[id]);
           const isFlagged = Boolean(flagged[id]);
 
           const stateClass = isCurrent
-            ? "border-[#2563eb] bg-[#2563eb] text-white"
+            ? "border-[#3b82f6] bg-[#e9f3ff] text-[#1a2e68]"
             : isFlagged
-              ? "border-[#f59e0b] bg-[#fffbeb] text-[#b45309]"
+              ? "border-[#facc15] bg-[#fff8db] text-[#7a5800]"
               : isAnswered
-                ? "border-[#22c55e] bg-[#f0fdf4] text-[#15803d]"
-                : "border-[#dbe3f0] bg-white text-[#4b5f89] hover:bg-[#f8fbff]";
+                ? "border-[#4ade80] bg-[#effdf3] text-[#16a34a]"
+                : "border-[#b8d9ff] bg-[#f4faff] text-[#5e7196] hover:bg-white";
 
           return (
             <button
               key={id}
               type="button"
               onClick={() => onJump(id)}
-              className={`h-11 rounded-xl border text-3 font-bold transition ${stateClass}`}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border text-[18px] font-medium transition ${stateClass}`}
             >
               {id}
             </button>
           );
         })}
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-3 text-[#5f7090]">Явц: {answeredCount}/{total} хариулсан</p>
-        <button
-          type="button"
-          onClick={onFinish}
-          className="rounded-xl bg-[#1d4ed8] px-6 py-2.5 text-3 font-semibold text-white hover:bg-[#1b43bd]"
-        >
-          Шалгалт дуусгах
-        </button>
       </div>
     </section>
   );
