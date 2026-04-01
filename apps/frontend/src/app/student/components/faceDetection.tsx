@@ -10,10 +10,14 @@ import {
 } from "@mediapipe/tasks-vision";
 
 type FaceCamProps = {
-  setFaceDetectionWarning: (msg: string) => void;
+  setFaceDetectionWarning: (msg: string | null) => void;
+  faceDetectionWarning: string | null;
 };
 
-export default function FaceCam({ setFaceDetectionWarning }: FaceCamProps) {
+export default function FaceCam({
+  setFaceDetectionWarning,
+  faceDetectionWarning,
+}: FaceCamProps) {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const detectorRef = useRef<FaceDetector | null>(null);
@@ -87,6 +91,7 @@ export default function FaceCam({ setFaceDetectionWarning }: FaceCamProps) {
         runningMode: "IMAGE",
         minDetectionConfidence: 0.5,
       });
+
       detectorRef.current = detector;
       console.log("FaceDetector loaded!");
       startDetection();
@@ -101,14 +106,15 @@ export default function FaceCam({ setFaceDetectionWarning }: FaceCamProps) {
     };
   }, []);
 
-  // Function to reset warning lock when user closes warning
-  const handleCloseWarning = () => {
-    faceWarningSentRef.current = false; // allow new warnings
-    setFaceDetectionWarning(""); // clear warning message
-  };
+  // Reset the lock when user closes warning
+  useEffect(() => {
+    if (!faceDetectionWarning) {
+      faceWarningSentRef.current = false;
+    }
+  }, [faceDetectionWarning]);
 
   return (
-    <div style={{ position: "relative", width: "640px", height: "480px" }}>
+    <div style={{ position: "relative", width: "320px", height: "240px" }}>
       <Webcam
         audio={false}
         ref={webcamRef}
@@ -134,9 +140,6 @@ export default function FaceCam({ setFaceDetectionWarning }: FaceCamProps) {
           border: "3px solid #2563eb",
         }}
       />
-
-      {/* Optional button inside FaceCam to close warning (or you can handle outside) */}
-      <button style={{ display: "none" }} onClick={handleCloseWarning} />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { ExamHeader } from "./exam-header";
 import { ProgressSummary } from "./progress-summary";
 import { QuestionCard } from "./question-card";
 import { QuestionNavigator } from "./question-navigator";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AlertTriangle, X } from "lucide-react";
 import FaceCam from "./faceDetection";
 
@@ -47,30 +47,13 @@ export function ExamScreen({
     string | null
   >(null);
 
-  // useEffect(() => {
-  //   const handleWindowChange = () => {
-  //     setWarning(true);
-  //   };
-
-  //   const handleVisibility = () => {
-  //     if (document.hidden) {
-  //       handleWindowChange();
-  //     }
-  //   };
-
-  //   window.addEventListener("blur", handleWindowChange);
-  //   document.addEventListener("visibilitychange", handleVisibility);
-
-  //   return () => {
-  //     window.removeEventListener("blur", handleWindowChange);
-  //     document.removeEventListener("visibilitychange", handleVisibility);
-  //   };
-  // }, []);
-
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-4 py-6 text-[#1f2a44] md:px-6 lg:px-8 relative">
       <div className="absolute top-10 right-20">
-        <FaceCam setFaceDetectionWarning={setFaceDetectionWarning} />
+        <FaceCam
+          setFaceDetectionWarning={setFaceDetectionWarning}
+          faceDetectionWarning={faceDetectionWarning}
+        />
       </div>
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
@@ -140,6 +123,7 @@ export function ExamScreen({
           </div>
         </div>
       )}
+
       {faceDetectionWarning && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
