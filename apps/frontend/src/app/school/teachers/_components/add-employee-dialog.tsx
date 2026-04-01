@@ -1,16 +1,33 @@
 "use client";
 
+import { useMutation } from "@apollo/client/react";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { createTeacher } from "@/app/school/action";
+import { ADD_TEACHER } from "@/graphql/typeDefs/mutations";
+import { GET_TEACHERS_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
 
 const inputClass =
   "mt-1 w-full min-w-0 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm";
 
 const labelClass = "block min-w-0 text-xs font-medium text-zinc-600";
 
-export function AddEmployeeDialog() {
+type AddTeacherResponse = {
+  addTeacher: { id: string };
+};
+
+export function AddEmployeeDialog({
+  schoolId,
+  onTeacherAdded,
+}: {
+  schoolId: string;
+  onTeacherAdded?: () => void;
+}) {
   const [open, setOpen] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const [addTeacher, { loading }] = useMutation<AddTeacherResponse>(ADD_TEACHER, {
+    refetchQueries: [{ query: GET_TEACHERS_BY_SCHOOL_ID, variables: { schoolId } }],
+  });
 
   return (
     <>
@@ -30,12 +47,16 @@ export function AddEmployeeDialog() {
               <div>
                 <h3 className="text-lg font-semibold text-zinc-900">Ажилтан нэмэх</h3>
                 <p className="mt-1 text-sm text-zinc-500">
-                  Овог, нэр, регистр, и-мэйл, албан тушаал, хичээлийг бөглөнө.
+                  Овог, нэр, и-мэйл, албан тушаалыг бөглөнө. Дараа нь багшдыг ижил и-мэйлээр Clerk-д бүртгүүлж, багшийн хэсэгт
+                  нэвтрүүлбэл бүртгэл автоматаар холбогдоно.
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setSubmitError(null);
+                  setOpen(false);
+                }}
                 className="rounded-md p-1 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
                 aria-label="Хаах"
               >
@@ -43,12 +64,54 @@ export function AddEmployeeDialog() {
               </button>
             </div>
 
+            {submitError ? (
+              <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                {submitError}
+              </p>
+            ) : null}
+
             <form
-              action={async (formData) => {
-                await createTeacher(formData);
-                setOpen(false);
-              }}
               className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setSubmitError(null);
+                const form = e.currentTarget;
+                const firstName = String(
+                  (form.elements.namedItem("firstName") as HTMLInputElement).value ?? "",
+                ).trim();
+                const lastName = String(
+                  (form.elements.namedItem("lastName") as HTMLInputElement).value ?? "",
+                ).trim();
+                const email = String(
+                  (form.elements.namedItem("email") as HTMLInputElement).value ?? "",
+                ).trim();
+                const roleRaw = String(
+                  (form.elements.namedItem("position") as HTMLInputElement).value ?? "",
+                ).trim();
+                if (!firstName || !lastName || !email) {
+                  setSubmitError("Овог, нэр, и-мэйл заавал бөглөнө.");
+                  return;
+                }
+                try {
+                  await addTeacher({
+                    variables: {
+                      input: {
+                        schoolId,
+                        firstName,
+                        lastName,
+                        email,
+                        role: roleRaw || "Багш",
+                        classIds: [],
+                      },
+                    },
+                  });
+                  form.reset();
+                  setOpen(false);
+                  onTeacherAdded?.();
+                } catch {
+                  setSubmitError("Хадгалахад алдаа гарлаа. Дахин оролдоно уу.");
+                }
+              }}
             >
               <label className={labelClass}>
                 Овог
@@ -58,36 +121,39 @@ export function AddEmployeeDialog() {
                 Нэр
                 <input name="firstName" required placeholder="жишээ: Сарнай" className={inputClass} />
               </label>
-              <label className={labelClass}>
-                Регистр
-                <input name="registerNumber" required placeholder="жишээ: УБ99112233" className={inputClass} />
-              </label>
-              <label className={labelClass}>
+              <label className={`${labelClass} sm:col-span-2`}>
                 И-мэйл
-                <input name="email" type="email" placeholder="ner@sur.mn" className={inputClass} />
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="ner@sur.mn"
+                  className={inputClass}
+                />
               </label>
-              <label className={labelClass}>
+              <label className={`${labelClass} sm:col-span-2`}>
                 Албан тушаал
                 <input name="position" placeholder="жишээ: Багш" className={inputClass} />
-              </label>
-              <label className={labelClass}>
-                Хичээл
-                <input name="specialty" placeholder="жишээ: Математик" className={inputClass} />
               </label>
 
               <div className="flex items-end justify-end gap-2 sm:col-span-2">
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    setSubmitError(null);
+                    setOpen(false);
+                  }}
                   className="rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                  disabled={loading}
                 >
                   Болих
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                  disabled={loading}
+                  className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
                 >
-                  Нэмэх
+                  {loading ? "Хадгалж байна…" : "Нэмэх"}
                 </button>
               </div>
             </form>

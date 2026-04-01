@@ -214,3 +214,52 @@ export const GET_OPEN_EXERCIES_BY_ID = gql`
     }
   }
 `;
+
+export const GET_SCHOOL_BY_CLERK_ID = gql`
+  query GetSchoolByClerkId($clerkId: String!) {
+    getSchoolByClerkId(clerkId: $clerkId) {
+      id
+      clerkId
+      email
+      name
+      register
+      provinceOrCity
+      soumOrDistrict
+      address
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_CLASS_BY_SCHOOL_ID = gql`
+  query GetClassBySchoolId($schoolId: String!) {
+    getClassBySchoolId(schoolId: $schoolId) {
+      id
+      schoolId
+      grade
+      section
+      sectionTeacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_TEACHERS_BY_SCHOOL_ID = gql`
+  query GetTeachersBySchoolId($schoolId: String!) {
+    getTeachersBySchoolId(schoolId: $schoolId) {
+      id
+      clerkId
+      email
+      myClassId
+      classIds
+      firstName
+      lastName
+      schoolId
+      role
+      createdAt
+      updatedAt
+    }
+  }
+`;

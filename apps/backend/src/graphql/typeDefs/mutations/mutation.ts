@@ -48,6 +48,20 @@ export const mutationTypeDefs = /* GraphQL */ `
     student: Student!
   }
 
+  input AddTeacherInput {
+    """Хоосон бол D1-д түр хүлээгдэж буй багш; дараа нь linkTeacherClerk ашиглана."""
+    clerkId: String
+    email: String!
+    firstName: String!
+    lastName: String!
+    schoolId: String!
+    role: String!
+    """Өөрийн ангийн ID."""
+    myClassId: String
+    """Заадаг ангийн ID жагсаалт."""
+    classIds: [String!]
+  }
+
   input CreateExamArgs {
     grade: Int!
     subjectId: String!
@@ -74,6 +88,9 @@ export const mutationTypeDefs = /* GraphQL */ `
     createOpenExercies(input: CreateOpenExerciesArgs!): OpenExercies!
     createExam(input: CreateExamArgs!): Exam!
     addStudent(input: AddStudentInput!): Student!
+    addTeacher(input: AddTeacherInput!): Teacher!
+    """Bearer session JWT шаардлагатай. И-мэйлээр урьсан teacher мөрийг одоогийн Clerk user-т холбоно."""
+    linkTeacherClerk: Teacher!
     studentExamAuth(input: StudentExamAuthInput!): StudentExamAuthPayload!
   }
 `;

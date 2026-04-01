@@ -83,3 +83,35 @@ export const ADD_STUDENT = gql`
     }
   }
 `;
+
+export const ADD_TEACHER = gql`
+  mutation AddTeacher($input: AddTeacherInput!) {
+    addTeacher(input: $input) {
+      id
+      clerkId
+      email
+      myClassId
+      classIds
+      firstName
+      lastName
+      schoolId
+      role
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const LINK_TEACHER_CLERK = gql`
+  mutation LinkTeacherClerk {
+    linkTeacherClerk {
+      id
+      clerkId
+      email
+      firstName
+      lastName
+      schoolId
+      role
+    }
+  }
+`;
