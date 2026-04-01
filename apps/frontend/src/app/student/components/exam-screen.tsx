@@ -1,5 +1,5 @@
 "use client";
-import { FaceCam } from "@/app/components/faceDetection";
+
 import type { OptionId, ExamData } from "../types";
 import { ExamActions } from "./exam-actions";
 import { ExamHeader } from "./exam-header";
@@ -8,6 +8,7 @@ import { QuestionCard } from "./question-card";
 import { QuestionNavigator } from "./question-navigator";
 import { useState, useEffect } from "react";
 import { AlertTriangle, X } from "lucide-react";
+import FaceCam from "./faceDetection";
 
 type ExamScreenProps = {
   examData: ExamData;
