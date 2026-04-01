@@ -1,7 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-export const runtime = "edge";
-
 function withCorsHeaders(res: Response, origin: string | null) {
   // Same-origin /api/graphql doesn't need CORS, but adding these
   // makes local tooling and accidental cross-origin calls less painful.
