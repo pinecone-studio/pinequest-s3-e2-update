@@ -1,16 +1,14 @@
 "use client";
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { AlertTriangle, X } from "lucide-react";
+import { WarningIcon } from "@/app/_icons/warningIcon";
 import type { ExamData, OptionId } from "../types";
-
-import type { OptionId, ExamData } from "../types";
 import { ExamActions } from "./exam-actions";
 import { ExamHeader } from "./exam-header";
 import { QuestionCard } from "./question-card";
 import { QuestionNavigator } from "./question-navigator";
-import { WarningIcon } from "@/app/_icons/warningIcon";
-import { useState } from "react";
-import { AlertTriangle, X } from "lucide-react";
 import FaceCam from "./faceDetection";
 
 type ExamScreenProps = {
@@ -52,9 +50,29 @@ export function ExamScreen({
     string | null
   >(null);
 
+  useEffect(() => {
+    const handleWindowChange = () => {
+      setWarning(true);
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        handleWindowChange();
+      }
+    };
+
+    window.addEventListener("blur", handleWindowChange);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("blur", handleWindowChange);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
+
   return (
-    <main className="relative min-h-screen bg-[#edf6ff] text-[#1f2a44]">
-      <div className="mx-auto w-full max-w-[1512px] px-12 pt-7">
+    <main className="relative min-h-screen bg-[#edf6ff] px-12 pt-7 text-[#1f2a44]">
+      <div className="mx-auto w-full max-w-[1512px]">
         <div className="flex items-center">
           <Image
             src="/bugsteibee.png"
@@ -68,20 +86,13 @@ export function ExamScreen({
             UPDATE
           </span>
         </div>
-    <main className="min-h-screen bg-[#f3f6fb] px-4 py-6 text-[#1f2a44] md:px-6 lg:px-8 relative">
-      <div className="absolute top-10 right-20">
-        <FaceCam
-          setFaceDetectionWarning={setFaceDetectionWarning}
-          faceDetectionWarning={faceDetectionWarning}
-        />
-      </div>
 
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
-        <ExamHeader
-          title={examData.title}
-          subtitle={`${examData.schoolYear} · ${examData.term}`}
-          timerText={timerText}
-        />
+        <div className="absolute right-20 top-10">
+          <FaceCam
+            setFaceDetectionWarning={setFaceDetectionWarning}
+            faceDetectionWarning={faceDetectionWarning}
+          />
+        </div>
 
         <div className="mx-auto mt-8 flex w-full max-w-[1184px] flex-col gap-4">
           <ExamHeader
@@ -106,6 +117,7 @@ export function ExamScreen({
               answeredCount={answeredCount}
               onFinish={onFinish}
             />
+
             <div className="flex w-full flex-col">
               <ExamActions
                 isFirst={currentQuestionIndex === 0}
@@ -122,7 +134,7 @@ export function ExamScreen({
             <button
               type="button"
               onClick={onFinish}
-              className="inline-flex min-w-[271px] h-[58px] items-center justify-center rounded-[20px] border border-[#29A4FF]  px-8 py-4 text-[22px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
+              className="inline-flex h-[58px] min-w-[271px] items-center justify-center rounded-[20px] border border-[#29A4FF] px-8 py-4 text-[22px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
             >
               Шалгалт дуусгах
             </button>
@@ -133,7 +145,7 @@ export function ExamScreen({
       {warning && !isFinishDialogOpen && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute left-1/2 top-1/2 flex h-[460px] w-[min(calc(100vw-2rem),898px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-[28px] bg-[#EDF6FF] px-10 py-12 shadow-lg">
+          <div className="absolute left-1/2 top-1/2 flex h-[460px] w-[min(calc(100vw-2rem),898px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-[28px] bg-[#edf6ff] px-10 py-12 shadow-lg">
             <div className="flex h-28 items-center justify-center">
               <WarningIcon />
             </div>
@@ -149,7 +161,7 @@ export function ExamScreen({
                 <li>Дэлгэц солих</li>
                 <li>Шинэ цонх нээх</li>
               </ul>
-              <p className="mt-5 text-[18px] font-normal  leading-[1.45] text-[#A1A1A1]">
+              <p className="mt-5 text-[18px] font-normal leading-[1.45] text-[#A1A1A1]">
                 Энэ мэдээлэл багшид харагдана.
               </p>
             </div>
@@ -157,7 +169,7 @@ export function ExamScreen({
             <div className="mt-7.5 flex items-center gap-2">
               <button
                 type="button"
-                className="inline-flex h-[36px] min-w-[86px] items-center justify-center rounded-[20px] border border-[#29A4FF]  px-3.5 py-1.5 text-[18px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
+                className="inline-flex h-[36px] min-w-[86px] items-center justify-center rounded-[20px] border border-[#29A4FF] px-3.5 py-1.5 text-[18px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
                 onClick={() => setWarning(false)}
               >
                 Буцах
@@ -190,7 +202,7 @@ export function ExamScreen({
             </div>
             <div className="flex flex-col items-center gap-6 px-4 pb-8 pt-2 sm:gap-10 sm:px-6 sm:pt-6">
               <p className="flex flex-wrap items-center justify-center gap-2 text-center text-xl font-semibold sm:gap-5 sm:text-[clamp(1.25rem,4vw,1.875rem)]">
-                <AlertTriangle className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" />{" "}
+                <AlertTriangle className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" />
                 Анхааруулга
               </p>
               <p className="max-w-prose text-center text-base font-semibold leading-snug text-pretty sm:text-lg">
