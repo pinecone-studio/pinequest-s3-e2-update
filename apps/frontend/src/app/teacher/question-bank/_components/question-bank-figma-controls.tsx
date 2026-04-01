@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, Circle, CirclePlus, FileUp, Search } from "lucide-react";
+import { ChevronLeft, CirclePlus, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
