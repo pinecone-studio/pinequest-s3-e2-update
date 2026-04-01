@@ -22,3 +22,4 @@ export const examTypeDefs = /* GraphQL */ `
     updatedAt: String!
   }
 `;
+
