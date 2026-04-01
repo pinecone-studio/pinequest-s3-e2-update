@@ -35,6 +35,7 @@ const yoga = createYoga<{ env: Env }, GraphQLUserContext>({
   },
   context: async ({ request, env }) => ({
     db: getDb(env),
+    env,
     clerkUserId: await clerkUserIdFromRequest(request, env),
   }),
 });
