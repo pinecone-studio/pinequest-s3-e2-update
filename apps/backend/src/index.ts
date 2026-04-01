@@ -17,6 +17,7 @@ const corsOrigins = [
   "http://127.0.0.1:3001",
   "http://localhost:8787",
   "http://127.0.0.1:8787",
+  "https://my-app.pureverdenej93.workers.dev",
 ] as const;
 
 const yoga = createYoga<{ env: Env }, GraphQLUserContext>({
@@ -51,9 +52,7 @@ app.get("/", (c) =>
   }),
 );
 
-app.post("/webhooks/clerk", (c) =>
-  handleClerkWebhook(c.req.raw, c.env),
-);
+app.post("/webhooks/clerk", (c) => handleClerkWebhook(c.req.raw, c.env));
 
 app.all("/graphql", (c) =>
   yoga.fetch(c.req.raw, {
