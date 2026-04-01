@@ -9,7 +9,9 @@ import { SetContextLink } from "@apollo/client/link/context";
 export function getGraphqlUri() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
   if (!backendUrl) {
-    return "https://backend.pureverdenej93.workers.dev";
+    // Safe production fallback when env is missing.
+    // Note: This must be the GraphQL endpoint, not just the origin.
+    return "https://backend.pureverdenej93.workers.dev/graphql";
   }
 
   return backendUrl.endsWith("/graphql")
