@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, Heart } from "lucide-react";
+import { Bookmark, Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Question } from "../../_lib/types";
 import { DIFFICULTY_LABELS } from "../../_lib/utils";
@@ -50,13 +50,17 @@ export function QuestionCard({
 
         <button
           aria-label="Select question"
-          className="inline-flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-[7px] border border-[#2F4A87] text-[#2F4A87]"
+          aria-pressed={isSelected}
+          className={cn(
+            "inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[6px] border transition-colors",
+            isSelected
+              ? "border-[#2F4A87] bg-[#2F4A87] text-white"
+              : "border-[#2F4A87] bg-white text-transparent hover:bg-[#eef4ff]",
+          )}
           onClick={onToggleSelect}
           type="button"
         >
-          {isSelected ? (
-            <span className="h-[10px] w-[10px] rounded-[3px] bg-[#2F4A87]" />
-          ) : null}
+          <Check className="h-[14px] w-[14px]" strokeWidth={3} />
         </button>
       </div>
 

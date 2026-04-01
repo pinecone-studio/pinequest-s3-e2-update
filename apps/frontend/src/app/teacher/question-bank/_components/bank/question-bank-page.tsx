@@ -1,7 +1,6 @@
 "use client";
 
 import { QuestionBuilderForm } from "../builder/question-builder-form";
-import { QuestionBankActivePanel } from "./question-bank-active-panel";
 import { QuestionBankBulkToolbar } from "./question-bank-bulk-toolbar";
 import { QuestionBankEntryPanel } from "../entry/question-bank-entry-panel";
 import { QuestionBankFigmaControls } from "../question-bank-figma-controls";
@@ -9,8 +8,6 @@ import { QuestionBankFigmaHero } from "../question-bank-figma-hero";
 import { QuestionBankFigmaResults } from "../question-bank-figma-results";
 import { useQuestionBank } from "../../_hooks/use-question-bank";
 import { useRouter } from "next/navigation";
-import { QuestionBankMySection } from "./question-bank-my-section";
-import { QuestionBankAllSection } from "./question-bank-all-section";
 import { QuestionBankPublishSuccessDialog } from "./question-bank-publish-success-dialog";
 
 export function QuestionBankPage({
@@ -61,11 +58,13 @@ export function QuestionBankPage({
       : undefined,
   );
 
-  const resultQuestions =
-    filteredQuestions.length > 0 ? filteredQuestions : myQuestions;
-  const visibleQuestions = resultQuestions.slice(0, 3);
-  const previewQuestion =
-    activeQuestion ?? resultQuestions[0] ?? myQuestions[0] ?? null;
+  const resultQuestionsByNewest = [...filteredQuestions].sort(
+    (left, right) =>
+      new Date(right.updatedAt || right.createdAt).getTime() -
+      new Date(left.updatedAt || left.createdAt).getTime(),
+  );
+  const visibleQuestions = resultQuestionsByNewest;
+  const previewQuestion = activeQuestion ?? resultQuestionsByNewest[0] ?? null;
   const myQuestionCount = myQuestions.length;
 
   return (
@@ -128,6 +127,7 @@ export function QuestionBankPage({
               getQuestionHeartCount={getQuestionHeartCount}
               myQuestionCount={myQuestionCount}
               onAddToExam={(questionId) => sendQuestionsToExam([questionId])}
+              onCreateQuestion={openCreateBuilder}
               onEditQuestion={openEditBuilder}
               onOpenQuestion={setActiveQuestionId}
               onToggleLike={toggleQuestionLike}

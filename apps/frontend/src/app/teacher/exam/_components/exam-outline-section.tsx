@@ -26,7 +26,7 @@ export function ExamOutlineSection({
   onRemoveExamQuestion: (examQuestionId: string) => void;
 }) {
   return (
-    <section className="mx-5 rounded-xl border border-[#E5E5E5] bg-[#EDF6FF] p-5 shadow-sm">
+    <section className="mx-5 rounded-[12px] border border-[#d1d5db] bg-[#f3f4f6] p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4 pb-4">
         <div>
           <div className="text-[20px] font-medium uppercase tracking-[0.14em] text-[#122459]">
@@ -48,7 +48,7 @@ export function ExamOutlineSection({
 
       <div className="mt-5 space-y-4">
         {examQuestionDetails.length === 0 ? (
-          <div className="rounded-[20px] h-29.75 border border-dashed border-[#404040]  px-5 py-8 text-center">
+          <div className="h-29.75 rounded-[12px] border border-dashed border-[#404040] px-5 py-8 text-center">
             <p className="text-[20px] font-medium tracking-[0.04em] text-[#122459]">
               Шалгалтад асуулт хараахан нэмэгдээгүй байна
             </p>
@@ -61,7 +61,7 @@ export function ExamOutlineSection({
 
         {examQuestionDetails.map((item, index) => (
           <article
-            className="rounded-[18px] border border-[#7dc8ff] bg-white p-5"
+            className="rounded-[12px] border border-[#a7adb8] bg-white p-5"
             key={item.examQuestionId}
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -106,7 +106,7 @@ export function ExamOutlineSection({
             </div>
 
             <div className="mt-5 flex justify-end">
-              <div className="inline-flex h-7.5 min-w-16.25 items-center justify-center gap-2 rounded-2xl border border-[#adadad] bg-white px-4">
+              <div className="inline-flex h-7.5 min-w-16.25 items-center justify-center gap-2 rounded-[12px] border border-[#adadad] bg-white px-4">
                 <span className="text-[12px] font-medium text-[#262626]">
                   {item.assignedPoints}
                 </span>
@@ -122,7 +122,7 @@ export function ExamOutlineSection({
       {examQuestionDetails.length > 0 ? (
         <div className="mt-5 flex justify-end pt-4">
           <button
-            className="inline-flex items-center justify-center rounded-2xl bg-[#29A4FF] px-6 py-3 text-[12px] font-medium text-[#EDF6FF] transition hover:bg-[#29A4FF]"
+            className="inline-flex items-center justify-center rounded-[12px] bg-[#29A4FF] px-6 py-3 text-[12px] font-medium text-[#EDF6FF] transition hover:bg-[#29A4FF]"
             onClick={onPersistExam}
             type="button"
           >
@@ -149,7 +149,7 @@ function OutlineButton({
 }) {
   return (
     <button
-      className={`inline-flex h-8 items-center gap-2 rounded-[14px] border px-3 text-[12px] font-medium transition ${danger ? "border-[#F2ADAC] bg-white text-[#F2ADAC] hover:bg-[#fff5f5]" : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff]"}`}
+      className={`inline-flex h-8 items-center gap-2 rounded-[12px] border px-3 text-[12px] font-medium transition ${danger ? "border-[#F2ADAC] bg-white text-[#F2ADAC] hover:bg-[#fff5f5]" : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff]"}`}
       onClick={onClick}
       type="button"
     >

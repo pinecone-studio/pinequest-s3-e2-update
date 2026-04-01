@@ -377,6 +377,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 
       try {
         const subjectId = entrySelection.subjectId;
+        if (!subjectId) {
+          showToast("Хичээлээ дахин сонгоод оролдоно уу.");
+          return false;
+        }
         const grade = parseGradeToInt(payload.grade);
         if (payload.questionType === "long_answer") {
           const result = await createOpenExercies({
@@ -489,6 +493,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
       mergedQuestions,
       entrySelection.grade,
       entrySelection.subject,
+      entrySelection.subjectId,
       teacher.name,
       teacher.id,
       refetchTests,
