@@ -26,5 +26,7 @@ export default async function TeacherLayout({
     user = fallbackAppUser(userId, "teacher");
   }
 
+  console.log("backend url: ", process.env.NEXT_PUBLIC_BACKEND_URL);
+
   return <TeacherShell user={user}>{children}</TeacherShell>;
 }
