@@ -25,6 +25,7 @@ export function NationalScriptAssist({
   const [errorMessage, setErrorMessage] = useState("");
 
   const hasPreview = convertedText.length > 0;
+  const isMongolianPreview = previewMode === "mongolian";
   const previewText = previewMode === "mongolian" ? convertedText : inputText;
 
   const handleConvert = async () => {
@@ -163,7 +164,22 @@ export function NationalScriptAssist({
                 ? "Монгол бичгийн урьдчилан харах"
                 : "Галиг урьдчилан харах"}
             </p>
-            <div className="mt-3 min-h-28 whitespace-pre-wrap rounded-2xl bg-[#fbfdff] px-4 py-3 text-sm leading-7 text-[#183153]">
+            <div
+              className={`mt-3 rounded-2xl bg-[#fbfdff] px-4 py-3 text-sm text-[#183153] ${
+                isMongolianPreview
+                  ? "min-h-56 overflow-x-auto leading-8"
+                  : "min-h-28 whitespace-pre-wrap leading-7"
+              }`}
+              style={
+                isMongolianPreview
+                  ? {
+                      writingMode: "vertical-lr",
+                      textOrientation: "mixed",
+                      whiteSpace: "pre-wrap",
+                    }
+                  : undefined
+              }
+            >
               {previewText}
             </div>
           </div>
