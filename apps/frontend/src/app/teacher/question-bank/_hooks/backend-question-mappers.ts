@@ -75,6 +75,7 @@ export function mapBackendTestsToQuestions(
       title,
       questionType,
       source: "global",
+      teacherId: test.teacherId ?? null,
       content: {
         prompt,
         guidance: "",
@@ -144,6 +145,7 @@ export function mapBackendOpenExerciesToQuestions(
       title,
       questionType: "long_answer",
       source: "school",
+      teacherId: row.teacherId ?? null,
       content: {
         prompt,
         guidance: "",

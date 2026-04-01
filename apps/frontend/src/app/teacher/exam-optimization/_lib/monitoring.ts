@@ -5,7 +5,7 @@ export type ActiveStudentEntry = {
 	grade: string;
 	school: string;
 	startedAt: number;
-	status: "active" | "disconnected";
+	status: "active" | "disconnected" | "submitted";
 };
 
 export type MonitorExamCardItem = {

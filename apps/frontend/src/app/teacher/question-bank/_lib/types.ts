@@ -44,6 +44,7 @@ export type Question = {
   questionType: QuestionType;
   source?: QuestionSource;
   teacherName?: string;
+  teacherId?: string | null;
   isLocalOnly?: boolean;
   content: QuestionContent;
   options: QuestionOption[];
