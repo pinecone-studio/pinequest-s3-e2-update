@@ -1,7 +1,6 @@
 /** @format */
 
 "use client";
-import { ArrowRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -78,7 +77,7 @@ export function QuestionBankEntry({
         </section>
 
         <section className="rounded-2xl border border-[#e5e7eb] bg-[#FAFAFA] px-5 py-4 sm:px-6">
-          <p className="text-sm font-semibold text-[#1f2a44]">
+          <p className="text-sm font-semibold tracking-[0.04em] text-[#1f2a44]">
             Сонголтын хэсэг
           </p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -86,7 +85,7 @@ export function QuestionBankEntry({
               onValueChange={handleSubjectChange}
               value={entrySelection.subjectId}
             >
-              <SelectTrigger className="h-10 w-full rounded-2xl border-[#e5e7eb] bg-white text-xs text-[#111827] focus:border-[#9fbef5] focus:ring-2 focus:ring-[#9fbef5]/30 sm:w-[150px]">
+              <SelectTrigger className="h-10 w-full rounded-2xl border-[#e5e7eb] bg-white text-xs tracking-[0.04em] text-[#111827] focus:border-[#9fbef5] focus:ring-2 focus:ring-[#9fbef5]/30 sm:w-[150px]">
                 <SelectValue placeholder="Хичээл сонгох" />
               </SelectTrigger>
               <SelectContent
@@ -122,7 +121,7 @@ export function QuestionBankEntry({
               onValueChange={handleGradeChange}
               value={entrySelection.grade}
             >
-              <SelectTrigger className="h-10 w-full rounded-2xl border-[#e5e7eb] bg-white text-xs text-[#111827] focus:border-[#9fbef5] focus:ring-2 focus:ring-[#9fbef5]/30 sm:w-[130px]">
+              <SelectTrigger className="h-10 w-full rounded-2xl border-[#e5e7eb] bg-white text-xs tracking-[0.04em] text-[#111827] focus:border-[#9fbef5] focus:ring-2 focus:ring-[#9fbef5]/30 sm:w-[130px]">
                 <SelectValue placeholder="Анги сонгох" />
               </SelectTrigger>
               <SelectContent>
@@ -135,7 +134,7 @@ export function QuestionBankEntry({
             </Select>
 
             <button
-              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-[#9fbef5] bg-[#EDF6FF] px-4 text-xs font-semibold text-[#1f2a44] transition hover:border-[#7aa8f0] hover:bg-[#e3f0ff] disabled:cursor-not-allowed disabled:border-[#d1d5db] disabled:bg-[#f3f4f6] disabled:text-[#9ca3af] sm:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-[#9fbef5] bg-[#EDF6FF] px-4 text-xs font-semibold tracking-[0.04em] text-[#1f2a44] transition hover:border-[#7aa8f0] hover:bg-[#e3f0ff] disabled:cursor-not-allowed disabled:border-[#d1d5db] disabled:bg-[#f3f4f6] disabled:text-[#9ca3af] sm:w-auto"
               disabled={
                 subjectsLoading ||
                 !entrySelection.subjectId ||
@@ -148,7 +147,6 @@ export function QuestionBankEntry({
               }
               type="button"
             >
-              <ArrowRight className="mr-2 h-4 w-4" />
               АСУУЛТ САНД НЭВТРЭХ
             </button>
           </div>
