@@ -132,8 +132,8 @@ export default function TeacherDashboard() {
 						</h2>
 						{!teacherDbLoading && !dbTeacher ? (
 							<p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-								Сургуулийн системд багшийн бүртгэл (`viewerTeacher`) олдсонгүй. Ижил и-мэйлээр
-								урьсан эсэхээ шалгаад дахин нэвтэрнэ үү.
+								Сургуулийн системд багшийн бүртгэл (`viewerTeacher`) олдсонгүй.
+								Ижил и-мэйлээр урьсан эсэхээ шалгаад дахин нэвтэрнэ үү.
 							</p>
 						) : null}
 						<p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#4a5875]">
