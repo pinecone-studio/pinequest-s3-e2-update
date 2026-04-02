@@ -27,11 +27,43 @@ export async function handleExamMonitorWebSocketUpgrade(
   }
 
   const origin = request.headers.get("Origin");
-  if (!isWebSocketOriginAllowed(origin, env, request.url)) {
+  const originAllowed = isWebSocketOriginAllowed(origin, env, request.url);
+  const url = new URL(request.url);
+  const roleParamEarly = url.searchParams.get("role")?.trim().toLowerCase();
+  // #region agent log
+  console.log(
+    JSON.stringify({
+      sessionId: "9f3746",
+      runId: "pre-fix",
+      hypothesisId: "H3",
+      location: "ws-exam-monitor-upgrade.ts:entry",
+      message: "ws_upgrade_request",
+      data: {
+        originPresent: Boolean(origin?.trim()),
+        originAllowed,
+        pathname: url.pathname,
+        roleTeacher: roleParamEarly === "teacher",
+      },
+      timestamp: Date.now(),
+    }),
+  );
+  // #endregion
+  if (!originAllowed) {
+    // #region agent log
+    console.log(
+      JSON.stringify({
+        sessionId: "9f3746",
+        runId: "pre-fix",
+        hypothesisId: "H3",
+        location: "ws-exam-monitor-upgrade.ts:forbidden_origin",
+        message: "ws_reject",
+        data: { status: 403, branch: "forbidden_origin" },
+        timestamp: Date.now(),
+      }),
+    );
+    // #endregion
     return new Response("Forbidden origin", { status: 403 });
   }
-
-  const url = new URL(request.url);
   const pathMatch = url.pathname.match(PATH_RE);
   if (!pathMatch) {
     return new Response("Not found", { status: 404 });
@@ -165,5 +197,18 @@ export async function handleExamMonitorWebSocketUpgrade(
     headers,
   });
 
+  // #region agent log
+  console.log(
+    JSON.stringify({
+      sessionId: "9f3746",
+      runId: "pre-fix",
+      hypothesisId: "H4",
+      location: "ws-exam-monitor-upgrade.ts:forward_do",
+      message: "ws_upgrade_ok_forwarding_to_do",
+      data: { monitorRole, hasUserId: Boolean(userId?.trim()) },
+      timestamp: Date.now(),
+    }),
+  );
+  // #endregion
   return stub.fetch(forward);
 }
