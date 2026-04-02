@@ -1,4 +1,5 @@
 import { classTable } from "./schema/classTable";
+import { examAllowedClassTable } from "./schema/examAllowedClassTable";
 import { examCheatLogTable } from "./schema/examCheatLogtable";
 import { examTable } from "./schema/examTable";
 import { openExerciesTable } from "./schema/openExerciesTable";
@@ -16,6 +17,7 @@ export {
   classTable,
   testTable,
   examTable,
+  examAllowedClassTable,
   examCheatLogTable,
   studentExamResultTable,
   schoolTable,
@@ -29,6 +31,7 @@ export const schema = {
   classTable,
   testTable,
   examTable,
+  examAllowedClassTable,
   examCheatLogTable,
   studentExamResultTable,
   schoolTable,

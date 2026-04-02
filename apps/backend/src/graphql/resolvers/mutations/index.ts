@@ -1,6 +1,8 @@
+import { addExamAllowedClasses } from "./exam/addExamAllowedClasses";
 import { createExam } from "./exam/createExam";
 import { studentExamAuth } from "./exam/studentExamAuth";
 import { addStudent } from "./student/addStudent";
+import { createClass } from "./student/createClass";
 import { addTeacher } from "./subjectSchoolAndTeachers/addTeacher";
 import { linkTeacherClerk } from "./subjectSchoolAndTeachers/linkTeacherClerk";
 import { createSubject } from "./subjectSchoolAndTeachers/createSubject";
@@ -13,7 +15,9 @@ export const mutationResolvers = {
   createOpenExercies,
   createExam,
   addStudent,
+  createClass,
   addTeacher,
   linkTeacherClerk,
   studentExamAuth,
+  addExamAllowedClasses,
 };

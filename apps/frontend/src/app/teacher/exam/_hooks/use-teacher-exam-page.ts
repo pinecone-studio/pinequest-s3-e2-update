@@ -8,7 +8,7 @@ import {
   getApprovalUpdatedEventName,
   upsertPendingApprovalRequest,
 } from "@/app/lib/exam-approval-store";
-import { CREATE_EXAM } from "@/graphql/typeDefs/mutations";
+import { ADD_EXAM_ALLOWED_CLASSES, CREATE_EXAM } from "@/graphql/typeDefs/mutations";
 import {
   GET_ALL_SUBJECTS,
   GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
@@ -135,6 +135,9 @@ export function useTeacherExamPage() {
     });
 
   const [createExam] = useMutation<CreateExamResponse>(CREATE_EXAM);
+  type AddExamAllowedClassesData = { addExamAllowedClasses: boolean };
+  const [addExamAllowedClasses] =
+    useMutation<AddExamAllowedClassesData>(ADD_EXAM_ALLOWED_CLASSES);
   const [exam, setExam] = useState<ExamComposerState>(INITIAL_FORM);
   const [selectedBankIds, setSelectedBankIds] = useState<string[]>([]);
   const [examQuestions, setExamQuestions] = useState<ExamQuestionItem[]>([]);
@@ -526,6 +529,7 @@ export function useTeacherExamPage() {
             needpermission: exam.requiresSchoolApproval ? 1 : 0,
             schoolId,
             teacherId: dbTeacher.id,
+            allowedClassIds: [],
           },
         },
       });
@@ -624,7 +628,7 @@ export function useTeacherExamPage() {
     showToast(`"${savedExam.title}" шалгалтын хяналт руу шилжлээ.`);
   };
 
-  const sendSavedExamToClass = (
+  const sendSavedExamToClass = async (
     savedExam: SavedExamRecord,
     openMonitoring = false,
   ) => {
@@ -640,6 +644,19 @@ export function useTeacherExamPage() {
     if (!classId) return showToast("Илгээхийн өмнө ангиа сонгоно уу.");
     const selectedClass = teacherClasses.find((item) => item.id === classId);
     if (!selectedClass) return showToast("Сонгосон анги олдсонгүй.");
+
+    try {
+      const result = await addExamAllowedClasses({
+        variables: { examId: savedExam.id, classIds: [classId] },
+      });
+      if (result.data?.addExamAllowedClasses !== true) {
+        showToast("Серверт анги нээж чадсангүй. Дахин оролдоно уу.");
+        return;
+      }
+    } catch {
+      showToast("Серверт анги нээхэд алдаа гарлаа. Нэвтэрсэн эсэхээ шалгана уу.");
+      return;
+    }
 
     const nextSavedExams = savedExams.map((item) =>
       item.id === savedExam.id

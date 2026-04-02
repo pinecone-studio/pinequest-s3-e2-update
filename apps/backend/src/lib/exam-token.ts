@@ -7,6 +7,15 @@ type ExamTokenPayload = {
   exp: number;
 };
 
+function base64UrlDecode(b64url: string): Uint8Array {
+  const pad = b64url.length % 4 === 0 ? "" : "====".slice((4 - (b64url.length % 4)) % 4);
+  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/") + pad;
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
 function base64UrlEncode(bytes: Uint8Array): string {
   let binary = "";
   for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
@@ -54,3 +63,40 @@ export async function createExamToken(params: {
   return `${message}.${sigB64}`;
 }
 
+/**
+ * `createExamToken`-ийн урвуу — буруу/expired бол null.
+ */
+export async function verifyExamToken(
+  token: string,
+  secret: string,
+): Promise<{ studentId: string; examId: string } | null> {
+  const parts = token.trim().split(".");
+  if (parts.length !== 3 || parts[0] !== "v1") return null;
+  const payloadB64 = parts[1];
+  const sigB64 = parts[2];
+  if (!payloadB64 || !sigB64) return null;
+  const message = `v1.${payloadB64}`;
+  const sig = await hmacSha256(secret, message);
+  const expectedB64 = base64UrlEncode(sig);
+  if (sigB64.length !== expectedB64.length) return null;
+  let diff = 0;
+  for (let i = 0; i < sigB64.length; i++) {
+    diff |= sigB64.charCodeAt(i) ^ expectedB64.charCodeAt(i);
+  }
+  if (diff !== 0) return null;
+  try {
+    const json = new TextDecoder().decode(base64UrlDecode(payloadB64));
+    const payload = JSON.parse(json) as ExamTokenPayload;
+    if (
+      typeof payload.sid !== "string" ||
+      typeof payload.eid !== "string" ||
+      typeof payload.exp !== "number"
+    ) {
+      return null;
+    }
+    if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return { studentId: payload.sid, examId: payload.eid };
+  } catch {
+    return null;
+  }
+}

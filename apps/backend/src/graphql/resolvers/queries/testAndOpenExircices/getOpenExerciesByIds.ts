@@ -1,5 +1,10 @@
 import { inArray } from "drizzle-orm";
 import { openExerciesTable } from "../../../../db/schema";
+import {
+  assertRequestIdsAllowed,
+  loadExamContentIds,
+  requireExamSession,
+} from "../../../../lib/exam-guard";
 import { GraphQLUserContext } from "../../../context";
 
 export const getOpenExerciesByIds = async (
@@ -7,9 +12,13 @@ export const getOpenExerciesByIds = async (
   args: { ids: string[] },
   ctx: GraphQLUserContext,
 ) => {
+  const session = requireExamSession(ctx);
   const ids =
     args.ids?.filter((x) => typeof x === "string" && x.length > 0) ?? [];
   if (ids.length === 0) return [];
+
+  const { openExerciseIds } = await loadExamContentIds(ctx, session.examId);
+  assertRequestIdsAllowed(ids, openExerciseIds, "getOpenExerciesByIds");
 
   try {
     const rows = await ctx.db

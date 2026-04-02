@@ -41,6 +41,27 @@ export const CREATE_OPEN_EXERCIES = gql`
     }
   }
 `;
+export const STUDENT_EXAM_AUTH = gql`
+  mutation StudentExamAuth($input: StudentExamAuthInput!) {
+    studentExamAuth(input: $input) {
+      token
+      student {
+        id
+        firstName
+        lastName
+        classId
+        studentCode
+      }
+    }
+  }
+`;
+
+export const ADD_EXAM_ALLOWED_CLASSES = gql`
+  mutation AddExamAllowedClasses($examId: String!, $classIds: [String!]!) {
+    addExamAllowedClasses(examId: $examId, classIds: $classIds)
+  }
+`;
+
 export const CREATE_EXAM = gql`
   mutation CreateExam($input: CreateExamArgs!) {
     createExam(input: $input) {

@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { examTable } from "../../../../db/schema";
+import { assertExamIdMatchesSession } from "../../../../lib/exam-guard";
 import { GraphQLUserContext } from "../../../context";
 
 function parseIds(value: unknown): string[] {
@@ -20,6 +21,8 @@ export const getExamById = async (
   args: { examId: string },
   ctx: GraphQLUserContext,
 ) => {
+  assertExamIdMatchesSession(ctx, args.examId);
+
   const rows = await ctx.db
     .select()
     .from(examTable)

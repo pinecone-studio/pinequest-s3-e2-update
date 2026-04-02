@@ -1,5 +1,10 @@
 import { inArray } from "drizzle-orm";
 import { testTable } from "../../../../db/schema";
+import {
+  assertRequestIdsAllowed,
+  loadExamContentIds,
+  requireExamSession,
+} from "../../../../lib/exam-guard";
 import { GraphQLUserContext } from "../../../context";
 
 function parseAnswers(value: string): string[] {
@@ -18,9 +23,13 @@ export const getTestsByIds = async (
   args: { ids: string[] },
   ctx: GraphQLUserContext,
 ) => {
+  const session = requireExamSession(ctx);
   const ids =
     args.ids?.filter((x) => typeof x === "string" && x.length > 0) ?? [];
   if (ids.length === 0) return [];
+
+  const { testIds } = await loadExamContentIds(ctx, session.examId);
+  assertRequestIdsAllowed(ids, testIds, "getTestsByIds");
 
   try {
     const rows = await ctx.db

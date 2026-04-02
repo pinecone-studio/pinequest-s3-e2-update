@@ -16,6 +16,7 @@ export type BackendExamMonitorRow = {
   score: number | null;
   needpermission: number | null;
   isActive: number | null;
+  teacherId: string | null;
   createdAt: string;
 };
 
@@ -43,17 +44,16 @@ export function formatMonitorSavedAt(dateString: string): string {
 }
 
 /**
- * D1-д анги хавсаргаагүй үед ч хяналтын UI (Эхлүүлэх) ажиллахаар
- * teacher демо ангийн жагсаалтаас classOptions өгнө.
+ * Backend-д exam→class холбоос байхгүй тул `teacherClassOptions` нь
+ * зөвхөн хяналт хийхэд сонгох багшийн бодит ангийн жагсаалт (GraphQL).
  */
 export function mapBackendExamsToMonitorCards(
   rows: BackendExamMonitorRow[],
   subjectNameById: Map<string, string>,
-  demoClassOptions: Array<{ id: string; label: string }>,
+  teacherClassOptions: Array<{ id: string; label: string }>,
 ): MonitorExamCardItem[] {
   const sorted = [...rows].sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
   let assignedOngoing = false;
@@ -64,8 +64,7 @@ export function mapBackendExamsToMonitorCards(
       ? row.openExerciseIds
       : [];
     const questionCount = testIds.length + openIds.length;
-    const subject =
-      subjectNameById.get(row.subjectId) ?? row.subjectId ?? "";
+    const subject = subjectNameById.get(row.subjectId) ?? row.subjectId ?? "";
     const needPerm = Boolean(row.needpermission);
 
     let status: MonitorExamCardItem["status"];
@@ -80,19 +79,14 @@ export function mapBackendExamsToMonitorCards(
       status = "completed";
     }
 
-    const classOptions = demoClassOptions;
+    const classOptions = teacherClassOptions;
     const classLabels = classOptions.map((c) => c.label);
     const classLabel =
       classLabels.length === 0
-        ? "Анги оноогоогүй"
+        ? "Анги байхгүй"
         : classLabels.length > 1
-          ? "олон"
-          : (classLabels[0] ?? "Анги оноогоогүй");
-    const gradingSummary = buildMonitorGradingSummary({
-      participantCount: classOptions.length > 0 ? 36 : 0,
-      openQuestionCount: openIds.length,
-      seedSource: row.id,
-    });
+          ? `${classLabels.length} анги`
+          : (classLabels[0] ?? "Анги байхгүй");
 
     return {
       id: row.id,
