@@ -7,6 +7,7 @@ import {
 } from "../db/schema";
 import { getDb } from "../db/drizzle";
 import type { Env } from "../types";
+import { isWebSocketOriginAllowed } from "./cors-allowed-origins";
 import { clerkUserIdFromRequest } from "./clerk-bearer";
 import { verifyExamToken } from "./exam-token";
 
@@ -23,6 +24,11 @@ export async function handleExamMonitorWebSocketUpgrade(
 ): Promise<Response> {
   if (request.headers.get("Upgrade") !== "websocket") {
     return new Response("Expected Upgrade: websocket", { status: 426 });
+  }
+
+  const origin = request.headers.get("Origin");
+  if (!isWebSocketOriginAllowed(origin, env, request.url)) {
+    return new Response("Forbidden origin", { status: 403 });
   }
 
   const url = new URL(request.url);

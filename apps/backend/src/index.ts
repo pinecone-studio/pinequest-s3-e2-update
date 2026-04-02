@@ -1,42 +1,31 @@
 import type { GraphQLSchema } from "graphql";
 import { createYoga } from "graphql-yoga";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { getDb } from "./db/drizzle";
 import { schema } from "./graphql";
 import { handleClerkWebhook } from "./clerk-webhook";
 import type { GraphQLUserContext } from "./graphql/context";
 import { clerkUserIdFromRequest } from "./lib/clerk-bearer";
 import { examSessionFromRequest } from "./lib/exam-session-from-request";
+import { resolveGraphqlCorsOrigin } from "./lib/cors-allowed-origins";
 import { handleExamMonitorWebSocketUpgrade } from "./lib/ws-exam-monitor-upgrade";
 import type { Env } from "./types";
 
-/** Apollo Sandbox, GraphiQL, local Next/Wrangler — browser-аас cross-origin POST зөвшөөрөх */
-const corsOrigins = [
-  "https://studio.apollographql.com",
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://localhost:3001",
-  "http://127.0.0.1:3001",
-  "http://localhost:8787",
-  "http://127.0.0.1:8787",
-  "https://my-app.pureverdenej93.workers.dev",
+const graphqlCorsHeaders = [
+  "content-type",
+  "apollo-require-preflight",
+  "authorization",
+  "x-apollo-operation-name",
+  "x-exam-token",
 ] as const;
 
 const yoga = createYoga<{ env: Env }, GraphQLUserContext>({
   schema: schema as GraphQLSchema,
   graphqlEndpoint: "/graphql",
   graphiql: true,
-  cors: {
-    origin: [...corsOrigins],
-    credentials: true,
-    allowedHeaders: [
-      "content-type",
-      "apollo-require-preflight",
-      "authorization",
-      "x-apollo-operation-name",
-      "x-exam-token",
-    ],
-  },
+  /** Hono `cors()` дээр тохируулна (request бүрт `CORS_ORIGINS` уншина). */
+  cors: false,
   context: async ({ request, env }) => ({
     db: getDb(env),
     env,
@@ -59,6 +48,17 @@ app.get("/", (c) =>
 );
 
 app.post("/webhooks/clerk", (c) => handleClerkWebhook(c.req.raw, c.env));
+
+app.use(
+  "/graphql",
+  cors({
+    origin: (origin, c) =>
+      resolveGraphqlCorsOrigin(origin, c.req.url, c.env as Env),
+    allowMethods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+    allowHeaders: [...graphqlCorsHeaders],
+  }),
+);
 
 app.get("/ws/exam/:examId/class/:classId", async (c) => {
   if (c.req.raw.headers.get("Upgrade") !== "websocket") {

@@ -13,4 +13,9 @@ export interface Env {
   CLERK_WEBHOOK_SIGNING_SECRET?: string;
   /** HMAC secret for student exam tokens. */
   EXAM_TOKEN_SECRET?: string;
+  /**
+   * Нэмэлт CORS origin-ууд (таслалаар тусгаарласан).
+   * Production frontend-ийн `https://...` хаягийг энд эсвэл Dashboard vars-аар нэмнэ.
+   */
+  CORS_ORIGINS?: string;
 }
