@@ -5,6 +5,10 @@ type EntryStepProps = {
   hasAcceptedRules: boolean;
   classCodeHint?: string;
   classCodeRequired?: boolean;
+  /** Сурагчийн код (studentExamAuth) — шаардлагатай үед. */
+  studentCode?: string;
+  studentCodeRequired?: boolean;
+  onChangeStudentCode?: (value: string) => void;
   /** Хоосон биш байвал «Үргэлжлүүлэх»-ийн алдааг харуулна */
   proceedError?: string | null;
   onChangeClassCode: (value: string) => void;
@@ -39,12 +43,19 @@ export function EntryStep({
   hasAcceptedRules,
   classCodeHint,
   classCodeRequired = false,
+  studentCode = "",
+  studentCodeRequired = false,
+  onChangeStudentCode,
   proceedError = null,
   onChangeClassCode,
   onToggleAcceptedRules,
   onProceed,
 }: EntryStepProps) {
-  const canProceed = hasAcceptedRules && classCode.trim().length > 0;
+  const canProceed =
+    hasAcceptedRules &&
+    classCode.trim().length > 0 &&
+    (!studentCodeRequired ||
+      (studentCode.trim().length > 0 && Boolean(onChangeStudentCode)));
 
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-4 py-8 text-[#1f2a44] sm:px-6 lg:px-8">
@@ -98,7 +109,7 @@ export function EntryStep({
             <span>Уншиж танилцсан</span>
           </label>
 
-          <div className="mt-5">
+          <div className="mt-5 space-y-4">
             <EntryInput
               placeholder={
                 classCodeRequired
@@ -108,6 +119,18 @@ export function EntryStep({
               value={classCode}
               onChange={onChangeClassCode}
             />
+            {studentCodeRequired && onChangeStudentCode ? (
+              <div>
+                <p className="mb-1.5 text-left text-[14px] font-medium text-[#374151]">
+                  Сурагчийн код
+                </p>
+                <EntryInput
+                  placeholder="Жишээ: 6 оронтой код"
+                  value={studentCode}
+                  onChange={onChangeStudentCode}
+                />
+              </div>
+            ) : null}
           </div>
         </section>
 

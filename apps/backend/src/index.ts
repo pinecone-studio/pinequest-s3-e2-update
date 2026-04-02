@@ -6,6 +6,7 @@ import { schema } from "./graphql";
 import { handleClerkWebhook } from "./clerk-webhook";
 import type { GraphQLUserContext } from "./graphql/context";
 import { clerkUserIdFromRequest } from "./lib/clerk-bearer";
+import { examSessionFromRequest } from "./lib/exam-session-from-request";
 import type { Env } from "./types";
 
 /** Apollo Sandbox, GraphiQL, local Next/Wrangler — browser-аас cross-origin POST зөвшөөрөх */
@@ -32,12 +33,14 @@ const yoga = createYoga<{ env: Env }, GraphQLUserContext>({
       "apollo-require-preflight",
       "authorization",
       "x-apollo-operation-name",
+      "x-exam-token",
     ],
   },
   context: async ({ request, env }) => ({
     db: getDb(env),
     env,
     clerkUserId: await clerkUserIdFromRequest(request, env),
+    examSession: await examSessionFromRequest(request, env),
   }),
 });
 

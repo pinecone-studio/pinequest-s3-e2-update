@@ -10,7 +10,7 @@ function withCorsHeaders(res: Response, origin: string | null) {
     headers.set("access-control-allow-credentials", "true");
     headers.set(
       "access-control-allow-headers",
-      "content-type, authorization, apollo-require-preflight, x-apollo-operation-name",
+      "content-type, authorization, apollo-require-preflight, x-apollo-operation-name, x-exam-token",
     );
     headers.set("access-control-allow-methods", "POST, OPTIONS");
   }

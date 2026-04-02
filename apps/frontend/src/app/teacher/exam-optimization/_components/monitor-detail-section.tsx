@@ -7,14 +7,15 @@ import type {
 } from "../_lib/monitoring";
 
 export function MonitorDetailSection({
+  activeClassId,
   activeClassLabel,
   activeExam,
   activeStudents,
   isMonitoring,
-  monitoringElapsedSeconds,
   monitorTotalStudents,
   remainingDurationLabel,
   onBackToList,
+  onSelectClass,
   onStartMonitoring,
 }: {
   activeClassId: string | null;
@@ -22,10 +23,10 @@ export function MonitorDetailSection({
   activeExam: MonitorExamCardItem | null;
   activeStudents: ActiveStudentEntry[];
   isMonitoring: boolean;
-  monitoringElapsedSeconds: number;
   monitorTotalStudents: number;
   remainingDurationLabel: string;
   onBackToList: () => void;
+  onSelectClass: (classId: string) => void;
   onStartMonitoring: () => void;
 }) {
   const isStarted = Boolean(activeExam) && isMonitoring;
@@ -33,47 +34,14 @@ export function MonitorDetailSection({
   const isRunning = isStarted && !isTimeUp;
   const canManageExam = (activeExam?.classOptions?.length ?? 0) > 0;
   const startActionLabel = "Эхлүүлэх";
-  const hashSeed = (value: string) => {
-    let h = 0;
-    for (let i = 0; i < value.length; i += 1) {
-      h = (h * 31 + value.charCodeAt(i)) % 10007;
-    }
-    return h;
-  };
   const visibleStudents = activeStudents;
-  const rankedIndexes = visibleStudents
-    .map((student, index) => ({
-      index,
-      score: hashSeed(
-        `${student.id || `student-${index}`}-${student.fullName}-${monitoringElapsedSeconds}`,
-      ),
-    }))
-    .sort((a, b) => a.score - b.score);
-  const disconnectedIndexSet = new Set<number>();
-  const warningIndexSet = new Set<number>();
-  if (isStarted && rankedIndexes.length > 0) {
-    disconnectedIndexSet.add(rankedIndexes[0].index);
-    const warningCount = Math.min(3, Math.max(0, rankedIndexes.length - 1));
-    rankedIndexes
-      .slice(1, 1 + warningCount)
-      .forEach((entry) => warningIndexSet.add(entry.index));
-  }
-  const monitoredStudents = visibleStudents.map((student, index) => {
-    const monitorStatus: "active" | "warning" | "disconnected" | "submitted" =
-      student.status === "submitted"
-        ? "submitted"
-        : disconnectedIndexSet.has(index)
-          ? "disconnected"
-          : warningIndexSet.has(index)
-            ? "warning"
-            : "active";
-    const displayStatus: "active" | "warning" | "disconnected" | "submitted" =
-      isTimeUp && monitorStatus !== "disconnected"
-        ? "submitted"
-        : monitorStatus;
+  /** Хяналт эхлээгүй үед төлөв харуулахгүй; эхэлсний дараа бүгдийг идэвхтэй гэж үзнэ (telemetry ирэх хүртэл). */
+  type RowStatus = "active" | "warning" | "disconnected" | "submitted";
+  const monitoredStudents = visibleStudents.map((student) => {
+    const displayStatus = (isTimeUp ? "submitted" : "active") as RowStatus;
     return {
       ...student,
-      monitorStatus,
+      monitorStatus: displayStatus,
       displayStatus,
     };
   });
@@ -164,9 +132,26 @@ export function MonitorDetailSection({
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <span className="rounded-md bg-[#d7ebff] px-3 py-0.5 text-[12px] font-medium text-[#355389]">
-                Илгээсэн анги: {activeClassLabel ?? activeExam.classLabel}
-              </span>
+              {(activeExam.classOptions?.length ?? 0) > 1 ? (
+                <label className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#355389]">
+                  <span>Анги:</span>
+                  <select
+                    className="rounded-md border border-[#bcd6f5] bg-white px-2 py-1 text-[12px] text-[#1f2a44]"
+                    value={activeClassId ?? ""}
+                    onChange={(e) => onSelectClass(e.target.value)}
+                  >
+                    {activeExam.classOptions.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : (
+                <span className="rounded-md bg-[#d7ebff] px-3 py-0.5 text-[12px] font-medium text-[#355389]">
+                  Анги: {activeClassLabel ?? activeExam.classLabel}
+                </span>
+              )}
               <span className="rounded-md bg-[#d7ebff] px-3 py-0.5 text-[12px] font-medium text-[#355389]">
                 {activeExam.subject}
               </span>
@@ -217,16 +202,20 @@ export function MonitorDetailSection({
                   </p>
                   <span
                     className={`inline-flex items-center justify-center rounded-sm border px-3 py-1 text-[15px] font-semibold ${
-                      student.displayStatus === "active"
-                        ? "border-[#22c55e] text-[#22c55e]"
-                        : student.displayStatus === "warning"
-                          ? "border-[#f59e0b] text-[#f59e0b]"
-                          : student.displayStatus === "submitted"
-                            ? "h-12 w-12 rounded-xl border-[#1d7bf2] px-0 py-0 text-[#1d7bf2]"
-                            : "border-[#ef4444] text-[#ef4444]"
+                      !isStarted
+                        ? "border-[#cbd5e1] text-[#64748b]"
+                        : student.displayStatus === "active"
+                          ? "border-[#22c55e] text-[#22c55e]"
+                          : student.displayStatus === "warning"
+                            ? "border-[#f59e0b] text-[#f59e0b]"
+                            : student.displayStatus === "submitted"
+                              ? "h-12 w-12 rounded-xl border-[#1d7bf2] px-0 py-0 text-[#1d7bf2]"
+                              : "border-[#ef4444] text-[#ef4444]"
                     }`}
                   >
-                    {student.displayStatus === "submitted" ? (
+                    {!isStarted ? (
+                      "Жагсаалт"
+                    ) : student.displayStatus === "submitted" ? (
                       <Check className="h-6 w-6" strokeWidth={3} />
                     ) : student.displayStatus === "active" ? (
                       "Идэвхтэй"

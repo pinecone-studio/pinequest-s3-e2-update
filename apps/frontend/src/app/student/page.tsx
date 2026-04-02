@@ -36,7 +36,9 @@ export default function StudentExamPage() {
   );
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [entryProceedError, setEntryProceedError] = useState<string | null>(null);
+  const [entryProceedError, setEntryProceedError] = useState<string | null>(
+    null,
+  );
 
   const activeSavedExam = useMemo(() => {
     return (
@@ -110,9 +112,9 @@ export default function StudentExamPage() {
 
   const isSelectedClassDelivered = Boolean(
     !activeSavedExam ||
-      !requiresDeliveredClass ||
-      (selectedClassId != null &&
-        (activeSavedExam.sentClassIds ?? []).includes(selectedClassId)),
+    !requiresDeliveredClass ||
+    (selectedClassId != null &&
+      (activeSavedExam.sentClassIds ?? []).includes(selectedClassId)),
   );
 
   const entryClassHintKind = useMemo(() => {

@@ -2,13 +2,19 @@
 
 "use client";
 
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { STUDENT_EXAM_AUTH } from "@/graphql/typeDefs/mutations";
 import {
 	GET_EXAM_BY_ID,
 	GET_EXAM_QUESTION_ITEMS,
 } from "@/graphql/typeDefs/queries";
+import {
+	discardStudentExamTokenIfNotForExam,
+	readStudentExamToken,
+	writeStudentExamToken,
+} from "../_lib/exam-session-storage";
 import {
   EXAM_MONITORING_STORAGE_KEY,
   createExamMonitoringScopeKey,
@@ -40,9 +46,30 @@ type GqlExamRow = {
   openExerciseIds: string[] | null;
 };
 
+type StudentExamAuthData = {
+  studentExamAuth: { token: string };
+};
+
+function formatStudentExamAuthError(error: unknown): string {
+  const raw =
+    error && typeof error === "object" && "message" in error
+      ? String((error as { message: string }).message)
+      : "Нэвтрэхэд алдаа гарлаа.";
+  return (
+    raw
+      .replace(/^Failed to student exam auth:\s*Error:\s*/i, "")
+      .replace(/^Failed to student exam auth:\s*/i, "")
+      .trim() || raw
+  );
+}
+
 function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   const [phase, setPhase] = useState<ExamPhase>("entry");
   const [classCode, setClassCode] = useState("");
+  const [studentCode, setStudentCode] = useState("");
+  const [examSessionToken, setExamSessionToken] = useState<string | null>(() =>
+    readStudentExamToken(routeExamId),
+  );
   const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
   const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
   const [monitoringStateMap, setMonitoringStateMap] =
@@ -61,13 +88,16 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     null,
   );
 
+  const [studentExamAuthMutation, { loading: authLoading }] =
+    useMutation<StudentExamAuthData>(STUDENT_EXAM_AUTH);
+
   const {
     data: examQueryData,
     loading: examLoading,
     error: examError,
   } = useQuery<{ getExamById: GqlExamRow | null }>(GET_EXAM_BY_ID, {
     variables: { examId: routeExamId },
-    skip: !routeExamId,
+    skip: !routeExamId || !examSessionToken,
   });
 
   const examRow = examQueryData?.getExamById ?? null;
@@ -79,7 +109,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     getOpenExerciesByIds: unknown[];
   }>(GET_EXAM_QUESTION_ITEMS, {
     variables: { testIds, openExerciseIds },
-    skip: !examRow,
+    skip: !routeExamId || !examSessionToken || !examRow,
   });
 
   const testsById = useMemo(() => {
@@ -220,6 +250,69 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     : manualRemainingSeconds;
   const timerText = formatTimer(remainingSeconds);
 
+  useEffect(() => {
+    discardStudentExamTokenIfNotForExam(routeExamId);
+    setExamSessionToken(readStudentExamToken(routeExamId));
+  }, [routeExamId]);
+
+  useEffect(() => {
+    if (phase !== "entry" || !examSessionToken || authLoading) return;
+    if (examLoading || itemsLoading || !examRow || !apiExamData) return;
+
+    if (apiExamData.questions.length === 0) {
+      setEntryProceedError(
+        "Энэ шалгалтад олон сонголттой хангалттай асуулт олдсонгүй.",
+      );
+      return;
+    }
+
+    if (usesTeacherControlledStart) {
+      if (entryClassHintKind === "not_delivered") {
+        setEntryProceedError(
+          "Энэ ангид тухайн шалгалт илгээгдээгүй байна.",
+        );
+        return;
+      }
+      if (!matchedClass) {
+        setEntryProceedError("Ийм анги олдсонгүй. Жишээ: 10A");
+        return;
+      }
+      if (!isSelectedClassDelivered) {
+        setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
+        return;
+      }
+      const totalDurationSeconds = apiExamData.durationMinutes * 60;
+      if (sharedStartedAt != null) {
+        const elapsedSeconds = Math.floor(
+          (Date.now() - sharedStartedAt) / 1000,
+        );
+        const rs = Math.max(0, totalDurationSeconds - elapsedSeconds);
+        if (rs <= 0) {
+          setEntryProceedError("Шалгалтын хугацаа дууссан байна.");
+          return;
+        }
+      }
+    } else {
+      setManualRemainingSeconds(apiExamData.durationMinutes * 60);
+    }
+
+    setEntryProceedError(null);
+    setPhase("exam");
+  }, [
+    phase,
+    examSessionToken,
+    authLoading,
+    examLoading,
+    itemsLoading,
+    examRow,
+    apiExamData,
+    usesTeacherControlledStart,
+    entryClassHintKind,
+    matchedClass,
+    isSelectedClassDelivered,
+    sharedStartedAt,
+  ]);
+
   const classCodeHint = linkedSavedExam
     ? normalizedClassCode.length === 0
       ? "Шалгалт илгээгдсэн ангийг оруулна уу. Жишээ: 10A"
@@ -302,7 +395,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     }));
   };
 
-  const handleStartExam = () => {
+  const handleStartExam = async () => {
     if (!hasAcceptedRules) {
       setEntryProceedError("Шалгалтын журмыг уншиж танилцсанаа чеклэнэ үү.");
       return;
@@ -311,51 +404,67 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
       setEntryProceedError("Шалгалтын кодоо оруулна уу.");
       return;
     }
-    if (totalQuestions === 0) {
-      setEntryProceedError(
-        "Энэ шалгалтад олон сонголттой хангалттай асуулт олдсонгүй.",
-      );
+    const trimmedStudentCode = studentCode.trim();
+    if (!trimmedStudentCode) {
+      setEntryProceedError("Сурагчийн кодоо оруулна уу.");
       return;
     }
 
-    if (!usesTeacherControlledStart) {
-      setEntryProceedError(null);
-      setManualRemainingSeconds(resolvedExamData.durationMinutes * 60);
-      setPhase("exam");
-      return;
-    }
-
-    if (entryClassHintKind === "not_delivered") {
-      setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
-      return;
-    }
-    if (!matchedClass) {
-      setEntryProceedError("Ийм анги олдсонгүй. Жишээ: 10A");
-      return;
-    }
-    if (!isSelectedClassDelivered) {
-      setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
-      return;
-    }
-    if (remainingSeconds <= 0) {
-      setEntryProceedError("Шалгалтын хугацаа дууссан байна.");
-      return;
+    if (usesTeacherControlledStart) {
+      if (entryClassHintKind === "not_delivered") {
+        setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
+        return;
+      }
+      if (!matchedClass) {
+        setEntryProceedError("Ийм анги олдсонгүй. Жишээ: 10A");
+        return;
+      }
+      if (!isSelectedClassDelivered) {
+        setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
+        return;
+      }
+      if (remainingSeconds <= 0) {
+        setEntryProceedError("Шалгалтын хугацаа дууссан байна.");
+        return;
+      }
     }
 
     setEntryProceedError(null);
-    setPhase("exam");
+
+    try {
+      const result = await studentExamAuthMutation({
+        variables: {
+          input: { examId: routeExamId, studentCode: trimmedStudentCode },
+        },
+      });
+      const token = result.data?.studentExamAuth?.token;
+      if (!token) {
+        setEntryProceedError(
+          result.error?.message ?? "Сурагчийн баталгаажуулалт амжилтгүй.",
+        );
+        return;
+      }
+      writeStudentExamToken(routeExamId, token);
+      setExamSessionToken(token);
+    } catch (error: unknown) {
+      setEntryProceedError(formatStudentExamAuthError(error));
+    }
   };
 
   if (isFinished || hasTimedOut) return <CompletedScreen />;
 
   if (phase === "entry") {
     const loadError =
-      examError?.message ??
-      (!examLoading && !examRow ? "Шалгалт олдсонгүй." : null);
+      examSessionToken != null
+        ? (examError?.message ??
+          (!examLoading && !examRow ? "Шалгалт олдсонгүй." : null))
+        : null;
 
     return (
       <div className="relative">
-        {examLoading || (examRow && itemsLoading) ? (
+        {authLoading ||
+        (examSessionToken != null &&
+          (examLoading || (examRow != null && itemsLoading))) ? (
           <div className="flex min-h-[120px] items-center justify-center bg-[#edf6ff] px-4 py-6 text-sm text-[#5c6786]">
             Шалгалтын өгөгдлийг ачааллаж байна…
           </div>
@@ -370,17 +479,25 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
           hasAcceptedRules={hasAcceptedRules}
           classCodeHint={classCodeHint}
           classCodeRequired={requiresDeliveredClass}
+          studentCode={studentCode}
+          studentCodeRequired
           proceedError={entryProceedError}
           onChangeClassCode={(value) => {
             setEntryProceedError(null);
             setClassCode(value);
           }}
+          onChangeStudentCode={(value) => {
+            setEntryProceedError(null);
+            setStudentCode(value);
+          }}
           onToggleAcceptedRules={(checked) => {
             setEntryProceedError(null);
             setHasAcceptedRules(checked);
           }}
-          onProceed={handleStartExam}
-        />
+          onProceed={() => {
+            void handleStartExam();
+          }}
+      />
       </div>
     );
   }

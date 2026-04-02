@@ -22,7 +22,6 @@ import { MonitorDetailSection } from "./_components/monitor-detail-section";
 import { MonitorExamsSection } from "./_components/monitor-exams-section";
 import {
 	mapBackendExamsToMonitorCards,
-	formatMonitorSavedAt,
 	type BackendExamMonitorRow,
 } from "./_lib/backend-exams-to-monitor-cards";
 import {
@@ -30,9 +29,6 @@ import {
 	type ActiveStudentEntry,
 	type MonitorExamCardItem,
 } from "./_lib/monitoring";
-import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
-import { normalizeSavedExamRecord } from "../exam/_lib/utils";
-import type { SavedExamRecord } from "../exam/_lib/types";
 
 type GetAllSubjectResponse = {
 	getAllSubject: { id: string; name: string }[];
@@ -47,11 +43,15 @@ type ClassesByTeacherResponse = {
 };
 
 type StudentsByClassResponse = {
-	getStudentByClassId: Array<{ id: string }>;
+	getStudentByClassId: Array<{
+		id: string;
+		firstName: string;
+		lastName: string;
+		email: string | null;
+	}>;
 };
 
 export default function ExamOptimizationPage() {
-	const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -92,27 +92,33 @@ export default function ExamOptimizationPage() {
 		return map;
 	}, [subjectsData?.getAllSubject]);
 
-	const demoClassOptions = useMemo(
+	const teacherClassOptions = useMemo(
 		() => apiClassOptions.map((k) => ({ id: k.id, label: k.name })),
 		[apiClassOptions],
 	);
 
-	const apiMonitorCards = useMemo(() => {
-		const rows = examsData?.getExamBySchoolId;
-		if (!rows?.length) return [];
-		return mapBackendExamsToMonitorCards(
-			rows,
-			subjectNameById,
-			demoClassOptions,
-		);
-	}, [demoClassOptions, examsData?.getExamBySchoolId, subjectNameById]);
+	const teacherExams = useMemo(() => {
+		const rows = examsData?.getExamBySchoolId ?? [];
+		if (!teacherId) return [];
+		return rows.filter((row) => row.teacherId === teacherId);
+	}, [examsData?.getExamBySchoolId, teacherId]);
 
-	const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
+	const monitorExamCards = useMemo(() => {
+		if (!teacherExams.length) return [];
+		return mapBackendExamsToMonitorCards(
+			teacherExams,
+			subjectNameById,
+			teacherClassOptions,
+		);
+	}, [teacherExams, subjectNameById, teacherClassOptions]);
+
 	const initialSelectedExamId = searchParams.get("examId");
 	const [selectedExamId, setSelectedExamId] = useState<string | null>(
 		initialSelectedExamId,
 	);
-	const [selectedClassIdByExamId] = useState<Record<string, string>>({});
+	const [selectedClassIdByExamId, setSelectedClassIdByExamId] = useState<
+		Record<string, string>
+	>({});
 	const [monitoringByScope, setMonitoringByScope] = useState<Record<string, boolean>>(
 		() => {
 			const initialMonitoringState = readExamMonitoringStateMap();
@@ -134,96 +140,7 @@ export default function ExamOptimizationPage() {
 				.map(([scope, value]) => [scope, value.startedAt as number]),
 		);
 	});
-	const [activeStudents, setActiveStudents] = useState<ActiveStudentEntry[]>(
-		[],
-	);
 	const [currentTime, setCurrentTime] = useState(() => Date.now());
-
-	const currentClassName = useMemo(() => {
-		const grades = activeStudents
-			.map((s) => s.grade?.trim())
-			.filter((g): g is string => Boolean(g));
-
-		if (!grades.length) return "—";
-
-		const freq = new Map<string, number>();
-		for (const g of grades) freq.set(g, (freq.get(g) ?? 0) + 1);
-
-		let bestGrade = grades[0];
-		let bestCount = 0;
-		for (const [g, c] of freq.entries()) {
-			if (c > bestCount) {
-				bestCount = c;
-				bestGrade = g;
-			}
-		}
-
-		// If multiple grades are tied, show "олон анги" but keep best as hint.
-		const uniqueCount = freq.size;
-		if (uniqueCount > 1) {
-			return `Олон анги (${bestGrade})`;
-		}
-
-		return bestGrade;
-	}, [activeStudents]);
-
-	const localStorageMonitorCards = useMemo<MonitorExamCardItem[]>(() => {
-		if (savedExams.length === 0) return [];
-
-		const firstSentExamId =
-			savedExams.find((item) => (item.sentClassIds ?? []).length > 0)?.id ??
-			null;
-		const resolveClassLabel = (classId?: string) => {
-			if (!classId) return "Анги оноогоогүй";
-			return apiClassOptions.find((klass) => klass.id === classId)?.name ?? classId;
-		};
-
-		return savedExams.map((exam) => {
-			const classOptions =
-				(exam.sentClassIds ?? []).length > 0
-					? (exam.sentClassIds ?? []).map((classId) => ({
-							id: classId,
-							label: resolveClassLabel(classId),
-						}))
-					: [];
-			const classLabels = classOptions.map((item) => item.label);
-
-			return {
-				id: exam.id,
-				title: exam.title,
-				grade: exam.grade,
-				subject: exam.subject,
-				topic: exam.topic,
-				durationInMinutes: exam.durationInMinutes,
-				status:
-					exam.approvalStatus === "pending"
-						? "approval_pending"
-						: classLabels.length === 0
-							? "draft"
-							: exam.id === firstSentExamId
-								? "ongoing"
-								: "completed",
-				questionCount: exam.questionCount,
-				totalPoints: exam.totalPoints,
-				classLabel:
-					classLabels.length > 0 ? classLabels.join(", ") : "Анги оноогоогүй",
-				classLabels,
-				classOptions,
-				savedAtLabel: formatMonitorSavedAt(exam.savedAt),
-			};
-		});
-	}, [savedExams, apiClassOptions]);
-
-	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
-		const mergedCards = [...localStorageMonitorCards, ...apiMonitorCards];
-		const seenIds = new Set<string>();
-
-		return mergedCards.filter((card) => {
-			if (seenIds.has(card.id)) return false;
-			seenIds.add(card.id);
-			return true;
-		});
-	}, [apiMonitorCards, localStorageMonitorCards]);
 
 	useEffect(() => {
 		if (!initialSelectedExamId) return;
@@ -242,6 +159,18 @@ export default function ExamOptimizationPage() {
 		if (!effectiveSelectedExamId) return null;
 		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;
 	}, [effectiveSelectedExamId, monitorExamCards]);
+
+	useEffect(() => {
+		if (!effectiveSelectedExamId) return;
+		const exam = monitorExamCards.find((e) => e.id === effectiveSelectedExamId);
+		const firstId = exam?.classOptions[0]?.id;
+		if (!firstId) return;
+		setSelectedClassIdByExamId((prev) => {
+			if (prev[effectiveSelectedExamId]) return prev;
+			return { ...prev, [effectiveSelectedExamId]: firstId };
+		});
+	}, [effectiveSelectedExamId, monitorExamCards]);
+
 	const activeClassId = activeMonitorExam
 		? selectedClassIdByExamId[activeMonitorExam.id] ??
 			activeMonitorExam.classOptions[0]?.id ??
@@ -262,12 +191,6 @@ export default function ExamOptimizationPage() {
 	const activeScopeStartedAt = activeMonitoringScope
 		? monitorStartedAtByScope[activeMonitoringScope] ?? null
 		: null;
-	const filteredActiveStudents = useMemo(() => {
-		if (!activeClassLabel) return activeStudents;
-		return activeStudents.filter(
-			(student) => student.grade.trim().toLowerCase() === activeClassLabel.trim().toLowerCase(),
-		);
-	}, [activeClassLabel, activeStudents]);
 
 	const { data: rosterCountData } = useQuery<StudentsByClassResponse>(
 		GET_STUDENT_BY_CLASS_ID,
@@ -278,12 +201,27 @@ export default function ExamOptimizationPage() {
 		},
 	);
 
-	const rosterCount = rosterCountData?.getStudentByClassId?.length ?? 0;
+	const rosterStudents = useMemo((): ActiveStudentEntry[] => {
+		const list = rosterCountData?.getStudentByClassId ?? [];
+		const gradeLabel = activeClassLabel ?? "";
+		return list.map((s) => ({
+			id: s.id,
+			fullName: `${s.firstName} ${s.lastName}`.trim() || s.id,
+			email: s.email ?? "",
+			grade: gradeLabel,
+			school: "",
+			startedAt: Date.now(),
+			status: "active",
+		}));
+	}, [rosterCountData?.getStudentByClassId, activeClassLabel]);
+
+	const rosterCount = rosterStudents.length;
 
 	const monitorTotalStudents = useMemo(() => {
 		if (!activeMonitorExam) return 0;
-		return Math.max(rosterCount, filteredActiveStudents.length);
-	}, [activeMonitorExam, rosterCount, filteredActiveStudents.length]);
+		return rosterCount;
+	}, [activeMonitorExam, rosterCount]);
+
 	const remainingDurationMs = useMemo(() => {
 		if (!activeMonitorExam) return 0;
 		const totalDurationMs = activeMonitorExam.durationInMinutes * 60 * 1000;
@@ -295,34 +233,13 @@ export default function ExamOptimizationPage() {
 		() => formatRemainingDuration(remainingDurationMs),
 		[remainingDurationMs],
 	);
-	const monitoringElapsedSeconds = useMemo(() => {
-		if (!isActiveMonitoring || !activeScopeStartedAt) return 0;
-		return Math.max(0, Math.floor((currentTime - activeScopeStartedAt) / 1000));
-	}, [activeScopeStartedAt, currentTime, isActiveMonitoring]);
 
-	const readActiveStudents = useCallback((): ActiveStudentEntry[] => {
-		try {
-			const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
-			if (!raw) return [];
-			const parsed = JSON.parse(raw) as unknown;
-			if (!Array.isArray(parsed) || parsed.length === 0) return [];
-			return parsed
-				.filter((x) => x && typeof x === "object")
-				.map((x) => x as ActiveStudentEntry)
-				.filter(
-					(x) =>
-						typeof x.id === "string" &&
-						typeof x.fullName === "string" &&
-						typeof x.email === "string" &&
-						typeof x.startedAt === "number" &&
-						(x.status === "active" ||
-							x.status === "disconnected" ||
-							x.status === "submitted"),
-				);
-		} catch {
-			return [];
-		}
-	}, []);
+	const onSelectClass = useCallback((classId: string) => {
+		setSelectedClassIdByExamId((prev) => {
+			if (!selectedExamId) return prev;
+			return { ...prev, [selectedExamId]: classId };
+		});
+	}, [selectedExamId]);
 
 	const startMonitoring = useCallback(() => {
 		if (!activeMonitoringScope) return;
@@ -388,69 +305,32 @@ export default function ExamOptimizationPage() {
 		isActiveMonitoring,
 	]);
 
-	useEffect(() => {
-		const syncSavedExams = () => {
-			try {
-				const raw = window.localStorage.getItem(SAVED_EXAMS_STORAGE_KEY);
-				setSavedExams(
-					raw
-						? (JSON.parse(raw) as SavedExamRecord[]).map(normalizeSavedExamRecord)
-						: [],
-				);
-			} catch {
-				setSavedExams([]);
-			}
-		};
-
-		const sync = () => {
-			const next = readActiveStudents();
-			setActiveStudents(next);
-		};
-
-		syncSavedExams();
-		sync();
-
-		const onStorage = (e: StorageEvent) => {
-			if (e.key === ACTIVE_STUDENTS_STORAGE_KEY) sync();
-			if (e.key === SAVED_EXAMS_STORAGE_KEY) syncSavedExams();
-		};
-		window.addEventListener("storage", onStorage);
-
-		// Same-tab updates won't fire "storage", so poll lightly.
-		const interval = window.setInterval(sync, 1000);
-
-		return () => {
-			window.removeEventListener("storage", onStorage);
-			window.clearInterval(interval);
-		};
-	}, [readActiveStudents]);
-
 	return (
 		<section className="w-full overflow-x-hidden px-6 py-8 sm:px-10 sm:py-10">
 			<div className="mx-auto max-w-6xl space-y-10">
-        {!activeMonitorExam ? (
-          <MonitorExamsSection
-            activeExamId={null}
-            exams={monitorExamCards}
-            onClearSelection={() => setSelectedExamId(null)}
-            onOpenExam={(exam) => {
-              setSelectedExamId(exam.id);
-            }}
-            totalExamCount={monitorExamCards.length}
-          />
-        ) : null}
+				{!activeMonitorExam ? (
+					<MonitorExamsSection
+						activeExamId={null}
+						exams={monitorExamCards}
+						onClearSelection={() => setSelectedExamId(null)}
+						onOpenExam={(exam) => {
+							setSelectedExamId(exam.id);
+						}}
+						totalExamCount={monitorExamCards.length}
+					/>
+				) : null}
 
 				{activeMonitorExam ? (
 					<MonitorDetailSection
 						activeClassId={activeClassId}
 						activeClassLabel={activeClassLabel}
 						activeExam={activeMonitorExam}
-						activeStudents={filteredActiveStudents}
+						activeStudents={rosterStudents}
 						isMonitoring={isActiveMonitoring}
-						monitoringElapsedSeconds={monitoringElapsedSeconds}
 						monitorTotalStudents={monitorTotalStudents}
 						remainingDurationLabel={remainingDurationLabel}
-            onBackToList={() => setSelectedExamId(null)}
+						onBackToList={() => setSelectedExamId(null)}
+						onSelectClass={onSelectClass}
 						onStartMonitoring={startMonitoring}
 					/>
 				) : null}

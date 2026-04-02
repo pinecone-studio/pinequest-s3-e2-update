@@ -22,6 +22,8 @@ export function getGraphqlUri() {
 export type CreateApolloClientOptions = {
   /** Clerk session JWT; omitted on SSR / when anonymous. */
   getToken?: () => Promise<string | null>;
+  /** Сурагчийн шалгалтын token (`x-exam-token`); синхрон уншина. */
+  getExamToken?: () => string | null;
 };
 
 function normalizeHeaders(headers: unknown): Record<string, string> {
@@ -49,9 +51,18 @@ export function createApolloClient(options?: CreateApolloClientOptions) {
         token = null;
       }
     }
+    let examToken: string | null = null;
+    if (options?.getExamToken) {
+      try {
+        examToken = options.getExamToken();
+      } catch {
+        examToken = null;
+      }
+    }
     const headers = {
       ...normalizeHeaders(prevContext.headers),
       ...(token ? { authorization: `Bearer ${token}` } : {}),
+      ...(examToken ? { "x-exam-token": examToken } : {}),
     };
     return { headers };
   });

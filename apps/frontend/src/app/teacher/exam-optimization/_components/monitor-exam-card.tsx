@@ -40,7 +40,7 @@ export function MonitorExamCard({
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <span className="rounded-[8px] bg-[#d7ebff] px-4 py-1.5 text-[12px] font-medium text-[#355389]">
-          Илгээсэн анги: {classSummary}
+          Анги: {classSummary}
         </span>
         <span className="rounded-[8px] bg-[#d7ebff] px-4 py-1.5 text-[12px] font-medium text-[#355389]">
           {exam.questionCount} асуулт

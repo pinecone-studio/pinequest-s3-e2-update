@@ -1,4 +1,4 @@
-import { examTable } from "../../../../db/schema";
+import { examAllowedClassTable, examTable } from "../../../../db/schema";
 import { GraphQLUserContext } from "../../../context";
 type CreateExamArgs = {
   grade: number;
@@ -49,6 +49,21 @@ export const createExam = async (
       createdAt: now,
       updatedAt: now,
     });
+
+    const classIds = [
+      ...new Set(
+        (args.input.allowedClassIds ?? [])
+          .map((c) => c.trim())
+          .filter((c) => c.length > 0),
+      ),
+    ];
+    for (const classId of classIds) {
+      await ctx.db
+        .insert(examAllowedClassTable)
+        .values({ examId: id, classId, createdAt: now })
+        .onConflictDoNothing();
+    }
+
     return {
       id: id,
       grade: args.input.grade,

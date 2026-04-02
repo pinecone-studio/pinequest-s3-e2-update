@@ -1,5 +1,9 @@
 import { eq } from "drizzle-orm";
-import { examTable, studentTable } from "../../../../db/schema";
+import {
+  examAllowedClassTable,
+  examTable,
+  studentTable,
+} from "../../../../db/schema";
 import { GraphQLUserContext } from "../../../context";
 import { createExamToken } from "../../../../lib/exam-token";
 
@@ -74,6 +78,18 @@ export const studentExamAuth = async (
       .where(eq(studentTable.studentCode, studentCode));
     const student = studentRows[0];
     if (!student) throw new Error("Invalid student code");
+
+    const allowedRows = await ctx.db
+      .select()
+      .from(examAllowedClassTable)
+      .where(eq(examAllowedClassTable.examId, examId));
+    const allowedClassIds = new Set(allowedRows.map((r) => r.classId));
+    if (allowedClassIds.size === 0) {
+      throw new Error("Энэ шалгалтыг аль ч ангиудад нэээгүй байна.");
+    }
+    if (!allowedClassIds.has(student.classId)) {
+      throw new Error("Таны анги энэ шалгалтад бүртгэгдээгүй байна.");
+    }
 
     const secret = ctx.env.EXAM_TOKEN_SECRET?.trim();
     if (!secret) throw new Error("Missing EXAM_TOKEN_SECRET");
