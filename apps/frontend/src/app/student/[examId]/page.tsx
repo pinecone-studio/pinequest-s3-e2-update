@@ -1,11 +1,13 @@
+/** @format */
+
 "use client";
 
 import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
-  GET_EXAM_BY_ID,
-  GET_EXAM_QUESTION_ITEMS,
+	GET_EXAM_BY_ID,
+	GET_EXAM_QUESTION_ITEMS,
 } from "@/graphql/typeDefs/queries";
 import {
   EXAM_MONITORING_STORAGE_KEY,
