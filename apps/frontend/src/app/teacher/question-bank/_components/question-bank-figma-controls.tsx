@@ -35,9 +35,9 @@ export function QuestionBankFigmaControls({
         <h2 className="text-[20px] font-medium leading-[20px] text-[#262626]">
           Сонголтын хэсэг
         </h2>
-        <div className="mt-[10px] flex flex-wrap items-center gap-[10px]">
+        <div className="mt-[20px] flex flex-wrap items-center gap-[14px]">
           <button
-            className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[10px] border border-[#dfe6f2] bg-white text-[#7c8aa5] transition hover:bg-[#f7faff]"
+            className="inline-flex h-[49px] w-[49px] items-center justify-center rounded-[10px] border border-[#dfe6f2] bg-white text-[#7c8aa5] transition hover:bg-[#f7faff]"
             onClick={onResetSelection}
             type="button"
           >
@@ -123,7 +123,7 @@ export function QuestionBankFigmaControls({
 
 function SelectedChip({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex h-[36px] items-center rounded-[10px] border border-[#93c5fd] bg-[#eff6ff] px-[14px] text-[11px] font-medium text-[#355caa]">
+    <div className="inline-flex h-[49px] w-[152px] items-center rounded-[10px] border border-[#93c5fd] bg-[#eff6ff] pl-[14px] pr-[14px] text-[14px] font-medium leading-[120%] tracking-[0.04em] text-[#355caa]">
       {children}
     </div>
   );
