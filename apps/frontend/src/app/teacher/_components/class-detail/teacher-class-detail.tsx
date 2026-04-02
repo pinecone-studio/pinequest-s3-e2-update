@@ -28,6 +28,7 @@ import { safeExamDateKey } from "./teacher-class-detail-utils";
 import { TeacherClassHistoryView } from "./teacher-class-history-view";
 import { TeacherClassPastExamStudentPopover } from "./teacher-class-past-exam-student-popover";
 import { TeacherClassPendingExamDeliveryFlow } from "./teacher-class-pending-exam-delivery-flow";
+import { TeacherClassDetailSkeleton } from "./teacher-class-detail-skeleton";
 import { TeacherClassStudentsView } from "./teacher-class-students-view";
 
 type GqlStudentRow = {
@@ -252,13 +253,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   }, [examStudentPopover, filteredPastExams]);
 
   if (pageLoading) {
-    return (
-      <section className="px-4 py-10 sm:px-10">
-        <p className="text-center text-4 font-semibold text-[#475569]">
-          Ачааллаж байна…
-        </p>
-      </section>
-    );
+    return <TeacherClassDetailSkeleton />;
   }
 
   if (!apiClassRow || !clsLabel) {

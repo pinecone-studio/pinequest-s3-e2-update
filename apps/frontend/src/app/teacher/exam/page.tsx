@@ -11,7 +11,7 @@ export default function TeacherExamPage() {
 
   if (examPage.isPageLoading) {
     return (
-      <div className="mx-auto max-w-[1200px] px-3 pt-1 sm:px-4 sm:pt-0 md:px-5">
+      <div className="mx-auto max-w-[1200px] space-y-5 px-3 pb-8 pt-1 sm:space-y-6 sm:px-4 sm:pt-0 md:px-5">
         <TeacherExamSkeleton />
       </div>
     );
