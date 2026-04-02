@@ -15,7 +15,7 @@ export function QuestionBankPublishSuccessDialog({
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-[#111827]/40 p-4 backdrop-blur-[2px]">
-      <div className="w-full max-w-md rounded-lg border border-[#E5E5E5] bg-[#EDF6FF] p-6 text-center shadow-2xl">
+      <div className="w-full max-w-[458px] rounded-lg border border-[#E5E5E5] bg-[#EDF6FF] px-6 py-[29px] text-center shadow-2xl">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border-[4px] border-[#0BBF63] text-[#0BBF63]">
           <Check className="h-6 w-6" />
         </div>

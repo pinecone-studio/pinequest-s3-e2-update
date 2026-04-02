@@ -4,9 +4,12 @@
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTeacher } from "../../teacher-shell";
-import { PENDING_EXAM_TRANSFER_STORAGE_KEY } from "../../exam/_lib/constants";
+import {
+	PENDING_EXAM_TRANSFER_STORAGE_KEY,
+	QUESTION_BANK_PREFILL_STORAGE_KEY,
+} from "../../exam/_lib/constants";
 import type { PendingExamTransfer } from "../../exam/_lib/types";
 import {
 	mapBackendOpenExerciesToQuestions,
@@ -39,6 +42,12 @@ import {
 type UseQuestionBankOptions = {
 	initialSubjectId: string;
 	initialGrade: string;
+};
+
+type QuestionBankPrefill = {
+	grade?: string;
+	subject?: string;
+	subjectId?: string;
 };
 
 type CreateTestsResponse = {
@@ -114,11 +123,43 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		entryFromRoute.subjectId && entryFromRoute.grade,
 	);
 
-	const [localEntry, setLocalEntry] = useState({
-		subjectId: "",
-		subject: "",
-		grade: "",
+	const [localEntry, setLocalEntry] = useState(() => {
+		if (typeof window === "undefined") {
+			return { subjectId: "", subject: "", grade: "" };
+		}
+		try {
+			const raw = window.sessionStorage.getItem(
+				QUESTION_BANK_PREFILL_STORAGE_KEY,
+			);
+			if (!raw) return { subjectId: "", subject: "", grade: "" };
+			const parsed = JSON.parse(raw) as QuestionBankPrefill;
+			return {
+				subjectId: parsed.subjectId ?? "",
+				subject: parsed.subject ?? "",
+				grade: parsed.grade ?? "",
+			};
+		} catch {
+			return { subjectId: "", subject: "", grade: "" };
+		}
 	});
+
+	useEffect(() => {
+		if (enteredFromRoute) return;
+		if (localEntry.subjectId || !localEntry.subject) return;
+
+		const matched = subjectItems.find((item) => item.name === localEntry.subject);
+		if (!matched) return;
+
+		setLocalEntry((current) => ({
+			...current,
+			subjectId: matched.id,
+		}));
+	}, [
+		enteredFromRoute,
+		localEntry.subject,
+		localEntry.subjectId,
+		subjectItems,
+	]);
 
 	const entrySelection = enteredFromRoute ? entryFromRoute : localEntry;
 

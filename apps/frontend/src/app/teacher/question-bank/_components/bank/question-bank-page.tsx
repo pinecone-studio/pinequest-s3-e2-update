@@ -83,6 +83,7 @@ export function QuestionBankPage({
 					<QuestionBankEntryPanel
 						entryGrade={entrySelection.grade}
 						entrySubjectId={entrySelection.subjectId}
+						totalQuestions={summary.selectedScopeCount}
 						subjects={subjectItems}
 						subjectsLoading={subjectsLoading}
 						gradeOptions={gradeOptions}
@@ -109,7 +110,6 @@ export function QuestionBankPage({
 							entryGrade={entrySelection.grade}
 							entrySubject={entrySelection.subject}
 							onClearFilters={clearFilters}
-							onOpenBulkImport={openBulkImport}
 							onResetSelection={() => {
 								resetEntrySelection();
 								router.push("/teacher/question-bank");

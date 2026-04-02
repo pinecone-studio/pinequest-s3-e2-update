@@ -28,6 +28,7 @@ export function QuestionBuilderAnswerSection(
   const {
     mode,
     onAddOption,
+    onMarkCorrectOption,
     onOptionChange,
     onRemoveOption,
     validationErrors,
@@ -58,6 +59,21 @@ export function QuestionBuilderAnswerSection(
           <div className="space-y-3">
             {values.options.map((option, index) => (
               <div className="flex items-center gap-3" key={option.id}>
+                <label
+                  className="inline-flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-[12px] border border-[#d3deef] bg-white"
+                  htmlFor={`question-option-correct-${option.id}`}
+                  title="Зөв хариулт болгох"
+                >
+                  <input
+                    id={`question-option-correct-${option.id}`}
+                    checked={option.isCorrect}
+                    className="h-4 w-4 cursor-pointer rounded border-[#9ca3af] accent-[#29A4FF]"
+                    onChange={(event) => {
+                      if (event.target.checked) onMarkCorrectOption(option.id);
+                    }}
+                    type="checkbox"
+                  />
+                </label>
                 <div className="flex-1">
                   {isNationalScript &&
                   hasTraditionalMongolianText(option.text) ? (
@@ -114,7 +130,7 @@ export function QuestionBuilderAnswerSection(
           </button>
 
           {isNationalScript && activeOptionId ? (
-            <div className="rounded-[12px] border border-[#d7e3f4] bg-[#f7faff] p-4">
+            <div className="rounded-[12px] border border-[#d7e3f4] bg-[#FAFAFA] p-4">
               <label className="block space-y-2">
                 <span className="text-[13px] font-semibold text-[#183153]">
                   Хөрвүүлсэн текст оруулах сонголт

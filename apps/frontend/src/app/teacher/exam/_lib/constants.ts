@@ -2,6 +2,8 @@ import type { ExamComposerState } from "./types";
 
 export const SAVED_EXAMS_STORAGE_KEY = "teacher-exam-saved-exams";
 export const PENDING_EXAM_TRANSFER_STORAGE_KEY = "teacher-exam-pending-transfer";
+export const QUESTION_BANK_PREFILL_STORAGE_KEY =
+  "teacher-question-bank-prefill";
 
 export const EXAM_GRADE_OPTIONS = [
   "6-р анги",

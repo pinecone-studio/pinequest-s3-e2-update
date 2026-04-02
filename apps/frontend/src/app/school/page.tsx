@@ -5,6 +5,13 @@
 import { ArrowUpRight, ChevronRight, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
 	type ApprovalRequest,
 	getApprovalRequestsClient,
 	getApprovalUpdatedEventName,
@@ -518,47 +525,59 @@ export default function SchoolDashboardPage() {
             <div className="mt-3 grid gap-3 md:grid-cols-3">
               <label className="block text-2 font-medium text-zinc-600">
                 Улирал
-                <select
+                <Select
                   value={selectedQuarterFilter}
-                  onChange={(e) => setSelectedQuarterFilter(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+                  onValueChange={setSelectedQuarterFilter}
                 >
-                  <option value="all">Бүх улирал</option>
-                  <option value="Q1">I улирал</option>
-                  <option value="Q2">II улирал</option>
-                  <option value="Q3">III улирал</option>
-                  <option value="Q4">IV улирал</option>
-                </select>
+                  <SelectTrigger className="mt-1 h-10 rounded-lg border-zinc-300 bg-white text-2 text-zinc-900 shadow-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200">
+                    <SelectValue placeholder="Бүх улирал" />
+                  </SelectTrigger>
+                  <SelectContent position="popper" sideOffset={4}>
+                    <SelectItem value="all">Бүх улирал</SelectItem>
+                    <SelectItem value="Q1">I улирал</SelectItem>
+                    <SelectItem value="Q2">II улирал</SelectItem>
+                    <SelectItem value="Q3">III улирал</SelectItem>
+                    <SelectItem value="Q4">IV улирал</SelectItem>
+                  </SelectContent>
+                </Select>
               </label>
               <label className="block text-2 font-medium text-zinc-600">
                 Анги
-                <select
+                <Select
                   value={selectedClassFilter}
-                  onChange={(e) => setSelectedClassFilter(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+                  onValueChange={setSelectedClassFilter}
                 >
-                  <option value="all">Бүх анги</option>
-                  {classOptions.map((grade) => (
-                    <option key={grade} value={grade}>
-                      {grade}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="mt-1 h-10 rounded-lg border-zinc-300 bg-white text-2 text-zinc-900 shadow-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200">
+                    <SelectValue placeholder="Бүх анги" />
+                  </SelectTrigger>
+                  <SelectContent position="popper" sideOffset={4}>
+                    <SelectItem value="all">Бүх анги</SelectItem>
+                    {classOptions.map((grade) => (
+                      <SelectItem key={grade} value={grade}>
+                        {grade}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </label>
               <label className="block text-2 font-medium text-zinc-600">
                 Хичээл
-                <select
+                <Select
                   value={selectedSubjectFilter}
-                  onChange={(e) => setSelectedSubjectFilter(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+                  onValueChange={setSelectedSubjectFilter}
                 >
-                  <option value="all">Бүх хичээл</option>
-                  {subjectOptions.map((subject) => (
-                    <option key={subject} value={subject}>
-                      {subject}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="mt-1 h-10 rounded-lg border-zinc-300 bg-white text-2 text-zinc-900 shadow-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200">
+                    <SelectValue placeholder="Бүх хичээл" />
+                  </SelectTrigger>
+                  <SelectContent position="popper" sideOffset={4}>
+                    <SelectItem value="all">Бүх хичээл</SelectItem>
+                    {subjectOptions.map((subject) => (
+                      <SelectItem key={subject} value={subject}>
+                        {subject}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </label>
             </div>
           ) : null}

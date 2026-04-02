@@ -65,19 +65,6 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
-        <div className="min-w-0 sm:max-w-[10rem] lg:col-span-1 lg:max-w-none">
-          <Field label="">
-            <input
-              className={`${inputClassName} h-10! w-full`}
-              onChange={(event) =>
-                onUpdateExam("classGroup", event.target.value.toUpperCase())
-              }
-              placeholder="Бүлэг"
-              value={exam.classGroup}
-            />
-          </Field>
-        </div>
-
         <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <Field label="">
             <Select
@@ -118,9 +105,9 @@ export function ExamSettingsForm({
           </div>
         </div>
 
-        <div className="min-w-0 sm:col-span-2 lg:col-span-1">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <Field label="">
-            <div className="flex h-10 w-full max-w-[11rem] items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-3 sm:max-w-none">
+            <div className="flex h-10 w-full items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-3">
               <div className="inline-flex items-center gap-1">
                 <button
                   type="button"

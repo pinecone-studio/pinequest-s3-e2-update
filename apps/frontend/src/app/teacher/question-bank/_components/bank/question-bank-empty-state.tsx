@@ -19,20 +19,20 @@ export function QuestionBankEmptyState({ onCreateQuestion }: EmptyStateProps) {
           <div className="absolute bottom-10 right-6 h-3 w-14 rounded-full bg-[#f0f2f5]" />
         </div>
 
-        <h3 className="text-2xl font-semibold tracking-[-0.03em] text-[#111827]">
+        <h3 className="text-2xl font-medium tracking-[-0.03em] text-[#111827]">
          Санд одоогоор асуулт байхгүй байна.
         </h3>
 
-        <p className="mt-2 text-sm leading-6 text-[#6b7280]">
+        <p className="mt-1 text-sm leading-6 text-[#6b7280]">
          Шинэ асуулт нэмээд эхлээрэй.
         </p>
 
         <button
           type="button"
           onClick={onCreateQuestion}
-          className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition hover:bg-[#1f2937] active:translate-y-px"
+          className="mt-6 inline-flex h-11 items-center justify-center rounded-[12px] bg-[#29A4FF] px-8 text-[18px] font-medium text-white transition hover:bg-[#1f97f1] active:translate-y-px"
         >
-          + Асуулт нэмэх
+          Шинэ асуулт +
         </button>
       </div>
     </div>

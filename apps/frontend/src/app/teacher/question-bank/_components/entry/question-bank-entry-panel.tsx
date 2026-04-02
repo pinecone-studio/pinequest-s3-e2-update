@@ -8,6 +8,7 @@ import { QuestionBankEntrySelect } from "./question-bank-entry-select";
 type QuestionBankEntryPanelProps = {
 	entryGrade: string;
 	entrySubjectId: string;
+	totalQuestions: number;
 	subjects: { id: string; name: string }[];
 	subjectsLoading?: boolean;
 	gradeOptions: string[];
@@ -19,6 +20,7 @@ type QuestionBankEntryPanelProps = {
 export function QuestionBankEntryPanel({
 	entryGrade,
 	entrySubjectId,
+	totalQuestions,
 	subjects,
 	subjectsLoading = false,
 	gradeOptions,
@@ -26,8 +28,6 @@ export function QuestionBankEntryPanel({
 	onGradeSelect,
 	onSubjectSelect,
 }: QuestionBankEntryPanelProps) {
-	const totalQuestions = 9;
-
 	return (
 		<div className="space-y-[18px]">
 			<section className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
@@ -40,11 +40,11 @@ export function QuestionBankEntryPanel({
 					</p>
 				</div>
 				<div className="inline-flex h-[72px] w-full min-w-0 shrink-0 items-center justify-center rounded-[16px] bg-[#D7ECFF] px-5 sm:h-[88px] sm:w-auto sm:min-w-0 sm:px-[28px] md:min-w-[280px]">
-					<span className="text-[40px] font-medium leading-none text-[#122459] sm:text-[56px]">
+					<span className="text-[38px] font-medium leading-none text-[#122459] sm:text-[54px]">
 						{totalQuestions}
 					</span>
 					<div className="ml-3 sm:ml-[12px]">
-						<p className="whitespace-nowrap text-[14px] font-medium uppercase leading-tight text-[#122459] sm:text-[16px] sm:leading-[20px]">
+						<p className="whitespace-nowrap text-[12px] font-medium uppercase leading-tight text-[#122459] sm:text-[14px] sm:leading-[18px]">
 							БҮХ АСУУЛТ
 						</p>
 					</div>

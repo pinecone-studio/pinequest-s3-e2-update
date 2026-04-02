@@ -28,6 +28,7 @@ import {
   EXAM_GRADE_OPTIONS,
   INITIAL_FORM,
   PENDING_EXAM_TRANSFER_STORAGE_KEY,
+  QUESTION_BANK_PREFILL_STORAGE_KEY,
 } from "../_lib/constants";
 import { normalizeSavedExamRecord } from "../_lib/utils";
 import type {
@@ -394,6 +395,27 @@ export function useTeacherExamPage() {
     key: Key,
     value: ExamComposerState[Key],
   ) => setExam((current) => ({ ...current, [key]: value }));
+
+  useEffect(() => {
+    const selectedSubject = (subjectsData?.getAllSubject ?? []).find(
+      (subject) => subject.name === exam.subject,
+    );
+
+    if (!exam.grade && !exam.subject) {
+      window.sessionStorage.removeItem(QUESTION_BANK_PREFILL_STORAGE_KEY);
+      return;
+    }
+
+    window.sessionStorage.setItem(
+      QUESTION_BANK_PREFILL_STORAGE_KEY,
+      JSON.stringify({
+        grade: exam.grade,
+        subject: exam.subject,
+        subjectId: selectedSubject?.id ?? "",
+      }),
+    );
+  }, [exam.grade, exam.subject, subjectsData?.getAllSubject]);
+
   const toggleSelectQuestion = (questionId: string) =>
     setSelectedBankIds((current) =>
       current.includes(questionId)
