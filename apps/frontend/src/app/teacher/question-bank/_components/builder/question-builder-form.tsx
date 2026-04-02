@@ -82,9 +82,7 @@ export function QuestionBuilderForm({
     const finalValues: QuestionBuilderValues = {
       ...values,
       topic:
-        values.topic.trim() ||
-        values.subtopic.trim() ||
-        values.subject.trim(),
+        values.topic.trim() || values.subtopic.trim() || values.subject.trim(),
       questionType: nextQuestionType,
       status: "published",
     };
