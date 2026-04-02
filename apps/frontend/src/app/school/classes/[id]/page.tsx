@@ -28,7 +28,10 @@ export default async function AdminClassDetailPage({
   const pastExams = getPastExamsForClass(c.id, roster);
   const homeroomTeacherName =
     c.teacherIds
-      .map((teacherId) => teachers.find((teacher) => teacher.id === teacherId)?.name)
+      .map(
+        (teacherId) =>
+          teachers.find((teacher) => teacher.id === teacherId)?.name,
+      )
       .find(Boolean) ?? "-";
   const classMatch = c.name.trim().match(/^(\d+)\s*([A-Za-zА-Яа-яӨөҮүЁё])?/u);
   const gradeLabel = classMatch?.[1] ?? c.name;
@@ -65,7 +68,9 @@ export default async function AdminClassDetailPage({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
         <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold text-zinc-900">Ангийн мэдээлэл</h3>
+            <h3 className="text-sm font-semibold text-zinc-900">
+              Ангийн мэдээлэл
+            </h3>
             <button
               type="button"
               className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
@@ -77,17 +82,20 @@ export default async function AdminClassDetailPage({
           </div>
           <div className="mt-3 space-y-2 text-sm text-zinc-600">
             <p>
-              Анги: <span className="font-medium text-zinc-900">{gradeLabel}</span>
+              Анги:{" "}
+              <span className="font-medium text-zinc-900">{gradeLabel}</span>
             </p>
             <p>
-              Бүлэг: <span className="font-medium text-zinc-900">{groupLabel}</span>
+              Бүлэг:{" "}
+              <span className="font-medium text-zinc-900">{groupLabel}</span>
             </p>
             <p>
               Анги даасан багш:{" "}
               <span className="text-zinc-900">{homeroomTeacherName}</span>
             </p>
             <p>
-              Нийт сурагч: <span className="font-medium text-zinc-900">{roster.length}</span>
+              Нийт сурагч:{" "}
+              <span className="font-medium text-zinc-900">{roster.length}</span>
             </p>
           </div>
         </section>
@@ -116,7 +124,6 @@ export default async function AdminClassDetailPage({
           )}
         </section>
       </div>
-
       <ClassLinkedExamResults
         classId={c.id}
         classNameLabel={c.name}
@@ -125,7 +132,6 @@ export default async function AdminClassDetailPage({
         updateStudentAction={updateStudent}
         removeStudentAction={removeStudent}
       />
-
     </div>
   );
 }

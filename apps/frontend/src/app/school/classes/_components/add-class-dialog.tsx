@@ -1,13 +1,21 @@
 "use client";
 
+import { useMutation } from "@apollo/client/react";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { createClass } from "@/app/school/action";
+import { CREATE_CLASS } from "@/graphql/typeDefs/mutations";
+import { GET_CLASS_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
 
-export function AddClassDialog() {
+export function AddClassDialog({ schoolId }: { schoolId: string }) {
   const [open, setOpen] = useState(false);
   const [grade, setGrade] = useState("");
   const [section, setSection] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const [createClass, { loading }] = useMutation(CREATE_CLASS, {
+    refetchQueries: [{ query: GET_CLASS_BY_SCHOOL_ID, variables: { schoolId } }],
+    awaitRefetchQueries: true,
+  });
 
   const normalizedSection = section.trim().toUpperCase();
   const combinedName = `${grade.trim()}${normalizedSection}`.trim();
@@ -44,11 +52,44 @@ export function AddClassDialog() {
             </div>
 
             <form
-              action={async (formData) => {
-                await createClass(formData);
-                setGrade("");
-                setSection("");
-                setOpen(false);
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setFormError(null);
+                const g = Number.parseInt(grade.trim(), 10);
+                if (!Number.isFinite(g) || g <= 0) {
+                  setFormError("Анги (тоо) зөв оруулна уу.");
+                  return;
+                }
+                const sec = normalizedSection;
+                if (!sec) {
+                  setFormError("Бүлэг (үсэг) оруулна уу.");
+                  return;
+                }
+                if (!schoolId) {
+                  setFormError("Сургуулийн мэдээлэл олдсонгүй. Дахин ачаална уу.");
+                  return;
+                }
+                try {
+                  await createClass({
+                    variables: {
+                      input: {
+                        schoolId,
+                        grade: g,
+                        section: sec,
+                        sectionTeacherId: "",
+                      },
+                    },
+                  });
+                  setGrade("");
+                  setSection("");
+                  setOpen(false);
+                } catch (err) {
+                  const msg =
+                    err && typeof err === "object" && "message" in err
+                      ? String((err as { message?: unknown }).message ?? "")
+                      : "";
+                  setFormError(msg || "Анги нэмэхэд алдаа гарлаа. Дахин оролдоно уу.");
+                }
               }}
               className="mt-5 space-y-4"
             >
@@ -68,6 +109,7 @@ export function AddClassDialog() {
                     }}
                     placeholder="жишээ: 10"
                     className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
+                    disabled={loading}
                   />
                 </label>
                 <label className="block">
@@ -80,25 +122,34 @@ export function AddClassDialog() {
                     onChange={(e) => setSection(e.target.value.slice(0, 1))}
                     placeholder="жишээ: А"
                     className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm uppercase text-zinc-900"
+                    disabled={loading}
                   />
                 </label>
               </div>
               <input type="hidden" name="name" value={combinedName} />
+
+              {formError ? (
+                <p className="text-sm text-red-600" role="alert">
+                  {formError}
+                </p>
+              ) : null}
 
               <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                  disabled={loading}
                 >
                   Болих
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={loading}
                 >
                   <Plus className="h-4 w-4" />
-                  Нэмэх
+                  {loading ? "Нэмж байна…" : "Нэмэх"}
                 </button>
               </div>
             </form>

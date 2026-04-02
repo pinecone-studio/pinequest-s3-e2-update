@@ -16,7 +16,6 @@ import {
   GET_STUDENT_EXAM_RESULTS_BY_CLASS_ID,
 } from "@/graphql/typeDefs/queries";
 import { useTeacherDb } from "@/app/teacher/_components/teacher-db-context";
-import { HARDCODED_TEACHER_ID } from "@/app/teacher/_lib/hardcoded-teacher-api";
 import { ClassDetailAccessDenied } from "./class-detail-access-denied";
 import { ClassDetailDeliveryFeedback } from "./class-detail-delivery-feedback";
 import { ClassDetailHero } from "./class-detail-hero";
@@ -166,8 +165,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   const clsLabel = apiClassRow
     ? `${apiClassRow.grade}${apiClassRow.section}`
     : "";
-  const isResponsibleClass =
-    apiClassRow?.sectionTeacherId === HARDCODED_TEACHER_ID;
+  const isResponsibleClass = apiClassRow?.sectionTeacherId === teacherId;
 
   const pageLoading =
     teacherDbLoading ||

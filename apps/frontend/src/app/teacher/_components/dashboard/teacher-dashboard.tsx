@@ -11,7 +11,6 @@ import {
 	GET_STUDENT_BY_CLASS_ID,
 } from "@/graphql/typeDefs/queries";
 import { useTeacherDb } from "@/app/teacher/_components/teacher-db-context";
-import { HARDCODED_TEACHER_ID } from "@/app/teacher/_lib/hardcoded-teacher-api";
 import { HoneyCircularLoader } from "@/components/loaders/honey-circular-loader";
 
 type ClassResponse = {
@@ -183,7 +182,7 @@ export default function TeacherDashboard() {
 							{classes.map((item: ClassType) => (
 								<DashboardClassCard
 									key={item.id}
-									isResponsible={item.sectionTeacherId === HARDCODED_TEACHER_ID}
+									isResponsible={item.sectionTeacherId === teacherId}
 									item={item}
 									onOpen={() =>
 										router.push(`/teacher/class/${encodeURIComponent(item.id)}`)
