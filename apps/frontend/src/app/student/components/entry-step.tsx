@@ -60,14 +60,15 @@ export function EntryStep({
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-3 py-6 text-[#1f2a44] sm:px-5 sm:py-8 md:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-[49rem] flex-col rounded-[18px] bg-[#eaf4ff] px-4 py-6 shadow-[0_22px_50px_rgba(15,23,42,0.12)] sm:px-6 sm:py-8 lg:min-h-127.5 lg:px-10 lg:py-10">
-        <div className="grid items-center gap-4 sm:gap-2 lg:grid-cols-[1fr_220px] lg:gap-2">
-          <div className="text-center lg:pl-6 lg:text-left">
-            <h1 className="text-lg font-medium leading-snug text-[#262626] sm:text-[21px]">
-              Шалгалтын журамтай танилцан нэвтэрнэ үү!
+        <div className="relative flex flex-col items-center gap-4 sm:gap-5 lg:pr-28">
+          <div className="text-center">
+            <h1 className="text-[22px] font-semibold leading-tight text-[#2b2b2b] sm:text-[28px]">
+              <span className="block">Шалгалтын журамтай</span>
+              <span className="block">танилцан нэвтэрнэ үү!</span>
             </h1>
           </div>
 
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex justify-center lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2">
             <div className="relative h-24.25 w-30.5 shrink-0">
               <div className="absolute left-0 top-6.5 z-10 px-2 py-1">
                 <p className="text-[18px] font-black uppercase leading-[0.9] tracking-[-0.04em] text-[#151515]">

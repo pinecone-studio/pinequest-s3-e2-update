@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { X } from "lucide-react";
 import { WarningIcon } from "@/app/_icons/warningIcon";
 import type { ExamData, OptionId } from "../types";
 import { ExamActions } from "./exam-actions";
@@ -25,6 +25,7 @@ type ExamScreenProps = {
   onJump: (questionId: number) => void;
   onFinish: () => void;
   isFinishDialogOpen?: boolean;
+  showWaitForStart?: boolean;
 };
 
 export function ExamScreen({
@@ -41,6 +42,7 @@ export function ExamScreen({
   onJump,
   onFinish,
   isFinishDialogOpen = false,
+  showWaitForStart = false,
 }: ExamScreenProps) {
   const totalQuestions = examData.questions.length;
   const currentQuestion = examData.questions[currentQuestionIndex];
@@ -87,10 +89,7 @@ export function ExamScreen({
               UPDATE
             </span>
           </div>
-          <FaceCam
-            setFaceDetectionWarning={setFaceDetectionWarning}
-            faceDetectionWarning={faceDetectionWarning}
-          />
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4" />
         </div>
 
         <div className="mx-auto mt-6 flex w-full max-w-[46rem] flex-col gap-4 sm:mt-8 xl:max-w-none">
@@ -98,6 +97,12 @@ export function ExamScreen({
             title={examData.title}
             subtitle={`${examData.schoolYear} · ${examData.term}`}
             timerText={timerText}
+            rightSlot={
+              <FaceCam
+                setFaceDetectionWarning={setFaceDetectionWarning}
+                faceDetectionWarning={faceDetectionWarning}
+              />
+            }
           />
 
           <QuestionCard
@@ -106,7 +111,7 @@ export function ExamScreen({
             onSelectOption={onSelectOption}
           />
 
-          <div className="grid gap-4 sm:gap-5 lg:grid-cols-2 lg:items-start lg:gap-6 xl:grid-cols-[repeat(2,minmax(0,582px))] xl:justify-between">
+          <div className="flex w-full flex-col gap-4 sm:gap-5">
             <QuestionNavigator
               total={totalQuestions}
               currentQuestionId={currentQuestion.id}
@@ -117,7 +122,7 @@ export function ExamScreen({
               onFinish={onFinish}
             />
 
-            <div className="flex w-full flex-col">
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <ExamActions
                 isFirst={currentQuestionIndex === 0}
                 isLast={currentQuestionIndex === totalQuestions - 1}
@@ -126,17 +131,17 @@ export function ExamScreen({
                 onNext={onNext}
                 onToggleFlag={onToggleFlag}
               />
-            </div>
-          </div>
 
-          <div className="flex w-full justify-stretch sm:justify-end">
-            <button
-              type="button"
-              onClick={onFinish}
-              className="inline-flex min-h-[3.25rem] w-full items-center justify-center rounded-[20px] border border-[#29A4FF] px-5 py-3 text-base font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff] sm:w-auto sm:min-w-[12rem] sm:px-8 sm:py-4 sm:text-lg lg:text-[22px]"
-            >
-              Шалгалт дуусгах
-            </button>
+              <div className="flex w-full justify-end sm:w-auto">
+                <button
+                  type="button"
+                  onClick={onFinish}
+                  className="inline-flex h-10 min-w-[7.5rem] items-center justify-center rounded-[12px] border border-[#7bb8ff] bg-[#8ec4ff] px-6 text-base font-semibold text-[#1b2b57] transition hover:bg-[#7bb8ff] sm:h-10.5 sm:text-[18px]"
+                >
+                  Дуусгах
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -144,7 +149,7 @@ export function ExamScreen({
       {warning && !isFinishDialogOpen && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute left-1/2 top-1/2 flex max-h-[min(90dvh,36rem)] w-[min(calc(100vw-1.5rem),898px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center overflow-y-auto overscroll-contain rounded-[20px] bg-[#edf6ff] px-4 py-6 shadow-lg sm:rounded-[28px] sm:px-8 sm:py-10 md:px-10 md:py-12">
+          <div className="absolute left-1/2 top-1/2 flex max-h-[min(80dvh,30rem)] w-[min(calc(100vw-2rem),32rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center overflow-y-auto overscroll-contain rounded-[20px] bg-[#edf6ff] px-4 py-6 shadow-lg sm:max-h-[min(90dvh,36rem)] sm:w-[min(calc(100vw-1.5rem),898px)] sm:rounded-[28px] sm:px-8 sm:py-10 md:px-10 md:py-12">
             <div className="flex h-20 shrink-0 items-center justify-center sm:h-28">
               <WarningIcon />
             </div>
@@ -178,28 +183,54 @@ export function ExamScreen({
         </div>
       )}
 
+      {showWaitForStart && (
+        <div className="fixed inset-0 z-40">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="absolute left-1/2 top-1/2 w-[min(calc(100vw-2rem),30rem)] -translate-x-1/2 -translate-y-1/2 rounded-[18px] border border-[#cfe1f5] bg-[#edf6ff] px-5 py-7 text-center shadow-[0_14px_30px_rgba(15,23,42,0.2)] sm:w-[min(calc(100vw-2rem),36rem)] sm:px-10 sm:py-10">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#f3c846] text-lg font-bold text-[#f3c846]">
+              !
+            </div>
+            <p className="mt-4 text-lg font-semibold text-[#111827] sm:text-[20px]">
+              Багш шалгалтыг эхлүүлэх хүртэл
+              <br />
+              түр хүлээнэ үү.
+            </p>
+          </div>
+        </div>
+      )}
+
       {faceDetectionWarning && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute left-1/2 top-1/2 flex max-h-[min(90dvh,28rem)] w-[min(calc(100vw-1.5rem),37.5rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border-2 border-gray-400 bg-white shadow-lg">
-            <div className="flex h-14 shrink-0 items-center justify-end sm:h-20">
+          <div className="absolute left-1/2 top-1/2 flex min-h-[20rem] max-h-[min(88dvh,30rem)] w-[min(calc(100vw-2rem),32rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-[#7dc8ff] bg-white shadow-[0_18px_40px_rgba(15,23,42,0.25)] sm:min-h-[22rem] sm:max-h-[min(92dvh,34rem)] sm:w-[min(calc(100vw-1.5rem),42rem)] sm:border-2">
+            <div className="flex h-full mt-3 flex-col items-center justify-center gap-3 px-4 pb-6 pt-4 text-center sm:gap-3 sm:px-6 sm:pt-6">
+              <div className="flex w-full justify-center">
+                <span className="relative h-14 w-14 shrink-0 sm:h-20 sm:w-20">
+                  <Image
+                    src="/alert-bee.png"
+                    alt="Анхааруулга"
+                    fill
+                    className="object-contain"
+                  />
+                </span>
+              </div>
+              <div className="flex w-full flex-col items-center gap-2 text-center mt-2">
+                <p className="text-center text-xl font-semibold text-[#fdae00] sm:text-[clamp(1.2rem,4vw,1.9rem)]">
+                  Анхааруулга
+                </p>
+                <p className="mx-auto max-w-prose text-center text-lg font-semibold leading-snug text-pretty text-[#111827] sm:text-xl">
+                  {faceDetectionWarning}
+                </p>
+              </div>
+            </div>
+            <div className="mt-auto flex w-full justify-end px-4 pb-4 sm:px-6 sm:pb-6">
               <button
                 type="button"
-                className="mr-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-gray-100 duration-200 hover:bg-gray-200 sm:mr-3"
+                className="inline-flex h-10 items-center justify-center rounded-[12px] border border-[#7dc8ff] bg-white px-4 text-sm font-medium text-[#1f2a44] transition hover:bg-[#edf6ff] sm:h-10.5 sm:px-5 sm:text-base"
                 onClick={() => setFaceDetectionWarning(null)}
-                aria-label="Хаах"
               >
-                <X className="h-6 w-6" />
+                Буцах
               </button>
-            </div>
-            <div className="flex flex-col items-center gap-6 px-4 pb-8 pt-2 sm:gap-10 sm:px-6 sm:pt-6">
-              <p className="flex flex-wrap items-center justify-center gap-2 text-center text-xl font-semibold sm:gap-5 sm:text-[clamp(1.25rem,4vw,1.875rem)]">
-                <AlertTriangle className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" />
-                Анхааруулга
-              </p>
-              <p className="max-w-prose text-center text-base font-semibold leading-snug text-pretty sm:text-lg">
-                {faceDetectionWarning}
-              </p>
             </div>
           </div>
         </div>

@@ -171,7 +171,7 @@ export default function FaceCam({
   }, [faceDetectionWarning]);
 
   return (
-    <div className="relative mx-auto aspect-[4/3] w-full max-w-[min(100vw-2rem,280px)] overflow-hidden rounded-[14px] border-[3px] border-[#2563eb] sm:max-w-[300px] sm:rounded-[18px] md:mx-0 md:max-w-[320px] md:rounded-[20px]">
+    <div className="relative aspect-[4/3] w-[220px] overflow-hidden rounded-[14px] border-[3px] border-[#2563eb] bg-white sm:w-[240px] sm:rounded-[18px] md:w-[260px] md:rounded-[20px]">
       <Webcam
         audio={false}
         ref={webcamRef}

@@ -245,6 +245,8 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     return Math.max(0, totalDurationSeconds - elapsedSeconds);
   }, [currentTime, resolvedExamData.durationMinutes, sharedStartedAt]);
   const usesTeacherControlledStart = Boolean(teacherMonitoringExam);
+  const shouldWaitForStart =
+    usesTeacherControlledStart && monitoringScopeState?.isStarted !== true;
   const remainingSeconds = usesTeacherControlledStart
     ? sharedRemainingSeconds
     : manualRemainingSeconds;
@@ -532,6 +534,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         onJump={(questionId) => setCurrentQuestionIndex(questionId - 1)}
         onFinish={() => setShowFinishDialog(true)}
         isFinishDialogOpen={showFinishDialog}
+        showWaitForStart={shouldWaitForStart}
       />
 
       <FinishConfirmationDialog
