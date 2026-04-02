@@ -35,7 +35,7 @@ export function ExamSettingsForm({
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end lg:gap-x-4 lg:gap-y-4">
-        <div className="min-w-0 sm:col-span-2 lg:col-span-[4.02]">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-4">
           <Field label="">
             <input
               className={`${inputClassName} h-10! w-full`}
@@ -106,7 +106,7 @@ export function ExamSettingsForm({
           </div>
         </div>
 
-        <div className="min-w-0 sm:col-span-2 lg:col-span-[1.98]">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <Field label="">
             <div className="flex h-10 w-full items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-[11px]">
               <div className="inline-flex items-center gap-1">

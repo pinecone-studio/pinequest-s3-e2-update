@@ -185,15 +185,11 @@ export default function ExamOptimizationPage() {
 	const activeMonitorExam = resolvedActiveMonitorExam;
 
 	const activeClassId = activeMonitorExam
-		? (selectedClassIdByExamId[activeMonitorExam.id] ??
-			activeMonitorExam.classOptions[0]?.id ??
-			null)
+		? (selectedClassIdByExamId[activeMonitorExam.id] ?? null)
 		: null;
 	const activeClassLabel = activeMonitorExam
 		? (activeMonitorExam.classOptions.find((item) => item.id === activeClassId)
-				?.label ??
-			activeMonitorExam.classOptions[0]?.label ??
-			null)
+				?.label ?? null)
 		: null;
 	const activeMonitoringScope =
 		activeMonitorExam && activeClassId
@@ -261,12 +257,13 @@ export default function ExamOptimizationPage() {
 
 	const onSelectClass = useCallback(
 		(classId: string) => {
-			setSelectedClassIdByExamId((prev) => {
-				if (!selectedExamId) return prev;
-				return { ...prev, [selectedExamId]: classId };
-			});
+			if (!activeMonitorExam) return;
+			setSelectedClassIdByExamId((prev) => ({
+				...prev,
+				[activeMonitorExam.id]: classId,
+			}));
 		},
-		[selectedExamId],
+		[activeMonitorExam],
 	);
 
 	const startMonitoring = useCallback(() => {
@@ -362,7 +359,7 @@ export default function ExamOptimizationPage() {
 					<MonitorGroupSelectionSection
 						exam={activeMonitorExam}
 						onBack={() => setSelectedExamId(null)}
-						onOpenGroup={(classId) => onSelectClass(classId)}
+						onOpenGroup={onSelectClass}
 					/>
 				) : null}
 

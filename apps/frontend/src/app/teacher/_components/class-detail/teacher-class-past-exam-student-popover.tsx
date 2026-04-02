@@ -108,15 +108,23 @@ export function TeacherClassPastExamStudentPopover({
                 {student.attempts.map((attempt) => {
                   const full = attempt.pointsEarned >= attempt.pointsMax;
                   const none = attempt.pointsEarned <= 0;
-                  const cardClass = full ? "border-emerald-500 bg-emerald-50/80" : none ? "border-rose-400 bg-rose-50/50" : "border-amber-400 bg-amber-50/40";
-                  const badgeClass = full ? "bg-emerald-600" : none ? "bg-rose-600" : "bg-amber-600";
+                  const cardClass = full
+                    ? "border-emerald-500 bg-transparent"
+                    : none
+                      ? "border-rose-400 bg-transparent"
+                      : "border-amber-400 bg-transparent";
+                  const badgeClass = full
+                    ? "border border-emerald-600 bg-emerald-600/30 text-emerald-900"
+                    : none
+                      ? "border border-rose-600 bg-rose-600/30 text-rose-900"
+                      : "border border-amber-600 bg-amber-600/30 text-amber-900";
                   return (
                     <li key={attempt.order} className={`rounded-2xl border px-4 py-4 shadow-sm sm:px-5 ${cardClass}`}>
                       <p className="text-[0.9375rem] font-semibold leading-[1.65] text-[#122459] sm:text-base">
                         <span className="mr-2 font-extrabold tabular-nums">{attempt.order}.</span>{attempt.question}
                       </p>
                       <p className="mt-3 text-[0.875rem] leading-relaxed text-[#122459]"><span className="font-semibold">Хариулт: </span>{attempt.studentAnswer}</p>
-                      <p className={`mt-3 inline-flex items-center rounded-full px-3 py-1 text-[0.8125rem] font-bold tabular-nums text-white ${badgeClass}`}>Оноо: {attempt.pointsEarned} / {attempt.pointsMax}</p>
+                      <p className={`mt-3 inline-flex items-center rounded-full px-3 py-1 text-[0.8125rem] font-bold tabular-nums ${badgeClass}`}>Оноо: {attempt.pointsEarned} / {attempt.pointsMax}</p>
                     </li>
                   );
                 })}
