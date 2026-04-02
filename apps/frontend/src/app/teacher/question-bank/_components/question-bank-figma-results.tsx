@@ -96,13 +96,13 @@ export function QuestionBankFigmaResults({
               selectedQuestionIds={selectedQuestionIds}
             />
 
-            <div className="space-y-[12px] pt-[4px]">
+            <div className="space-y-[12px]">
+              <QuestionBankActivePanel question={previewQuestion} />
               <QuestionBankBulkToolbar
                 count={selectedCount}
                 onClear={onClearSelection}
                 onSendToExam={onSendSelectedToExam}
               />
-              <QuestionBankActivePanel question={previewQuestion} />
             </div>
           </div>
         ) : myQuestionCount === 0 ? (
@@ -173,12 +173,12 @@ function ManagementCard({
         <TagChip>{DIFFICULTY_LABELS[question.difficulty]}</TagChip>
       </div>
 
-      <h3 className="mt-[18px] text-[16px] font-medium leading-[22px] text-[#323232]">
+      <h3 className="mt-[18px] text-[16px] font-semibold leading-[22px] text-[#323232]">
         {resolveQuestionTitle(question.title, question.content.prompt) ||
           "Асуултын дэлгэрэнгүй"}
       </h3>
 
-      <div className="mt-[10px] space-y-[2px] text-[12px] leading-[18px] text-[#323232]">
+      <div className="mt-[10px] space-y-[2px] text-[12px] leading-[18px] text-[#0A0A0A]">
         {splitPromptLines(question.content.prompt).map((line) => (
           <p key={line}>{line}</p>
         ))}
@@ -219,8 +219,8 @@ function ManagementCard({
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="contents">
-      <span className="text-[12px] leading-[15px] text-[#23407D]">{label}</span>
-      <span className="text-[12px] leading-[15px] text-[#23407D]">{value}</span>
+      <span className="text-[12px] leading-[15px] text-[#262626]">{label}</span>
+      <span className="text-[12px] leading-[15px] text-[#262626]">{value}</span>
     </div>
   );
 }

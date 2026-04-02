@@ -1,6 +1,7 @@
 "use client";
 
 import { Bookmark, Check, Heart } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Question } from "../../_lib/types";
 import { DIFFICULTY_LABELS, resolveQuestionTitle } from "../../_lib/utils";
@@ -31,6 +32,8 @@ export function QuestionCard({
   onToggleLike,
 }: QuestionCardProps) {
   const promptLines = splitPromptLines(question.content.prompt);
+  const [isUsageMarked, setIsUsageMarked] = useState(false);
+  const displayedUsageCount = question.usageCount + (isUsageMarked ? 1 : 0);
 
   return (
     <article
@@ -98,10 +101,10 @@ export function QuestionCard({
         <div className="h-px w-full bg-[#E5E5E5]" />
       </div>
 
-      <div className="mt-[12px] flex items-center justify-between text-[12px] leading-[140%] text-[#7B7B7B]">
+      <div className="mt-[12px] flex items-center justify-between text-[#7B7B7B]">
         <button
           className={cn(
-            "inline-flex items-center gap-[6px] px-[12px]",
+            "inline-flex items-center gap-[8px] px-[12px] text-[16px] leading-[140%]",
             isLiked ? "text-[#e11d48]" : "text-[#7B7B7B]",
           )}
           onClick={onToggleLike}
@@ -109,19 +112,25 @@ export function QuestionCard({
         >
           <Heart
             className={cn(
-              "h-[14px] w-[14px]",
-              isLiked ? "fill-current text-[#e11d48]" : "text-[#7B7B7B]",
+              "h-[20px] w-[20px]",
+              isLiked ? "fill-current text-[#e11d48]" : "text-[#525252]",
             )}
           />
-          <span className={cn(isLiked ? "text-[#e11d48]" : "text-[#7B7B7B]")}>
+          <span className={cn(isLiked ? "text-[#e11d48]" : "text-[#525252]")}>
             {heartCount}
           </span>
         </button>
 
-        <div className="inline-flex items-center gap-[6px] px-[12px]">
-          <Bookmark className="h-[14px] w-[14px] text-[#7B7B7B]" />
-          <span>{question.usageCount} удаа ашигласан</span>
-        </div>
+        <button
+          className="inline-flex items-center gap-[8px] px-[12px] text-[16px] leading-[140%]"
+          onClick={() => setIsUsageMarked((value) => !value)}
+          type="button"
+        >
+          <Bookmark className="h-[20px] w-[20px] text-[#525252]" />
+          <span className="text-[#525252]">
+            {displayedUsageCount} удаа ашигласан
+          </span>
+        </button>
       </div>
     </article>
   );
@@ -138,7 +147,9 @@ function Tag({
     <span
       className={cn(
         "inline-flex h-[26px] items-center rounded-[8px] px-[16px] text-[14px] font-normal leading-[14px] tracking-[0.04em] text-[#0A0A0A]",
-        borderless ? "bg-transparent" : "border border-[#ECECEC] bg-white",
+        borderless
+          ? "rounded-[8px] border border-[#E5E5E5] bg-white"
+          : "border border-[#ECECEC] bg-white",
       )}
     >
       {children}
