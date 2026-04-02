@@ -238,7 +238,7 @@ function MetaRow({ label, value }: { label: string; value: string }) {
 
 function TagChip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex h-[26px] items-center rounded-[8px] border border-[#ECECEC] bg-white px-[16px] text-[12px] font-normal leading-[14px] text-[#0A0A0A]">
+    <span className="inline-flex min-h-[30px] items-center rounded-[12px] border border-[#d4d4d8] bg-transparent px-[14px] text-[14px] font-medium leading-[20px] text-[#2d2d2d]">
       {children}
     </span>
   );

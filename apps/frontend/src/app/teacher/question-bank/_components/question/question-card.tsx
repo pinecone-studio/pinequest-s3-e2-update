@@ -139,10 +139,10 @@ function Tag({
   return (
     <span
       className={cn(
-        "inline-flex h-[26px] items-center rounded-[8px] px-[16px] text-[14px] font-normal leading-[14px] tracking-[0.04em] text-[#0A0A0A]",
+        "inline-flex min-h-[30px] items-center rounded-[12px] px-[14px] text-[14px] font-medium leading-[20px] tracking-[0.01em] text-[#2d2d2d]",
         borderless
-          ? "rounded-[8px] border border-[#E5E5E5] bg-white"
-          : "border border-[#ECECEC] bg-white",
+          ? "border border-[#d4d4d8] bg-transparent"
+          : "border border-[#d4d4d8] bg-transparent",
       )}
     >
       {children}
