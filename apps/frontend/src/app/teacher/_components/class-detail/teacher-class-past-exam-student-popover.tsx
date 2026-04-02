@@ -2,6 +2,7 @@
 
 import { Download, X } from "lucide-react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import { downloadSingleStudentPastExamXls, formatExamDate } from "./teacher-class-detail-utils";
 
@@ -18,6 +19,8 @@ export function TeacherClassPastExamStudentPopover({
   onClose,
   student,
 }: TeacherClassPastExamStudentPopoverProps) {
+  const router = useRouter();
+
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -25,6 +28,33 @@ export function TeacherClassPastExamStudentPopover({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  const openManualGrading = () => {
+    const storageKey = `manual-grading-bootstrap:${exam.blueprintId}:${student.studentId}`;
+    sessionStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        classLabel,
+        exam,
+        student,
+      }),
+    );
+
+    const params = new URLSearchParams({
+      studentId: student.studentId,
+      studentName: `${student.lastName} ${student.firstName}`,
+      studentNumber: student.studentNumber,
+      classLabel,
+      examTitle: exam.examTitle,
+      subject: exam.subject,
+      maxScore: String(exam.maxScore),
+      currentScore: String(student.score),
+    });
+
+    router.push(
+      `/teacher/exam-grading/${encodeURIComponent(exam.blueprintId)}?${params.toString()}`,
+    );
+  };
 
   return (
     <>
@@ -57,7 +87,14 @@ export function TeacherClassPastExamStudentPopover({
             ))}
           </dl>
 
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex flex-wrap justify-end gap-3">
+            <button
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#3a9df2] bg-[#ecf6ff] px-3 py-2 text-[0.8125rem] font-semibold text-[#175ea8] shadow-sm transition hover:border-[#1f89e5] hover:bg-[#e1f0ff]"
+              onClick={openManualGrading}
+              type="button"
+            >
+              Гараар засах
+            </button>
             <button className="inline-flex items-center gap-1.5 rounded-xl border border-[#c8d6ea] bg-white px-3 py-2 text-[0.8125rem] font-semibold text-[#122459] shadow-sm transition hover:border-[#4f9dff] hover:bg-[#f1f6ff]" onClick={() => downloadSingleStudentPastExamXls(classLabel, exam, student)} type="button">
               <Download className="h-4 w-4 shrink-0" />
               Excel
