@@ -4,8 +4,10 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-03-23",
   "compatibility_flags": ["nodejs_compat"],
+  // Production: GraphQL + WebSocket CORS — таслалаар тусгаарласан frontend origin-ууд.
+  // Жишээ: "vars": { "CORS_ORIGINS": "https://my-app.workers.dev,https://app.example.com" },
   // "vars": {
-  //   "MY_VAR": "my-variable"
+  //   "CORS_ORIGINS": ""
   // },
   // "kv_namespaces": [
   //   {
