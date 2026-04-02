@@ -10,8 +10,14 @@ import {
 	readExamMonitoringStateMap,
 	writeExamMonitoringStateMap,
 } from "@/app/lib/exam-monitoring-store";
-import { GET_ALL_SUBJECTS, GET_EXAM_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
-import { HARDCODED_SCHOOL_ID } from "../_lib/hardcoded-teacher-api";
+import {
+	GET_ALL_SUBJECTS,
+	GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+	GET_EXAM_BY_SCHOOL_ID,
+	GET_STUDENT_BY_CLASS_ID,
+} from "@/graphql/typeDefs/queries";
+import { useTeacherDb } from "../_components/teacher-db-context";
+import { mapGqlTeacherClasses } from "../_lib/teacher-class-options";
 import { MonitorDetailSection } from "./_components/monitor-detail-section";
 import { MonitorExamsSection } from "./_components/monitor-exams-section";
 import {
@@ -20,13 +26,10 @@ import {
 	type BackendExamMonitorRow,
 } from "./_lib/backend-exams-to-monitor-cards";
 import {
-	buildMonitorGradingSummary,
-	MOCK_ACTIVE_STUDENTS,
 	formatRemainingDuration,
 	type ActiveStudentEntry,
 	type MonitorExamCardItem,
 } from "./_lib/monitoring";
-import { teacherClasses } from "../exam/_lib/class-data";
 import { SAVED_EXAMS_STORAGE_KEY } from "../exam/_lib/constants";
 import { normalizeSavedExamRecord } from "../exam/_lib/utils";
 import type { SavedExamRecord } from "../exam/_lib/types";
@@ -39,17 +42,44 @@ type GetExamBySchoolIdResponse = {
 	getExamBySchoolId: BackendExamMonitorRow[];
 };
 
+type ClassesByTeacherResponse = {
+	getClassByTeacherAndSchoolId: Array<{ id: string; grade: number; section: string }>;
+};
+
+type StudentsByClassResponse = {
+	getStudentByClassId: Array<{ id: string }>;
+};
+
 export default function ExamOptimizationPage() {
 	const ACTIVE_STUDENTS_STORAGE_KEY = "pinequest.activeStudents.v1";
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
+	const { teacher: dbTeacher } = useTeacherDb();
+	const teacherId = dbTeacher?.id ?? "";
+	const schoolId = dbTeacher?.schoolId ?? "";
+
 	const { data: subjectsData } = useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+	const { data: classesData } = useQuery<ClassesByTeacherResponse>(
+		GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+		{
+			variables: { input: { teacherId, schoolId } },
+			skip: !teacherId || !schoolId,
+			fetchPolicy: "cache-and-network",
+		},
+	);
+
+	const apiClassOptions = useMemo(
+		() => mapGqlTeacherClasses(classesData?.getClassByTeacherAndSchoolId ?? []),
+		[classesData?.getClassByTeacherAndSchoolId],
+	);
+
 	const { data: examsData } = useQuery<GetExamBySchoolIdResponse>(
 		GET_EXAM_BY_SCHOOL_ID,
 		{
-			variables: { schoolId: HARDCODED_SCHOOL_ID },
+			variables: { schoolId },
+			skip: !schoolId,
 			fetchPolicy: "cache-and-network",
 		},
 	);
@@ -63,8 +93,8 @@ export default function ExamOptimizationPage() {
 	}, [subjectsData?.getAllSubject]);
 
 	const demoClassOptions = useMemo(
-		() => teacherClasses.map((k) => ({ id: k.id, label: k.name })),
-		[],
+		() => apiClassOptions.map((k) => ({ id: k.id, label: k.name })),
+		[apiClassOptions],
 	);
 
 	const apiMonitorCards = useMemo(() => {
@@ -139,54 +169,6 @@ export default function ExamOptimizationPage() {
 		return bestGrade;
 	}, [activeStudents]);
 
-	const fallbackMockExamCards = useMemo<MonitorExamCardItem[]>(() => {
-		return [
-			{
-				id: "monitor-mock-1",
-				title: "10-р ангийн математикийн сорил",
-				grade: "10-р анги",
-				subject: "Математик",
-				topic: "Квадрат функц",
-				status: "ongoing",
-				durationInMinutes: 40,
-				questionCount: 12,
-				totalPoints: 24,
-				classLabel: currentClassName,
-				classLabels: currentClassName === "—" ? [] : [currentClassName],
-				classOptions:
-					currentClassName === "—"
-						? []
-						: [{ id: "mock-class-10a", label: currentClassName }],
-				savedAtLabel: "Одоо явагдаж байна",
-				...buildMonitorGradingSummary({
-					participantCount: activeStudents.length || 36,
-					openQuestionCount: 0,
-					seedSource: "monitor-mock-1",
-				}),
-			},
-			{
-				id: "monitor-mock-2",
-				title: "9-р ангийн логикийн шалгалт",
-				grade: "9-р анги",
-				subject: "Математик",
-				topic: "Логарифм",
-				status: "completed",
-				durationInMinutes: 30,
-				questionCount: 10,
-				totalPoints: 20,
-				classLabel: "9B",
-				classLabels: ["9B"],
-				classOptions: [{ id: "mock-class-9b", label: "9B" }],
-				savedAtLabel: "Өнөөдөр дууссан",
-				...buildMonitorGradingSummary({
-					participantCount: 28,
-					openQuestionCount: 0,
-					seedSource: "monitor-mock-2",
-				}),
-			},
-		];
-	}, [activeStudents.length, currentClassName]);
-
 	const localStorageMonitorCards = useMemo<MonitorExamCardItem[]>(() => {
 		if (savedExams.length === 0) return [];
 
@@ -195,9 +177,7 @@ export default function ExamOptimizationPage() {
 			null;
 		const resolveClassLabel = (classId?: string) => {
 			if (!classId) return "Анги оноогоогүй";
-			return (
-				teacherClasses.find((klass) => klass.id === classId)?.name ?? classId
-			);
+			return apiClassOptions.find((klass) => klass.id === classId)?.name ?? classId;
 		};
 
 		return savedExams.map((exam) => {
@@ -246,17 +226,10 @@ export default function ExamOptimizationPage() {
 				}),
 			};
 		});
-	}, [activeStudents.length, savedExams]);
+	}, [savedExams, apiClassOptions]);
 
 	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
-		if (apiMonitorCards.length === 0 && localStorageMonitorCards.length === 0) {
-			return fallbackMockExamCards;
-		}
-
-		const mergedCards = [
-			...localStorageMonitorCards,
-			...apiMonitorCards,
-		];
+		const mergedCards = [...localStorageMonitorCards, ...apiMonitorCards];
 		const seenIds = new Set<string>();
 
 		return mergedCards.filter((card) => {
@@ -264,7 +237,7 @@ export default function ExamOptimizationPage() {
 			seenIds.add(card.id);
 			return true;
 		});
-	}, [apiMonitorCards, fallbackMockExamCards, localStorageMonitorCards]);
+	}, [apiMonitorCards, localStorageMonitorCards]);
 
 	useEffect(() => {
 		if (!initialSelectedExamId) return;
@@ -315,18 +288,21 @@ export default function ExamOptimizationPage() {
 		);
 	}, [activeClassLabel, activeStudents]);
 
+	const { data: rosterCountData } = useQuery<StudentsByClassResponse>(
+		GET_STUDENT_BY_CLASS_ID,
+		{
+			variables: { classId: activeClassId ?? "" },
+			skip: !activeClassId,
+			fetchPolicy: "cache-and-network",
+		},
+	);
+
+	const rosterCount = rosterCountData?.getStudentByClassId?.length ?? 0;
+
 	const monitorTotalStudents = useMemo(() => {
-		if (activeMonitorExam) {
-			let computed = 0;
-			if (activeClassId) {
-				const klass = teacherClasses.find((item) => item.id === activeClassId);
-				if (klass) computed = klass.studentCount;
-			}
-			if (computed === 0) computed = filteredActiveStudents.length;
-			return Math.max(36, computed);
-		}
-		return 0;
-	}, [activeClassId, activeMonitorExam, filteredActiveStudents.length]);
+		if (!activeMonitorExam) return 0;
+		return Math.max(rosterCount, filteredActiveStudents.length);
+	}, [activeMonitorExam, rosterCount, filteredActiveStudents.length]);
 	const remainingDurationMs = useMemo(() => {
 		if (!activeMonitorExam) return 0;
 		const totalDurationMs = activeMonitorExam.durationInMinutes * 60 * 1000;
@@ -346,23 +322,24 @@ export default function ExamOptimizationPage() {
 	const readActiveStudents = useCallback((): ActiveStudentEntry[] => {
 		try {
 			const raw = window.localStorage.getItem(ACTIVE_STUDENTS_STORAGE_KEY);
-			const parsed = raw ? JSON.parse(raw) : MOCK_ACTIVE_STUDENTS;
-			if (!Array.isArray(parsed) || parsed.length === 0) return MOCK_ACTIVE_STUDENTS;
+			if (!raw) return [];
+			const parsed = JSON.parse(raw) as unknown;
+			if (!Array.isArray(parsed) || parsed.length === 0) return [];
 			return parsed
 				.filter((x) => x && typeof x === "object")
 				.map((x) => x as ActiveStudentEntry)
-					.filter(
-						(x) =>
-							typeof x.id === "string" &&
-							typeof x.fullName === "string" &&
-							typeof x.email === "string" &&
-							typeof x.startedAt === "number" &&
-							(x.status === "active" ||
-								x.status === "disconnected" ||
-								x.status === "submitted"),
-					);
+				.filter(
+					(x) =>
+						typeof x.id === "string" &&
+						typeof x.fullName === "string" &&
+						typeof x.email === "string" &&
+						typeof x.startedAt === "number" &&
+						(x.status === "active" ||
+							x.status === "disconnected" ||
+							x.status === "submitted"),
+				);
 		} catch {
-			return MOCK_ACTIVE_STUDENTS;
+			return [];
 		}
 	}, []);
 

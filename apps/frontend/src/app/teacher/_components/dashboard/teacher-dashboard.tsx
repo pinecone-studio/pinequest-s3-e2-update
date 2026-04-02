@@ -10,10 +10,7 @@ import {
 	GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
 	GET_STUDENT_BY_CLASS_ID,
 } from "@/graphql/typeDefs/queries";
-import {
-	HARDCODED_SCHOOL_ID,
-	HARDCODED_TEACHER_ID,
-} from "@/app/teacher/_lib/hardcoded-teacher-api";
+import { useTeacherDb } from "@/app/teacher/_components/teacher-db-context";
 import { HoneyCircularLoader } from "@/components/loaders/honey-circular-loader";
 
 type ClassResponse = {
@@ -93,19 +90,24 @@ function DashboardClassCard({
 export default function TeacherDashboard() {
 	const router = useRouter();
 	const [loaderProgress, setLoaderProgress] = useState(0);
+	const { teacher: dbTeacher, loading: teacherDbLoading } = useTeacherDb();
+	const teacherId = dbTeacher?.id ?? "";
+	const schoolId = dbTeacher?.schoolId ?? "";
 
-	const { data, loading } = useQuery<ClassResponse>(
+	const { data, loading: classesLoading } = useQuery<ClassResponse>(
 		GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
 		{
 			variables: {
 				input: {
-					teacherId: HARDCODED_TEACHER_ID,
-					schoolId: HARDCODED_SCHOOL_ID,
+					teacherId,
+					schoolId,
 				},
 			},
+			skip: !teacherId || !schoolId,
 		},
 	);
 
+	const loading = teacherDbLoading || (!!teacherId && classesLoading);
 	const classes = data?.getClassByTeacherAndSchoolId ?? [];
 
 	useEffect(() => {
@@ -139,6 +141,12 @@ export default function TeacherDashboard() {
 						<h2 className="text-[22px] font-extrabold tracking-tight text-[#1f2a44]">
 							Миний ангиуд
 						</h2>
+						{!teacherDbLoading && !dbTeacher ? (
+							<p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+								Сургуулийн системд багшийн бүртгэл (`viewerTeacher`) олдсонгүй.
+								Ижил и-мэйлээр урьсан эсэхээ шалгаад дахин нэвтэрнэ үү.
+							</p>
+						) : null}
 						<p className="mt-2 max-w-2xl text-4 leading-relaxed text-[#4a5875]">
 							Анги дээр дарж сурагчид, шалгалтын статистик руу орно.
 						</p>

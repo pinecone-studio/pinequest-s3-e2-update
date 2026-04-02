@@ -6,38 +6,6 @@ import type {
   MonitorExamCardItem,
 } from "../_lib/monitoring";
 
-const MOCK_FULL_NAMES = [
-  "Б. Анужин",
-  "С. Тэмүүлэн",
-  "Д. Номин",
-  "Г. Бат-Эрдэнэ",
-  "М. Энхжин",
-  "Т. Мөнх-Оргил",
-  "Ж. Саруул",
-  "Н. Төгөлдөр",
-  "Л. Хүслэн",
-  "П. Ариунболд",
-  "Р. Мишээл",
-  "Х. Билгүүн",
-  "Ц. Уянга",
-  "Ч. Дөлгөөн",
-  "Ш. Амарсанаа",
-  "Э. Наранзул",
-  "Ю. Төгсбилэг",
-  "Я. Баярцэцэг",
-  "О. Ганзориг",
-  "А. Сувд",
-  "З. Мөнхжин",
-  "К. Тэмүүжин",
-  "Ф. Энх-Амгалан",
-  "В. Отгонжаргал",
-];
-
-function getMockFullName(index: number) {
-  if (index < MOCK_FULL_NAMES.length) return MOCK_FULL_NAMES[index];
-  return MOCK_FULL_NAMES[index % MOCK_FULL_NAMES.length];
-}
-
 export function MonitorDetailSection({
   activeClassLabel,
   activeExam,
@@ -72,24 +40,7 @@ export function MonitorDetailSection({
     }
     return h;
   };
-  const visibleStudents =
-    monitorTotalStudents > activeStudents.length
-      ? [
-          ...activeStudents,
-          ...Array.from(
-            { length: monitorTotalStudents - activeStudents.length },
-            (_, i) => ({
-              id: `placeholder-${i + 1}`,
-              fullName: getMockFullName(activeStudents.length + i),
-              email: "",
-              grade: activeClassLabel ?? "",
-              school: "",
-              startedAt: 0,
-              status: "active" as const,
-            }),
-          ),
-        ]
-      : activeStudents;
+  const visibleStudents = activeStudents;
   const rankedIndexes = visibleStudents
     .map((student, index) => ({
       index,

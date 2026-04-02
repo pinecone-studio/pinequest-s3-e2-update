@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   type ApprovalRequest,
   getApprovalRequestsClient,
   getApprovalUpdatedEventName,
+  markAllApprovalRequestsRead,
   updateApprovalRequestStatus,
 } from "@/app/lib/exam-approval-store";
 
@@ -17,6 +18,7 @@ export default function SchoolRequestsPage() {
   const pendingCount = useMemo(() => requests.filter((r) => r.status === "pending").length, [requests]);
 
   useEffect(() => {
+    markAllApprovalRequestsRead();
     const sync = () => setRequests(getApprovalRequestsClient());
     sync();
     const eventName = getApprovalUpdatedEventName();
@@ -37,7 +39,7 @@ export default function SchoolRequestsPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto w-full max-w-2xl space-y-5">
       <section className="rounded-2xl border border-[#dbe5f0] bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -58,17 +60,10 @@ export default function SchoolRequestsPage() {
               <p className="font-semibold text-zinc-900">
                 {request.teacherName} · {request.className} · {request.subject}
               </p>
-              <div className="flex items-center gap-2">
-                {request.unread ? <span className="rounded-full bg-blue-100 px-2 py-1 text-2 font-medium text-blue-700">Шинэ</span> : null}
-                {request.status === "pending" ? <span className="rounded-full bg-amber-100 px-2 py-1 text-2 font-medium text-amber-700">Хүлээгдэж байна</span> : null}
-                {request.status === "approved" ? <span className="rounded-full bg-emerald-100 px-2 py-1 text-2 font-medium text-emerald-700">Баталсан</span> : null}
-                {request.status === "needs_fix" ? <span className="rounded-full bg-red-100 px-2 py-1 text-2 font-medium text-red-700">Дутуу - буцаасан</span> : null}
-              </div>
             </div>
 
             <div className="mt-2 space-y-1 text-2 text-zinc-700">
               <p>Шалгалт: {request.title}</p>
-              <p>Материал: {request.materialTitle}</p>
               <p>Илгээсэн: {request.sentAt}</p>
             </div>
 
@@ -134,13 +129,11 @@ export default function SchoolRequestsPage() {
                   />
                 </label>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <button type="button" onClick={() => approveRequest(request.id)} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-2 font-semibold text-white hover:bg-emerald-700">
-                    <CheckCircle2 className="h-4 w-4" />
+                  <button type="button" onClick={() => approveRequest(request.id)} className="inline-flex items-center rounded-lg border border-emerald-500 bg-white px-3 py-2 text-2 font-semibold text-emerald-700 hover:bg-emerald-50">
                     Батлах
                   </button>
-                  <button type="button" onClick={() => rejectRequest(request.id)} className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-2 font-semibold text-white hover:bg-red-700">
-                    <XCircle className="h-4 w-4" />
-                    Дутуу гэж буцаах
+                  <button type="button" onClick={() => rejectRequest(request.id)} className="inline-flex items-center rounded-lg border border-red-500 bg-white px-3 py-2 text-2 font-semibold text-red-700 hover:bg-red-50">
+                    Буцаах
                   </button>
                 </div>
               </div>

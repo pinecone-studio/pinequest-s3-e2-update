@@ -9,7 +9,7 @@ export default function TeacherExamPage() {
   const examPage = useTeacherExamPage();
 
   return (
-    <div className="space-y-6  p-2 pb-8">
+    <div className="mx-auto max-w-[1200px] space-y-5 px-3 pb-8 pt-1 sm:space-y-6 sm:px-4 sm:pt-0 md:px-5">
       {examPage.toastMessage ? (
         <div className="rounded-2xl border border-[#cfe0fb] bg-[#eef6ff] px-4 py-3 text-sm font-medium text-[#2f66b9]">
           {examPage.toastMessage}
@@ -38,6 +38,7 @@ export default function TeacherExamPage() {
           activeSavedExamId={examPage.activeSavedExamId}
           hasLoadedSavedExams={examPage.hasLoadedSavedExams}
           savedExams={examPage.savedExams}
+          teacherClasses={examPage.teacherClasses}
           selectedClassByExamId={examPage.selectedClassByExamId}
           onDeleteSavedExam={examPage.deleteSavedExam}
           onOpenMonitoring={examPage.openMonitoringForSavedExam}

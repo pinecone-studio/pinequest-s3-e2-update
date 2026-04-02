@@ -1,8 +1,5 @@
-import {
-  buildPastExamFullStatisticsExportHtml,
-  type PastExamRow,
-  type PastExamStudentScore,
-} from "@/app/lib/class-past-exams-mock";
+import { buildPastExamFullStatisticsExportHtml } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 
 export type LetterGrade = "A" | "B" | "C" | "D" | "F";
 

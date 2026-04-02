@@ -5,7 +5,7 @@ import { Fragment } from "react";
 import type {
   PastExamRow,
   PastExamStudentScore,
-} from "@/app/lib/class-past-exams-mock";
+} from "@/app/lib/class-past-exams-types";
 import {
   downloadFullExamStatisticsXls,
   downloadSingleStudentPastExamXls,

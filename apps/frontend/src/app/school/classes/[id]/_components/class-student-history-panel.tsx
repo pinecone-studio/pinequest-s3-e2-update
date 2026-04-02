@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Student } from "@/app/lib/types";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 import { StudentRow } from "./class-student-history/student-row";
 
 export function ClassStudentHistoryPanel({

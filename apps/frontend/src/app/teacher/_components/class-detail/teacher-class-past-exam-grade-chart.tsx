@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { BarChart3 } from "lucide-react";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 
 type LetterGrade = "A" | "B" | "C" | "D" | "F";
 

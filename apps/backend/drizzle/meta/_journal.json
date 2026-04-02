@@ -43,6 +43,34 @@
       "when": 1775064879113,
       "tag": "0005_perpetual_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1775067445853,
+      "tag": "0006_huge_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1775150400000,
+      "tag": "0010_teacher_add_class_ids",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1775072788222,
+      "tag": "0008_bouncy_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1775150900000,
+      "tag": "0011_teacher_add_role",
+      "breakpoints": true
     }
   ]
 }

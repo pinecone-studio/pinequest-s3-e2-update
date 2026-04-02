@@ -1,3 +1,4 @@
+import { parseTeacherClassIdsJson } from "../../lib/teacher-class-ids";
 import { mutationResolvers } from "./mutations";
 import { queryResolvers } from "./queries/index";
 
@@ -28,5 +29,12 @@ export const resolvers = {
   Student: {
     studentExamResultIds: (parent: { studentExamResultIds?: unknown }) =>
       studentExamResultIdsFromParent(parent.studentExamResultIds),
+  },
+  Teacher: {
+    classIds: (parent: { classIds?: unknown }) =>
+      parseTeacherClassIdsJson(parent.classIds),
+  },
+  StudentExamResult: {
+    examCheatLogs: () => [],
   },
 };

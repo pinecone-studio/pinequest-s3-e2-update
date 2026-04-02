@@ -22,8 +22,10 @@ export type HoneyCircularLoaderProps = {
   label?: string;
   /** When false, the caption is hidden. Default true. */
   showLabel?: boolean;
-  /** When false, hides the center percentage. Default true. */
+  /** When false, hides the percentage everywhere. Default true. */
   showCenterPercent?: boolean;
+  /** Where to show the percentage when `showCenterPercent` is true. Default `"center"`. */
+  percentPlacement?: "center" | "below";
   /**
    * Optional photo inside the jar (clipped to the inner circle), behind the honey fill.
    * Use a path under `/public` (e.g. `/school-mascot.png`) or any absolute image URL.
@@ -50,6 +52,7 @@ export function HoneyCircularLoader({
   label = "Loading...",
   showLabel = true,
   showCenterPercent = true,
+  percentPlacement = "center",
   backgroundImage,
   backgroundImageFit = "cover",
   showJarOutline = false,
@@ -251,7 +254,7 @@ export function HoneyCircularLoader({
           </g>
         </svg>
 
-        {showCenterPercent ? (
+        {showCenterPercent && percentPlacement === "center" ? (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <span
               className={[
@@ -269,6 +272,13 @@ export function HoneyCircularLoader({
           </div>
         ) : null}
       </div>
+
+      {showCenterPercent && percentPlacement === "below" ? (
+        <p className="m-0 select-none text-center text-[clamp(1.15rem,5.5vw,1.85rem)] font-semibold tabular-nums tracking-tight text-amber-950">
+          {Math.round(progress)}
+          <span className="text-[0.65em] font-semibold text-amber-800/80">%</span>
+        </p>
+      ) : null}
 
       {showLabel && label ? (
         <p

@@ -5,7 +5,7 @@ import { useState } from "react";
 import type {
   PastExamRow,
   PastExamStudentScore,
-} from "@/app/lib/class-past-exams-mock";
+} from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
 import { TeacherClassAddStudentDialog } from "./teacher-class-add-student-dialog";
 import { TeacherClassStudentHistoryDialog } from "./teacher-class-student-history-dialog";

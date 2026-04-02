@@ -1,14 +1,17 @@
 import { getClassBySchoolId } from "./classAndStudent/getClassBySchoold";
 import { getClassByTeacherAndSchoolId } from "./classAndStudent/getClassByTeacherAndSchoolId";
 import { getStudentByClassId } from "./classAndStudent/getStudentByClassId";
+import { getStudentExamResultsByClassId } from "./classAndStudent/getStudentExamResultsByClassId";
 import { getAllExams } from "./exam/getAllExams";
 import { getExamById } from "./exam/getExamById";
+import { getExamsByIds } from "./exam/getExamsByIds";
 import { getExamBySchoolId } from "./exam/getExamBySchoolId";
 import { hello } from "./hello";
 import { viewerClerkId } from "./viewer-clerk-id";
 import { getAllSubject } from "./subjectSchoolAndTeachers/getAllSubjects";
 import { getSchoolByClerkId } from "./subjectSchoolAndTeachers/getSchoolByClerkId";
 import { getTeachersBySchoolId } from "./subjectSchoolAndTeachers/getTeachersBySchoolId";
+import { viewerTeacher } from "./subjectSchoolAndTeachers/viewerTeacher";
 import { getAllTests } from "./testAndOpenExircices/getAllTests";
 import { getOpenExerciesById } from "./testAndOpenExircices/getOpenExerciesById";
 import { getOpenExerciesByIds } from "./testAndOpenExircices/getOpenExerciesByIds";
@@ -19,9 +22,11 @@ import { getTestsBySybjectAndGrade } from "./testAndOpenExircices/getTestsBySubj
 
 export const queryResolvers = {
   viewerClerkId,
+  viewerTeacher,
   hello,
   getAllTests,
   getStudentByClassId,
+  getStudentExamResultsByClassId,
   getClassBySchoolId,
   getSchoolByClerkId,
   getTeachersBySchoolId,
@@ -32,6 +37,7 @@ export const queryResolvers = {
   getClassByTeacherAndSchoolId,
   getOpenExerciesBySubjectAndGrade,
   getExamBySchoolId,
+  getExamsByIds,
   getTestById,
   getOpenExerciesById,
   getTestsByIds,

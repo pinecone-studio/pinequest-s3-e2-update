@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "681a0457-a2f6-475b-bb29-88d53f54f625",
-  "prevId": "e85617ab-127f-4435-978f-51eb8d398d5b",
+  "id": "843b32dc-84dd-4d86-9f9d-1dccccbfae77",
+  "prevId": "2d9a77d4-90d3-4cda-a65f-42fd71a73eb8",
   "tables": {
     "class": {
       "name": "class",
@@ -414,25 +414,25 @@
           "notNull": true,
           "autoincrement": false
         },
-        "address": {
-          "name": "address",
+        "provinceOrCity": {
+          "name": "provinceOrCity",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "schoolName": {
-          "name": "schoolName",
+        "soumOrDistrict": {
+          "name": "soumOrDistrict",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "organizationRegister": {
-          "name": "organizationRegister",
+        "address": {
+          "name": "address",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "createdAt": {
@@ -572,7 +572,7 @@
           "name": "email",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "classId": {
@@ -610,6 +610,14 @@
           "notNull": false,
           "autoincrement": false
         },
+        "studentStatus": {
+          "name": "studentStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "text",
@@ -625,7 +633,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "student_studentCode_unique": {
+          "name": "student_studentCode_unique",
+          "columns": [
+            "studentCode"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

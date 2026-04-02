@@ -3,7 +3,7 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 
 export function PastExamStudentPopover({
   classLabel,

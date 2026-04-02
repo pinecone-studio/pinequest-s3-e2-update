@@ -1,5 +1,5 @@
 import { BookOpen, CheckCircle2 } from "lucide-react";
-import type { PastExamRow } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 
 export function PastExamMostFailedInsight({ row }: { row: PastExamRow }) {
   const insight = row.mostFailedQuestion;

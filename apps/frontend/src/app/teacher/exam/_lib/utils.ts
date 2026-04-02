@@ -3,6 +3,7 @@ import type { SavedExamRecord } from "./types";
 export function normalizeSavedExamRecord(savedExam: SavedExamRecord): SavedExamRecord {
   return {
     ...savedExam,
+    classGroup: savedExam.classGroup ?? "",
     durationInMinutes:
       Number.isFinite(savedExam.durationInMinutes) && savedExam.durationInMinutes > 0
         ? savedExam.durationInMinutes
@@ -12,6 +13,14 @@ export function normalizeSavedExamRecord(savedExam: SavedExamRecord): SavedExamR
       ? savedExam.approvalStatus ?? "pending"
       : "not_required",
     sentClassIds: Array.isArray(savedExam.sentClassIds) ? savedExam.sentClassIds : [],
+    sentClassLabels:
+      savedExam.sentClassLabels && typeof savedExam.sentClassLabels === "object"
+        ? savedExam.sentClassLabels
+        : {},
+    approvalExamDate: savedExam.approvalExamDate ?? "",
+    approvalStartTime: savedExam.approvalStartTime ?? "09:00",
+    approvalEndTime: savedExam.approvalEndTime ?? "10:00",
+    approvalLocation: savedExam.approvalLocation ?? "",
   };
 }
 

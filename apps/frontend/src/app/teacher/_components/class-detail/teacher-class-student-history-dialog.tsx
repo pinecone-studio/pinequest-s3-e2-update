@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-mock";
+import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
 import { formatExamDate } from "./teacher-class-detail-utils";
 

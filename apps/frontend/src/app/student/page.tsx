@@ -7,7 +7,6 @@ import {
   readExamMonitoringStateMap,
   type ExamMonitoringScopeStateMap,
 } from "../lib/exam-monitoring-store";
-import { teacherClasses } from "../teacher/exam/_lib/class-data";
 import { SAVED_EXAMS_STORAGE_KEY } from "../teacher/exam/_lib/constants";
 import type { SavedExamRecord } from "../teacher/exam/_lib/types";
 import { normalizeSavedExamRecord } from "../teacher/exam/_lib/utils";
@@ -15,15 +14,13 @@ import { CompletedScreen } from "./components/completed-screen";
 import { EntryStep } from "./components/entry-step";
 import { ExamScreen } from "./components/exam-screen";
 import { FinishConfirmationDialog } from "./components/finish-confirmation-dialog";
+import { STUDENT_ENTRY_CLASS_OPTIONS } from "./_lib/entry-class-options";
 import { examData } from "./mock-data";
 import type { ExamData, ExamPhase, OptionId } from "./types";
 import { formatTimer } from "./utils";
 
 export default function StudentExamPage() {
   const [phase, setPhase] = useState<ExamPhase>("entry");
-  const [studentLastName, setStudentLastName] = useState("");
-  const [studentFirstName, setStudentFirstName] = useState("");
-  const [studentEmail, setStudentEmail] = useState("");
   const [classCode, setClassCode] = useState("");
   const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
   const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
@@ -61,23 +58,81 @@ export default function StudentExamPage() {
   const currentQuestion = resolvedExamData.questions[currentQuestionIndex];
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
   const normalizedClassCode = classCode.trim().toUpperCase();
-  const matchedClass = useMemo(
-    () =>
-      teacherClasses.find(
-        (klass) => klass.name.trim().toUpperCase() === normalizedClassCode,
-      ) ?? null,
-    [normalizedClassCode],
-  );
-  const selectedClassId = matchedClass?.id ?? null;
   const requiresDeliveredClass = Boolean(
     activeSavedExam && (activeSavedExam.sentClassIds ?? []).length > 0,
   );
+
+  const globalClassByCode = useMemo(() => {
+    if (!normalizedClassCode) return null;
+    return (
+      STUDENT_ENTRY_CLASS_OPTIONS.find(
+        (klass) => klass.name.trim().toUpperCase() === normalizedClassCode,
+      ) ?? null
+    );
+  }, [normalizedClassCode]);
+
+  const deliveredClassByCode = useMemo(() => {
+    if (!normalizedClassCode || !activeSavedExam?.sentClassIds?.length) {
+      return null;
+    }
+    const labels = activeSavedExam.sentClassLabels ?? {};
+    for (const id of activeSavedExam.sentClassIds) {
+      const label = labels[id];
+      if (label && label.trim().toUpperCase() === normalizedClassCode) {
+        return { id, name: label };
+      }
+    }
+    for (const opt of STUDENT_ENTRY_CLASS_OPTIONS) {
+      if (
+        opt.name.trim().toUpperCase() === normalizedClassCode &&
+        activeSavedExam.sentClassIds.includes(opt.id)
+      ) {
+        return { id: opt.id, name: opt.name };
+      }
+    }
+    return null;
+  }, [normalizedClassCode, activeSavedExam]);
+
+  const matchedClass = useMemo(() => {
+    if (!normalizedClassCode) return null;
+    if (requiresDeliveredClass) {
+      return deliveredClassByCode;
+    }
+    return globalClassByCode;
+  }, [
+    normalizedClassCode,
+    requiresDeliveredClass,
+    deliveredClassByCode,
+    globalClassByCode,
+  ]);
+
+  const selectedClassId = matchedClass?.id ?? null;
+
   const isSelectedClassDelivered = Boolean(
     !activeSavedExam ||
-    !requiresDeliveredClass ||
-    (selectedClassId &&
-      (activeSavedExam.sentClassIds ?? []).includes(selectedClassId)),
+      !requiresDeliveredClass ||
+      (selectedClassId != null &&
+        (activeSavedExam.sentClassIds ?? []).includes(selectedClassId)),
   );
+
+  const entryClassHintKind = useMemo(() => {
+    if (!activeSavedExam || !normalizedClassCode) return null;
+    if (!requiresDeliveredClass) return null;
+    if (deliveredClassByCode) return "ok" as const;
+    if (
+      globalClassByCode &&
+      !(activeSavedExam.sentClassIds ?? []).includes(globalClassByCode.id)
+    ) {
+      return "not_delivered" as const;
+    }
+    return "unknown" as const;
+  }, [
+    activeSavedExam,
+    normalizedClassCode,
+    requiresDeliveredClass,
+    deliveredClassByCode,
+    globalClassByCode,
+  ]);
   const monitoringScopeKey =
     activeSavedExam && selectedClassId
       ? createExamMonitoringScopeKey(activeSavedExam.id, selectedClassId)
@@ -102,10 +157,10 @@ export default function StudentExamPage() {
   const classCodeHint = activeSavedExam
     ? normalizedClassCode.length === 0
       ? "Шалгалт илгээгдсэн ангийг оруулна уу. Жишээ: 10A"
-      : !matchedClass
-        ? "Ийм анги олдсонгүй."
-        : !isSelectedClassDelivered
-          ? "Энэ ангид тухайн шалгалт илгээгдээгүй байна."
+      : entryClassHintKind === "not_delivered"
+        ? "Энэ ангид тухайн шалгалт илгээгдээгүй байна."
+        : !matchedClass
+          ? "Ийм анги олдсонгүй."
           : `Илгээсэн анги баталгаажлаа: ${matchedClass.name}`
     : undefined;
   const hasTimedOut = phase === "exam" && remainingSeconds <= 0;
@@ -180,6 +235,15 @@ export default function StudentExamPage() {
   };
 
   const handleStartExam = () => {
+    if (!hasAcceptedRules) {
+      setEntryProceedError("Шалгалтын журмыг уншиж танилцсанаа чеклэнэ үү.");
+      return;
+    }
+    if (!normalizedClassCode) {
+      setEntryProceedError("Шалгалтын кодоо оруулна уу.");
+      return;
+    }
+
     if (!usesTeacherControlledStart) {
       setEntryProceedError(null);
       setManualRemainingSeconds(resolvedExamData.durationMinutes * 60);
@@ -189,6 +253,10 @@ export default function StudentExamPage() {
 
     if (!normalizedClassCode) {
       setEntryProceedError("Илгээгдсэн шалгалтын ангийн кодыг оруулна уу.");
+      return;
+    }
+    if (entryClassHintKind === "not_delivered") {
+      setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
       return;
     }
     if (!matchedClass) {
@@ -213,26 +281,11 @@ export default function StudentExamPage() {
   if (phase === "entry") {
     return (
       <EntryStep
-        studentLastName={studentLastName}
-        studentFirstName={studentFirstName}
-        studentEmail={studentEmail}
         classCode={classCode}
         hasAcceptedRules={hasAcceptedRules}
         classCodeHint={classCodeHint}
         classCodeRequired={requiresDeliveredClass}
         proceedError={entryProceedError}
-        onChangeLastName={(value) => {
-          setEntryProceedError(null);
-          setStudentLastName(value);
-        }}
-        onChangeFirstName={(value) => {
-          setEntryProceedError(null);
-          setStudentFirstName(value);
-        }}
-        onChangeEmail={(value) => {
-          setEntryProceedError(null);
-          setStudentEmail(value);
-        }}
         onChangeClassCode={(value) => {
           setEntryProceedError(null);
           setClassCode(value);
@@ -240,21 +293,6 @@ export default function StudentExamPage() {
         onToggleAcceptedRules={(checked) => {
           setEntryProceedError(null);
           setHasAcceptedRules(checked);
-        }}
-        onApplyDemo={() => {
-          setEntryProceedError(null);
-          const demoClassName =
-            activeSavedExam && (activeSavedExam.sentClassIds ?? []).length > 0
-              ? (teacherClasses.find(
-                  (klass) => klass.id === activeSavedExam.sentClassIds?.[0],
-                )?.name ?? "10A")
-              : "10A";
-
-          setStudentLastName("Түвшин");
-          setStudentFirstName("Элзий-Орших");
-          setStudentEmail("student@school.mn");
-          setClassCode(demoClassName);
-          setHasAcceptedRules(true);
         }}
         onProceed={handleStartExam}
       />

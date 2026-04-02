@@ -2,7 +2,7 @@ import type {
   PastExamQuestionAttempt,
   PastExamRow,
   PastExamStudentScore,
-} from "@/app/lib/class-past-exams-mock";
+} from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
 
 const EXAM_MANAGEMENT_STORAGE_KEY = "exam-management.local.v1";

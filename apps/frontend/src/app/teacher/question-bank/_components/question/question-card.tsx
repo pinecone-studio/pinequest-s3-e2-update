@@ -2,13 +2,8 @@
 
 import { Bookmark, Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
-import {
-  DIFFICULTY_LABELS,
-  hasTraditionalMongolianText,
-  resolveQuestionTitle,
-} from "../../_lib/utils";
+import { DIFFICULTY_LABELS, resolveQuestionTitle } from "../../_lib/utils";
 
 type QuestionCardProps = {
   compactAction?: boolean;
@@ -35,27 +30,22 @@ export function QuestionCard({
   onToggleSelect,
   onToggleLike,
 }: QuestionCardProps) {
-  const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
-  const shouldRenderPromptVertical =
-    isNationalScript && hasTraditionalMongolianText(question.content.prompt);
+  const promptLines = splitPromptLines(question.content.prompt);
 
   return (
     <article
       className={cn(
-        "group relative flex min-h-[248px] flex-col rounded-[14px] border px-[28px] pb-[20px] pt-[24px]",
-        isActive && !isSelected ? "min-h-[185px]" : "",
-        isSelected
+        "group relative flex min-h-[248px] flex-col rounded-[10px] border px-4 pb-4 pt-5 sm:px-[28px] sm:pb-[20px] sm:pt-[24px]",
+        isSelected || isActive
           ? "border-[#7DC8FF] bg-white"
-          : isActive
-            ? "border-[#7DC8FF] bg-white"
-            : "border-[#E5E5E5] bg-white",
+          : "border-[#ECECEC] bg-white",
       )}
     >
       <button
         aria-label="Select question"
         aria-pressed={isSelected}
         className={cn(
-          "absolute right-[26px] top-[18px] inline-flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[10px] border-[2px] transition-colors",
+          "absolute right-[26px] top-[18px] inline-flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[6px] border-[2px] transition-colors",
           isSelected
             ? "border-[#404040] bg-white text-[#404040]"
             : "border-[#404040] bg-white text-transparent hover:bg-[#eef4ff]",
@@ -63,7 +53,7 @@ export function QuestionCard({
         onClick={onToggleSelect}
         type="button"
       >
-        <Check className="h-[18px] w-[18px]" strokeWidth={3} />
+        <Check className="h-[14px] w-[14px]" strokeWidth={3} />
       </button>
 
       <button
@@ -71,28 +61,15 @@ export function QuestionCard({
         onClick={onOpen}
         type="button"
       >
-        <h3 className="line-clamp-2 text-[18px] font-medium leading-[22px] text-[#323232]">
+        <h3 className="line-clamp-2 text-[20px] font-semibold leading-[120%] tracking-[0.04em] text-[#323232]">
           {resolveQuestionTitle(question.title, question.content.prompt) ||
             "Квадрат функцийн оройг олох"}
         </h3>
-        <p
-          className={`mt-[14px] text-[12px] text-[#323232] ${
-            shouldRenderPromptVertical
-              ? "min-h-28 overflow-x-auto leading-7"
-              : "line-clamp-2 leading-[18px]"
-          }`}
-          style={
-            shouldRenderPromptVertical
-              ? {
-                  writingMode: "vertical-lr",
-                  textOrientation: "mixed",
-                  whiteSpace: "pre-wrap",
-                }
-              : undefined
-          }
-        >
-          {question.content.prompt}
-        </p>
+        <div className="mt-[14px] space-y-[2px] text-[14px] leading-[20px] text-[#323232]">
+          {promptLines.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
       </button>
 
       <div className="mt-[18px] flex flex-wrap items-center gap-[10px]">
@@ -102,12 +79,18 @@ export function QuestionCard({
       </div>
 
       <div className="mt-[8px] flex flex-wrap items-center gap-[10px]">
-        <Tag>{question.questionType === "multiple_choice" ? "Сонгох асуулт" : "Задгай"}</Tag>
-        <Tag>{DIFFICULTY_LABELS[question.difficulty]}</Tag>
-        <Tag>{question.gradingType === "auto" ? "Автомат үнэлгээ" : "Гар үнэлгээ"}</Tag>
+        <Tag borderless>
+          {question.questionType === "multiple_choice"
+            ? "Сонгох асуулт"
+            : "Задгай"}
+        </Tag>
+        <Tag borderless>{DIFFICULTY_LABELS[question.difficulty]}</Tag>
+        <Tag borderless>
+          {question.gradingType === "auto" ? "Автомат үнэлгээ" : "Гар үнэлгээ"}
+        </Tag>
       </div>
 
-      <p className="mt-[14px] text-[12px] leading-[15px] text-[#323232]">
+      <p className="mt-[14px] text-[14px] font-normal leading-[140%] tracking-[0.04em] text-[#323232]">
         16-р сургууль · Багш: {question.teacherName ?? "О.Наранзул"}
       </p>
 
@@ -115,36 +98,74 @@ export function QuestionCard({
         <div className="h-px w-full bg-[#E5E5E5]" />
       </div>
 
-      <div className="mt-[12px] flex items-center justify-between text-[12px] leading-[15px] text-[#7B7B7B]">
+      <div className="mt-[12px] flex items-center justify-between text-[#7B7B7B]">
         <button
-          className="inline-flex items-center gap-[6px]"
+          className={cn(
+            "inline-flex items-center gap-[8px] px-[12px] text-[16px] leading-[140%]",
+            isLiked ? "text-[#e11d48]" : "text-[#7B7B7B]",
+          )}
           onClick={onToggleLike}
           type="button"
         >
           <Heart
             className={cn(
-              "h-[14px] w-[14px]",
-              isLiked ? "fill-current text-[#e11d48]" : "text-[#7B7B7B]",
+              "h-[20px] w-[20px]",
+              isLiked ? "fill-current text-[#e11d48]" : "text-[#525252]",
             )}
           />
-          <span className={cn(isLiked ? "text-[#e11d48]" : "text-[#7B7B7B]")}>
+          <span className={cn(isLiked ? "text-[#e11d48]" : "text-[#525252]")}>
             {heartCount}
           </span>
         </button>
 
-        <div className="inline-flex items-center gap-[6px]">
-          <Bookmark className="h-[14px] w-[14px] text-[#7B7B7B]" />
-          <span>{question.usageCount} удаа ашигласан</span>
+        <div className="inline-flex items-center gap-[8px] px-[12px] text-[16px] leading-[140%]">
+          <Bookmark className="h-[20px] w-[20px] text-[#525252]" />
+          <span className="text-[#525252]">
+            {question.usageCount} удаа ашигласан
+          </span>
         </div>
       </div>
     </article>
   );
 }
 
-function Tag({ children }: { children: React.ReactNode }) {
+function Tag({
+  borderless = false,
+  children,
+}: {
+  borderless?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <span className="inline-flex h-[26px] items-center rounded-[10px] border border-[#E5E5E5] bg-white px-[16px] text-[12px] font-normal leading-[14px] text-[#0A0A0A]">
+    <span
+      className={cn(
+        "inline-flex h-[26px] items-center rounded-[8px] px-[16px] text-[14px] font-normal leading-[14px] tracking-[0.04em] text-[#0A0A0A]",
+        borderless
+          ? "rounded-[8px] border border-[#E5E5E5] bg-white"
+          : "border border-[#ECECEC] bg-white",
+      )}
+    >
       {children}
     </span>
   );
+}
+
+function splitPromptLines(prompt: string) {
+  const normalized = prompt.trim();
+  if (!normalized) return [];
+
+  const explicitLines = normalized
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (explicitLines.length > 1) return explicitLines;
+
+  const splitIndex = normalized.search(/\s(?=[A-ZА-ЯӨҮЁ])/);
+  if (splitIndex > 0) {
+    const first = normalized.slice(0, splitIndex).trim();
+    const second = normalized.slice(splitIndex + 1).trim();
+    if (first && second) return [first, second];
+  }
+
+  return [normalized];
 }
