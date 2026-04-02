@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Link2,
+  Pencil,
+} from "lucide-react";
+import { useState } from "react";
 import type { TeacherClassOption } from "../../_lib/teacher-class-options";
 import { formatSavedDate } from "../_lib/utils";
 import type { SavedExamRecord } from "../_lib/types";
@@ -34,9 +32,19 @@ export function SavedExamCard({
   onSelectClass: (classId: string) => void;
   onSend: () => void;
 }) {
-  const availableClasses = teacherClasses.filter(
-    (klass) => klass.grade === savedExam.grade,
-  );
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const handleCopyLink = async () => {
+    if (typeof window === "undefined") return;
+    const examLink = `${window.location.origin}/student/${savedExam.id}`;
+    try {
+      await navigator.clipboard.writeText(examLink);
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 1800);
+    } catch {
+      window.prompt("Шалгалтын линк:", examLink);
+    }
+  };
 
   return (
     <article
@@ -51,80 +59,54 @@ export function SavedExamCard({
           <SavedExamMeta savedExam={savedExam} />
         </div>
 
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-          <div className="w-full min-w-0 sm:min-w-52 sm:w-auto">
-            <Select
-              disabled={
-                savedExam.approvalStatus === "pending" ||
-                savedExam.approvalStatus === "needs_fix"
-              }
-              onValueChange={onSelectClass}
-              value={selectedClassId ?? undefined}
-            >
-              <SelectTrigger className="h-11 w-full rounded-2xl border border-[#a7adb8] bg-white px-4 text-sm font-medium text-[#444] focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10 focus-visible:border-[#4f9dff] focus-visible:ring-4 focus-visible:ring-[#4f9dff]/10">
-                <SelectValue placeholder="Анги сонгож илгээх" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableClasses.length > 0 ? (
-                  availableClasses.map((klass) => (
-                    <ClassOption key={klass.id} klass={klass} />
-                  ))
-                ) : (
-                  <SelectItem disabled value="empty">
-                    Тохирох анги алга
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
-            <ActionButton
-              className="col-span-2 w-full sm:col-span-1 sm:w-auto"
-              disabled={
-                savedExam.approvalStatus === "pending" ||
-                savedExam.approvalStatus === "needs_fix"
-              }
-              kind="secondary"
-              label={
-                savedExam.approvalStatus === "pending"
-                  ? "Зөвшөөрөл хүлээж байна"
-                  : savedExam.approvalStatus === "needs_fix"
-                    ? "Засвар шаардлагатай"
-                    : "Нээх"
-              }
-              onClick={onOpen}
-            />
-            <ActionButton label="Засварлах" onClick={onOpen} />
-            <ActionButton
-              icon={<TrashIcon />}
-              kind="danger"
-              label="Устгах"
-              onClick={onDelete}
-            />
-          </div>
+        <div className="flex w-full flex-row justify-end gap-2 sm:w-auto">
+          <button
+            aria-label="Засварлах"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#a7adb8] bg-white text-[#444] transition hover:bg-[#f8fbff]"
+            onClick={onOpen}
+            type="button"
+          >
+            <Pencil className="h-5 w-5" />
+          </button>
+          <button
+            aria-label="Устгах"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#ffc6c6] bg-white text-[#ff7e7e] transition hover:bg-[#fff5f5]"
+            onClick={onDelete}
+            type="button"
+          >
+            <TrashIcon />
+          </button>
         </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <SavedExamStats savedExam={savedExam} />
-          <ActionButton
-            disabled={
-              savedExam.approvalStatus === "pending" ||
-              savedExam.approvalStatus === "needs_fix"
-            }
-            kind="primary"
-            label={
-              savedExam.approvalStatus === "pending"
-                ? "Зөвшөөрөл хүлээж байна"
-                : savedExam.approvalStatus === "needs_fix"
-                  ? "Засвар шаардлагатай"
-                  : "Илгээх"
-            }
-            className="w-full sm:w-auto"
-            onClick={onSend}
-          />
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <ActionButton
+              className="w-full sm:w-auto"
+              icon={<Link2 className="h-4 w-4" />}
+              kind="secondary"
+              label={linkCopied ? "Линк хуулсан" : "Линк"}
+              onClick={handleCopyLink}
+            />
+            <ActionButton
+              disabled={
+                savedExam.approvalStatus === "pending" ||
+                savedExam.approvalStatus === "needs_fix"
+              }
+              kind="primary"
+              label={
+                savedExam.approvalStatus === "pending"
+                  ? "Зөвшөөрөл хүлээж байна"
+                  : savedExam.approvalStatus === "needs_fix"
+                    ? "Засвар шаардлагатай"
+                    : "Илгээх"
+              }
+              className="w-full sm:w-auto"
+              onClick={onSend}
+            />
+          </div>
         </div>
         <SavedExamSendState
           onOpenMonitoring={onOpenMonitoring}
@@ -209,16 +191,6 @@ function SavedExamSendState({
         Хяналт руу орох
       </button>
     </div>
-  );
-}
-
-function ClassOption({ klass }: { klass: TeacherClassOption }) {
-  return (
-    <SelectItem value={klass.id}>
-      {klass.studentCount > 0
-        ? `${klass.name} · ${klass.studentCount} сурагч`
-        : klass.name}
-    </SelectItem>
   );
 }
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { Check, Copy, Link2 } from "lucide-react";
+import { useState } from "react";
 import {
   DIFFICULTY_LABELS,
   QUESTION_TYPE_LABELS,
@@ -12,6 +14,7 @@ import { TrashIcon } from "@/app/_icons/trashIcon";
 
 export function ExamOutlineSection({
   examQuestionDetails,
+  latestSavedExamId,
   requiresSchoolApproval,
   totalPoints,
   onMoveQuestion,
@@ -19,6 +22,7 @@ export function ExamOutlineSection({
   onRemoveExamQuestion,
 }: {
   examQuestionDetails: ExamQuestionDetail[];
+  latestSavedExamId: string | null;
   requiresSchoolApproval: boolean;
   totalPoints: number;
   onMoveQuestion: (examQuestionId: string, direction: "up" | "down") => void;
@@ -26,6 +30,21 @@ export function ExamOutlineSection({
   onRemoveExamQuestion: (examQuestionId: string) => void;
 }) {
   const hasQuestions = examQuestionDetails.length > 0;
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const latestExamLink = latestSavedExamId ? `/student/${latestSavedExamId}` : "";
+
+  const handleCopyLatestLink = async () => {
+    if (!latestSavedExamId || typeof window === "undefined") return;
+    const absoluteLink = `${window.location.origin}${latestExamLink}`;
+    try {
+      await navigator.clipboard.writeText(absoluteLink);
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 1800);
+    } catch {
+      window.prompt("Шалгалтын линк:", absoluteLink);
+    }
+  };
 
   return (
     <section
@@ -128,16 +147,53 @@ export function ExamOutlineSection({
       </div>
 
       {hasQuestions ? (
-        <div className="mt-5 flex justify-stretch pt-4 sm:justify-end">
-          <button
-            className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#29A4FF] px-6 py-3 text-[12px] font-medium text-[#EDF6FF] transition hover:bg-[#29A4FF] sm:w-auto"
-            onClick={onPersistExam}
-            type="button"
-          >
-            {requiresSchoolApproval
-              ? "Хадгалж, зөвшөөрөл хүсэх"
-              : "Шалгалтад хадгалах"}
-          </button>
+        <div className="mt-5 pt-4">
+          <div className="flex justify-stretch sm:justify-end">
+            <button
+              className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#29A4FF] px-6 py-3 text-[12px] font-medium text-[#EDF6FF] transition hover:bg-[#29A4FF] sm:w-auto"
+              onClick={onPersistExam}
+              type="button"
+            >
+              {requiresSchoolApproval
+                ? "Хадгалж, зөвшөөрөл хүсэх"
+                : "Шалгалтад хадгалах"}
+            </button>
+          </div>
+          {latestSavedExamId ? (
+            <div className="mt-3 rounded-[12px] border border-[#cfe0fb] bg-white p-3">
+              <p className="text-xs font-medium text-[#5f7394]">
+                Шалгалтын линк
+              </p>
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 rounded-[10px] border border-[#d7e6fb] bg-[#f8fbff] px-3 py-2">
+                  <p className="truncate text-xs font-medium text-[#183153]">
+                    {latestExamLink}
+                  </p>
+                </div>
+                <button
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-[10px] border border-[#a7adb8] bg-white px-3 text-xs font-medium text-[#444] transition hover:bg-[#f8fbff]"
+                  onClick={handleCopyLatestLink}
+                  type="button"
+                >
+                  {linkCopied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                  {linkCopied ? "Хуулсан" : "Линк хуулах"}
+                </button>
+              </div>
+              <a
+                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#2f66b9] hover:underline"
+                href={latestExamLink}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <Link2 className="h-3.5 w-3.5" />
+                Нээж шалгах
+              </a>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </section>

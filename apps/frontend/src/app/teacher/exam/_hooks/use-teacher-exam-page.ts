@@ -155,6 +155,9 @@ export function useTeacherExamPage() {
   const [selectedClassByExamId, setSelectedClassByExamId] = useState<
     Record<string, string>
   >({});
+  const [latestSavedExamId, setLatestSavedExamId] = useState<string | null>(
+    null,
+  );
 
   const questionBank = useMemo(() => {
     const backendQuestions = mapBackendTestsToQuestions(
@@ -563,6 +566,7 @@ export function useTeacherExamPage() {
       }
 
       createdExamId = created.id;
+      setLatestSavedExamId(created.id);
       setActiveSavedExamId(created.id);
 
       if (exam.requiresSchoolApproval) {
@@ -717,6 +721,7 @@ export function useTeacherExamPage() {
     filteredQuestions,
     gradeOptions: EXAM_GRADE_OPTIONS,
     hasLoadedSavedExams,
+    latestSavedExamId,
     moveQuestion,
     teacherClasses,
     openMonitoringForSavedExam,
