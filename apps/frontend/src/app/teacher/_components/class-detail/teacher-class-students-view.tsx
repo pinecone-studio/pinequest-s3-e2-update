@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   PastExamRow,
   PastExamStudentScore,
@@ -9,6 +9,12 @@ import type {
 import type { Student } from "@/app/lib/types";
 import { TeacherClassAddStudentDialog } from "./teacher-class-add-student-dialog";
 import { TeacherClassStudentHistoryDialog } from "./teacher-class-student-history-dialog";
+import {
+  readStudentStatusMap,
+  STUDENT_STATUS_OPTIONS,
+  STUDENT_STATUS_UPDATED_EVENT,
+  type StudentStatus,
+} from "./student-status-ui";
 
 type TeacherClassStudentsViewProps = {
   classId: string;
@@ -37,8 +43,25 @@ export function TeacherClassStudentsView({
   students,
 }: TeacherClassStudentsViewProps) {
   const [addStudentDialogOpen, setAddStudentDialogOpen] = useState(false);
+  const [statusByStudentId, setStatusByStudentId] = useState<
+    Record<string, StudentStatus>
+  >(() => readStudentStatusMap());
   const selectedStudent =
     students.find((student) => student.id === selectedId) ?? null;
+
+  useEffect(() => {
+    const sync = () => {
+      setStatusByStudentId(readStudentStatusMap());
+    };
+
+    window.addEventListener("storage", sync);
+    window.addEventListener(STUDENT_STATUS_UPDATED_EVENT, sync);
+
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener(STUDENT_STATUS_UPDATED_EVENT, sync);
+    };
+  }, []);
 
   return (
     <div className="rounded-2xl bg-white p-5 sm:p-8">
@@ -76,11 +99,17 @@ export function TeacherClassStudentsView({
       <div className="mt-6 grid justify-items-center gap-y-4 md:justify-center md:[grid-template-columns:repeat(2,455px)] md:gap-x-[20px]">
         {students.map((student, index) => {
           const selected = selectedId === student.id;
+          const status =
+            statusByStudentId[student.id] ?? ("active" satisfies StudentStatus);
+          const activeStatusOption =
+            STUDENT_STATUS_OPTIONS.find((item) => item.value === status) ??
+            STUDENT_STATUS_OPTIONS[0];
+
           return (
             <div
               key={student.id}
               aria-expanded={selected}
-              className={`w-full cursor-pointer rounded-[12px] border px-4 py-4 transition sm:px-5 md:h-[86px] md:w-[455px] md:max-w-[455px] ${
+              className={`w-full cursor-pointer rounded-[12px] border px-4 py-4 transition sm:px-5 md:min-h-[110px] md:w-[455px] md:max-w-[455px] ${
                 selected
                   ? "border-[#cfe3f7] bg-[#EDF6FF]"
                   : "border-[#e5e7eb] bg-white hover:bg-[#EDF6FF]"
@@ -95,8 +124,8 @@ export function TeacherClassStudentsView({
               role="button"
               tabIndex={0}
             >
-              <div className="flex h-full items-center justify-between gap-4">
-                <div className="flex items-start gap-4">
+              <div className="flex h-full items-start justify-between gap-4">
+                <div className="flex min-w-0 items-start gap-4">
                   <span className="mt-1.5 w-9 shrink-0 text-[22px] font-semibold leading-none text-[#122459]">
                     {index + 1}
                   </span>
@@ -107,6 +136,11 @@ export function TeacherClassStudentsView({
                     <p className="mt-0.5 text-3 text-[#122459]">{`${student.studentNumber.toLowerCase()}@gmail.com`}</p>
                   </div>
                 </div>
+                <span
+                  className={`inline-flex shrink-0 items-center rounded-full border px-3 py-1 text-[12px] font-semibold ${activeStatusOption.badgeClass}`}
+                >
+                  {activeStatusOption.label}
+                </span>
               </div>
             </div>
           );
@@ -115,11 +149,12 @@ export function TeacherClassStudentsView({
 
       <TeacherClassStudentHistoryDialog
         examRows={selectedStudentExams}
+        isResponsibleClass={isResponsibleClass}
         onClose={() => setSelectedId(null)}
         open={!!selectedStudent}
         student={selectedStudent}
       />
-      {isResponsibleClass ? (
+      {isResponsibleClass && addStudentDialogOpen ? (
         <TeacherClassAddStudentDialog
           classId={classId}
           classLabel={className}
@@ -128,7 +163,6 @@ export function TeacherClassStudentsView({
           onSuccess={() => {
             onStudentsChanged?.();
           }}
-          open={addStudentDialogOpen}
         />
       ) : null}
     </div>

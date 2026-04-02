@@ -1,9 +1,14 @@
 "use client";
 
-import { ArrowLeft, CheckCircle2, Save } from "lucide-react";
+import { useQuery } from "@apollo/client/react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  GET_EXAM_BY_ID,
+  GET_EXAM_QUESTION_ITEMS,
+} from "@/graphql/typeDefs/queries";
 import {
   buildInitialManualQuestions,
   readManualGradingBootstrap,
@@ -11,8 +16,22 @@ import {
   sumManualMaxScore,
   sumManualScore,
   writeManualGradingRecord,
+  type ManualGradingFallbackQuestionSeed,
   type ManualGradingQuestion,
 } from "../_lib/manual-grading";
+
+type GqlExamRow = {
+  id: string;
+  openExerciseIds: string[] | null;
+  testIds: string[] | null;
+};
+
+type GqlOpenExerciseRow = {
+  id: string;
+  title: string | null;
+  question: string | null;
+  score: number | null;
+};
 
 export function ManualGradingPage({ examId }: { examId: string }) {
   const router = useRouter();
@@ -35,23 +54,84 @@ export function ManualGradingPage({ examId }: { examId: string }) {
     () => readManualGradingBootstrap(examId, studentId),
     [examId, studentId],
   );
+  const hasBootstrapAttempts = (bootstrap?.student.attempts?.length ?? 0) > 0;
 
-  const [questions, setQuestions] = useState<ManualGradingQuestion[]>(() =>
-    buildInitialManualQuestions({
-      bootstrap,
-      examId,
-      examTitle,
-      savedRecord,
-      subject,
-    }),
+  const { data: examQueryData } = useQuery<{ getExamById: GqlExamRow | null }>(
+    GET_EXAM_BY_ID,
+    {
+      variables: { examId },
+      skip: !examId || hasBootstrapAttempts,
+    },
   );
+
+  const examRow = examQueryData?.getExamById ?? null;
+  const testIds = useMemo(() => examRow?.testIds ?? [], [examRow?.testIds]);
+  const openExerciseIds = useMemo(
+    () => examRow?.openExerciseIds ?? [],
+    [examRow?.openExerciseIds],
+  );
+
+  const { data: itemQueryData } = useQuery<{
+    getOpenExerciesByIds: GqlOpenExerciseRow[];
+  }>(GET_EXAM_QUESTION_ITEMS, {
+    variables: { testIds, openExerciseIds },
+    skip: !examRow || hasBootstrapAttempts,
+  });
+
+  const fallbackQuestions = useMemo<ManualGradingFallbackQuestionSeed[]>(() => {
+    if (!openExerciseIds.length) return [];
+
+    const openExerciseById = new Map(
+      (itemQueryData?.getOpenExerciesByIds ?? []).map((item) => [item.id, item] as const),
+    );
+
+    return openExerciseIds
+      .map((openExerciseId, index) => {
+        const question = openExerciseById.get(openExerciseId);
+        if (!question) return null;
+
+        return {
+          id: `${examId}-manual-${openExerciseId}`,
+          order: index + 1,
+          prompt:
+            question.question?.trim() ||
+            question.title?.trim() ||
+            `${examTitle} шалгалтын задгай асуулт ${index + 1}`,
+          maxScore: Math.max(1, question.score ?? 1),
+        };
+      })
+      .filter(
+        (question): question is ManualGradingFallbackQuestionSeed =>
+          Boolean(question),
+      );
+  }, [examId, examTitle, itemQueryData?.getOpenExerciesByIds, openExerciseIds]);
+
+  const baseQuestions = useMemo(
+    () =>
+      buildInitialManualQuestions({
+        bootstrap,
+        examId,
+        examTitle,
+        fallbackQuestions,
+        savedRecord,
+        subject,
+      }),
+    [bootstrap, examId, examTitle, fallbackQuestions, savedRecord, subject],
+  );
+  const [questionDrafts, setQuestionDrafts] = useState<ManualGradingQuestion[] | null>(null);
+  const questions = questionDrafts ?? baseQuestions;
   const [activeQuestionId, setActiveQuestionId] = useState<string>(
     () => questions[0]?.id ?? "",
   );
   const [saveMessage, setSaveMessage] = useState("");
 
+  const resolvedActiveQuestionId = questions.some(
+    (question) => question.id === activeQuestionId,
+  )
+    ? activeQuestionId
+    : questions[0]?.id ?? "";
   const activeQuestion =
-    questions.find((question) => question.id === activeQuestionId) ??
+    questions.find((question) => question.id === resolvedActiveQuestionId) ??
     questions[0] ??
     null;
 
@@ -67,8 +147,8 @@ export function ManualGradingPage({ examId }: { examId: string }) {
     questionId: string,
     partial: Partial<ManualGradingQuestion>,
   ) => {
-    setQuestions((current) =>
-      current.map((question) =>
+    setQuestionDrafts(
+      questions.map((question) =>
         question.id === questionId ? { ...question, ...partial } : question,
       ),
     );
@@ -82,7 +162,7 @@ export function ManualGradingPage({ examId }: { examId: string }) {
       ...question,
       savedAt: now,
     }));
-    setQuestions(nextQuestions);
+    setQuestionDrafts(nextQuestions);
     writeManualGradingRecord({
       examId,
       studentId,
@@ -194,16 +274,16 @@ export function ManualGradingPage({ examId }: { examId: string }) {
           <section className="rounded-3xl border border-[#dbe5f1] bg-white p-5">
             {activeQuestion ? (
               <>
-                <div className="flex flex-col gap-3 border-b border-[#e8edf5] pb-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf5] pb-4">
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7f8ea8]">
                       ЗАДГАЙ АСУУЛТ
                     </p>
-                    <h2 className="mt-2 text-xl font-extrabold text-[#183153]">
+                    <h2 className="mt-2 break-words text-xl font-extrabold text-[#183153]">
                       Асуулт {activeQuestion.order}
                     </h2>
                   </div>
-                  <div className="rounded-full border border-[#d9e4f2] bg-[#f8fbff] px-4 py-2 text-sm font-semibold text-[#48607f]">
+                  <div className="shrink-0 rounded-full border border-[#d9e4f2] bg-[#f8fbff] px-4 py-2 text-sm font-semibold text-[#48607f]">
                     Дээд оноо: {activeQuestion.maxScore}
                   </div>
                 </div>
@@ -231,9 +311,8 @@ export function ManualGradingPage({ examId }: { examId: string }) {
                             Оноо
                           </span>
                           <input
-                            className="h-12 w-full rounded-2xl border border-[#d6e2f0] px-4 text-sm text-[#183153] outline-none transition focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10"
-                            max={activeQuestion.maxScore}
-                            min={0}
+                            className="h-12 w-full rounded-2xl border border-[#d6e2f0] bg-white px-4 text-sm text-[#183153] outline-none transition focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10"
+                            inputMode="numeric"
                             onChange={(event) => {
                               const numeric = Number(event.target.value);
                               const safeValue = Number.isFinite(numeric)
@@ -243,12 +322,13 @@ export function ManualGradingPage({ examId }: { examId: string }) {
                                 awardedScore: safeValue,
                               });
                             }}
-                            type="number"
+                            pattern="[0-9]*"
+                            type="text"
                             value={activeQuestion.awardedScore}
                           />
                         </label>
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 pt-2">
                           <QuickScoreButton
                             label="0 оноо"
                             onClick={() =>
@@ -264,22 +344,6 @@ export function ManualGradingPage({ examId }: { examId: string }) {
                             }
                           />
                         </div>
-
-                        <label className="block">
-                          <span className="mb-2 block text-sm font-semibold text-[#183153]">
-                            Багшийн тайлбар
-                          </span>
-                          <textarea
-                            className="min-h-32 w-full rounded-2xl border border-[#d6e2f0] px-4 py-3 text-sm leading-7 text-[#183153] outline-none transition focus:border-[#4f9dff] focus:ring-4 focus:ring-[#4f9dff]/10"
-                            onChange={(event) =>
-                              updateQuestion(activeQuestion.id, {
-                                teacherFeedback: event.target.value,
-                              })
-                            }
-                            placeholder="Яагаад энэ оноог өгснөө тайлбарлаж болно."
-                            value={activeQuestion.teacherFeedback}
-                          />
-                        </label>
                       </div>
                     </Panel>
 
@@ -288,7 +352,6 @@ export function ManualGradingPage({ examId }: { examId: string }) {
                       onClick={handleSave}
                       type="button"
                     >
-                      <Save className="h-4 w-4" />
                       Гараар зассан оноог хадгалах
                     </button>
 

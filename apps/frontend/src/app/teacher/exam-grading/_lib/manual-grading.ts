@@ -23,12 +23,65 @@ export type ManualGradingQuestion = {
   savedAt?: string;
 };
 
+export type ManualGradingFallbackQuestionSeed = {
+  id: string;
+  order: number;
+  prompt: string;
+  maxScore: number;
+  studentAnswer?: string;
+};
+
 export type ManualGradingRecord = {
   examId: string;
   studentId: string;
   questions: ManualGradingQuestion[];
   updatedAt: string;
 };
+
+function clampScore(value: number, maxScore: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(maxScore, value));
+}
+
+function computeMostFailedQuestion(studentScores: PastExamStudentScore[]) {
+  const firstStudentWithAttempts = studentScores.find(
+    (student) => student.attempts.length > 0,
+  );
+  if (!firstStudentWithAttempts) return null;
+
+  let best:
+    | {
+        order: number;
+        question: string;
+        correctAnswer: string;
+        failCount: number;
+      }
+    | null = null;
+
+  for (const seedAttempt of firstStudentWithAttempts.attempts) {
+    let failCount = 0;
+    for (const student of studentScores) {
+      const attempt = student.attempts.find(
+        (item) => item.order === seedAttempt.order,
+      );
+      if (attempt && attempt.pointsEarned < attempt.pointsMax) failCount += 1;
+    }
+
+    const candidate = {
+      order: seedAttempt.order,
+      question: seedAttempt.question,
+      correctAnswer: seedAttempt.correctAnswer ?? "-",
+      failCount,
+    };
+    if (!best || candidate.failCount > best.failCount) best = candidate;
+  }
+
+  if (!best || best.failCount === 0) return null;
+  return {
+    ...best,
+    totalStudents: studentScores.length,
+  };
+}
 
 export function buildBootstrapStorageKey(examId: string, studentId: string) {
   return `manual-grading-bootstrap:${examId}:${studentId}`;
@@ -74,6 +127,14 @@ export function writeManualGradingRecord(record: ManualGradingRecord) {
     buildManualGradingStorageKey(record.examId, record.studentId),
     JSON.stringify(record),
   );
+  window.dispatchEvent(new Event("exam-management.local.updated"));
+}
+
+export function isManualGradableAttempt(attempt: PastExamQuestionAttempt) {
+  if (!attempt.questionType) return true;
+  return (
+    attempt.questionType === "essay" || attempt.questionType === "short_answer"
+  );
 }
 
 function mapAttemptToQuestion(
@@ -95,7 +156,22 @@ function buildFallbackQuestions(
   examId: string,
   examTitle: string,
   subject: string,
+  fallbackQuestions?: ManualGradingFallbackQuestionSeed[],
 ): ManualGradingQuestion[] {
+  if (fallbackQuestions?.length) {
+    return fallbackQuestions.map((question) => ({
+      id: question.id,
+      order: question.order,
+      prompt: question.prompt,
+      studentAnswer:
+        question.studentAnswer ??
+        `${subject} хичээлийн энэ задгай асуултын сурагчийн хариулт backend-ээс хараахан ирээгүй байна.`,
+      maxScore: question.maxScore,
+      awardedScore: 0,
+      teacherFeedback: "",
+    }));
+  }
+
   return [
     {
       id: `${examId}-manual-1`,
@@ -122,21 +198,31 @@ export function buildInitialManualQuestions(input: {
   bootstrap: ManualGradingBootstrap | null;
   examId: string;
   examTitle: string;
+  fallbackQuestions?: ManualGradingFallbackQuestionSeed[];
   subject: string;
   savedRecord: ManualGradingRecord | null;
 }) {
-  const { bootstrap, examId, examTitle, savedRecord, subject } = input;
+  const {
+    bootstrap,
+    examId,
+    examTitle,
+    fallbackQuestions,
+    savedRecord,
+    subject,
+  } = input;
 
   if (savedRecord?.questions?.length) {
     return savedRecord.questions;
   }
 
-  const attempts = bootstrap?.student.attempts ?? [];
+  const attempts = (bootstrap?.student.attempts ?? []).filter(
+    isManualGradableAttempt,
+  );
   if (attempts.length > 0) {
     return attempts.map((attempt) => mapAttemptToQuestion(examId, attempt));
   }
 
-  return buildFallbackQuestions(examId, examTitle, subject);
+  return buildFallbackQuestions(examId, examTitle, subject, fallbackQuestions);
 }
 
 export function sumManualScore(questions: ManualGradingQuestion[]) {
@@ -147,3 +233,46 @@ export function sumManualMaxScore(questions: ManualGradingQuestion[]) {
   return questions.reduce((sum, question) => sum + question.maxScore, 0);
 }
 
+export function applySavedManualGradingToRows(rows: PastExamRow[]) {
+  return rows.map((row) => {
+    const studentScores = row.studentScores.map((student) => {
+      const savedRecord = readManualGradingRecord(row.blueprintId, student.studentId);
+      if (!savedRecord?.questions?.length || !student.attempts.length) {
+        return student;
+      }
+
+      const savedByOrder = new Map(
+        savedRecord.questions.map((question) => [question.order, question] as const),
+      );
+      let changed = false;
+
+      const attempts = student.attempts.map((attempt) => {
+        const savedQuestion = savedByOrder.get(attempt.order);
+        if (!savedQuestion) return attempt;
+        changed = true;
+        return {
+          ...attempt,
+          pointsEarned: clampScore(savedQuestion.awardedScore, attempt.pointsMax),
+          teacherFeedback: savedQuestion.teacherFeedback,
+        };
+      });
+
+      if (!changed) return student;
+
+      const score = attempts.reduce((sum, attempt) => sum + attempt.pointsEarned, 0);
+      return {
+        ...student,
+        score,
+        passed: score >= row.maxScore * 0.5,
+        attempts,
+      };
+    });
+
+    return {
+      ...row,
+      mostFailedQuestion: computeMostFailedQuestion(studentScores),
+      passed: studentScores.filter((student) => student.passed).length,
+      studentScores,
+    };
+  });
+}
