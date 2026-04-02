@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { AppApolloProvider } from "@/components/providers/apollo-provider";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { AUTH_ROUTES } from "@/app/lib/auth-redirect";
 import "./globals.css";
 import "@fontsource/google-sans";
@@ -28,7 +30,7 @@ export default function RootLayout({
       signUpUrl={AUTH_ROUTES.signUp}
       afterSignOutUrl="/"
     >
-      <html lang="en" className="h-full antialiased">
+      <html lang="en" className="h-full antialiased" suppressHydrationWarning>
         <body
           className="flex min-h-screen flex-col"
           style={{
@@ -36,7 +38,10 @@ export default function RootLayout({
             letterSpacing: "1px",
           }}
         >
-          <AppApolloProvider>{children}</AppApolloProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <AppApolloProvider>{children}</AppApolloProvider>
+            <Toaster position="top-center" richColors closeButton />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -9,6 +9,11 @@
 	--success: #34c759;
 	--foreground: #1f2a44;
 	--error: #ff6b6b;
+	/* shadcn Sonner / UI tokens */
+	--border: #e4e4e7;
+	--muted: #f4f4f5;
+	--muted-foreground: #71717a;
+	--primary-foreground: #ffffff;
 }
 
 @theme inline {
@@ -18,6 +23,10 @@
 	--color-secondary: var(--secondary);
 	--color-success: var(--success);
 	--color-error: var(--error);
+	--color-border: var(--border);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-primary-foreground: var(--primary-foreground);
 	--font-sans: var(--font-geist-sans);
 	--font-mono: var(--font-geist-mono);
 }
