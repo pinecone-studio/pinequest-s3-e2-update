@@ -33,7 +33,7 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
     <div
       className={[
         "relative flex min-h-[min(800px,calc(100vh-4rem))] flex-1 flex-col items-center justify-center overflow-hidden py-16",
-        overlay ? "min-h-screen" : "",
+        overlay ? "min-h-full grow" : "",
       ].join(" ")}
     >
       <div
@@ -48,7 +48,8 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
             backgroundImageFit="contain"
             showJarOutline
             showLabel={false}
-            showCenterPercent={false}
+            showCenterPercent
+            percentPlacement="below"
             className="mx-auto max-w-[min(280px,82vw)]"
           />
         </div>
@@ -59,7 +60,7 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
   if (overlay) {
     return (
       <div
-        className="fixed inset-0 z-[100] flex flex-col bg-[#f7fafc]/85 backdrop-blur-[2px]"
+        className="absolute inset-0 z-50 flex min-h-0 flex-col bg-[#f7fafc]/85 backdrop-blur-[2px]"
         aria-live="polite"
         aria-busy="true"
         aria-label="Loading progress"

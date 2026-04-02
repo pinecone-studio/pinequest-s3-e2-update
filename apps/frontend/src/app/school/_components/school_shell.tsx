@@ -210,11 +210,13 @@ export function SchoolShell({
 				</div>
 			</header>
 
-			<main className="mx-auto flex w-full max-w-378 flex-1 flex-col px-4 py-6 sm:px-6">
-				{children}
-			</main>
+			<div className="relative flex min-h-0 flex-1 flex-col">
+				<main className="mx-auto flex w-full max-w-378 flex-1 flex-col px-4 py-6 sm:px-6">
+					{children}
+				</main>
 
-			{showLoaderHold ? <SchoolLoaderExperience overlay /> : null}
+				{showLoaderHold ? <SchoolLoaderExperience overlay /> : null}
+			</div>
 		</div>
 	);
 }
