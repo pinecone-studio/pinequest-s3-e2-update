@@ -476,6 +476,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								const next = new Map(current);
 								next.set(mapped.id, {
 									...mapped,
+									title: payload.title || mapped.title,
+									topic: payload.topic || mapped.topic,
+									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
 									teacherName: teacher.name,
 									teacherId: teacher.id,
@@ -528,6 +531,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								const next = new Map(current);
 								next.set(mapped.id, {
 									...mapped,
+									title: payload.title || mapped.title,
+									topic: payload.topic || mapped.topic,
+									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
 									teacherName: teacher.name,
 									teacherId: teacher.id,

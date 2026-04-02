@@ -81,7 +81,10 @@ export function QuestionBuilderForm({
 
     const finalValues: QuestionBuilderValues = {
       ...values,
-      topic: values.subtopic.trim() || values.subject.trim(),
+      topic:
+        values.topic.trim() ||
+        values.subtopic.trim() ||
+        values.subject.trim(),
       questionType: nextQuestionType,
       status: "published",
     };
@@ -127,7 +130,11 @@ export function QuestionBuilderForm({
               supportsFormulaInput={supportsFormulaInput}
             />
             <QuestionBuilderDetailsSection
+              formulaRaw={values.formulaRaw}
               gradeOptions={gradeOptions}
+              includesFormula={includesFormula}
+              includesImage={includesImage}
+              imageUrl={values.imageUrl}
               onGradeChange={(value) => updateValue("grade", value)}
               onNotesChange={(value) => {
                 updateValue("guidance", value);
