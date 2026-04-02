@@ -171,31 +171,16 @@ export default function FaceCam({
   }, [faceDetectionWarning]);
 
   return (
-    <div style={{ position: "relative", width: "320px", height: "240px" }}>
+    <div className="relative mx-auto aspect-[4/3] w-full max-w-[min(100vw-2rem,280px)] overflow-hidden rounded-[14px] border-[3px] border-[#2563eb] sm:max-w-[300px] sm:rounded-[18px] md:mx-0 md:max-w-[320px] md:rounded-[20px]">
       <Webcam
         audio={false}
         ref={webcamRef}
-        style={{
-          position: "absolute",
-          width: "320px",
-          height: "240px",
-          borderRadius: "20px",
-          border: "3px solid #2563eb",
-          top: 0,
-          right: 0,
-        }}
+        className="absolute inset-0 size-full object-contain"
+        videoConstraints={{ facingMode: "user", width: 640, height: 480 }}
       />
       <canvas
         ref={canvasRef}
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: "320px",
-          height: "240px",
-          borderRadius: "20px",
-          border: "3px solid #2563eb",
-        }}
+        className="pointer-events-none absolute inset-0 size-full"
       />
     </div>
   );

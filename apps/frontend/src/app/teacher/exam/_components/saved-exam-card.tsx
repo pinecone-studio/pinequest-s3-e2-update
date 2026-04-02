@@ -11,7 +11,7 @@ import type { TeacherClassOption } from "../../_lib/teacher-class-options";
 import { formatSavedDate } from "../_lib/utils";
 import type { SavedExamRecord } from "../_lib/types";
 import { TrashIcon } from "@/app/_icons/trashIcon";
-
+import { cn } from "@/lib/utils";
 
 export function SavedExamCard({
   savedExam,
@@ -40,7 +40,7 @@ export function SavedExamCard({
 
   return (
     <article
-      className={`rounded-3xl border p-5 transition ${
+      className={`rounded-3xl border p-4 transition sm:p-5 ${
         isActive
           ? "border-[#7dc8ff] bg-white shadow-[0_14px_30px_rgba(79,157,255,0.08)]"
           : "border-[#d8e2f0] bg-white"
@@ -51,8 +51,8 @@ export function SavedExamCard({
           <SavedExamMeta savedExam={savedExam} />
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <div className="min-w-52">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+          <div className="w-full min-w-0 sm:min-w-52 sm:w-auto">
             <Select
               disabled={
                 savedExam.approvalStatus === "pending" ||
@@ -78,36 +78,36 @@ export function SavedExamCard({
             </Select>
           </div>
 
-          <ActionButton
-            disabled={
-              savedExam.approvalStatus === "pending" ||
-              savedExam.approvalStatus === "needs_fix"
-            }
-            kind="secondary"
-            label={
-              savedExam.approvalStatus === "pending"
-                ? "Зөвшөөрөл хүлээж байна"
-                : savedExam.approvalStatus === "needs_fix"
-                  ? "Засвар шаардлагатай"
-                : "Нээх"
-            }
-            onClick={onOpen}
-          />
-          <ActionButton
-            label="Засварлах"
-            onClick={onOpen}
-          />
-          <ActionButton
-            icon={<TrashIcon />}
-            kind="danger"
-            label="Устгах"
-            onClick={onDelete}
-          />
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+            <ActionButton
+              className="col-span-2 w-full sm:col-span-1 sm:w-auto"
+              disabled={
+                savedExam.approvalStatus === "pending" ||
+                savedExam.approvalStatus === "needs_fix"
+              }
+              kind="secondary"
+              label={
+                savedExam.approvalStatus === "pending"
+                  ? "Зөвшөөрөл хүлээж байна"
+                  : savedExam.approvalStatus === "needs_fix"
+                    ? "Засвар шаардлагатай"
+                    : "Нээх"
+              }
+              onClick={onOpen}
+            />
+            <ActionButton label="Засварлах" onClick={onOpen} />
+            <ActionButton
+              icon={<TrashIcon />}
+              kind="danger"
+              label="Устгах"
+              onClick={onDelete}
+            />
+          </div>
         </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <SavedExamStats savedExam={savedExam} />
           <ActionButton
             disabled={
@@ -122,6 +122,7 @@ export function SavedExamCard({
                   ? "Засвар шаардлагатай"
                   : "Илгээх"
             }
+            className="w-full sm:w-auto"
             onClick={onSend}
           />
         </div>
@@ -237,12 +238,14 @@ function ClassOption({ klass }: { klass: TeacherClassOption }) {
 }
 
 function ActionButton({
+  className,
   disabled = false,
   icon,
   kind = "secondary",
   label,
   onClick,
 }: {
+  className?: string;
   disabled?: boolean;
   icon?: React.ReactNode;
   kind?: "secondary" | "primary" | "danger";
@@ -257,7 +260,11 @@ function ActionButton({
         : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]";
   return (
     <button
-      className={`inline-flex h-11 items-center gap-2 rounded-2xl border px-4 text-sm font-medium transition disabled:cursor-not-allowed ${styles}`}
+      className={cn(
+        "inline-flex h-11 min-h-[2.75rem] items-center justify-center gap-2 rounded-2xl border px-3 text-sm font-medium transition disabled:cursor-not-allowed sm:px-4",
+        styles,
+        className,
+      )}
       disabled={disabled}
       onClick={onClick}
       type="button"

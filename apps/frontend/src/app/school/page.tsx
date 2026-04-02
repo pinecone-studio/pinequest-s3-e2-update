@@ -5,10 +5,10 @@
 import { ArrowUpRight, ChevronRight, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
-  type ApprovalRequest,
-  getApprovalRequestsClient,
-  getApprovalUpdatedEventName,
-  updateApprovalRequestStatus,
+	type ApprovalRequest,
+	getApprovalRequestsClient,
+	getApprovalUpdatedEventName,
+	updateApprovalRequestStatus,
 } from "@/app/lib/exam-approval-store";
 import {
   pendingActions,
@@ -243,55 +243,55 @@ export default function SchoolDashboardPage() {
     Record<string, boolean>
   >({});
 
-  useEffect(() => {
-    const sync = () => setApprovalRequests(getApprovalRequestsClient());
-    sync();
-    const eventName = getApprovalUpdatedEventName();
-    window.addEventListener(eventName, sync);
-    window.addEventListener("storage", sync);
-    document.addEventListener("visibilitychange", sync);
-    return () => {
-      window.removeEventListener(eventName, sync);
-      window.removeEventListener("storage", sync);
-      document.removeEventListener("visibilitychange", sync);
-    };
-  }, []);
+	useEffect(() => {
+		const sync = () => setApprovalRequests(getApprovalRequestsClient());
+		sync();
+		const eventName = getApprovalUpdatedEventName();
+		window.addEventListener(eventName, sync);
+		window.addEventListener("storage", sync);
+		document.addEventListener("visibilitychange", sync);
+		return () => {
+			window.removeEventListener(eventName, sync);
+			window.removeEventListener("storage", sync);
+			document.removeEventListener("visibilitychange", sync);
+		};
+	}, []);
 
-  const isTodayLabel = (value: string) => {
-    if (!value) return false;
-    if (value.includes("Өнөөдөр")) return true;
-    const match = value.match(/(\d{4})-(\d{2})-(\d{2})/);
-    if (!match) return false;
-    const [, year, month, day] = match;
-    const now = new Date();
-    return (
-      Number(year) === now.getFullYear() &&
-      Number(month) === now.getMonth() + 1 &&
-      Number(day) === now.getDate()
-    );
-  };
+	const isTodayLabel = (value: string) => {
+		if (!value) return false;
+		if (value.includes("Өнөөдөр")) return true;
+		const match = value.match(/(\d{4})-(\d{2})-(\d{2})/);
+		if (!match) return false;
+		const [, year, month, day] = match;
+		const now = new Date();
+		return (
+			Number(year) === now.getFullYear() &&
+			Number(month) === now.getMonth() + 1 &&
+			Number(day) === now.getDate()
+		);
+	};
 
-  const parseDueTime = (value: string) => {
-    if (!value) return 0;
-    if (value.includes("Өнөөдөр")) {
-      const now = new Date();
-      const match = value.match(/(\d{1,2}):(\d{2})/);
-      const hours = match ? Number(match[1]) : 23;
-      const minutes = match ? Number(match[2]) : 59;
-      const date = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        hours,
-        minutes,
-        0,
-        0,
-      );
-      return date.getTime();
-    }
-    const parsed = new Date(value).getTime();
-    return Number.isFinite(parsed) ? parsed : 0;
-  };
+	const parseDueTime = (value: string) => {
+		if (!value) return 0;
+		if (value.includes("Өнөөдөр")) {
+			const now = new Date();
+			const match = value.match(/(\d{1,2}):(\d{2})/);
+			const hours = match ? Number(match[1]) : 23;
+			const minutes = match ? Number(match[2]) : 59;
+			const date = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				now.getDate(),
+				hours,
+				minutes,
+				0,
+				0,
+			);
+			return date.getTime();
+		}
+		const parsed = new Date(value).getTime();
+		return Number.isFinite(parsed) ? parsed : 0;
+	};
 
   const pendingItems = useMemo(
     () =>
@@ -357,21 +357,21 @@ export default function SchoolDashboardPage() {
     [approvalRequests],
   );
 
-  const approveRequest = (id: string) => {
-    updateApprovalRequestStatus(id, "approved");
-    setApprovalRequests(getApprovalRequestsClient());
-  };
+	const approveRequest = (id: string) => {
+		updateApprovalRequestStatus(id, "approved");
+		setApprovalRequests(getApprovalRequestsClient());
+	};
 
-  const rejectRequest = (id: string) => {
-    const note = (approvalComments[id] || "").trim();
-    if (!note) return;
-    updateApprovalRequestStatus(id, "needs_fix", note);
-    setApprovalRequests(getApprovalRequestsClient());
-  };
+	const rejectRequest = (id: string) => {
+		const note = (approvalComments[id] || "").trim();
+		if (!note) return;
+		updateApprovalRequestStatus(id, "needs_fix", note);
+		setApprovalRequests(getApprovalRequestsClient());
+	};
 
-  const toggleRequestDetail = (id: string) => {
-    setApprovalExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
+	const toggleRequestDetail = (id: string) => {
+		setApprovalExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+	};
 
   return (
     <div className="space-y-6 text-2">
@@ -832,71 +832,71 @@ export default function SchoolDashboardPage() {
               </button>
             </div>
 
-            <div className="mt-4 max-h-[70vh] space-y-3 overflow-y-auto pr-1">
-              {pendingApprovalRequests.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-2 text-zinc-500">
-                  Хүлээгдэж буй хүсэлт алга.
-                </p>
-              ) : (
-                pendingApprovalRequests.map((item) => (
-                  <ApprovalRequestCard
-                    key={item.id}
-                    comments={approvalComments}
-                    expanded={approvalExpanded}
-                    onApprove={approveRequest}
-                    onReject={rejectRequest}
-                    onToggleDetail={toggleRequestDetail}
-                    onUpdateComment={(id, value) =>
-                      setApprovalComments((prev) => ({ ...prev, [id]: value }))
-                    }
-                    request={item}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
+						<div className="mt-4 max-h-[70vh] space-y-3 overflow-y-auto pr-1">
+							{pendingApprovalRequests.length === 0 ? (
+								<p className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-2 text-zinc-500">
+									Хүлээгдэж буй хүсэлт алга.
+								</p>
+							) : (
+								pendingApprovalRequests.map((item) => (
+									<ApprovalRequestCard
+										key={item.id}
+										comments={approvalComments}
+										expanded={approvalExpanded}
+										onApprove={approveRequest}
+										onReject={rejectRequest}
+										onToggleDetail={toggleRequestDetail}
+										onUpdateComment={(id, value) =>
+											setApprovalComments((prev) => ({ ...prev, [id]: value }))
+										}
+										request={item}
+									/>
+								))
+							)}
+						</div>
+					</div>
+				</div>
+			) : null}
+		</div>
+	);
 }
 
 function ApprovalRequestCard({
-  request,
-  comments,
-  expanded,
-  onToggleDetail,
-  onUpdateComment,
-  onApprove,
-  onReject,
+	request,
+	comments,
+	expanded,
+	onToggleDetail,
+	onUpdateComment,
+	onApprove,
+	onReject,
 }: {
-  request: ApprovalRequest;
-  comments: Record<string, string>;
-  expanded: Record<string, boolean>;
-  onToggleDetail: (id: string) => void;
-  onUpdateComment: (id: string, value: string) => void;
-  onApprove: (id: string) => void;
-  onReject: (id: string) => void;
+	request: ApprovalRequest;
+	comments: Record<string, string>;
+	expanded: Record<string, boolean>;
+	onToggleDetail: (id: string) => void;
+	onUpdateComment: (id: string, value: string) => void;
+	onApprove: (id: string) => void;
+	onReject: (id: string) => void;
 }) {
-  return (
-    <article className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-      <p className="font-semibold text-zinc-900">
-        {request.teacherName} · {request.className} · {request.subject}
-      </p>
-      <div className="mt-2 space-y-1 text-2 text-zinc-700">
-        <p>Шалгалт: {request.title}</p>
-        <p>Илгээсэн: {request.sentAt}</p>
-      </div>
+	return (
+		<article className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+			<p className="font-semibold text-zinc-900">
+				{request.teacherName} · {request.className} · {request.subject}
+			</p>
+			<div className="mt-2 space-y-1 text-2 text-zinc-700">
+				<p>Шалгалт: {request.title}</p>
+				<p>Илгээсэн: {request.sentAt}</p>
+			</div>
 
-      <div className="mt-3">
-        <button
-          type="button"
-          onClick={() => onToggleDetail(request.id)}
-          className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-2 font-medium text-blue-700 hover:bg-blue-100"
-        >
-          {expanded[request.id] ? "Дэлгэрэнгүйг хаах" : "Дэлгэрэнгүй харах"}
-        </button>
-      </div>
+			<div className="mt-3">
+				<button
+					type="button"
+					onClick={() => onToggleDetail(request.id)}
+					className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-2 font-medium text-blue-700 hover:bg-blue-100"
+				>
+					{expanded[request.id] ? "Дэлгэрэнгүйг хаах" : "Дэлгэрэнгүй харах"}
+				</button>
+			</div>
 
       {expanded[request.id] ? (
         <div className="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
@@ -921,33 +921,33 @@ function ApprovalRequestCard({
         </div>
       ) : null}
 
-      <div className="mt-3">
-        <label className="block text-2 font-medium text-zinc-600">
-          Тайлбар (дутуу бол заавал бичнэ)
-          <textarea
-            value={comments[request.id] ?? ""}
-            onChange={(e) => onUpdateComment(request.id, e.target.value)}
-            rows={2}
-            className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
-          />
-        </label>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => onApprove(request.id)}
-            className="inline-flex items-center rounded-lg border border-emerald-500 bg-white px-3 py-2 text-2 font-semibold text-emerald-700 hover:bg-emerald-50"
-          >
-            Батлах
-          </button>
-          <button
-            type="button"
-            onClick={() => onReject(request.id)}
-            className="inline-flex items-center rounded-lg border border-red-500 bg-white px-3 py-2 text-2 font-semibold text-red-700 hover:bg-red-50"
-          >
-            Буцаах
-          </button>
-        </div>
-      </div>
-    </article>
-  );
+			<div className="mt-3">
+				<label className="block text-2 font-medium text-zinc-600">
+					Тайлбар (дутуу бол заавал бичнэ)
+					<textarea
+						value={comments[request.id] ?? ""}
+						onChange={(e) => onUpdateComment(request.id, e.target.value)}
+						rows={2}
+						className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+					/>
+				</label>
+				<div className="mt-2 flex flex-wrap gap-2">
+					<button
+						type="button"
+						onClick={() => onApprove(request.id)}
+						className="inline-flex items-center rounded-lg border border-emerald-500 bg-white px-3 py-2 text-2 font-semibold text-emerald-700 hover:bg-emerald-50"
+					>
+						Батлах
+					</button>
+					<button
+						type="button"
+						onClick={() => onReject(request.id)}
+						className="inline-flex items-center rounded-lg border border-red-500 bg-white px-3 py-2 text-2 font-semibold text-red-700 hover:bg-red-50"
+					>
+						Буцаах
+					</button>
+				</div>
+			</div>
+		</article>
+	);
 }

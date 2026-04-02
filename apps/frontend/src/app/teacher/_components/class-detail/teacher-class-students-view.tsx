@@ -7,17 +7,13 @@ import type {
   PastExamStudentScore,
 } from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
-import {
-  downloadStudentListPdf,
-  downloadStudentListXls,
-} from "./teacher-class-detail-utils";
 import { TeacherClassAddStudentDialog } from "./teacher-class-add-student-dialog";
-import { TeacherClassDownloadMenu } from "./teacher-class-download-menu";
 import { TeacherClassStudentHistoryDialog } from "./teacher-class-student-history-dialog";
 
 type TeacherClassStudentsViewProps = {
   classId: string;
   className: string;
+  isResponsibleClass: boolean;
   onStudentsChanged?: () => void;
   selectedId: string | null;
   selectedStudentExams: Array<{
@@ -33,13 +29,13 @@ type TeacherClassStudentsViewProps = {
 export function TeacherClassStudentsView({
   classId,
   className,
+  isResponsibleClass,
   onStudentsChanged,
   selectedId,
   selectedStudentExams,
   setSelectedId,
   students,
 }: TeacherClassStudentsViewProps) {
-  const [draftStudentName, setDraftStudentName] = useState("");
   const [addStudentDialogOpen, setAddStudentDialogOpen] = useState(false);
   const selectedStudent =
     students.find((student) => student.id === selectedId) ?? null;
@@ -53,13 +49,21 @@ export function TeacherClassStudentsView({
             Сурагчид
           </h2>
           <p className="mt-2 text-4 text-[#122459]">
-            Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай.
+            {isResponsibleClass
+              ? "Сурагч сонгоогүй байна. Доорх хүснэгтээс мөр дараарай."
+              : "Энэ ангид зөвхөн сурагчдын мэдээлэл харах боломжтой."}
           </p>
         </div>
-        <TeacherClassDownloadMenu
-          onExcel={() => downloadStudentListXls(className, students)}
-          onPdf={() => downloadStudentListPdf(className, students)}
-        />
+        {isResponsibleClass ? (
+          <button
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[#d9dee8] bg-white px-4 py-2.5 text-3 font-semibold text-[#122459] shadow-sm transition hover:border-[#7DC8FF] hover:bg-[#EDF6FF] sm:text-4"
+            onClick={() => setAddStudentDialogOpen(true)}
+            type="button"
+          >
+            <Plus className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+            Сурагч нэмэх
+          </button>
+        ) : null}
       </div>
 
       <div className="mx-auto mt-5 max-w-[930px] rounded-xl px-2 py-6 text-center text-4 text-[#122459] sm:px-4">
@@ -70,36 +74,6 @@ export function TeacherClassStudentsView({
       </div>
 
       <div className="mt-6 grid justify-items-center gap-y-4 md:justify-center md:[grid-template-columns:repeat(2,455px)] md:gap-x-[20px]">
-        <div className="w-full rounded-[12px] border border-[#e5e7eb] bg-white px-4 py-4 transition sm:px-5 md:h-[86px] md:w-[455px] md:max-w-[455px]">
-          <div className="flex h-full items-center gap-4">
-            <span className="mt-1.5 w-9 shrink-0 text-[22px] font-semibold leading-none text-[#122459]">
-              00
-            </span>
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <div className="min-w-0 flex-1">
-                <input
-                  className="w-full border-0 bg-transparent p-0 text-4 font-semibold text-[#122459] outline-none placeholder:text-[#7DC8FF]"
-                  onChange={(event) => setDraftStudentName(event.target.value)}
-                  placeholder="Сурагч нэр оруулах"
-                  type="text"
-                  value={draftStudentName}
-                />
-                <p className="mt-0.5 text-3 text-[#94a3b8]">
-                  Сурагчийн код оруулах
-                </p>
-              </div>
-              <button
-                aria-label="Сурагч нэмэх"
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#29A4FF] bg-white text-[#29A4FF] transition hover:bg-[#EDF6FF]"
-                onClick={() => setAddStudentDialogOpen(true)}
-                type="button"
-              >
-                <Plus className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-
         {students.map((student, index) => {
           const selected = selectedId === student.id;
           return (
@@ -145,17 +119,18 @@ export function TeacherClassStudentsView({
         open={!!selectedStudent}
         student={selectedStudent}
       />
-      <TeacherClassAddStudentDialog
-        classId={classId}
-        classLabel={className}
-        initialName={draftStudentName}
-        onClose={() => setAddStudentDialogOpen(false)}
-        onSuccess={() => {
-          onStudentsChanged?.();
-          setDraftStudentName("");
-        }}
-        open={addStudentDialogOpen}
-      />
+      {isResponsibleClass ? (
+        <TeacherClassAddStudentDialog
+          classId={classId}
+          classLabel={className}
+          initialName=""
+          onClose={() => setAddStudentDialogOpen(false)}
+          onSuccess={() => {
+            onStudentsChanged?.();
+          }}
+          open={addStudentDialogOpen}
+        />
+      ) : null}
     </div>
   );
 }

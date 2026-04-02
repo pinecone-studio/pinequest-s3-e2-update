@@ -8,10 +8,10 @@ export function ResultsPageSkeleton() {
       aria-busy="true"
       aria-label="Үр дүн ачааллаж байна"
     >
-      <section className="rounded-2xl border border-[#dbe5f0] bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5 lg:p-6">
         <div className="h-8 w-36 rounded-md bg-[#e8edf5]" />
         <div className="mt-2 h-4 w-[min(520px,95%)] rounded bg-[#f1f4f9]" />
-        <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_1.2fr]">
+        <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1.15fr]">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {[1, 2, 3, 4].map((key) => (
               <div
@@ -38,7 +38,7 @@ export function ResultsPageSkeleton() {
       </section>
 
       <section>
-        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-5 shadow-sm">
+        <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
           <div className="h-6 w-64 rounded-md bg-[#e8edf5]" />
           <div className="mt-3 grid gap-3 md:grid-cols-3">
             {[1, 2, 3].map((key) => (

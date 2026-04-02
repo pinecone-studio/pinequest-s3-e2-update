@@ -28,13 +28,13 @@ export function ExamSettingsForm({
   ) => void;
 }) {
   return (
-    <section className="p-5">
-      <div className="text-[20px] font-medium uppercase tracking-[0.18em] text-[#122459]">
+    <section className="p-4 sm:p-5">
+      <div className="text-base font-medium uppercase tracking-[0.12em] text-[#122459] sm:text-[20px] sm:tracking-[0.18em]">
         Шалгалтын тохиргоо
       </div>
 
-      <div className="mt-4 flex items-end gap-4">
-        <div className="flex-2">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end lg:gap-x-4 lg:gap-y-4">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-4">
           <Field label="">
             <input
               className={`${inputClassName} h-10! w-full`}
@@ -45,7 +45,7 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
-        <div className="flex-1">
+        <div className="min-w-0 lg:col-span-2">
           <Field label="">
             <Select
               onValueChange={(value) => onUpdateExam("grade", value)}
@@ -65,7 +65,7 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
-        <div className="w-[120px]">
+        <div className="min-w-0 sm:max-w-[10rem] lg:col-span-1 lg:max-w-none">
           <Field label="">
             <input
               className={`${inputClassName} h-10! w-full`}
@@ -78,7 +78,7 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
-        <div className="flex-[1.5]">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <Field label="">
             <Select
               onValueChange={(value) => onUpdateExam("subject", value)}
@@ -98,7 +98,7 @@ export function ExamSettingsForm({
           </Field>
         </div>
 
-        <div className="flex-[1.5]">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <div className="flex w-full flex-col justify-end">
             <Select
               onValueChange={(value) => onUpdateExam("topic", value)}
@@ -118,9 +118,9 @@ export function ExamSettingsForm({
           </div>
         </div>
 
-        <div className="flex-[0.8]">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1">
           <Field label="">
-            <div className="flex h-10 w-full items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-3">
+            <div className="flex h-10 w-full max-w-[11rem] items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-3 sm:max-w-none">
               <div className="inline-flex items-center gap-1">
                 <button
                   type="button"
@@ -172,21 +172,21 @@ export function ExamSettingsForm({
         </div>
       </div>
 
-      <div className="mt-4 rounded-xl border border-[#e5e5e5] bg-[#F5F5F5] p-4">
+      <div className="mt-4 rounded-xl border border-[#e5e5e5] bg-[#F5F5F5] p-3 sm:p-4">
         <label className="flex cursor-pointer items-start gap-3">
           <input
             checked={exam.requiresSchoolApproval}
-            className="mt-1 h-4 w-4 rounded border-[#bfd3f4] text-[#1f6feb] focus:ring-[#1f6feb]/20"
+            className="mt-1 h-4 w-4 shrink-0 rounded border-[#bfd3f4] text-[#1f6feb] focus:ring-[#1f6feb]/20"
             onChange={(event) =>
               onUpdateExam("requiresSchoolApproval", event.target.checked)
             }
             type="checkbox"
           />
-          <div>
-            <p className="text-[20px] font-medium text-[#122459]">
+          <div className="min-w-0">
+            <p className="text-base font-medium text-[#122459] sm:text-[20px]">
               Сургуулийн зөвшөөрөл авах
             </p>
-            <p className="mt-1 text-[16px] font-normal leading-6 text-[#737373]">
+            <p className="mt-1 text-sm font-normal leading-relaxed text-[#737373] sm:text-[16px] sm:leading-6">
               Хэрэв энэ шалгалт сургуулийн талаас баталгаажих шаардлагатай бол
               хадгалах үед зөвшөөрлийн хүсэлт илгээгдэнэ.
             </p>
@@ -195,8 +195,8 @@ export function ExamSettingsForm({
       </div>
 
       {exam.requiresSchoolApproval ? (
-        <div className="mt-4 rounded-xl border border-[#dbe5f0] bg-white p-4">
-          <p className="text-[16px] font-semibold text-[#122459]">
+        <div className="mt-4 rounded-xl border border-[#dbe5f0] bg-white p-3 sm:p-4">
+          <p className="text-sm font-semibold text-[#122459] sm:text-[16px]">
             Батлуулах хуваарийн мэдээлэл
           </p>
 

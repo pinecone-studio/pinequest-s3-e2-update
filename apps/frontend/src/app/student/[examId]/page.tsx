@@ -1,472 +1,468 @@
 /** @format */
 
 "use client";
+
+import { useQuery } from "@apollo/client/react";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import {
 	GET_EXAM_BY_ID,
 	GET_EXAM_QUESTION_ITEMS,
 } from "@/graphql/typeDefs/queries";
-import { useQuery } from "@apollo/client/react";
-import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import {
+  EXAM_MONITORING_STORAGE_KEY,
+  createExamMonitoringScopeKey,
+  readExamMonitoringStateMap,
+  type ExamMonitoringScopeStateMap,
+} from "../../lib/exam-monitoring-store";
+import { SAVED_EXAMS_STORAGE_KEY } from "../../teacher/exam/_lib/constants";
+import type { SavedExamRecord } from "../../teacher/exam/_lib/types";
+import { normalizeSavedExamRecord } from "../../teacher/exam/_lib/utils";
+import { CompletedScreen } from "../components/completed-screen";
+import { EntryStep } from "../components/entry-step";
+import { ExamScreen } from "../components/exam-screen";
+import { FinishConfirmationDialog } from "../components/finish-confirmation-dialog";
+import {
+  buildExamDataFromApi,
+  type ApiTestRow,
+} from "../_lib/exam-data-from-api";
+import { STUDENT_ENTRY_CLASS_OPTIONS } from "../_lib/entry-class-options";
+import { examData } from "../mock-data";
+import type { ExamData, ExamPhase, OptionId } from "../types";
+import { formatTimer } from "../utils";
 
-type ExamType = {
-	id: string;
-	grade: number;
-	subjectId: string;
-	topic: string;
-	title: string;
-	date: string;
-	location: string;
-	duration: string;
-	variation: string;
-	testIds: string[];
-	openExerciseIds: string[];
-	notes: string;
-	score: number;
-	usageCount: number;
-	isActive: number;
-	needpermission: number;
-	schoolId: string;
-	teacherId: string;
-	createdAt: string;
-	updatedAt: string;
+type GqlExamRow = {
+  id: string;
+  title: string | null;
+  topic: string | null;
+  duration: string | null;
+  testIds: string[] | null;
+  openExerciseIds: string[] | null;
 };
 
-type TestType = {
-	id: string;
-	grade: number;
-	subjectId: string;
-	question: string;
-	answers: string[];
-	rightAnswer: string;
-	imageUrl: string | null;
-	difficulty: string;
-	score: number;
-	usageCount: number;
-	notes: string | null;
-	teacherId: string;
-	createdAt: string;
-	updatedAt: string;
-};
+function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
+  const [phase, setPhase] = useState<ExamPhase>("entry");
+  const [classCode, setClassCode] = useState("");
+  const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
+  const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
+  const [monitoringStateMap, setMonitoringStateMap] =
+    useState<ExamMonitoringScopeStateMap>({});
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
 
-type OpenExerciesType = {
-	id: string;
-	subjectId: string;
-	grade: number;
-	topic: string | null;
-	title: string | null;
-	question: string | null;
-	answer: string | null;
-	imageUrl: string | null;
-	difficulty: string | null;
-	score: number;
-	notes: string | null;
-	teacherId: string | null;
-	createdAt: string;
-	updatedAt: string;
-};
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Partial<Record<number, OptionId>>>({});
+  const [flagged, setFlagged] = useState<Partial<Record<number, boolean>>>({});
+  const [manualRemainingSeconds, setManualRemainingSeconds] = useState(
+    examData.durationMinutes * 60,
+  );
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [entryProceedError, setEntryProceedError] = useState<string | null>(
+    null,
+  );
 
-type ExamUiMcq = {
-	kind: "mcq";
-	sourceId: string;
-	text: string;
-	choices: string[];
-};
+  const {
+    data: examQueryData,
+    loading: examLoading,
+    error: examError,
+  } = useQuery<{ getExamById: GqlExamRow | null }>(GET_EXAM_BY_ID, {
+    variables: { examId: routeExamId },
+    skip: !routeExamId,
+  });
 
-type ExamUiOpen = {
-	kind: "open";
-	sourceId: string;
-	title: string | null;
-	text: string;
-};
+  const examRow = examQueryData?.getExamById ?? null;
+  const testIds = examRow?.testIds ?? [];
+  const openExerciseIds = examRow?.openExerciseIds ?? [];
 
-type ExamUiQuestion = ExamUiMcq | ExamUiOpen;
+  const { data: itemsData, loading: itemsLoading } = useQuery<{
+    getTestsByIds: ApiTestRow[];
+    getOpenExerciesByIds: unknown[];
+  }>(GET_EXAM_QUESTION_ITEMS, {
+    variables: { testIds, openExerciseIds },
+    skip: !examRow,
+  });
 
-const CHOICE_LABELS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const testsById = useMemo(() => {
+    const rows = itemsData?.getTestsByIds ?? [];
+    return new Map(rows.map((r) => [r.id, r]));
+  }, [itemsData?.getTestsByIds]);
 
-function choiceLabel(idx: number): string {
-	return CHOICE_LABELS[idx] ?? String(idx + 1);
+  const apiExamData = useMemo(() => {
+    if (!examRow || !itemsData) return null;
+    return buildExamDataFromApi(
+      {
+        title: examRow.title,
+        topic: examRow.topic,
+        duration: examRow.duration,
+        testIds: examRow.testIds,
+      },
+      testsById,
+    );
+  }, [examRow, itemsData, testsById]);
+
+  const linkedSavedExam = useMemo(
+    () => savedExams.find((item) => item.id === routeExamId) ?? null,
+    [savedExams, routeExamId],
+  );
+
+  const teacherMonitoringExam = useMemo(
+    () =>
+      linkedSavedExam && (linkedSavedExam.sentClassIds ?? []).length > 0
+        ? linkedSavedExam
+        : null,
+    [linkedSavedExam],
+  );
+
+  const resolvedExamData = useMemo<ExamData>(() => {
+    if (apiExamData && apiExamData.questions.length > 0) return apiExamData;
+    if (linkedSavedExam) return buildDemoExamData(linkedSavedExam);
+    return examData;
+  }, [apiExamData, linkedSavedExam]);
+
+  const totalQuestions = resolvedExamData.questions.length;
+  const currentQuestion = resolvedExamData.questions[currentQuestionIndex];
+  const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
+  const normalizedClassCode = classCode.trim().toUpperCase();
+  const requiresDeliveredClass = Boolean(
+    linkedSavedExam && (linkedSavedExam.sentClassIds ?? []).length > 0,
+  );
+
+  const globalClassByCode = useMemo(() => {
+    if (!normalizedClassCode) return null;
+    return (
+      STUDENT_ENTRY_CLASS_OPTIONS.find(
+        (klass) => klass.name.trim().toUpperCase() === normalizedClassCode,
+      ) ?? null
+    );
+  }, [normalizedClassCode]);
+
+  const deliveredClassByCode = useMemo(() => {
+    if (!normalizedClassCode || !linkedSavedExam?.sentClassIds?.length) {
+      return null;
+    }
+    const labels = linkedSavedExam.sentClassLabels ?? {};
+    for (const id of linkedSavedExam.sentClassIds) {
+      const label = labels[id];
+      if (label && label.trim().toUpperCase() === normalizedClassCode) {
+        return { id, name: label };
+      }
+    }
+    for (const opt of STUDENT_ENTRY_CLASS_OPTIONS) {
+      if (
+        opt.name.trim().toUpperCase() === normalizedClassCode &&
+        linkedSavedExam.sentClassIds.includes(opt.id)
+      ) {
+        return { id: opt.id, name: opt.name };
+      }
+    }
+    return null;
+  }, [normalizedClassCode, linkedSavedExam]);
+
+  const matchedClass = useMemo(() => {
+    if (!normalizedClassCode) return null;
+    if (requiresDeliveredClass) {
+      return deliveredClassByCode;
+    }
+    return globalClassByCode;
+  }, [
+    normalizedClassCode,
+    requiresDeliveredClass,
+    deliveredClassByCode,
+    globalClassByCode,
+  ]);
+
+  const selectedClassId = matchedClass?.id ?? null;
+
+  const isSelectedClassDelivered = Boolean(
+    !linkedSavedExam ||
+    !requiresDeliveredClass ||
+    (selectedClassId != null &&
+      (linkedSavedExam.sentClassIds ?? []).includes(selectedClassId)),
+  );
+
+  const entryClassHintKind = useMemo(() => {
+    if (!linkedSavedExam || !normalizedClassCode) return null;
+    if (!requiresDeliveredClass) return null;
+    if (deliveredClassByCode) return "ok" as const;
+    if (
+      globalClassByCode &&
+      !(linkedSavedExam.sentClassIds ?? []).includes(globalClassByCode.id)
+    ) {
+      return "not_delivered" as const;
+    }
+    return "unknown" as const;
+  }, [
+    linkedSavedExam,
+    normalizedClassCode,
+    requiresDeliveredClass,
+    deliveredClassByCode,
+    globalClassByCode,
+  ]);
+
+  const monitoringScopeKey =
+    teacherMonitoringExam && selectedClassId
+      ? createExamMonitoringScopeKey(teacherMonitoringExam.id, selectedClassId)
+      : null;
+  const monitoringScopeState = monitoringScopeKey
+    ? (monitoringStateMap[monitoringScopeKey] ?? null)
+    : null;
+  const sharedStartedAt = monitoringScopeState?.startedAt ?? null;
+  const sharedRemainingSeconds = useMemo(() => {
+    const totalDurationSeconds = resolvedExamData.durationMinutes * 60;
+    if (!sharedStartedAt) return totalDurationSeconds;
+
+    const elapsedSeconds = Math.floor((currentTime - sharedStartedAt) / 1000);
+    return Math.max(0, totalDurationSeconds - elapsedSeconds);
+  }, [currentTime, resolvedExamData.durationMinutes, sharedStartedAt]);
+  const usesTeacherControlledStart = Boolean(teacherMonitoringExam);
+  const remainingSeconds = usesTeacherControlledStart
+    ? sharedRemainingSeconds
+    : manualRemainingSeconds;
+  const timerText = formatTimer(remainingSeconds);
+
+  const classCodeHint = linkedSavedExam
+    ? normalizedClassCode.length === 0
+      ? "Шалгалт илгээгдсэн ангийг оруулна уу. Жишээ: 10A"
+      : entryClassHintKind === "not_delivered"
+        ? "Энэ ангид тухайн шалгалт илгээгдээгүй байна."
+        : !matchedClass
+          ? "Ийм анги олдсонгүй."
+          : `Илгээсэн анги баталгаажлаа: ${matchedClass.name}`
+    : undefined;
+  const hasTimedOut = phase === "exam" && remainingSeconds <= 0;
+
+  useEffect(() => {
+    const syncSavedExams = () => {
+      try {
+        const raw = window.localStorage.getItem(SAVED_EXAMS_STORAGE_KEY);
+        setSavedExams(
+          raw
+            ? (JSON.parse(raw) as SavedExamRecord[]).map(
+                normalizeSavedExamRecord,
+              )
+            : [],
+        );
+      } catch {
+        setSavedExams([]);
+      }
+    };
+
+    const syncMonitoringState = () => {
+      setMonitoringStateMap(readExamMonitoringStateMap());
+    };
+
+    syncSavedExams();
+    syncMonitoringState();
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === SAVED_EXAMS_STORAGE_KEY) syncSavedExams();
+      if (event.key === EXAM_MONITORING_STORAGE_KEY) syncMonitoringState();
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!sharedStartedAt || remainingSeconds <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [remainingSeconds, sharedStartedAt]);
+
+  useEffect(() => {
+    if (usesTeacherControlledStart || phase !== "exam" || isFinished) return;
+
+    const timer = window.setInterval(() => {
+      setManualRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isFinished, phase, usesTeacherControlledStart]);
+
+  const handleSelectOption = (optionId: OptionId) => {
+    if (!currentQuestion) return;
+    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: optionId }));
+  };
+
+  const handleToggleFlag = () => {
+    if (!currentQuestion) return;
+    setFlagged((prev) => ({
+      ...prev,
+      [currentQuestion.id]: !prev[currentQuestion.id],
+    }));
+  };
+
+  const handleStartExam = () => {
+    if (!hasAcceptedRules) {
+      setEntryProceedError("Шалгалтын журмыг уншиж танилцсанаа чеклэнэ үү.");
+      return;
+    }
+    if (!normalizedClassCode) {
+      setEntryProceedError("Шалгалтын кодоо оруулна уу.");
+      return;
+    }
+    if (totalQuestions === 0) {
+      setEntryProceedError(
+        "Энэ шалгалтад олон сонголттой хангалттай асуулт олдсонгүй.",
+      );
+      return;
+    }
+
+    if (!usesTeacherControlledStart) {
+      setEntryProceedError(null);
+      setManualRemainingSeconds(resolvedExamData.durationMinutes * 60);
+      setPhase("exam");
+      return;
+    }
+
+    if (entryClassHintKind === "not_delivered") {
+      setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
+      return;
+    }
+    if (!matchedClass) {
+      setEntryProceedError("Ийм анги олдсонгүй. Жишээ: 10A");
+      return;
+    }
+    if (!isSelectedClassDelivered) {
+      setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
+      return;
+    }
+    if (remainingSeconds <= 0) {
+      setEntryProceedError("Шалгалтын хугацаа дууссан байна.");
+      return;
+    }
+
+    setEntryProceedError(null);
+    setPhase("exam");
+  };
+
+  if (isFinished || hasTimedOut) return <CompletedScreen />;
+
+  if (phase === "entry") {
+    const loadError =
+      examError?.message ??
+      (!examLoading && !examRow ? "Шалгалт олдсонгүй." : null);
+
+    return (
+      <div className="relative">
+        {examLoading || (examRow && itemsLoading) ? (
+          <div className="flex min-h-[120px] items-center justify-center bg-[#edf6ff] px-4 py-6 text-sm text-[#5c6786]">
+            Шалгалтын өгөгдлийг ачааллаж байна…
+          </div>
+        ) : null}
+        {loadError ? (
+          <div className="mx-auto max-w-lg px-4 py-4 text-center text-sm text-red-700">
+            {loadError}
+          </div>
+        ) : null}
+        <EntryStep
+          classCode={classCode}
+          hasAcceptedRules={hasAcceptedRules}
+          classCodeHint={classCodeHint}
+          classCodeRequired={requiresDeliveredClass}
+          proceedError={entryProceedError}
+          onChangeClassCode={(value) => {
+            setEntryProceedError(null);
+            setClassCode(value);
+          }}
+          onToggleAcceptedRules={(checked) => {
+            setEntryProceedError(null);
+            setHasAcceptedRules(checked);
+          }}
+          onProceed={handleStartExam}
+        />
+      </div>
+    );
+  }
+
+  if (!currentQuestion) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#edf6ff] px-4 text-[#1f2a44]">
+        <p className="text-sm">Асуулт олдсонгүй.</p>
+      </main>
+    );
+  }
+
+  return (
+    <>
+      <ExamScreen
+        examData={resolvedExamData}
+        timerText={timerText}
+        currentQuestionIndex={currentQuestionIndex}
+        answers={answers}
+        flagged={flagged}
+        answeredCount={answeredCount}
+        onSelectOption={handleSelectOption}
+        onPrevious={() =>
+          setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))
+        }
+        onNext={() =>
+          setCurrentQuestionIndex((prev) =>
+            Math.min(totalQuestions - 1, prev + 1),
+          )
+        }
+        onToggleFlag={handleToggleFlag}
+        onJump={(questionId) => setCurrentQuestionIndex(questionId - 1)}
+        onFinish={() => setShowFinishDialog(true)}
+        isFinishDialogOpen={showFinishDialog}
+      />
+
+      <FinishConfirmationDialog
+        isOpen={showFinishDialog}
+        answeredCount={answeredCount}
+        total={totalQuestions}
+        onCancel={() => setShowFinishDialog(false)}
+        onConfirm={() => {
+          setShowFinishDialog(false);
+          setIsFinished(true);
+        }}
+      />
+    </>
+  );
 }
 
-export default function StudentPage() {
-	const params = useParams();
-	const examId = params.examId as string;
+export default function StudentExamByIdPage() {
+  const params = useParams();
+  const routeExamId =
+    typeof params?.examId === "string" ? params.examId.trim() : "";
 
-	const [step, setStep] = useState<"info" | "exam" | "done">("info");
-	const [current, setCurrent] = useState(1);
-	const [answers, setAnswers] = useState<Record<number, string>>({});
-	const [flagged, setFlagged] = useState<Record<number, boolean>>({});
-	const [showConfirm, setShowConfirm] = useState(false);
+  if (!routeExamId) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#edf6ff] px-4 text-[#1f2a44]">
+        <p className="text-sm">Шалгалтын ID олдсонгүй.</p>
+      </main>
+    );
+  }
 
-	const { data: examData, loading: examLoading } = useQuery<{
-		getExamById: ExamType | null;
-	}>(GET_EXAM_BY_ID, {
-		variables: { examId },
-		skip: !examId,
-	});
-	const exam = examData?.getExamById;
+  return <StudentExamByIdInner key={routeExamId} routeExamId={routeExamId} />;
+}
 
-	const testIds = exam?.testIds ?? [];
-	const openExerciseIds = exam?.openExerciseIds ?? [];
+function buildDemoExamData(savedExam: SavedExamRecord): ExamData {
+  const questionCount = Math.max(savedExam.questionCount, 1);
+  const questions = Array.from({ length: questionCount }, (_, index) => {
+    const baseQuestion = examData.questions[index % examData.questions.length];
 
-	const { data: itemsData, loading: itemsLoading } = useQuery<{
-		getTestsByIds: TestType[];
-		getOpenExerciesByIds: OpenExerciesType[];
-	}>(GET_EXAM_QUESTION_ITEMS, {
-		variables: { testIds, openExerciseIds },
-		skip: !exam,
-	});
+    return {
+      ...baseQuestion,
+      id: index + 1,
+      questionNumber: index + 1,
+    };
+  });
 
-	const questions = useMemo((): ExamUiQuestion[] => {
-		if (!exam || !itemsData) return [];
-		const tests = itemsData.getTestsByIds ?? [];
-		const openItems = itemsData.getOpenExerciesByIds ?? [];
-		const testById = new Map(tests.map((t) => [t.id, t]));
-		const openById = new Map(openItems.map((o) => [o.id, o]));
-		const out: ExamUiQuestion[] = [];
-		for (const id of exam.testIds ?? []) {
-			const t = testById.get(id);
-			if (!t) continue;
-			const choices = Array.isArray(t.answers)
-				? t.answers.filter((a) => typeof a === "string" && a.length > 0)
-				: [];
-			if (choices.length === 0) continue;
-			out.push({
-				kind: "mcq",
-				sourceId: t.id,
-				text: t.question,
-				choices,
-			});
-		}
-		for (const id of exam.openExerciseIds ?? []) {
-			const o = openById.get(id);
-			if (!o) continue;
-			const text =
-				(o.question && o.question.trim()) ||
-				(o.title && o.title.trim()) ||
-				"Задгай асуулт";
-			out.push({
-				kind: "open",
-				sourceId: o.id,
-				title: o.title,
-				text,
-			});
-		}
-		return out;
-	}, [exam, itemsData]);
-
-	const total = questions.length;
-	const activeIndex = total > 0 ? Math.min(Math.max(1, current), total) : 1;
-
-	useEffect(() => {
-		if (step !== "exam") return;
-
-		const blockShortcuts = (e: KeyboardEvent) => {
-			const key = e.key.toLowerCase();
-			if ((e.ctrlKey || e.metaKey) && ["c", "x", "v"].includes(key)) {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-			}
-		};
-
-		const preventContextMenu = (e: MouseEvent) => e.preventDefault();
-		const preventClipboard = (e: ClipboardEvent) => e.preventDefault();
-
-		document.addEventListener("keydown", blockShortcuts, true);
-		document.addEventListener("contextmenu", preventContextMenu, true);
-		document.addEventListener("copy", preventClipboard, true);
-		document.addEventListener("cut", preventClipboard, true);
-		document.addEventListener("paste", preventClipboard, true);
-
-		return () => {
-			document.removeEventListener("keydown", blockShortcuts, true);
-			document.removeEventListener("contextmenu", preventContextMenu, true);
-			document.removeEventListener("copy", preventClipboard, true);
-			document.removeEventListener("cut", preventClipboard, true);
-			document.removeEventListener("paste", preventClipboard, true);
-		};
-	}, [step]);
-
-	const q = total > 0 ? questions[activeIndex - 1] : undefined;
-	const answeredCount = useMemo(() => {
-		let n = 0;
-		for (let i = 1; i <= total; i++) {
-			const v = answers[i];
-			if (v != null && String(v).trim() !== "") n++;
-		}
-		return n;
-	}, [answers, total]);
-
-	const headerTitle = exam?.title?.trim() || exam?.topic?.trim() || "Шалгалт";
-	const headerSubtitle = exam
-		? `${exam.grade}-р анги${exam.subjectId ? ` · ID: ${exam.subjectId}` : ""}`
-		: "";
-
-	return (
-		<main className="min-h-screen bg-[#f3f5f9] px-4 py-8 text-[#1f2a44]">
-			<div className="mx-auto w-full max-w-4xl space-y-5">
-				<section className="rounded-2xl border border-[#e0e4ec] bg-white px-6 py-5 shadow-[0_10px_30px_rgba(20,30,60,0.08)]">
-					<div className="flex flex-wrap items-center justify-between gap-4">
-						<div>
-							<p className="text-xl font-semibold">{headerTitle}</p>
-							<p className="mt-1 text-sm text-[#6a7390]">
-								{examLoading
-									? "Ачааллаж байна…"
-									: headerSubtitle || "2025-2026 оны хичээлийн жил"}
-							</p>
-						</div>
-						<div className="flex items-center gap-2 rounded-full border border-[#e2e6ef] bg-[#f7f9fc] px-4 py-2 text-sm font-semibold text-[#39415c]">
-							<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#f2e9e5] text-[#a35f45]">
-								⏱
-							</span>
-							<span className="text-xs font-medium text-[#7981a0]">
-								үлдсэн хугацаа
-							</span>
-						</div>
-					</div>
-				</section>
-
-				{itemsLoading && exam && (
-					<p className="text-center text-sm text-[#5c6786]">
-						Асуултуудыг ачааллаж байна…
-					</p>
-				)}
-
-				{!examLoading && exam && !itemsLoading && total === 0 && (
-					<section className="rounded-2xl border border-[#e0e4ec] bg-white p-8 text-center text-[#5c6786]">
-						Энэ шалгалтад асуулт олдсонгүй. (testIds / openExerciseIds
-						шалгаарай)
-					</section>
-				)}
-
-				{q && step !== "done" && (
-					<>
-						<section className="rounded-2xl border border-[#e0e4ec] bg-white p-6 shadow-[0_10px_30px_rgba(20,30,60,0.06)]">
-							<div className="flex flex-wrap items-center justify-between gap-3">
-								<p className="text-sm font-semibold text-[#2f3a57]">
-									Явц: {activeIndex}/{total} асуулт
-								</p>
-								<p className="text-xs text-[#5c6786]">
-									Progress:{" "}
-									<span className="font-semibold text-[#2f3a57]">
-										{answeredCount}
-									</span>
-									/{total} answered
-								</p>
-							</div>
-						</section>
-						<section className="rounded-2xl border border-[#e0e4ec] bg-white p-6 shadow-[0_10px_30px_rgba(20,30,60,0.06)]">
-							<p className="text-sm font-semibold text-[#6a7390]">
-								Асуулт {activeIndex}
-								{q.kind === "open" ? " (задгай)" : ""}
-							</p>
-							<h2 className="mt-2 text-lg font-semibold">{q.text}</h2>
-							{q.kind === "mcq" ? (
-								<div className="mt-4 space-y-3">
-									{q.choices.map((label, idx) => {
-										const id = choiceLabel(idx);
-										const isSelected = answers[activeIndex] === id;
-										return (
-											<button
-												key={`${q.sourceId}-${id}`}
-												className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${isSelected ? "border-[#7aa7ff] bg-[#f1f5ff] text-[#2f4c9a]" : "border-[#e4e7ef] bg-white text-[#3a4564] hover:border-[#c9d4ea]"}`}
-												type="button"
-												onClick={() =>
-													setAnswers((p) => ({ ...p, [activeIndex]: id }))
-												}
-											>
-												<span className="flex items-center gap-3">
-													<span
-														className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${isSelected ? "bg-[#2f5bd1] text-white" : "bg-[#f2f4f8] text-[#4a5574]"}`}
-													>
-														{id}
-													</span>
-													{label}
-												</span>
-												{isSelected && (
-													<span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2f5bd1] text-xs font-bold text-white">
-														✓
-													</span>
-												)}
-											</button>
-										);
-									})}
-								</div>
-							) : (
-								<div className="mt-4">
-									<textarea
-										className="min-h-[140px] w-full rounded-xl border border-[#e4e7ef] bg-white px-4 py-3 text-sm text-[#1f2a44] outline-none focus:border-[#7aa7ff]"
-										placeholder="Хариултаа энд бичнэ үү"
-										value={answers[activeIndex] ?? ""}
-										onChange={(e) =>
-											setAnswers((p) => ({
-												...p,
-												[activeIndex]: e.target.value,
-											}))
-										}
-									/>
-								</div>
-							)}
-							<div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-								<button
-									className="rounded-lg border border-[#e2e6ef] bg-white px-4 py-2 text-sm font-semibold text-[#39415c] hover:bg-[#f7f9fc]"
-									type="button"
-									onClick={() => setCurrent((c) => Math.max(1, c - 1))}
-								>
-									← Өмнөх
-								</button>
-								<div className="flex items-center gap-3">
-									<button
-										className="rounded-lg border border-[#e2e6ef] bg-white px-4 py-2 text-sm font-semibold text-[#39415c] hover:bg-[#f7f9fc]"
-										type="button"
-										onClick={() =>
-											setFlagged((p) => ({
-												...p,
-												[activeIndex]: !p[activeIndex],
-											}))
-										}
-									>
-										Flag хийх
-									</button>
-									<button
-										className="rounded-lg bg-[#1f4ed8] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a42b6]"
-										type="button"
-										onClick={() => setCurrent((c) => Math.min(total, c + 1))}
-									>
-										Дараах →
-									</button>
-								</div>
-							</div>
-							<div className="mt-5 flex items-center justify-end">
-								<button
-									className="rounded-lg bg-[#1f4ed8] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a42b6]"
-									type="button"
-									onClick={() => setShowConfirm(true)}
-								>
-									Дуусгах
-								</button>
-							</div>
-						</section>
-						<section className="rounded-2xl border border-[#e0e4ec] bg-white px-6 py-5 shadow-[0_10px_30px_rgba(20,30,60,0.06)]">
-							<div className="flex flex-wrap items-center justify-between gap-4">
-								<h3 className="text-sm font-semibold text-[#2f3a57]">
-									Асуултууд
-								</h3>
-								<div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#5c6786]">
-									<span className="flex items-center gap-2">
-										<span className="h-2 w-2 rounded-full bg-[#1f4ed8]" />
-										Одоогийн
-									</span>
-									<span className="flex items-center gap-2">
-										<span className="h-2 w-2 rounded-full bg-[#22c55e]" />
-										Хариулсан
-									</span>
-									<span className="flex items-center gap-2">
-										<span className="h-2 w-2 rounded-full bg-[#f59e0b]" />
-										Flagged
-									</span>
-									<span className="flex items-center gap-2">
-										<span className="h-2 w-2 rounded-full bg-[#cbd5e1]" />
-										Хариулаагүй
-									</span>
-								</div>
-							</div>
-							<div className="mt-4 grid grid-cols-6 gap-4 sm:grid-cols-10">
-								{questions.map((item, idx) => {
-									const num = idx + 1;
-									const isCurrent = num === activeIndex;
-									const isAnswered =
-										answers[num] != null && String(answers[num]).trim() !== "";
-									const isFlagged = flagged[num];
-									return (
-										<button
-											key={`${item.kind}-${item.sourceId}`}
-											type="button"
-											onClick={() => setCurrent(num)}
-											className={`flex h-15 w-15 items-center justify-center rounded-lg border text-sm font-semibold ${isCurrent ? "border-[#1f4ed8] bg-[#1f4ed8] text-white" : isFlagged ? "border-[#f59e0b] bg-[#fff7ed] text-[#b45309]" : isAnswered ? "border-[#22c55e] bg-[#ecfdf3] text-[#15803d]" : "border-[#e2e6ef] bg-white text-[#55607d]"}`}
-										>
-											{num}
-										</button>
-									);
-								})}
-							</div>
-							<div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-								<p className="text-sm text-[#5c6786]">
-									Progress:{" "}
-									<span className="font-semibold text-[#2f3a57]">
-										{answeredCount}
-									</span>
-									/{total} answered
-								</p>
-								<button
-									className="rounded-lg bg-[#1f4ed8] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a42b6]"
-									type="button"
-									onClick={() => setShowConfirm(true)}
-								>
-									Finish exam
-								</button>
-							</div>
-						</section>
-					</>
-				)}
-
-				{step === "done" && (
-					<section className="rounded-2xl border border-[#e0e4ec] bg-white px-6 py-10 text-center shadow-[0_10px_30px_rgba(20,30,60,0.08)]">
-						<div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#ecfdf3] text-xl font-bold text-[#16a34a]">
-							✓
-						</div>
-						<h2 className="mt-3 text-2xl font-semibold">
-							Шалгалт амжилттай дууслаа
-						</h2>
-						<p className="mt-2 text-sm text-[#5c6786]">
-							Таны хариултууд амжилттай илгээгдлээ.
-						</p>
-						<button
-							className="mt-6 rounded-lg bg-[#1f4ed8] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a42b6]"
-							type="button"
-							onClick={() => setStep("info")}
-						>
-							Буцах
-						</button>
-					</section>
-				)}
-			</div>
-			{showConfirm && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-					<div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
-						<div className="flex items-start gap-3">
-							<span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eef2ff] text-[#1f4ed8]">
-								!
-							</span>
-							<div>
-								<h4 className="text-lg font-semibold">Дуусгахад итгэлтэй?</h4>
-								<p className="mt-1 text-sm text-[#5c6786]">
-									Дуусгасны дараа хариултаа дахин засах боломжгүй.
-								</p>
-							</div>
-						</div>
-						<div className="mt-6 flex items-center justify-end gap-3">
-							<button
-								className="rounded-lg border border-[#e2e6ef] bg-white px-4 py-2 text-sm font-semibold text-[#39415c] hover:bg-[#f7f9fc]"
-								type="button"
-								onClick={() => setShowConfirm(false)}
-							>
-								Болих
-							</button>
-							<button
-								className="rounded-lg bg-[#1f4ed8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1a42b6]"
-								type="button"
-								onClick={() => {
-									setShowConfirm(false);
-									setStep("done");
-								}}
-							>
-								Тийм, дуусгах
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
-		</main>
-	);
+  return {
+    ...examData,
+    title: savedExam.title,
+    durationMinutes: savedExam.durationInMinutes,
+    questions,
+  };
 }
