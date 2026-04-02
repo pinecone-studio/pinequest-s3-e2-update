@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, CheckCircle2 } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 
 export function TeacherClassPastExamMostFailedInsight({
@@ -58,22 +58,6 @@ export function TeacherClassPastExamMostFailedInsight({
           <p className="mt-3 text-[0.9375rem] font-medium leading-[1.65] text-[#122459] sm:text-base sm:leading-[1.7]">
             {insight.question}
           </p>
-        </div>
-
-        <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 px-5 py-4 shadow-sm sm:px-6 sm:py-5">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
-              <CheckCircle2 className="h-5 w-5" strokeWidth={2.2} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[0.8125rem] font-bold uppercase tracking-wide text-emerald-900">
-                Зөв хариулт (загвар)
-              </p>
-              <p className="mt-2.5 text-[0.9375rem] leading-[1.65] text-emerald-950 sm:text-base sm:leading-[1.7]">
-                {insight.correctAnswer}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>

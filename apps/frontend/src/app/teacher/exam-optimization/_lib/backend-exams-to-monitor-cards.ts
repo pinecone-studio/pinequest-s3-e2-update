@@ -79,14 +79,12 @@ export function mapBackendExamsToMonitorCards(
       status = "completed";
     }
 
-    const classOptions = teacherClassOptions;
+    const gradePrefix = String(row.grade);
+    const classOptions = teacherClassOptions.filter((option) =>
+      option.label.startsWith(gradePrefix),
+    );
     const classLabels = classOptions.map((c) => c.label);
-    const classLabel =
-      classLabels.length === 0
-        ? "Анги байхгүй"
-        : classLabels.length > 1
-          ? `${classLabels.length} анги`
-          : (classLabels[0] ?? "Анги байхгүй");
+    const classLabel = gradeLabel(row.grade) || "Анги байхгүй";
 
     const gradingSummary = buildMonitorGradingSummary({
       participantCount: classOptions.length > 0 ? 36 : 0,

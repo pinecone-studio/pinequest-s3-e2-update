@@ -70,13 +70,21 @@ export function TeacherClassStudentExamResultsPanel({
                         {score.attempts.map((attempt) => {
                           const full = attempt.pointsEarned >= attempt.pointsMax;
                           const none = attempt.pointsEarned <= 0;
-                          const cardClass = full ? "border-emerald-500 bg-emerald-50/80" : none ? "border-rose-400 bg-rose-50/50" : "border-amber-400 bg-amber-50/40";
-                          const badgeClass = full ? "bg-emerald-600" : none ? "bg-rose-600" : "bg-amber-600";
+                          const cardClass = full
+                            ? "border-emerald-500 bg-transparent"
+                            : none
+                              ? "border-rose-400 bg-transparent"
+                              : "border-amber-400 bg-transparent";
+                          const badgeClass = full
+                            ? "border border-emerald-600 bg-emerald-600/30 text-emerald-900"
+                            : none
+                              ? "border border-rose-600 bg-rose-600/30 text-rose-900"
+                              : "border border-amber-600 bg-amber-600/30 text-amber-900";
                           return (
                             <li key={attempt.order} className={`rounded-xl border px-3 py-3 sm:px-4 sm:py-3.5 ${cardClass}`}>
                               <p className="text-[0.875rem] font-semibold leading-relaxed text-[#122459]"><span className="mr-1.5 font-extrabold">{attempt.order}.</span>{attempt.question}</p>
                               <p className="mt-2 text-[0.8125rem] text-[#122459]"><span className="font-semibold">Хариулт: </span>{attempt.studentAnswer}</p>
-                              <p className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-[0.75rem] font-bold tabular-nums text-white ${badgeClass}`}>{attempt.pointsEarned} / {attempt.pointsMax}</p>
+                              <p className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-[0.75rem] font-bold tabular-nums ${badgeClass}`}>{attempt.pointsEarned} / {attempt.pointsMax}</p>
                             </li>
                           );
                         })}

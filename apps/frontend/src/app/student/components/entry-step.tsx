@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import Image from "next/image";
 
 type EntryStepProps = {
@@ -107,12 +108,22 @@ export function EntryStep({
           </div>
 
           <label className="mt-5 inline-flex w-full max-w-full cursor-pointer items-start gap-3 text-sm font-medium text-[#111827] sm:w-fit sm:items-center sm:text-[15px]">
-            <input
-              checked={hasAcceptedRules}
-              className="mt-0.5 h-4.5 w-4.5 shrink-0 rounded border border-[#9ca3af] sm:mt-0"
-              type="checkbox"
-              onChange={(event) => onToggleAcceptedRules(event.target.checked)}
-            />
+            <span className="relative mt-0.5 inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center sm:mt-0">
+              <input
+                checked={hasAcceptedRules}
+                className="peer absolute inset-0 z-10 cursor-pointer opacity-0"
+                type="checkbox"
+                onChange={(event) =>
+                  onToggleAcceptedRules(event.target.checked)
+                }
+              />
+              <span className="pointer-events-none inline-flex h-[25px] w-[25px] items-center justify-center rounded-[8px] border border-[#4A4A4A] bg-white text-[#4A4A4A] transition peer-checked:[&_svg]:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-[#9fbef5]/40">
+                <Check
+                  className="h-4 w-4 opacity-0 transition-opacity"
+                  strokeWidth={3}
+                />
+              </span>
+            </span>
             <span className="min-w-0 leading-snug">Уншиж танилцсан</span>
           </label>
 
@@ -120,9 +131,10 @@ export function EntryStep({
             {showClassCodeField ? (
               <EntryInput
                 placeholder={
-                  classCodeRequired
+                  classCodeHint?.trim() ||
+                  (classCodeRequired
                     ? "Ангийн код оруулах (жишээ нь 10A)"
-                    : "Ангийн код (сонголттой)"
+                    : "Ангийн код (сонголттой)")
                 }
                 value={classCode}
                 onChange={(value) => onChangeClassCode?.(value)}

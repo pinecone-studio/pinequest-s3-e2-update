@@ -30,7 +30,7 @@ export default async function Home({
           </p>
         ) : null}
 
-        <section className="mt-8 grid min-h-0 items-start gap-6 sm:mt-12 sm:gap-8 lg:mt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10">
+        <section className="mt-6 grid min-h-0 items-start gap-6 sm:mt-8 sm:gap-0 lg:mt-16 lg:grid-cols-[1.08fr_0.92fr] lg:items-stretch lg:gap-0">
           <div className="max-w-xl min-w-0 lg:max-w-[47.5rem]">
             <header className="inline-flex w-full items-center justify-center gap-2 sm:justify-start">
               <Image
@@ -106,15 +106,15 @@ export default async function Home({
             </article>
           </div>
 
-          <div className="mt-6 flex w-full min-w-0 flex-col lg:mt-2 lg:min-h-full lg:justify-between lg:pl-4 xl:pl-10">
-            <div className="relative mx-auto mt-2 hidden aspect-[780/420] w-full max-w-[35rem] overflow-visible lg:mx-0 lg:mt-2 lg:block">
+          <div className="mt-6 flex w-full min-w-0 flex-col lg:mt-2 lg:min-h-full lg:justify-between lg:pl-0 xl:pl-2">
+            <div className="relative mx-auto mt-2 hidden aspect-[780/420] w-full max-w-[37rem] overflow-visible lg:mx-0 lg:mt-2 lg:block">
               <Image
                 src="/path.png"
                 alt=""
                 width={780}
                 height={420}
                 priority
-                className="absolute left-0 top-[7rem] h-auto w-[38.75rem] max-w-[112%] origin-top-left object-contain object-left lg:scale-[0.88] xl:scale-100"
+                className="absolute left-[-12.5rem] top-[5rem] h-auto w-[38.75rem] max-w-[112%] origin-top-left object-contain object-left lg:scale-[0.88] xl:scale-100"
               />
               <Image
                 src="/ThisWay.png"
@@ -122,7 +122,7 @@ export default async function Home({
                 width={460}
                 height={260}
                 priority
-                className="absolute left-[26.25rem] top-[11.75rem] h-auto w-[14.25rem] max-w-[40%] object-contain lg:scale-[0.88] xl:scale-100"
+                className="absolute left-[15.75rem] top-[11.75rem] h-auto w-[14.25rem] max-w-[40%] object-contain lg:scale-[0.88] xl:scale-100"
               />
               <Image
                 src="/Herobee.png"
@@ -130,19 +130,19 @@ export default async function Home({
                 width={120}
                 height={120}
                 priority
-                className="absolute left-[37.25rem] top-[6.25rem] h-[5.75rem] w-[5.75rem] max-w-[18%] object-contain lg:scale-[0.88] xl:scale-100"
+                className="absolute left-[28.75rem] top-[4.25rem] h-[5.75rem] w-[5.75rem] max-w-[18%] object-contain lg:scale-[0.88] xl:scale-100"
               />
             </div>
 
-            <div className="mt-4 flex w-full max-w-full flex-col items-center gap-4 sm:mt-6 sm:flex-row sm:items-end sm:justify-start sm:gap-2 md:gap-3 lg:mt-2 lg:justify-start lg:gap-1">
-              <div className="relative hidden h-28 shrink-0 items-start justify-center pl-[4.75rem] pt-1 sm:h-30 sm:pl-[5.9rem] sm:pt-0.5 lg:flex ">
+            <div className="mt-[-26px] ml-[-20px] flex w-full max-w-full flex-col items-center gap-4 sm:mt-6 sm:flex-row sm:items-end sm:justify-start sm:gap-2 md:gap-3 lg:mt-2 lg:justify-start lg:gap-1 lg:-ml-[-20px]">
+              <div className=" relative hidden h-28 shrink-0 items-start justify-start pl-[4.75rem] pt-1 sm:h-30 sm:pl-[5.9rem] sm:pt-0.5 lg:flex ">
                 <Image
                   src="/bugsteibee.png"
                   alt="Bee — begin here"
                   width={120}
                   height={120}
                   priority
-                  className="absolute  top-0 h-28 w-28 object-contain sm:left-6 sm:h-30 sm:w-30"
+                  className="absolute bottom-5 top-0 h-28 w-28 object-contain sm:left-0 sm:h-30 sm:w-30"
                 />
                 <p className="relative z-10 mt-5 text-center text-[15px] font-black leading-[0.95] tracking-tight text-[#3a2614] sm:mt-6 sm:text-[16px] sm:whitespace-nowrap">
                   BEE-GIN

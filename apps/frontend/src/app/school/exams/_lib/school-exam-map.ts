@@ -16,6 +16,9 @@ export type BackendExamRow = {
   allowedClassIds: string[];
   testIds?: string[];
   openExerciseIds?: string[];
+  notes?: string | null;
+  /** Дээд оноо (жагсаалт/API-аас ирэх боломжтой). */
+  score?: number | null;
 };
 
 export type ClassRowLite = {

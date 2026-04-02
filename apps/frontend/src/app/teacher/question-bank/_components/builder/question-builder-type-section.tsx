@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { QuestionTypeSelector } from "./question-type-selector";
 import type { QuestionType } from "../../_lib/types";
 
@@ -79,18 +80,26 @@ function FeatureToggleCard({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-start gap-3 rounded-[12px] border p-4 transition ${
+      className={`flex cursor-pointer items-start gap-4 rounded-[12px] border p-4 transition ${
         checked
           ? "border-[#d8e2f0] bg-[#eef6ff]"
           : "border-[#d8e2f0] bg-white hover:border-[#d8e2f0]"
       }`}
     >
-      <input
-        checked={checked}
-        className="mt-1 h-4 w-4 rounded border-[#b8c8dc] text-[#1f6feb] focus:ring-[#1f6feb]/20"
-        onChange={(event) => onCheckedChange(event.target.checked)}
-        type="checkbox"
-      />
+      <span className="relative mt-0.5 inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center">
+        <input
+          checked={checked}
+          className="peer absolute inset-0 z-10 cursor-pointer opacity-0"
+          onChange={(event) => onCheckedChange(event.target.checked)}
+          type="checkbox"
+        />
+        <span className="pointer-events-none inline-flex h-[25px] w-[25px] items-center justify-center rounded-[8px] border-[1px] border-[#4A4A4A] bg-white text-[#4A4A4A] transition peer-checked:[&_svg]:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-[#9fbef5]/40">
+          <Check
+            className="h-3 w-3 opacity-0 transition-opacity"
+            strokeWidth={3}
+          />
+        </span>
+      </span>
       <div>
         <p className="text-[13px] font-semibold text-[#183153]">{label}</p>
         <p className="mt-1 text-[13px] leading-6 text-[#607391]">

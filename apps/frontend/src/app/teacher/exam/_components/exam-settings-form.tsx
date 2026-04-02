@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -107,7 +108,7 @@ export function ExamSettingsForm({
 
         <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <Field label="">
-            <div className="flex h-10 w-full items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-3">
+            <div className="flex h-10 w-full items-center justify-center rounded-xl border border-[#7f7f7f] bg-white px-[11px]">
               <div className="inline-flex items-center gap-1">
                 <button
                   type="button"
@@ -118,7 +119,7 @@ export function ExamSettingsForm({
                       Math.max(1, (exam.durationInMinutes || 40) - 1),
                     )
                   }
-                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]"
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#262626] pt-[1px] text-[12px] leading-none text-[#262626]"
                 >
                   −
                 </button>
@@ -131,12 +132,12 @@ export function ExamSettingsForm({
                       (exam.durationInMinutes || 40) + 1,
                     )
                   }
-                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#262626] text-[12px] leading-none text-[#262626]"
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#262626] pt-[1px] text-[12px] leading-none text-[#262626]"
                 >
                   +
                 </button>
                 <input
-                  className="w-7 bg-transparent text-right text-[12px] font-normal text-[#262626] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-10 bg-transparent text-right text-[12px] font-normal text-[#262626] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   min={1}
                   onChange={(event) =>
                     onUpdateExam(
@@ -161,14 +162,22 @@ export function ExamSettingsForm({
 
       <div className="mt-4 rounded-xl border border-[#e5e5e5] bg-[#F5F5F5] p-3 sm:p-4">
         <label className="flex cursor-pointer items-start gap-3">
-          <input
-            checked={exam.requiresSchoolApproval}
-            className="mt-1 h-4 w-4 shrink-0 rounded border-[#bfd3f4] text-[#1f6feb] focus:ring-[#1f6feb]/20"
-            onChange={(event) =>
-              onUpdateExam("requiresSchoolApproval", event.target.checked)
-            }
-            type="checkbox"
-          />
+          <span className="relative mt-1 inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center">
+            <input
+              checked={exam.requiresSchoolApproval}
+              className="peer absolute inset-0 z-10 cursor-pointer opacity-0"
+              onChange={(event) =>
+                onUpdateExam("requiresSchoolApproval", event.target.checked)
+              }
+              type="checkbox"
+            />
+            <span className="pointer-events-none inline-flex h-[25px] w-[25px] items-center justify-center rounded-[8px] border border-[#4A4A4A] bg-white text-[#4A4A4A] transition peer-checked:[&_svg]:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-[#9fbef5]/40">
+              <Check
+                className="h-4 w-4 opacity-0 transition-opacity"
+                strokeWidth={3}
+              />
+            </span>
+          </span>
           <div className="min-w-0">
             <p className="text-base font-medium text-[#122459] sm:text-[20px]">
               Сургуулийн зөвшөөрөл авах
@@ -211,7 +220,7 @@ export function ExamSettingsForm({
               <Field label="">
                 <input
                   type="time"
-                  className={`${inputClassName} h-10! w-full !border-0 !bg-[#29A4FF] !text-white focus:!border-0 focus:!ring-0`}
+                  className={`${inputClassName} h-10! w-full !border-[#7f7f7f] !bg-white !text-[#122459] [accent-color:#29A4FF] [color-scheme:light] [&::-webkit-datetime-edit-fields-wrapper]:text-[#122459] focus:!border-[#7DC8FF] focus:!ring-4 focus:!ring-[#7DC8FF]/20`}
                   onChange={(event) =>
                     onUpdateExam("approvalStartTime", event.target.value)
                   }
@@ -222,7 +231,7 @@ export function ExamSettingsForm({
               <Field label="">
                 <input
                   type="time"
-                  className={`${inputClassName} h-10! w-full !border-0 !bg-[#29A4FF] !text-white focus:!border-0 focus:!ring-0`}
+                  className={`${inputClassName} h-10! w-full !border-[#7f7f7f] !bg-white !text-[#122459] [accent-color:#29A4FF] [color-scheme:light] [&::-webkit-datetime-edit-fields-wrapper]:text-[#122459] focus:!border-[#7DC8FF] focus:!ring-4 focus:!ring-[#7DC8FF]/20`}
                   onChange={(event) =>
                     onUpdateExam("approvalEndTime", event.target.value)
                   }

@@ -70,7 +70,7 @@ export function SavedExamsSection({
             onOpenMonitoring={() => onOpenMonitoring(savedExam)}
             onOpen={() => onOpenSavedExam(savedExam)}
             onSelectClass={(classId) => onSelectClass(savedExam.id, classId)}
-            onSend={() => onSendSavedExam(savedExam)}
+            onSend={() => onSendSavedExam(savedExam, true)}
           />
         ))}
       </div>

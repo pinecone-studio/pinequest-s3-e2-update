@@ -68,7 +68,9 @@ export function SchoolExamDetailClient({ examId }: { examId: string }) {
       }
       const results = await Promise.all(
         ids.map((classId) =>
-          client.query({
+          client.query<{
+            getStudentByClassId: unknown[] | null;
+          }>({
             query: GET_STUDENT_BY_CLASS_ID,
             variables: { classId },
             fetchPolicy: "cache-first",

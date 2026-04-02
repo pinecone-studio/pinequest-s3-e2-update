@@ -6,7 +6,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { authSignInHref } from "@/app/lib/auth-redirect";
-import { buildPastExamRowsFromApi } from "@/app/lib/class-past-exams-from-api";
+import {
+  buildPastExamRowsFromApi,
+  type ApiExamQuestionSummary,
+} from "@/app/lib/class-past-exams-from-api";
 import type { Student } from "@/app/lib/types";
 import {
   assignTeachersToClass,
@@ -142,12 +145,14 @@ export default async function AdminClassDetailPage({
     (subjectsQ.getAllSubject ?? []).map((s) => [s.id, s.name]),
   );
 
+  const questionById = new Map<string, ApiExamQuestionSummary>();
   const pastExams = buildPastExamRowsFromApi(
     id,
     roster,
     results,
     examsByIdsQ.getExamsByIds ?? [],
     subjectNameById,
+    questionById,
   );
 
   const classDisplay = `${klass.grade}${klass.section.trim().toUpperCase()}`;

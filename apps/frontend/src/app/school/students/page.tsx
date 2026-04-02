@@ -64,7 +64,9 @@ export default function SchoolStudentsPage() {
       }
       const entries = await Promise.all(
         classRows.map(async (c) => {
-          const r = await client.query({
+          const r = await client.query<{
+            getStudentByClassId: Student[] | null;
+          }>({
             query: GET_STUDENT_BY_CLASS_ID,
             variables: { classId: c.id },
             fetchPolicy: "cache-first",
@@ -143,7 +145,9 @@ export default function SchoolStudentsPage() {
                 <tr key={student.id} className="border-b border-zinc-100">
                   <td className="py-2 text-zinc-500">{index + 1}</td>
                   <td className="py-2 font-medium text-zinc-900">{student.fullName}</td>
-                  <td className="py-2 text-zinc-600">{student.studentCode}</td>
+                  <td className="py-2 text-zinc-600">
+                    {student.studentCode?.trim() || student.studentNumber || "—"}
+                  </td>
                   <td className="py-2 text-zinc-700">{student.className}</td>
                 </tr>
               ))}

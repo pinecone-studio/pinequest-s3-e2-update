@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { WarningIcon } from "@/app/_icons/warningIcon";
 import type { ExamData, OptionId } from "../types";
 import { ExamActions } from "./exam-actions";
 import { ExamHeader } from "./exam-header";
@@ -74,7 +72,13 @@ export function ExamScreen({
 
   return (
     <main className="relative min-h-screen bg-[#edf6ff] px-3 pb-8 pt-4 text-[#1f2a44] sm:px-5 sm:pt-6 md:px-8 lg:px-12 lg:pt-7">
-      <div className="mx-auto w-full max-w-[min(100%,56rem)] xl:max-w-[72rem]">
+      <div
+        className={`mx-auto w-full max-w-[min(100%,56rem)] transition-[filter,opacity] duration-200 xl:max-w-[72rem] ${
+          showWaitForStart
+            ? "pointer-events-none select-none blur-lg opacity-40"
+            : ""
+        }`}
+      >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-center">
             <Image
@@ -149,9 +153,15 @@ export function ExamScreen({
       {warning && !isFinishDialogOpen && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute left-1/2 top-1/2 flex max-h-[min(80dvh,30rem)] w-[min(calc(100vw-2rem),32rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center overflow-y-auto overscroll-contain rounded-[20px] bg-[#edf6ff] px-4 py-6 shadow-lg sm:max-h-[min(90dvh,36rem)] sm:w-[min(calc(100vw-1.5rem),898px)] sm:rounded-[28px] sm:px-8 sm:py-10 md:px-10 md:py-12">
+          <div className="absolute left-1/2 top-1/2 flex max-h-[min(80dvh,29.5rem)] w-[min(calc(100vw-2.625rem),31.375rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center overflow-y-auto overscroll-contain rounded-[20px] bg-[#edf6ff] px-4 py-6 shadow-lg sm:max-h-[min(90dvh,35.5rem)] sm:w-[min(calc(100vw-1.5rem),888px)] sm:rounded-[28px] sm:px-8 sm:py-10 md:px-10 md:py-12">
             <div className="flex h-20 shrink-0 items-center justify-center sm:h-28">
-              <WarningIcon />
+              <Image
+                src="/alert-bee.png"
+                alt="Анхааруулга"
+                width={74}
+                height={74}
+                className="h-[60px] w-[60px] object-contain sm:h-[74px] sm:w-[74px]"
+              />
             </div>
 
             <div className="mt-3 flex min-h-0 flex-col items-center justify-center text-center sm:mt-4">
@@ -185,12 +195,12 @@ export function ExamScreen({
 
       {showWaitForStart && (
         <div className="fixed inset-0 z-40">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="absolute left-1/2 top-1/2 w-[min(calc(100vw-2rem),30rem)] -translate-x-1/2 -translate-y-1/2 rounded-[18px] border border-[#cfe1f5] bg-[#edf6ff] px-5 py-7 text-center shadow-[0_14px_30px_rgba(15,23,42,0.2)] sm:w-[min(calc(100vw-2rem),36rem)] sm:px-10 sm:py-10">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#f3c846] text-lg font-bold text-[#f3c846]">
+          <div className="absolute inset-0 bg-black/58 backdrop-blur-[7px]" />
+          <div className="absolute left-1/2 top-1/2 w-[min(calc(100vw-1.5rem),40rem)] -translate-x-1/2 -translate-y-1/2 rounded-[18px] border border-[#cfe1f5] bg-[#edf6ff] px-5 py-8 text-center shadow-[0_14px_30px_rgba(15,23,42,0.2)] sm:w-[min(calc(100vw-2rem),42rem)] sm:px-10 sm:py-10">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-[#f3c846] text-lg font-bold text-[#f3c846]">
               !
             </div>
-            <p className="mt-4 text-lg font-semibold text-[#111827] sm:text-[20px]">
+            <p className="mt-5 text-lg font-semibold leading-snug text-[#111827] sm:text-[20px]">
               Багш шалгалтыг эхлүүлэх хүртэл
               <br />
               түр хүлээнэ үү.

@@ -54,6 +54,8 @@ export const GET_EXAMS_BY_IDS = gql`
       title
       date
       score
+      testIds
+      openExerciseIds
       schoolId
       teacherId
       createdAt

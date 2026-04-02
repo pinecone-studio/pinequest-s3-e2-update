@@ -7,12 +7,15 @@ import type { PastExamRow } from "@/app/lib/class-past-exams-types";
 type LetterGrade = "A" | "B" | "C" | "D" | "F";
 
 const LETTER_GRADE_ORDER: LetterGrade[] = ["A", "B", "C", "D", "F"];
-const LETTER_GRADE_STYLES: Record<LetterGrade, { fill: string; labelMn: string }> = {
-  A: { fill: "#16a34a", labelMn: "Маш сайн (A)" },
-  B: { fill: "#4f9dff", labelMn: "Сайн (B)" },
-  C: { fill: "#ca8a04", labelMn: "Дунд (C)" },
-  D: { fill: "#ea580c", labelMn: "Муу (D)" },
-  F: { fill: "#dc2626", labelMn: "Тэнцээгүй (F)" },
+const LETTER_GRADE_STYLES: Record<
+  LetterGrade,
+  { fill: string; labelMn: string }
+> = {
+  A: { fill: "rgba(22, 163, 74, 0.5)", labelMn: "Маш сайн (A)" },
+  B: { fill: "rgba(79, 157, 255, 0.5)", labelMn: "Сайн (B)" },
+  C: { fill: "rgba(202, 138, 4, 0.5)", labelMn: "Дунд (C)" },
+  D: { fill: "rgba(234, 88, 12, 0.5)", labelMn: "Муу (D)" },
+  F: { fill: "rgba(236, 72, 153, 0.5)", labelMn: "Тэнцээгүй (F)" },
 };
 
 function letterGradeFromPercent(percent: number): LetterGrade {
