@@ -30,21 +30,21 @@ export default async function Home({
 					</p>
 				) : null}
 
-				<section className="mt-10 grid min-h-0 w-full min-w-0 grid-cols-1 items-start gap-6 sm:mt-14 sm:gap-8 lg:mt-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10">
-					<div className="min-w-0 max-w-xl lg:max-w-190">
-						<header className="flex items-center justify-center gap-2 sm:justify-start">
-							<Image
-								src="/Bee.png"
-								alt="Bee logo"
-								width={50}
-								height={50}
-								priority
-								className="h-10 w-10 object-contain"
-							/>
-							<p className=" text-[22px] font-black tracking-tight text-[#11161d]">
-								UPDATE
-							</p>
-						</header>
+        <section className="grid min-h-0 items-start gap-3 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10 mt-16">
+          <div className="max-w-xl lg:max-w-190">
+            <header className="inline-flex items-center justify-center gap-2 sm:justify-start">
+              <Image
+                src="/Bee.png"
+                alt="Bee logo"
+                width={50}
+                height={50}
+                priority
+                className="h-10 w-10 object-contain"
+              />
+              <p className=" text-[22px] font-black tracking-tight text-[#11161d]">
+                UPDATE
+              </p>
+            </header>
 
 						<div className="mt-8 flex flex-wrap items-center gap-3 sm:mt-12 sm:gap-4">
 							<div className="flex items-center -space-x-3">
@@ -133,36 +133,36 @@ export default async function Home({
 							/>
 						</div>
 
-						<div className="mt-6 flex w-full min-w-0 flex-col items-center gap-5 sm:mt-8 lg:flex-row lg:items-end lg:justify-center lg:gap-4 xl:-mt-2 xl:justify-start xl:gap-2 xl:pl-12">
-							<div className="relative hidden h-28 w-fit max-w-full shrink-0 pl-[6.75rem] pt-1 xl:mx-0 xl:block xl:h-30 xl:pl-[5.9rem] xl:pt-[0.2rem]">
-								<Image
-									src="/bugsteibee.png"
-									alt="Bee begin here"
-									width={120}
-									height={120}
-									priority
-									className="absolute bottom-0 left-0 h-24 w-24 object-contain xl:h-30 xl:w-30"
-								/>
-								<p className="relative z-10 text-sm font-black leading-[0.95] tracking-tight text-[#3a2614] xl:text-base">
-									BEE-GIN
-									<br />
-									HERE
-								</p>
-							</div>
+            <div className="mt-2 mb-3 inline-flex flex-col items-center sm:flex-row sm:items-end sm:gap-1 lg:-mt-2 lg:pl-12">
+              <div className="relative h-30 shrink-0 pl-[5.4rem] pt-[0.35rem] sm:h-30 sm:pl-[5.9rem] sm:pt-[0.2rem]">
+                <Image
+                  src="/bugsteibee.png"
+                  alt="Bee begin here"
+                  width={120}
+                  height={120}
+                  priority
+                  className="absolute left-6 h-32 w-32 object-contain sm:h-30 sm:w-30"
+                />
+                <p className="relative ml-6 mt-6 z-10 whitespace-nowrap text-[16px] font-black leading-[0.95] tracking-tight text-[#3a2614]">
+                  BEE-GIN
+                  <br />
+                  HERE
+                </p>
+              </div>
 
-							<div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-stretch sm:justify-center lg:items-end">
-								<HomeSchoolEntry />
-								<Link
-									href="/teacher"
-									className="inline-flex h-14 w-full min-w-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-white px-5 text-2xl font-medium text-[#122459] transition hover:bg-[#f7fbff] sm:h-17.5 sm:w-auto sm:min-w-40 sm:px-6 sm:text-[30px]"
-								>
-									Багш
-								</Link>
-							</div>
-						</div>
-					</div>
-				</section>
-			</div>
-		</main>
-	);
+              <div className="flex flex-col mb-2 gap-5 sm:flex-row sm:items-end">
+                <HomeSchoolEntry />
+                <Link
+                  href="/teacher"
+                  className="inline-flex h-17.5 min-w-40 items-center justify-center rounded-xl border border-[#7DC8FF] bg-white px-6 text-[30px] font-medium text-[#122459] transition hover:bg-[#f7fbff]"
+                >
+                  Багш
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }

@@ -25,6 +25,7 @@ import {
 	type BackendExamMonitorRow,
 } from "./_lib/backend-exams-to-monitor-cards";
 import {
+	buildMonitorGradingSummary,
 	formatRemainingDuration,
 	type ActiveStudentEntry,
 	type MonitorExamCardItem,
