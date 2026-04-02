@@ -1,9 +1,16 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { Bookmark, Check, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
-import { DIFFICULTY_LABELS, resolveQuestionTitle } from "../../_lib/utils";
+import {
+  DIFFICULTY_LABELS,
+  getPromptDisplayParts,
+  hasTraditionalMongolianText,
+  resolveQuestionTitle,
+} from "../../_lib/utils";
 
 type QuestionCardProps = {
   compactAction?: boolean;
@@ -30,7 +37,15 @@ export function QuestionCard({
   onToggleSelect,
   onToggleLike,
 }: QuestionCardProps) {
-  const promptLines = splitPromptLines(question.content.prompt);
+  const promptParts = getPromptDisplayParts(question.content.prompt);
+  const resolvedTitle =
+    resolveQuestionTitle(question.title, question.content.prompt) ||
+    "Зурагтай асуулт";
+  const noteText =
+    question.content.explanation?.trim() || question.content.guidance?.trim();
+  const shouldRenderPromptVertical =
+    question.subject === NATIONAL_SCRIPT_SUBJECT &&
+    hasTraditionalMongolianText(question.content.prompt);
 
   return (
     <article
@@ -62,13 +77,43 @@ export function QuestionCard({
         type="button"
       >
         <h3 className="line-clamp-2 text-[20px] font-semibold leading-[120%] tracking-[0.04em] text-[#323232]">
-          {resolveQuestionTitle(question.title, question.content.prompt) ||
-            "Квадрат функцийн оройг олох"}
+          {resolvedTitle}
         </h3>
-        <div className="mt-[14px] space-y-[2px] text-[14px] leading-[20px] text-[#323232]">
-          {promptLines.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
+        <div className="mt-[14px] space-y-[8px] text-[14px] leading-[20px] text-[#323232]">
+          {promptParts.map((part, index) =>
+            part.type === "text" ? (
+              <p
+                key={`${part.type}-${index}`}
+                className={
+                  shouldRenderPromptVertical
+                    ? "min-h-20 overflow-x-auto leading-8"
+                    : "whitespace-pre-line"
+                }
+                style={
+                  shouldRenderPromptVertical
+                    ? {
+                        writingMode: "vertical-lr",
+                        textOrientation: "mixed",
+                        whiteSpace: "pre-wrap",
+                      }
+                    : undefined
+                }
+              >
+                {part.value}
+              </p>
+            ) : question.imageUrl ? (
+              <div
+                key={`${part.type}-${index}`}
+                className="mx-auto w-full max-w-[260px] overflow-hidden rounded-[10px] border border-[#dce5f2]"
+              >
+                <img
+                  alt={resolvedTitle}
+                  className="h-[120px] w-full object-cover"
+                  src={question.imageUrl}
+                />
+              </div>
+            ) : null,
+          )}
         </div>
       </button>
 
@@ -90,7 +135,13 @@ export function QuestionCard({
         </Tag>
       </div>
 
-      <p className="mt-[14px] text-[14px] font-normal leading-[140%] tracking-[0.04em] text-[#323232]">
+      {noteText ? (
+        <p className="mt-[14px] line-clamp-2 text-[14px] font-normal leading-[140%] tracking-[0.04em] text-[#323232]">
+          Тэмдэглэл: {noteText}
+        </p>
+      ) : null}
+
+      <p className="mt-[8px] text-[13px] font-normal leading-[140%] tracking-[0.04em] text-[#5f5f5f]">
         16-р сургууль · Багш: {question.teacherName ?? "О.Наранзул"}
       </p>
 
@@ -148,24 +199,4 @@ function Tag({
       {children}
     </span>
   );
-}
-
-function splitPromptLines(prompt: string) {
-  const normalized = prompt.trim();
-  if (!normalized) return [];
-
-  const explicitLines = normalized
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-  if (explicitLines.length > 1) return explicitLines;
-
-  const splitIndex = normalized.search(/\s(?=[A-ZА-ЯӨҮЁ])/);
-  if (splitIndex > 0) {
-    const first = normalized.slice(0, splitIndex).trim();
-    const second = normalized.slice(splitIndex + 1).trim();
-    if (first && second) return [first, second];
-  }
-
-  return [normalized];
 }

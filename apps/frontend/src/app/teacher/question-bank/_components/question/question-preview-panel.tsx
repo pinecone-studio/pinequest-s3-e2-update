@@ -6,7 +6,9 @@ import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
 import {
   formatDate,
+  getPromptDisplayParts,
   hasTraditionalMongolianText,
+  promptHasImagePlaceholder,
   resolveQuestionTitle,
 } from "../../_lib/utils";
 import {
@@ -35,6 +37,11 @@ export function QuestionPreviewPanel({
   const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
   const shouldRenderPromptVertical =
     isNationalScript && hasTraditionalMongolianText(question.content.prompt);
+  const promptParts = getPromptDisplayParts(question.content.prompt);
+  const shouldShowInlineImage = promptHasImagePlaceholder(question.content.prompt);
+  const resolvedTitle =
+    resolveQuestionTitle(question.title, question.content.prompt) ||
+    "Зурагтай асуулт";
 
   return (
     <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
@@ -52,33 +59,51 @@ export function QuestionPreviewPanel({
 
       <div className="mt-4">
         <h3 className="text-xl font-semibold text-[#183153]">
-          {resolveQuestionTitle(question.title, question.content.prompt)}
+          {resolvedTitle}
         </h3>
-        <p
-          className={`mt-2 text-sm text-[#3b4d69] ${
-            shouldRenderPromptVertical
-              ? "min-h-40 overflow-x-auto leading-8"
-              : "leading-7"
-          }`}
-          style={
-            shouldRenderPromptVertical
-              ? {
-                  writingMode: "vertical-lr",
-                  textOrientation: "mixed",
-                  whiteSpace: "pre-wrap",
+        <div className="mt-2 space-y-3">
+          {promptParts.map((part, index) =>
+            part.type === "text" ? (
+              <p
+                key={`${part.type}-${index}`}
+                className={`text-sm text-[#3b4d69] ${
+                  shouldRenderPromptVertical
+                    ? "min-h-20 overflow-x-auto leading-8"
+                    : "leading-7 whitespace-pre-line"
+                }`}
+                style={
+                  shouldRenderPromptVertical
+                    ? {
+                        writingMode: "vertical-lr",
+                        textOrientation: "mixed",
+                        whiteSpace: "pre-wrap",
+                      }
+                    : undefined
                 }
-              : undefined
-          }
-        >
-          {question.content.prompt}
-        </p>
+              >
+                {part.value}
+              </p>
+            ) : question.imageUrl ? (
+              <div
+                key={`${part.type}-${index}`}
+                className="mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#e2ebf7]"
+              >
+                <img
+                  alt={resolvedTitle}
+                  className="h-40 w-full object-cover"
+                  src={question.imageUrl}
+                />
+              </div>
+            ) : null,
+          )}
+        </div>
       </div>
 
-      {question.imageUrl ? (
-        <div className="mt-4 overflow-hidden rounded-2xl border border-[#e2ebf7]">
+      {question.imageUrl && !shouldShowInlineImage ? (
+        <div className="mt-4 mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#e2ebf7]">
           <img
-            alt={question.title}
-            className="h-48 w-full object-cover"
+            alt={resolvedTitle}
+            className="h-40 w-full object-cover"
             src={question.imageUrl}
           />
         </div>
@@ -167,7 +192,9 @@ export function QuestionPreviewPanel({
         </div>
         <div className="flex items-center justify-between gap-3">
           <dt>Сэдэв</dt>
-          <dd className="font-semibold text-[#183153]">{question.topic}</dd>
+          <dd className="font-semibold text-[#183153]">
+            {question.subtopic?.trim() || question.topic}
+          </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
           <dt>Оноо</dt>

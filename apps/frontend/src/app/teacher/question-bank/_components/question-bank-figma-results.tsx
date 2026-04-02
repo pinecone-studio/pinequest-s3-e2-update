@@ -1,9 +1,16 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { Wrench } from "lucide-react";
 import { useState } from "react";
+import { NATIONAL_SCRIPT_SUBJECT } from "../_lib/constants";
 import type { Question } from "../_lib/types";
-import { DIFFICULTY_LABELS, resolveQuestionTitle } from "../_lib/utils";
+import {
+  DIFFICULTY_LABELS,
+  getPromptDisplayParts,
+  hasTraditionalMongolianText,
+  resolveQuestionTitle,
+} from "../_lib/utils";
 import { QuestionBankActivePanel } from "./bank/question-bank-active-panel";
 import { QuestionBankBulkToolbar } from "./bank/question-bank-bulk-toolbar";
 import { QuestionList } from "./question/question-list";
@@ -186,13 +193,49 @@ function ManagementCard({
 
       <h3 className="mt-[18px] text-[16px] font-semibold leading-[22px] text-[#323232]">
         {resolveQuestionTitle(question.title, question.content.prompt) ||
-          "Асуултын дэлгэрэнгүй"}
+          "Зурагтай асуулт"}
       </h3>
 
-      <div className="mt-[10px] space-y-[2px] text-[12px] leading-[18px] text-[#0A0A0A]">
-        {splitPromptLines(question.content.prompt).map((line) => (
-          <p key={line}>{line}</p>
-        ))}
+      <div className="mt-[10px] space-y-[8px] text-[12px] leading-[18px] text-[#0A0A0A]">
+        {getPromptDisplayParts(question.content.prompt).map((part, index) =>
+          part.type === "text" ? (
+            <p
+              key={`${part.type}-${index}`}
+              className={
+                question.subject === NATIONAL_SCRIPT_SUBJECT &&
+                hasTraditionalMongolianText(question.content.prompt)
+                  ? "min-h-20 overflow-x-auto leading-8"
+                  : "whitespace-pre-line"
+              }
+              style={
+                question.subject === NATIONAL_SCRIPT_SUBJECT &&
+                hasTraditionalMongolianText(question.content.prompt)
+                  ? {
+                      writingMode: "vertical-lr",
+                      textOrientation: "mixed",
+                      whiteSpace: "pre-wrap",
+                    }
+                  : undefined
+              }
+            >
+              {part.value}
+            </p>
+          ) : question.imageUrl ? (
+            <div
+              key={`${part.type}-${index}`}
+              className="mx-auto w-full max-w-[240px] overflow-hidden rounded-[10px] border border-[#dce5f2]"
+            >
+              <img
+                alt={
+                  resolveQuestionTitle(question.title, question.content.prompt) ||
+                  "Зурагтай асуулт"
+                }
+                className="h-[112px] w-full object-cover"
+                src={question.imageUrl}
+              />
+            </div>
+          ) : null,
+        )}
       </div>
 
       {question.questionType === "multiple_choice" ? (
@@ -200,14 +243,31 @@ function ManagementCard({
           {question.options.slice(0, 4).map((option, index) => (
             <div
               key={option.id}
-              className={`flex h-[24px] items-center rounded-[4px] border px-[10px] text-[11px] leading-[13px] ${
+              className={`flex rounded-[4px] border px-[10px] py-[8px] text-[11px] leading-[13px] ${
                 option.isCorrect
                   ? "border-[#7DC8FF] bg-[#75B8ED] text-[#122459]"
                   : "border-[#ECECEC] bg-white text-[#122459]"
               }`}
             >
               <span className="mr-[8px] shrink-0">{index + 1}.</span>
-              <span className="truncate">{stripLeadingNumber(option.text)}</span>
+              <span
+                className={
+                  hasTraditionalMongolianText(option.text)
+                    ? "min-h-20 overflow-x-auto leading-8"
+                    : "truncate"
+                }
+                style={
+                  hasTraditionalMongolianText(option.text)
+                    ? {
+                        writingMode: "vertical-lr",
+                        textOrientation: "mixed",
+                        whiteSpace: "pre-wrap",
+                      }
+                    : undefined
+                }
+              >
+                {stripLeadingNumber(option.text)}
+              </span>
             </div>
           ))}
         </div>
@@ -246,24 +306,4 @@ function TagChip({ children }: { children: React.ReactNode }) {
 
 function stripLeadingNumber(value: string) {
   return value.replace(/^\s*\d+\.\s*/, "");
-}
-
-function splitPromptLines(prompt: string) {
-  const normalized = prompt.trim();
-  if (!normalized) return [];
-
-  const explicitLines = normalized
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-  if (explicitLines.length > 1) return explicitLines;
-
-  const splitIndex = normalized.search(/\s(?=[A-ZА-ЯӨҮЁ])/);
-  if (splitIndex > 0) {
-    const first = normalized.slice(0, splitIndex).trim();
-    const second = normalized.slice(splitIndex + 1).trim();
-    if (first && second) return [first, second];
-  }
-
-  return [normalized];
 }

@@ -4,6 +4,7 @@ import type {
   QuestionOption,
   QuestionType,
 } from "../_lib/types";
+import { normalizePromptText } from "../_lib/utils";
 import type { BackendTest } from "./get-tests";
 
 type SubjectNameById = Map<string, string>;
@@ -66,9 +67,9 @@ export function mapBackendTestsToQuestions(
         : [];
     const subject = subjectNameFromId(test.subjectId, subjectNameById);
     const prompt = test.question?.trim() || "(Агуулга байхгүй)";
-    const title =
-      test.notes?.trim()?.slice(0, 120) || prompt.slice(0, 80) || "Асуулт";
-    const topic = test.notes?.trim() || title;
+    const promptText = normalizePromptText(prompt);
+    const title = promptText.slice(0, 80) || "Асуулт";
+    const topic = promptText.slice(0, 120) || subject;
 
     return {
       id: test.id,
@@ -133,12 +134,12 @@ export function mapBackendOpenExerciesToQuestions(
   return rows.map((row) => {
     const subject = subjectNameFromId(row.subjectId, subjectNameById);
     const prompt = row.question?.trim() || "(Агуулга байхгүй)";
+    const promptText = normalizePromptText(prompt);
     const title =
       row.title?.trim()?.slice(0, 120) ||
-      row.notes?.trim()?.slice(0, 120) ||
-      prompt.slice(0, 80) ||
+      promptText.slice(0, 80) ||
       "Асуулт";
-    const topic = row.topic?.trim() || row.notes?.trim() || title;
+    const topic = row.topic?.trim() || promptText.slice(0, 120) || title;
 
     return {
       id: row.id,

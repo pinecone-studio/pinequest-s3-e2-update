@@ -42,15 +42,25 @@ export const DEFAULT_FILE_UPLOAD_CONFIG: QuestionFileUploadConfig = {
   maxFiles: 1,
 };
 
+export const PROMPT_IMAGE_PLACEHOLDER = "[ЗУРАГ]";
+
 export function hasTraditionalMongolianText(value: string) {
   return /[\u1800-\u18AF]/.test(value);
+}
+
+export function stripPromptImagePlaceholder(prompt: string) {
+  return prompt.split(PROMPT_IMAGE_PLACEHOLDER).join(" ");
+}
+
+export function normalizePromptText(prompt: string) {
+  return stripPromptImagePlaceholder(prompt).replace(/\s+/g, " ").trim();
 }
 
 export function resolveQuestionTitle(title: string, prompt: string) {
   const normalizedTitle = title.trim();
   if (normalizedTitle) return normalizedTitle;
 
-  const normalizedPrompt = prompt.trim();
+  const normalizedPrompt = normalizePromptText(prompt);
   if (!normalizedPrompt) return "";
 
   return normalizedPrompt.split(/\r?\n/)[0]?.trim() ?? "";
@@ -122,6 +132,36 @@ export function renderFormulaPreview(input: string) {
     .replace(/\\pi/g, "pi")
     .replace(/\^\{([^}]*)\}/g, "^($1)")
     .replace(/_\{([^}]*)\}/g, "_($1)");
+}
+
+export type PromptDisplayPart =
+  | { type: "text"; value: string }
+  | { type: "image" };
+
+export function promptHasImagePlaceholder(prompt: string) {
+  return prompt.includes(PROMPT_IMAGE_PLACEHOLDER);
+}
+
+export function getPromptDisplayParts(prompt: string): PromptDisplayPart[] {
+  const normalized = prompt.trim();
+  if (!normalized) return [];
+
+  return normalized
+    .split(PROMPT_IMAGE_PLACEHOLDER)
+    .flatMap((segment, index, array) => {
+      const parts: PromptDisplayPart[] = [];
+      const cleanedText = segment.trim();
+
+      if (cleanedText) {
+        parts.push({ type: "text", value: cleanedText });
+      }
+
+      if (index < array.length - 1) {
+        parts.push({ type: "image" });
+      }
+
+      return parts;
+    });
 }
 
 export function questionMatchesSearch(question: Question, search: string) {

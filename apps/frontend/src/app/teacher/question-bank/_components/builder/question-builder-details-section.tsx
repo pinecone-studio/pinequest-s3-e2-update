@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import {
   NATIONAL_SCRIPT_SUBJECT,
   SUBTOPIC_OPTIONS,
@@ -23,7 +24,11 @@ import {
 } from "@/components/ui/select";
 
 type QuestionBuilderDetailsSectionProps = {
+  formulaRaw: string;
   gradeOptions: string[];
+  includesFormula: boolean;
+  includesImage: boolean;
+  imageUrl: string;
   onGradeChange: (value: string) => void;
   onNotesChange: (value: string) => void;
   onPromptChange: (value: string) => void;
@@ -36,7 +41,11 @@ type QuestionBuilderDetailsSectionProps = {
 };
 
 export function QuestionBuilderDetailsSection({
+  formulaRaw,
   gradeOptions,
+  includesFormula,
+  includesImage,
+  imageUrl,
   onGradeChange,
   onNotesChange,
   onPromptChange,
@@ -49,9 +58,52 @@ export function QuestionBuilderDetailsSection({
 }: QuestionBuilderDetailsSectionProps) {
   const subtopicOptions =
     SUBTOPIC_OPTIONS[values.subject as keyof typeof SUBTOPIC_OPTIONS] ?? [];
-  const isNationalScriptSubject = values.subject === NATIONAL_SCRIPT_SUBJECT;
+  const promptTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const shouldRenderPromptVertical =
-    isNationalScriptSubject && hasTraditionalMongolianText(values.prompt);
+    values.subject === NATIONAL_SCRIPT_SUBJECT &&
+    hasTraditionalMongolianText(values.prompt) &&
+    !/[A-Za-z\u0400-\u04FF0-9]/.test(values.prompt);
+
+  const insertIntoPrompt = (snippet: string) => {
+    const textarea = promptTextareaRef.current;
+    const currentValue = values.prompt;
+
+    if (!textarea) {
+      const nextValue = currentValue.trim()
+        ? `${currentValue}\n${snippet}`
+        : snippet;
+      onPromptChange(nextValue);
+      return;
+    }
+
+    const start = textarea.selectionStart ?? currentValue.length;
+    const end = textarea.selectionEnd ?? currentValue.length;
+    const prefix = currentValue.slice(0, start);
+    const suffix = currentValue.slice(end);
+    const needsLeadingBreak = prefix.length > 0 && !prefix.endsWith("\n");
+    const needsTrailingBreak = suffix.length > 0 && !suffix.startsWith("\n");
+    const insertion = `${needsLeadingBreak ? "\n" : ""}${snippet}${needsTrailingBreak ? "\n" : ""}`;
+    const nextValue = `${prefix}${insertion}${suffix}`;
+    const nextCursor = prefix.length + insertion.length;
+
+    onPromptChange(nextValue);
+
+    requestAnimationFrame(() => {
+      if (!promptTextareaRef.current) return;
+      promptTextareaRef.current.focus();
+      promptTextareaRef.current.setSelectionRange(nextCursor, nextCursor);
+    });
+  };
+
+  const handleInsertImage = () => {
+    if (!includesImage || !imageUrl.trim()) return;
+    insertIntoPrompt("[ЗУРАГ]");
+  };
+
+  const handleInsertFormula = () => {
+    if (!includesFormula || !formulaRaw.trim()) return;
+    insertIntoPrompt(formulaRaw.trim());
+  };
 
   return (
     <section>
@@ -87,7 +139,7 @@ export function QuestionBuilderDetailsSection({
           onValueChange={onSubtopicChange}
           value={values.subtopic}
         >
-          <SelectTrigger className="h-[46px] rounded-[12px] border-[#d3deef] bg-[#fafafa] px-[14px] text-[13px] shadow-none focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
+          <SelectTrigger className="h-11.5 rounded-[12px] border-[#d3deef] bg-[#fafafa] px-[14px] text-[13px] shadow-none focus:border-[#4f9dff] focus:ring-[#4f9dff]/10">
             <SelectValue placeholder="Дэд сэдэв сонгоно уу." />
           </SelectTrigger>
           <SelectContent>
@@ -100,7 +152,7 @@ export function QuestionBuilderDetailsSection({
         </Select>
 
         <input
-          className={`${builderInputClassName} h-[46px] rounded-[12px] bg-[#fafafa] px-[14px] shadow-none`}
+          className={`${builderInputClassName} h-11.5 rounded-xl bg-[#fafafa] px-3.5 shadow-none`}
           onChange={(event) => onTitleChange(event.target.value)}
           placeholder="Асуултын гарчиг бичих"
           value={values.title}
@@ -109,6 +161,7 @@ export function QuestionBuilderDetailsSection({
 
       {validationErrors?.grade ||
       validationErrors?.subject ||
+      validationErrors?.topic ||
       validationErrors?.title ? (
         <div className="mt-2 space-y-1">
           {validationErrors?.grade ? (
@@ -126,9 +179,13 @@ export function QuestionBuilderDetailsSection({
               {validationErrors.title}
             </p>
           ) : null}
+          {validationErrors?.topic ? (
+            <p className="text-[13px] font-medium text-[#d34f4f]">
+              {validationErrors.topic}
+            </p>
+          ) : null}
         </div>
       ) : null}
-
       <div className="mt-4">
         <BuilderField
           error={validationErrors?.prompt}
@@ -138,13 +195,14 @@ export function QuestionBuilderDetailsSection({
         >
           <>
             <textarea
-              className={`${builderInputClassName} px-[20px] py-3 ${
+              className={`${builderInputClassName} px-5 py-3 ${
                 shouldRenderPromptVertical
-                  ? "min-h-56 overflow-x-auto leading-8"
-                  : "min-h-18"
+                  ? "min-h-20 overflow-x-auto leading-8"
+                  : "min-h-32 leading-7"
               }`}
               onChange={(event) => onPromptChange(event.target.value)}
               placeholder="Сурагчид харагдах асуулгын текстээ энд бичнэ үү."
+              ref={promptTextareaRef}
               style={
                 shouldRenderPromptVertical
                   ? {
@@ -156,11 +214,43 @@ export function QuestionBuilderDetailsSection({
               }
               value={values.prompt}
             />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                className={`inline-flex h-10 items-center rounded-[12px] border px-4 text-[13px] font-semibold transition ${
+                  includesImage && imageUrl.trim()
+                    ? "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
+                    : "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
+                }`}
+                disabled={!includesImage || !imageUrl.trim()}
+                onClick={handleInsertImage}
+                type="button"
+              >
+                Зургийг асуултад оруулах
+              </button>
+              <button
+                className={`inline-flex h-10 items-center rounded-[12px] border px-4 text-[13px] font-semibold transition ${
+                  includesFormula && formulaRaw.trim()
+                    ? "border-[#d3deef] bg-white text-[#365077] hover:border-[#aac8f8] hover:text-[#1f6feb]"
+                    : "border-[#e4ebf5] bg-[#f8fbff] text-[#b6c0d0]"
+                }`}
+                disabled={!includesFormula || !formulaRaw.trim()}
+                onClick={handleInsertFormula}
+                type="button"
+              >
+                Томьёог асуултад оруулах
+              </button>
+            </div>
             {values.subject === NATIONAL_SCRIPT_SUBJECT ? (
               <NationalScriptAssist
                 key={values.subject}
                 onApplyText={onPromptChange}
               />
+            ) : null}
+            {includesImage || includesFormula ? (
+              <p className="mt-2 text-[12px] leading-5 text-[#7a8aa5]">
+                Зураг болон томьёог асуулгын текст дотор оруулахын тулд дээрх
+                товчийг ашиглана уу.
+              </p>
             ) : null}
           </>
         </BuilderField>
