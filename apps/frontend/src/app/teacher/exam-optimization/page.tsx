@@ -26,6 +26,7 @@ import {
 	type BackendExamMonitorRow,
 } from "./_lib/backend-exams-to-monitor-cards";
 import {
+	buildMonitorGradingSummary,
 	formatRemainingDuration,
 	type ActiveStudentEntry,
 	type MonitorExamCardItem,
@@ -192,7 +193,9 @@ export default function ExamOptimizationPage() {
 			const participantCount =
 				classOptions.length > 0
 					? classOptions.reduce((sum, item) => {
-							const klass = teacherClasses.find((klassItem) => klassItem.id === item.id);
+							const klass = apiClassOptions.find(
+								(klassItem) => klassItem.id === item.id,
+							);
 							return sum + (klass?.studentCount ?? 0);
 					  }, 0)
 					: activeStudents.length;
@@ -226,7 +229,7 @@ export default function ExamOptimizationPage() {
 				}),
 			};
 		});
-	}, [savedExams, apiClassOptions]);
+	}, [activeStudents.length, savedExams, apiClassOptions]);
 
 	const monitorExamCards = useMemo<MonitorExamCardItem[]>(() => {
 		const mergedCards = [...localStorageMonitorCards, ...apiMonitorCards];

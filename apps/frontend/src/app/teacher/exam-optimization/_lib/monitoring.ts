@@ -30,6 +30,57 @@ export type MonitorExamCardItem = {
 	gradingStatus: "manual_pending" | "finalized";
 };
 
+export function buildMonitorGradingSummary({
+	participantCount,
+	openQuestionCount,
+	seedSource,
+}: {
+	participantCount: number;
+	openQuestionCount: number;
+	seedSource: string;
+}) {
+	const normalizedParticipants = Math.max(0, participantCount);
+	const manualQuestionCount = Math.max(0, openQuestionCount);
+
+	if (normalizedParticipants === 0) {
+		return {
+			participantCount: 0,
+			autoScoredCount: 0,
+			finalizedCount: 0,
+			pendingManualCount: 0,
+			manualQuestionCount,
+			gradingStatus: "manual_pending" as const,
+		};
+	}
+
+	if (manualQuestionCount === 0) {
+		return {
+			participantCount: normalizedParticipants,
+			autoScoredCount: normalizedParticipants,
+			finalizedCount: normalizedParticipants,
+			pendingManualCount: 0,
+			manualQuestionCount: 0,
+			gradingStatus: "finalized" as const,
+		};
+	}
+
+	const seedValue = Array.from(seedSource).reduce(
+		(total, character) => total + character.charCodeAt(0),
+		0,
+	);
+	const pendingManualCount = seedValue % (normalizedParticipants + 1);
+	const finalizedCount = Math.max(0, normalizedParticipants - pendingManualCount);
+
+	return {
+		participantCount: normalizedParticipants,
+		autoScoredCount: normalizedParticipants,
+		finalizedCount,
+		pendingManualCount,
+		manualQuestionCount,
+		gradingStatus: pendingManualCount > 0 ? ("manual_pending" as const) : ("finalized" as const),
+	};
+}
+
 export function monitorStatusText(
 	status: MonitorExamCardItem["status"],
 	classLabels: string[] = [],

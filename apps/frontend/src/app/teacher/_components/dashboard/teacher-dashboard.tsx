@@ -11,6 +11,7 @@ import {
 	GET_STUDENT_BY_CLASS_ID,
 } from "@/graphql/typeDefs/queries";
 import { useTeacherDb } from "@/app/teacher/_components/teacher-db-context";
+import { HARDCODED_TEACHER_ID } from "@/app/teacher/_lib/hardcoded-teacher-api";
 import { HoneyCircularLoader } from "@/components/loaders/honey-circular-loader";
 
 type ClassResponse = {
