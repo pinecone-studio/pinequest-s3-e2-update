@@ -35,7 +35,7 @@ export function QuestionCard({
   return (
     <article
       className={cn(
-        "group relative flex min-h-[248px] flex-col rounded-[10px] border px-[28px] pb-[20px] pt-[24px]",
+        "group relative flex min-h-[248px] flex-col rounded-[10px] border px-4 pb-4 pt-5 sm:px-[28px] sm:pb-[20px] sm:pt-[24px]",
         isSelected || isActive
           ? "border-[#7DC8FF] bg-white"
           : "border-[#ECECEC] bg-white",
