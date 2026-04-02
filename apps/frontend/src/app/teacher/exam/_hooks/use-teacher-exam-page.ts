@@ -8,7 +8,7 @@ import {
   getApprovalUpdatedEventName,
   upsertPendingApprovalRequest,
 } from "@/app/lib/exam-approval-store";
-import { ADD_EXAM_ALLOWED_CLASSES, CREATE_EXAM } from "@/graphql/typeDefs/mutations";
+import { CREATE_EXAM } from "@/graphql/typeDefs/mutations";
 import {
   GET_ALL_SUBJECTS,
   GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
@@ -63,6 +63,7 @@ type BackendExam = {
   needpermission: number | null;
   schoolId: string;
   teacherId: string | null;
+  allowedClassIds: string[] | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -146,9 +147,6 @@ export function useTeacherExamPage() {
     (!!teacherId && !!schoolId && classesLoading);
 
   const [createExam] = useMutation<CreateExamResponse>(CREATE_EXAM);
-  type AddExamAllowedClassesData = { addExamAllowedClasses: boolean };
-  const [addExamAllowedClasses] =
-    useMutation<AddExamAllowedClassesData>(ADD_EXAM_ALLOWED_CLASSES);
   const [exam, setExam] = useState<ExamComposerState>(INITIAL_FORM);
   const [selectedBankIds, setSelectedBankIds] = useState<string[]>([]);
   const [examQuestions, setExamQuestions] = useState<ExamQuestionItem[]>([]);
@@ -162,9 +160,6 @@ export function useTeacherExamPage() {
   const [activeSavedExamId, setActiveSavedExamId] = useState<string | null>(
     null,
   );
-  const [selectedClassByExamId, setSelectedClassByExamId] = useState<
-    Record<string, string>
-  >({});
   const [latestSavedExamId, setLatestSavedExamId] = useState<string | null>(
     null,
   );
@@ -245,6 +240,9 @@ export function useTeacherExamPage() {
 
   const savedExamsFromApi = useMemo(() => {
     const rows = examsData?.getExamBySchoolId ?? [];
+    const classIdToLabel = new Map(
+      teacherClasses.map((c) => [c.id, c.name] as const),
+    );
     return rows
       .slice()
       .sort(
@@ -260,6 +258,14 @@ export function useTeacherExamPage() {
         const durationInMinutes = parseDurationMinutes(row.duration);
         const subjectName =
           subjectNameById.get(row.subjectId) ?? row.subjectId ?? "";
+        const allowed = Array.isArray(row.allowedClassIds)
+          ? row.allowedClassIds
+          : [];
+        const sentClassLabels: Record<string, string> = {};
+        for (const classId of allowed) {
+          sentClassLabels[classId] =
+            classIdToLabel.get(classId) ?? classId;
+        }
         return normalizeSavedExamRecord({
           id: row.id,
           title: row.title ?? "",
@@ -281,14 +287,20 @@ export function useTeacherExamPage() {
           })),
           requiresSchoolApproval: Boolean(row.needpermission),
           approvalStatus: row.needpermission ? "pending" : "not_required",
-          sentClassIds: [],
+          sentClassIds: [...allowed],
+          sentClassLabels,
           approvalExamDate: "",
           approvalStartTime: "09:00",
           approvalEndTime: "10:00",
           approvalLocation: "",
         });
       });
-  }, [examsData?.getExamBySchoolId, questionBank, subjectNameById]);
+  }, [
+    examsData?.getExamBySchoolId,
+    questionBank,
+    subjectNameById,
+    teacherClasses,
+  ]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -304,26 +316,6 @@ export function useTeacherExamPage() {
       JSON.stringify(savedExams.map(normalizeSavedExamRecord)),
     );
   }, [hasLoadedSavedExams, savedExams]);
-
-  useEffect(() => {
-    if (teacherClasses.length === 0 || savedExams.length === 0) return;
-    const fallbackClassId = teacherClasses[0]?.id;
-    if (!fallbackClassId) return;
-
-    setSelectedClassByExamId((current) => {
-      let changed = false;
-      const next = { ...current };
-
-      for (const savedExam of savedExams) {
-        if (!next[savedExam.id]) {
-          next[savedExam.id] = fallbackClassId;
-          changed = true;
-        }
-      }
-
-      return changed ? next : current;
-    });
-  }, [savedExams, teacherClasses]);
 
   useEffect(() => {
     const syncApprovalStatus = () => {
@@ -671,83 +663,15 @@ export function useTeacherExamPage() {
     setSavedExams((current) =>
       current.filter((item) => item.id !== savedExamId),
     );
-    setSelectedClassByExamId((current) => {
-      const next = { ...current };
-      delete next[savedExamId];
-      return next;
-    });
     if (activeSavedExamId === savedExamId) setActiveSavedExamId(null);
     showToast("Хадгалсан шалгалтыг жагсаалтаас устгалаа.");
   };
 
-  const selectClassForSavedExam = (savedExamId: string, classId: string) =>
-    setSelectedClassByExamId((current) => ({
-      ...current,
-      [savedExamId]: classId,
-    }));
   const openMonitoringForSavedExam = (savedExam: SavedExamRecord) => {
     router.push(
       `/teacher/exam-optimization?examId=${encodeURIComponent(savedExam.id)}`,
     );
     showToast(`"${savedExam.title}" шалгалтын хяналт руу шилжлээ.`);
-  };
-
-  const sendSavedExamToClass = async (
-    savedExam: SavedExamRecord,
-    openMonitoring = false,
-  ) => {
-    if (savedExam.approvalStatus === "pending") {
-      return showToast("Энэ шалгалт сургуулийн зөвшөөрөл хүлээж байна.");
-    }
-    if (savedExam.approvalStatus === "needs_fix") {
-      return showToast(
-        "Энэ шалгалтыг засварлаад дахин батлуулах шаардлагатай.",
-      );
-    }
-    const classId =
-      selectedClassByExamId[savedExam.id] ?? teacherClasses[0]?.id ?? "";
-    if (!classId) return showToast("Илгээхийн өмнө ангиа сонгоно уу.");
-    const selectedClass = teacherClasses.find((item) => item.id === classId);
-    if (!selectedClass) return showToast("Сонгосон анги олдсонгүй.");
-
-    try {
-      const result = await addExamAllowedClasses({
-        variables: { examId: savedExam.id, classIds: [classId] },
-      });
-      if (result.data?.addExamAllowedClasses !== true) {
-        showToast("Серверт анги нээж чадсангүй. Дахин оролдоно уу.");
-        return;
-      }
-    } catch {
-      showToast("Серверт анги нээхэд алдаа гарлаа. Нэвтэрсэн эсэхээ шалгана уу.");
-      return;
-    }
-
-    const nextSavedExams = savedExams.map((item) =>
-      item.id === savedExam.id
-        ? {
-            ...item,
-            sentClassIds: Array.from(
-              new Set([...(item.sentClassIds ?? []), classId]),
-            ),
-            sentClassLabels: {
-              ...(item.sentClassLabels ?? {}),
-              [classId]: selectedClass.name,
-            },
-          }
-        : item,
-    );
-
-    setSavedExams(nextSavedExams);
-
-    const monitoringUrl = `/teacher/exam-optimization?examId=${encodeURIComponent(savedExam.id)}`;
-    showToast(
-      openMonitoring
-        ? `"${savedExam.title}" шалгалтын хяналт руу шилжлээ.`
-        : `"${savedExam.title}" шалгалтыг ${selectedClass.name} ангид илгээлээ.`,
-    );
-
-    router.push(monitoringUrl);
   };
 
   return {
@@ -771,9 +695,6 @@ export function useTeacherExamPage() {
     savedExams,
     search,
     selectedBankIds,
-    selectedClassByExamId,
-    selectClassForSavedExam,
-    sendSavedExamToClass,
     setSearch,
     subjectOptions,
     toastMessage,

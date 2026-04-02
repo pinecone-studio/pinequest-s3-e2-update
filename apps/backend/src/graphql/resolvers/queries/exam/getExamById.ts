@@ -1,5 +1,9 @@
-import { eq } from "drizzle-orm";
-import { examTable } from "../../../../db/schema";
+import { and, eq } from "drizzle-orm";
+import {
+  examAllowedClassTable,
+  examTable,
+  studentTable,
+} from "../../../../db/schema";
 import {
   assertExamReadableBySessionOrSchoolAdmin,
 } from "../../../../lib/exam-guard";
@@ -34,10 +38,37 @@ export const getExamById = async (
   const row = rows[0];
   if (!row) return null;
   const allowedMap = await loadAllowedClassIdsByExamIds(ctx.db, [row.id]);
+  const allowedClassIds = allowedMap.get(row.id) ?? [];
+
+  let monitoringStartedAt: string | null = null;
+  if (ctx.examSession?.examId === row.id) {
+    const studentRows = await ctx.db
+      .select()
+      .from(studentTable)
+      .where(eq(studentTable.id, ctx.examSession.studentId))
+      .limit(1);
+    const classId = studentRows[0]?.classId?.trim();
+    if (classId) {
+      const scopeRows = await ctx.db
+        .select()
+        .from(examAllowedClassTable)
+        .where(
+          and(
+            eq(examAllowedClassTable.examId, row.id),
+            eq(examAllowedClassTable.classId, classId),
+          ),
+        )
+        .limit(1);
+      const started = scopeRows[0]?.sessionStartedAt?.trim();
+      monitoringStartedAt = started && started.length > 0 ? started : null;
+    }
+  }
+
   return {
     ...row,
     testIds: parseIds((row as any).testIds),
     openExerciseIds: parseIds((row as any).openExerciseIds),
-    allowedClassIds: allowedMap.get(row.id) ?? [],
+    allowedClassIds,
+    monitoringStartedAt,
   };
 };

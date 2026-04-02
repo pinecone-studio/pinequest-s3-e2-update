@@ -68,6 +68,7 @@ export function buildExamDataFromApi(
       text: (t.question ?? "").trim() || `Асуулт ${qNum}`,
       type: "multiple_choice",
       options,
+      sourceTestId: tid,
       correctAnswer,
     });
   }

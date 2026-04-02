@@ -6,6 +6,8 @@ export type ExamQuestion = {
   text: string;
   type: "multiple_choice";
   options: Array<{ id: OptionId; text: string }>;
+  /** Сервер руу илгээхэд test мөрийн id (MCQ). */
+  sourceTestId?: string;
   correctAnswer: OptionId;
 };
 

@@ -56,9 +56,36 @@ export const STUDENT_EXAM_AUTH = gql`
   }
 `;
 
+export const SUBMIT_STUDENT_EXAM = gql`
+  mutation SubmitStudentExam($input: SubmitStudentExamInput!) {
+    submitStudentExam(input: $input) {
+      id
+      examId
+      studentId
+      status
+      testScore
+      openExerciseScore
+      totalScore
+      actualScore
+      answersJson
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const ADD_EXAM_ALLOWED_CLASSES = gql`
   mutation AddExamAllowedClasses($examId: String!, $classIds: [String!]!) {
     addExamAllowedClasses(examId: $examId, classIds: $classIds)
+  }
+`;
+
+export const START_EXAM_MONITORING_FOR_CLASS = gql`
+  mutation StartExamMonitoringForClass($examId: String!, $classId: String!) {
+    startExamMonitoringForClass(examId: $examId, classId: $classId) {
+      ok
+      startedAt
+    }
   }
 `;
 

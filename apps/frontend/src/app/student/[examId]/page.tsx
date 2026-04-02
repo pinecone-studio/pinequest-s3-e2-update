@@ -5,37 +5,32 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { STUDENT_EXAM_AUTH } from "@/graphql/typeDefs/mutations";
 import {
-	GET_EXAM_BY_ID,
-	GET_EXAM_QUESTION_ITEMS,
+  STUDENT_EXAM_AUTH,
+  SUBMIT_STUDENT_EXAM,
+} from "@/graphql/typeDefs/mutations";
+import {
+  GET_EXAM_BY_ID,
+  GET_EXAM_QUESTION_ITEMS,
 } from "@/graphql/typeDefs/queries";
 import {
-	discardStudentExamTokenIfNotForExam,
-	readStudentExamClassId,
-	readStudentExamToken,
-	writeStudentExamToken,
+  discardStudentExamTokenIfNotForExam,
+  readStudentExamClassId,
+  readStudentExamToken,
+  writeStudentExamToken,
 } from "../_lib/exam-session-storage";
-import {
-  EXAM_MONITORING_STORAGE_KEY,
-  createExamMonitoringScopeKey,
-  readExamMonitoringStateMap,
-  type ExamMonitoringScopeStateMap,
-} from "../../lib/exam-monitoring-store";
-import { SAVED_EXAMS_STORAGE_KEY } from "../../teacher/exam/_lib/constants";
-import type { SavedExamRecord } from "../../teacher/exam/_lib/types";
-import { normalizeSavedExamRecord } from "../../teacher/exam/_lib/utils";
-import { CompletedScreen } from "../components/completed-screen";
-import { EntryStep } from "../components/entry-step";
-import { ExamScreen } from "../components/exam-screen";
-import { FinishConfirmationDialog } from "../components/finish-confirmation-dialog";
 import {
   buildExamDataFromApi,
   type ApiTestRow,
 } from "../_lib/exam-data-from-api";
-import { examData } from "../mock-data";
-import type { ExamData, ExamPhase, OptionId } from "../types";
+import { CompletedScreen } from "../components/completed-screen";
+import { EntryStep } from "../components/entry-step";
+import { ExamScreen } from "../components/exam-screen";
+import { FinishConfirmationDialog } from "../components/finish-confirmation-dialog";
+import type { ExamPhase, OptionId } from "../types";
 import { formatTimer } from "../utils";
+
+const DEFAULT_DURATION_MINUTES = 40;
 
 type GqlExamRow = {
   id: string;
@@ -44,6 +39,8 @@ type GqlExamRow = {
   duration: string | null;
   testIds: string[] | null;
   openExerciseIds: string[] | null;
+  allowedClassIds: string[] | null;
+  monitoringStartedAt: string | null;
 };
 
 type StudentExamAuthData = {
@@ -53,11 +50,26 @@ type StudentExamAuthData = {
   };
 };
 
-function formatStudentExamAuthError(error: unknown): string {
+type SubmitStudentExamData = {
+  submitStudentExam: {
+    id: string;
+    status: string | null;
+    testScore: number | null;
+    totalScore: number | null;
+    actualScore: number | null;
+  };
+};
+
+function formatGraphQLError(error: unknown): string {
   const raw =
     error && typeof error === "object" && "message" in error
       ? String((error as { message: string }).message)
-      : "Нэвтрэхэд алдаа гарлаа.";
+      : "Алдаа гарлаа.";
+  return raw.trim() || raw;
+}
+
+function formatStudentExamAuthError(error: unknown): string {
+  const raw = formatGraphQLError(error);
   return (
     raw
       .replace(/^Failed to student exam auth:\s*Error:\s*/i, "")
@@ -73,35 +85,31 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   const [examSessionToken, setExamSessionToken] = useState<string | null>(() =>
     readStudentExamToken(routeExamId),
   );
-  const [authenticatedClassId, setAuthenticatedClassId] = useState<
-    string | null
-  >(() => readStudentExamClassId(routeExamId));
   const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
-  const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
-  const [monitoringStateMap, setMonitoringStateMap] =
-    useState<ExamMonitoringScopeStateMap>({});
-  const [currentTime, setCurrentTime] = useState(() => Date.now());
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Partial<Record<number, OptionId>>>({});
   const [flagged, setFlagged] = useState<Partial<Record<number, boolean>>>({});
   const [manualRemainingSeconds, setManualRemainingSeconds] = useState(
-    examData.durationMinutes * 60,
+    DEFAULT_DURATION_MINUTES * 60,
   );
   const [showFinishDialog, setShowFinishDialog] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [entryProceedError, setEntryProceedError] = useState<string | null>(
     null,
   );
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const studentClassIdForGate =
+    examSessionToken != null ? readStudentExamClassId(routeExamId) : null;
 
   const [studentExamAuthMutation, { loading: authLoading }] =
     useMutation<StudentExamAuthData>(STUDENT_EXAM_AUTH);
 
-  const linkedSavedExam = useMemo(
-    () => savedExams.find((item) => item.id === routeExamId) ?? null,
-    [savedExams, routeExamId],
-  );
-  const isLocalSavedExam = Boolean(linkedSavedExam);
+  const [submitExamMutation, { loading: submitLoading }] =
+    useMutation<SubmitStudentExamData>(SUBMIT_STUDENT_EXAM);
+
+  const [examPollIntervalMs, setExamPollIntervalMs] = useState(0);
 
   const {
     data: examQueryData,
@@ -109,10 +117,24 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     error: examError,
   } = useQuery<{ getExamById: GqlExamRow | null }>(GET_EXAM_BY_ID, {
     variables: { examId: routeExamId },
-    skip: !routeExamId || !examSessionToken || isLocalSavedExam,
+    skip: !routeExamId || !examSessionToken,
+    pollInterval: examPollIntervalMs,
   });
 
   const examRow = examQueryData?.getExamById ?? null;
+
+  const waitingForTeacherStart = useMemo(() => {
+    if (!examSessionToken || !examRow) return false;
+    const cid = studentClassIdForGate?.trim();
+    if (!cid) return false;
+    const allowed = examRow.allowedClassIds ?? [];
+    if (!allowed.includes(cid)) return false;
+    return !examRow.monitoringStartedAt?.trim();
+  }, [examSessionToken, examRow, studentClassIdForGate]);
+
+  useEffect(() => {
+    setExamPollIntervalMs(waitingForTeacherStart ? 2000 : 0);
+  }, [waitingForTeacherStart]);
   const testIds = examRow?.testIds ?? [];
   const openExerciseIds = examRow?.openExerciseIds ?? [];
 
@@ -121,7 +143,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     getOpenExerciesByIds: unknown[];
   }>(GET_EXAM_QUESTION_ITEMS, {
     variables: { testIds, openExerciseIds },
-    skip: !routeExamId || !examSessionToken || !examRow || isLocalSavedExam,
+    skip: !routeExamId || !examSessionToken || !examRow,
   });
 
   const testsById = useMemo(() => {
@@ -142,187 +164,86 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     );
   }, [examRow, itemsData, testsById]);
 
-  const teacherMonitoringExam = useMemo(
-    () =>
-      linkedSavedExam && (linkedSavedExam.sentClassIds ?? []).length > 0
-        ? linkedSavedExam
-        : null,
-    [linkedSavedExam],
-  );
+  const resolvedExamData = apiExamData;
 
-  const resolvedExamData = useMemo<ExamData>(() => {
-    if (apiExamData && apiExamData.questions.length > 0) return apiExamData;
-    if (linkedSavedExam) return buildDemoExamData(linkedSavedExam);
-    return examData;
-  }, [apiExamData, linkedSavedExam]);
-
-  const totalQuestions = resolvedExamData.questions.length;
-  const currentQuestion = resolvedExamData.questions[currentQuestionIndex];
+  const totalQuestions = resolvedExamData?.questions.length ?? 0;
+  const currentQuestion = resolvedExamData?.questions[currentQuestionIndex];
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
-  const requiresDeliveredClass = Boolean(
-    linkedSavedExam && (linkedSavedExam.sentClassIds ?? []).length > 0,
-  );
 
-  const selectedClassId = authenticatedClassId;
-
-  const isSelectedClassDelivered = Boolean(
-    !linkedSavedExam ||
-    !requiresDeliveredClass ||
-    (selectedClassId != null &&
-      (linkedSavedExam.sentClassIds ?? []).includes(selectedClassId)),
-  );
-
-  const monitoringScopeKey =
-    teacherMonitoringExam && selectedClassId
-      ? createExamMonitoringScopeKey(teacherMonitoringExam.id, selectedClassId)
-      : null;
-  const monitoringScopeState = monitoringScopeKey
-    ? (monitoringStateMap[monitoringScopeKey] ?? null)
-    : null;
-  const sharedStartedAt = monitoringScopeState?.startedAt ?? null;
-  const sharedRemainingSeconds = useMemo(() => {
-    const totalDurationSeconds = resolvedExamData.durationMinutes * 60;
-    if (!sharedStartedAt) return totalDurationSeconds;
-
-    const elapsedSeconds = Math.floor((currentTime - sharedStartedAt) / 1000);
-    return Math.max(0, totalDurationSeconds - elapsedSeconds);
-  }, [currentTime, resolvedExamData.durationMinutes, sharedStartedAt]);
-  const usesTeacherControlledStart = Boolean(teacherMonitoringExam);
-  const shouldWaitForStart =
-    usesTeacherControlledStart && monitoringScopeState?.isStarted !== true;
-  const remainingSeconds = usesTeacherControlledStart
-    ? sharedRemainingSeconds
-    : manualRemainingSeconds;
+  const remainingSeconds = manualRemainingSeconds;
   const timerText = formatTimer(remainingSeconds);
 
   useEffect(() => {
     discardStudentExamTokenIfNotForExam(routeExamId);
     setExamSessionToken(readStudentExamToken(routeExamId));
-    setAuthenticatedClassId(readStudentExamClassId(routeExamId));
   }, [routeExamId]);
 
   useEffect(() => {
-    if (classCode.trim().length > 0) return;
-    const firstDeliveredLabel = Object.values(
-      linkedSavedExam?.sentClassLabels ?? {},
-    )[0];
-    if (firstDeliveredLabel) {
-      setClassCode(firstDeliveredLabel);
-    }
-  }, [classCode, linkedSavedExam]);
-
-  useEffect(() => {
     if (phase !== "entry" || !examSessionToken || authLoading) return;
-    if (!isLocalSavedExam && (examLoading || itemsLoading || !examRow || !apiExamData)) {
+    if (examLoading || itemsLoading || !examRow || !apiExamData) {
       return;
     }
 
-    const examDataToUse = isLocalSavedExam ? resolvedExamData : apiExamData;
-    if (!examDataToUse) return;
-
-    if (examDataToUse.questions.length === 0) {
+    if (apiExamData.questions.length === 0) {
       setEntryProceedError(
         "Энэ шалгалтад олон сонголттой хангалттай асуулт олдсонгүй.",
       );
       return;
     }
 
-    if (usesTeacherControlledStart) {
-      if (!selectedClassId) {
-        setEntryProceedError(
-          "Сурагчийн анги тодорхойлогдсонгүй. Дахин сурагчийн кодоор нэвтэрнэ үү.",
-        );
-        return;
-      }
-      if (!isSelectedClassDelivered) {
-        setEntryProceedError(
-          "Энэ төхөөрөмж дээр илгээсэн ангийн жагсаалт таарахгүй байна.",
-        );
-        return;
-      }
-      const totalDurationSeconds = examDataToUse.durationMinutes * 60;
-      if (sharedStartedAt != null) {
-        const elapsedSeconds = Math.floor(
-          (Date.now() - sharedStartedAt) / 1000,
-        );
-        const rs = Math.max(0, totalDurationSeconds - elapsedSeconds);
-        if (rs <= 0) {
-          setEntryProceedError("Шалгалтын хугацаа дууссан байна.");
-          return;
-        }
-      }
-    } else {
-      setManualRemainingSeconds(examDataToUse.durationMinutes * 60);
+    if (waitingForTeacherStart) {
+      return;
     }
 
+    const rawStart = examRow.monitoringStartedAt?.trim();
+    const startedMs = rawStart ? Date.parse(rawStart) : Number.NaN;
+    const totalSec = apiExamData.durationMinutes * 60;
+    if (Number.isFinite(startedMs)) {
+      const elapsed = Math.floor((Date.now() - startedMs) / 1000);
+      setManualRemainingSeconds(Math.max(0, totalSec - elapsed));
+    } else {
+      setManualRemainingSeconds(totalSec);
+    }
     setEntryProceedError(null);
     setPhase("exam");
   }, [
     phase,
     examSessionToken,
     authLoading,
-    isLocalSavedExam,
     examLoading,
     itemsLoading,
     examRow,
     apiExamData,
-    resolvedExamData,
-    usesTeacherControlledStart,
-    selectedClassId,
-    isSelectedClassDelivered,
-    sharedStartedAt,
+    waitingForTeacherStart,
   ]);
 
   const hasTimedOut = phase === "exam" && remainingSeconds <= 0;
 
+  const serverExamStartedAtMs = useMemo(() => {
+    const raw = examRow?.monitoringStartedAt?.trim();
+    if (!raw) return null;
+    const t = Date.parse(raw);
+    return Number.isFinite(t) ? t : null;
+  }, [examRow?.monitoringStartedAt]);
+
   useEffect(() => {
-    const syncSavedExams = () => {
-      try {
-        const raw = window.localStorage.getItem(SAVED_EXAMS_STORAGE_KEY);
-        setSavedExams(
-          raw
-            ? (JSON.parse(raw) as SavedExamRecord[]).map(
-                normalizeSavedExamRecord,
-              )
-            : [],
+    if (phase !== "exam" || isFinished || !resolvedExamData) return;
+
+    const totalSec = resolvedExamData.durationMinutes * 60;
+
+    if (serverExamStartedAtMs != null) {
+      const tick = () => {
+        const elapsed = Math.floor(
+          (Date.now() - serverExamStartedAtMs) / 1000,
         );
-      } catch {
-        setSavedExams([]);
-      }
-    };
-
-    const syncMonitoringState = () => {
-      setMonitoringStateMap(readExamMonitoringStateMap());
-    };
-
-    syncSavedExams();
-    syncMonitoringState();
-
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === SAVED_EXAMS_STORAGE_KEY) syncSavedExams();
-      if (event.key === EXAM_MONITORING_STORAGE_KEY) syncMonitoringState();
-    };
-
-    window.addEventListener("storage", onStorage);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!sharedStartedAt || remainingSeconds <= 0) return;
-
-    const timer = window.setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, [remainingSeconds, sharedStartedAt]);
-
-  useEffect(() => {
-    if (usesTeacherControlledStart || phase !== "exam" || isFinished) return;
+        setManualRemainingSeconds(Math.max(0, totalSec - elapsed));
+      };
+      tick();
+      const timer = window.setInterval(tick, 1000);
+      return () => {
+        window.clearInterval(timer);
+      };
+    }
 
     const timer = window.setInterval(() => {
       setManualRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
@@ -331,7 +252,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     return () => {
       window.clearInterval(timer);
     };
-  }, [isFinished, phase, usesTeacherControlledStart]);
+  }, [isFinished, phase, resolvedExamData, serverExamStartedAtMs]);
 
   const handleSelectOption = (optionId: OptionId) => {
     if (!currentQuestion) return;
@@ -359,13 +280,6 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
 
     setEntryProceedError(null);
 
-    if (isLocalSavedExam) {
-      const localToken = `local-${routeExamId}-${trimmedStudentCode}`;
-      writeStudentExamToken(routeExamId, localToken);
-      setExamSessionToken(localToken);
-      return;
-    }
-
     try {
       const result = await studentExamAuthMutation({
         variables: {
@@ -382,10 +296,53 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         return;
       }
       writeStudentExamToken(routeExamId, token, classId);
-      setAuthenticatedClassId(classId);
       setExamSessionToken(token);
     } catch (error: unknown) {
       setEntryProceedError(formatStudentExamAuthError(error));
+    }
+  };
+
+  const handleConfirmFinish = async () => {
+    if (!resolvedExamData || resolvedExamData.questions.length === 0) return;
+
+    setSubmitError(null);
+
+    const missing = resolvedExamData.questions.filter(
+      (q) => answers[q.id] == null,
+    );
+    if (missing.length > 0) {
+      setSubmitError("Бүх асуултад хариулна уу.");
+      return;
+    }
+
+    const testResponses = resolvedExamData.questions
+      .map((q) => {
+        const testId = q.sourceTestId?.trim();
+        if (!testId) return null;
+        const selectedOption = answers[q.id];
+        if (!selectedOption) return null;
+        return { testId, selectedOption };
+      })
+      .filter((x): x is { testId: string; selectedOption: OptionId } => x != null);
+
+    if (testResponses.length !== resolvedExamData.questions.length) {
+      setSubmitError("Асуултын ID тохируулаагүй байна. Дахин ачаална уу.");
+      return;
+    }
+
+    try {
+      await submitExamMutation({
+        variables: {
+          input: {
+            examId: routeExamId,
+            testResponses,
+          },
+        },
+      });
+      setShowFinishDialog(false);
+      setIsFinished(true);
+    } catch (error: unknown) {
+      setSubmitError(formatGraphQLError(error));
     }
   };
 
@@ -397,6 +354,12 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         ? (examError?.message ??
           (!examLoading && !examRow ? "Шалгалт олдсонгүй." : null))
         : null;
+
+    const showTeacherWait =
+      examSessionToken != null &&
+      !examLoading &&
+      examRow != null &&
+      waitingForTeacherStart;
 
     return (
       <div className="relative">
@@ -412,6 +375,18 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
             {loadError}
           </div>
         ) : null}
+        {showTeacherWait ? (
+          <div className="mx-auto max-w-lg px-4 py-10 text-center text-sm text-[#365077]">
+            <p className="text-base font-medium text-[#1f2a44]">
+              Багш шалгалтыг эхлүүлэхийг хүлээнэ үү.
+            </p>
+            <p className="mt-2 text-[#5c6786]">
+              Хяналтын дэлгэц дээр «Эхлүүлэх» товч дарагдмагц автоматаар
+              нээгдэнэ.
+            </p>
+          </div>
+        ) : null}
+        {!showTeacherWait ? (
         <EntryStep
           classCode={classCode}
           hasAcceptedRules={hasAcceptedRules}
@@ -436,11 +411,12 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
             void handleStartExam();
           }}
         />
+        ) : null}
       </div>
     );
   }
 
-  if (!currentQuestion) {
+  if (!resolvedExamData || !currentQuestion) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#edf6ff] px-4 text-[#1f2a44]">
         <p className="text-sm">Асуулт олдсонгүй.</p>
@@ -468,19 +444,28 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         }
         onToggleFlag={handleToggleFlag}
         onJump={(questionId) => setCurrentQuestionIndex(questionId - 1)}
-        onFinish={() => setShowFinishDialog(true)}
+        onFinish={() => {
+          setSubmitError(null);
+          setShowFinishDialog(true);
+        }}
         isFinishDialogOpen={showFinishDialog}
-        showWaitForStart={shouldWaitForStart}
+        showWaitForStart={false}
       />
 
       <FinishConfirmationDialog
         isOpen={showFinishDialog}
         answeredCount={answeredCount}
         total={totalQuestions}
-        onCancel={() => setShowFinishDialog(false)}
+        isSubmitting={submitLoading}
+        submitError={submitError}
+        onCancel={() => {
+          if (!submitLoading) {
+            setShowFinishDialog(false);
+            setSubmitError(null);
+          }
+        }}
         onConfirm={() => {
-          setShowFinishDialog(false);
-          setIsFinished(true);
+          void handleConfirmFinish();
         }}
       />
     </>
@@ -501,24 +486,4 @@ export default function StudentExamByIdPage() {
   }
 
   return <StudentExamByIdInner key={routeExamId} routeExamId={routeExamId} />;
-}
-
-function buildDemoExamData(savedExam: SavedExamRecord): ExamData {
-  const questionCount = Math.max(savedExam.questionCount, 1);
-  const questions = Array.from({ length: questionCount }, (_, index) => {
-    const baseQuestion = examData.questions[index % examData.questions.length];
-
-    return {
-      ...baseQuestion,
-      id: index + 1,
-      questionNumber: index + 1,
-    };
-  });
-
-  return {
-    ...examData,
-    title: savedExam.title,
-    durationMinutes: savedExam.durationInMinutes,
-    questions,
-  };
 }

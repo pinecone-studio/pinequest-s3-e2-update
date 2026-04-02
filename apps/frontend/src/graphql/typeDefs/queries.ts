@@ -184,6 +184,7 @@ export const GET_EXAM_BY_ID = gql`
       schoolId
       teacherId
       allowedClassIds
+      monitoringStartedAt
       createdAt
       updatedAt
     }

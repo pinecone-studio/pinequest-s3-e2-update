@@ -10,6 +10,7 @@ export const studentExamResultTypeDefs = /* GraphQL */ `
     openExerciseScore: Int
     totalScore: Int
     actualScore: Int
+    answersJson: String
     examCheatLogs: [ExamCheatLog]
     createdAt: String!
     updatedAt: String!

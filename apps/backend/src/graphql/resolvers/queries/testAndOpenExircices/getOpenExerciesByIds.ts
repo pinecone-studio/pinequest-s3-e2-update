@@ -1,5 +1,6 @@
 import { inArray } from "drizzle-orm";
 import { openExerciesTable } from "../../../../db/schema";
+import { assertClerkCanAccessQuestionContent } from "../../../../lib/clerk-question-access";
 import {
   assertRequestIdsAllowed,
   loadExamContentIds,
@@ -12,19 +13,31 @@ export const getOpenExerciesByIds = async (
   args: { ids: string[] },
   ctx: GraphQLUserContext,
 ) => {
-  const session = requireExamSession(ctx);
   const ids =
     args.ids?.filter((x) => typeof x === "string" && x.length > 0) ?? [];
   if (ids.length === 0) return [];
 
-  const { openExerciseIds } = await loadExamContentIds(ctx, session.examId);
-  assertRequestIdsAllowed(ids, openExerciseIds, "getOpenExerciesByIds");
+  let stripSecrets = false;
+
+  if (ctx.examSession) {
+    const session = requireExamSession(ctx);
+    const { openExerciseIds } = await loadExamContentIds(ctx, session.examId);
+    assertRequestIdsAllowed(ids, openExerciseIds, "getOpenExerciesByIds");
+    stripSecrets = true;
+  }
 
   try {
     const rows = await ctx.db
       .select()
       .from(openExerciesTable)
       .where(inArray(openExerciesTable.id, ids));
+
+    if (!ctx.examSession) {
+      await assertClerkCanAccessQuestionContent(
+        ctx,
+        rows.map((r) => r.teacherId),
+      );
+    }
 
     const byId = new Map(rows.map((r) => [r.id, r]));
     return ids
@@ -37,7 +50,7 @@ export const getOpenExerciesByIds = async (
         topic: row.topic ?? null,
         title: row.title ?? null,
         question: row.question ?? null,
-        answer: row.answer ?? null,
+        answer: stripSecrets ? null : row.answer ?? null,
         imageUrl: row.imageUrl ?? null,
         difficulty: row.difficulty ?? null,
         score: row.score,
@@ -48,6 +61,7 @@ export const getOpenExerciesByIds = async (
       }));
   } catch (err) {
     console.error("Failed to get open exercises by ids. Error:", err);
+    if (err instanceof Error && err.message) throw err;
     throw new Error("Failed to get open exercises.");
   }
 };

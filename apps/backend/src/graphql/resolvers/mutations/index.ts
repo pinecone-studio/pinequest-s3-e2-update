@@ -1,6 +1,8 @@
 import { addExamAllowedClasses } from "./exam/addExamAllowedClasses";
+import { startExamMonitoringForClass } from "./exam/startExamMonitoringForClass";
 import { createExam } from "./exam/createExam";
 import { studentExamAuth } from "./exam/studentExamAuth";
+import { submitStudentExam } from "./exam/submitStudentExam";
 import { addStudent } from "./student/addStudent";
 import { createClass } from "./student/createClass";
 import { deleteClass } from "./schoolAdmin/deleteClass";
@@ -26,7 +28,9 @@ export const mutationResolvers = {
   addTeacher,
   linkTeacherClerk,
   studentExamAuth,
+  submitStudentExam,
   addExamAllowedClasses,
+  startExamMonitoringForClass,
   updateClass,
   deleteClass,
   updateStudent,

@@ -50,9 +50,24 @@ export const mutationTypeDefs = /* GraphQL */ `
     studentCode: String!
   }
 
+  input StudentExamTestResponseInput {
+    testId: String!
+    selectedOption: String!
+  }
+
+  input SubmitStudentExamInput {
+    examId: String!
+    testResponses: [StudentExamTestResponseInput!]!
+  }
+
   type StudentExamAuthPayload {
     token: String!
     student: Student!
+  }
+
+  type StartExamMonitoringForClassPayload {
+    ok: Boolean!
+    startedAt: String!
   }
 
   input AddTeacherInput {
@@ -133,8 +148,18 @@ export const mutationTypeDefs = /* GraphQL */ `
     """Bearer session JWT шаардлагатай. И-мэйлээр урьсан teacher мөрийг одоогийн Clerk user-т холбоно."""
     linkTeacherClerk: Teacher!
     studentExamAuth(input: StudentExamAuthInput!): StudentExamAuthPayload!
+    """Шалгалтын token (x-exam-token) шаардлагатай. MCQ-г серверт онооно."""
+    submitStudentExam(input: SubmitStudentExamInput!): StudentExamResult!
     """Bearer Clerk session — зөвхөн энэ шалгалтын teacherId багш дуудаж болно."""
     addExamAllowedClasses(examId: String!, classIds: [String!]!): Boolean!
+    """
+    Илгээсэн ангийн хувьд хяналтын эхлэлтийг D1-д тэмдэглэнэ.
+    Зөвхөн шалгалтын эзэн багш, мөн (examId, classId) exam_allowed_class-д байвал.
+    """
+    startExamMonitoringForClass(
+      examId: String!
+      classId: String!
+    ): StartExamMonitoringForClassPayload!
     """Сургуулийн админ (Clerk JWT)."""
     updateClass(input: UpdateClassInput!): Class!
     deleteClass(id: String!): Boolean!

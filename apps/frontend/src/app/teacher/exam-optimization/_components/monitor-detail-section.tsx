@@ -11,28 +11,33 @@ export function MonitorDetailSection({
   activeClassLabel,
   activeExam,
   activeStudents,
+  hasAccessForSelectedClass,
   isMonitoring,
   monitorTotalStudents,
   remainingDurationLabel,
   onBackToList,
   onSelectClass,
   onStartMonitoring,
+  startMonitoringLoading = false,
 }: {
   activeClassId: string | null;
   activeClassLabel: string | null;
   activeExam: MonitorExamCardItem | null;
   activeStudents: ActiveStudentEntry[];
+  hasAccessForSelectedClass: boolean;
   isMonitoring: boolean;
   monitorTotalStudents: number;
   remainingDurationLabel: string;
   onBackToList: () => void;
   onSelectClass: (classId: string) => void;
   onStartMonitoring: () => void;
+  startMonitoringLoading?: boolean;
 }) {
   const isStarted = Boolean(activeExam) && isMonitoring;
   const isTimeUp = remainingDurationLabel === "00:00";
   const isRunning = isStarted && !isTimeUp;
-  const canManageExam = (activeExam?.classOptions?.length ?? 0) > 0;
+  const hasClassTabs = (activeExam?.classOptions?.length ?? 0) > 0;
+  const canStartSession = hasClassTabs && hasAccessForSelectedClass;
   const startActionLabel = "Эхлүүлэх";
   const visibleStudents = activeStudents;
   /** Хяналт эхлээгүй үед төлөв харуулахгүй; эхэлсний дараа бүгдийг идэвхтэй гэж үзнэ (telemetry ирэх хүртэл). */
@@ -171,22 +176,31 @@ export function MonitorDetailSection({
                   </span>
                 </p>
               </div>
-              {canManageExam ? (
+              {canStartSession ? (
                 <button
                   type="button"
-                  disabled={isRunning || isTimeUp}
-                  onClick={onStartMonitoring}
+                  disabled={isRunning || isTimeUp || startMonitoringLoading}
+                  onClick={() => {
+                    void onStartMonitoring();
+                  }}
                   className="rounded-xl bg-[#39a8ff] px-6 py-3 text-[25px] font-bold text-white transition hover:bg-[#2198f5] disabled:cursor-not-allowed disabled:bg-[#9ecff8]"
                 >
-                  {isTimeUp
-                    ? "Дууссан"
-                    : isRunning
-                      ? "Явагдаж байна"
-                      : startActionLabel}
+                  {startMonitoringLoading
+                    ? "Илгээж байна…"
+                    : isTimeUp
+                      ? "Дууссан"
+                      : isRunning
+                        ? "Явагдаж байна"
+                        : startActionLabel}
                 </button>
-              ) : (
+              ) : !hasClassTabs ? (
                 <div className="rounded-xl border border-[#d9dee8] bg-white px-6 py-3 text-center text-3 text-[#66789f]">
                   Эхлүүлэх боломжгүй
+                </div>
+              ) : (
+                <div className="rounded-xl border border-[#e8d4a8] bg-[#fffbf0] px-6 py-3 text-center text-3 text-[#5c4a26]">
+                  Сонгосон ангид эрх нээгдээгүй. Жагсаалт руу буцаад «Эрх нээх»
+                  дарна уу.
                 </div>
               )}
             </div>

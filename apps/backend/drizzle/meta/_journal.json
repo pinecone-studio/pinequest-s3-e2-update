@@ -85,6 +85,20 @@
       "when": 1775111282662,
       "tag": "0011_ancient_the_liberteens",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1775300000000,
+      "tag": "0013_student_exam_result_answers_json",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1775400000000,
+      "tag": "0014_exam_allowed_class_session_started",
+      "breakpoints": true
     }
   ]
 }

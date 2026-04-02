@@ -20,6 +20,11 @@ export const examTypeDefs = /* GraphQL */ `
     teacherId: String
     """Шалгалтанд эрх нээгдсэн ангийн ID жагсаалт."""
     allowedClassIds: [String!]!
+    """
+    x-exam-token session үед: тухайн сурагчийн ангийн хувьд багш серверээс
+    хяналтыг эхлүүлсэн цаг (ISO). Бусад тохиолдолд null.
+    """
+    monitoringStartedAt: String
     createdAt: String!
     updatedAt: String!
   }

@@ -1,28 +1,33 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lock } from "lucide-react";
 import type { MonitorExamCardItem } from "../_lib/monitoring";
 
 export function MonitorGroupSelectionSection({
   exam,
+  grantingClassId,
   onBack,
+  onGrantAccess,
   onOpenGroup,
 }: {
   exam: MonitorExamCardItem;
+  grantingClassId: string | null;
   onBack: () => void;
+  onGrantAccess: (classId: string) => void;
   onOpenGroup: (classId: string) => void;
 }) {
+  const allowedSet = new Set(exam.allowedClassIds);
+
   return (
     <section className="space-y-6">
       <div className="rounded-[12px] border border-[#d4d4d8] bg-[#FAFAFA] px-8 py-8 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-[20px] font-bold leading-[1.2] text-[#1f2a44]">
-              Бүлэг сонгох
+              Анги сонгох
             </h2>
             <p className="mt-1 text-3 text-[#737373]">
-              {exam.title} шалгалтын хяналтад орохын өмнө шалгалт авч буй бүлгээ
-              сонгоно уу.
+              Эхлээд ангид эрх нээнэ, дараа нь тухайн ангийн хяналт руу орно.
             </p>
           </div>
 
@@ -49,31 +54,70 @@ export function MonitorGroupSelectionSection({
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {exam.classOptions.map((group) => (
-            <button
-              className="w-full rounded-[20px] border border-[#d9dee8] bg-white p-5 text-left shadow-sm transition hover:border-[#aac8f8] hover:bg-[#f8fbff]"
-              key={group.id}
-              onClick={() => onOpenGroup(group.id)}
-              type="button"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[24px] font-semibold text-[#1f2a44]">
-                    {group.label}
-                  </p>
-                  <p className="mt-2 text-[14px] text-[#66789f]">
-                    Шалгалт авч буй бүлэг
-                  </p>
-                  <p className="mt-3 text-[14px] text-[#737373]">
-                    Дараад одоогийн хяналтын дэлгэрэнгүй хэсэг рүү орно.
-                  </p>
+          {exam.classOptions.length === 0 ? (
+            <div className="col-span-full rounded-[16px] border border-dashed border-[#c5d4e8] bg-[#f4f8ff] px-5 py-8 text-center text-sm text-[#5c6786]">
+              Танд хамаарах анги бүртгэгдээгүй эсвэл өгөгдөл ачааллаагүй байна.
+              Сургуулийн админтай холбогдоно уу.
+            </div>
+          ) : (
+            exam.classOptions.map((group) => {
+              const allowed = allowedSet.has(group.id);
+              const granting = grantingClassId === group.id;
+
+              return (
+                <div
+                  className="rounded-[20px] border border-[#d9dee8] bg-white p-5 shadow-sm"
+                  key={group.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[24px] font-semibold text-[#1f2a44]">
+                        {group.label}
+                      </p>
+                      <p className="mt-2 text-[14px] text-[#66789f]">
+                        {allowed
+                          ? "Эрх нээгдсэн — хяналт руу орж болно."
+                          : "Эрх хараахан нээгдээгүй — эхлээд «Эрх нээх» дарна."}
+                      </p>
+                    </div>
+                    {!allowed ? (
+                      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#e8d4a8] bg-[#fff8e7]">
+                        <Lock className="h-4 w-4 text-[#8a6d3b]" />
+                      </span>
+                    ) : (
+                      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#cfe8c9] bg-[#f4fff0]">
+                        <ArrowRight className="h-4 w-4 text-[#357a3d]" />
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {allowed ? (
+                      <button
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#39a8ff] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2198f5]"
+                        onClick={() => onOpenGroup(group.id)}
+                        type="button"
+                      >
+                        Хяналт руу орох
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    ) : (
+                      <button
+                        className="inline-flex flex-1 items-center justify-center rounded-xl border border-[#aac8f8] bg-white px-4 py-2.5 text-sm font-semibold text-[#1f6feb] transition hover:bg-[#eef6ff] disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={Boolean(grantingClassId)}
+                        onClick={() => {
+                          void onGrantAccess(group.id);
+                        }}
+                        type="button"
+                      >
+                        {granting ? "Нээгдэж байна…" : "Эрх нээх"}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#e1e7f0] bg-white">
-                  <ArrowRight className="h-5 w-5 text-[#a0aabc]" />
-                </span>
-              </div>
-            </button>
-          ))}
+              );
+            })
+          )}
         </div>
       </div>
     </section>
