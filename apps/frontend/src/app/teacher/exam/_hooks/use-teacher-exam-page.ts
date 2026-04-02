@@ -107,34 +107,43 @@ type ClassesByTeacherResponse = {
 export function useTeacherExamPage() {
   const router = useRouter();
   const clerkUser = useTeacher();
-  const { teacher: dbTeacher } = useTeacherDb();
+  const { teacher: dbTeacher, loading: teacherDbLoading } = useTeacherDb();
   const teacherId = dbTeacher?.id ?? "";
   const schoolId = dbTeacher?.schoolId ?? "";
 
-  const { data: testsData } = useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
-  const { data: subjectsData } =
+  const { data: testsData, loading: testsLoading } =
+    useQuery<GetAllTestsResponse>(GET_ALL_TESTS_QUERY);
+  const { data: subjectsData, loading: subjectsLoading } =
     useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
 
-  const { data: classesData } = useQuery<ClassesByTeacherResponse>(
-    GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
-    {
-      variables: { input: { teacherId, schoolId } },
-      skip: !teacherId || !schoolId,
-      fetchPolicy: "cache-and-network",
-    },
-  );
+  const { data: classesData, loading: classesLoading } =
+    useQuery<ClassesByTeacherResponse>(
+      GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
+      {
+        variables: { input: { teacherId, schoolId } },
+        skip: !teacherId || !schoolId,
+        fetchPolicy: "cache-and-network",
+      },
+    );
 
   const teacherClasses = useMemo(
     () => mapGqlTeacherClasses(classesData?.getClassByTeacherAndSchoolId ?? []),
     [classesData?.getClassByTeacherAndSchoolId],
   );
 
-  const { data: examsData, refetch: refetchExams } =
+  const { data: examsData, loading: examsLoading, refetch: refetchExams } =
     useQuery<GetExamBySchoolIdResponse>(GET_EXAM_BY_SCHOOL_ID, {
       variables: { schoolId },
       skip: !schoolId,
       fetchPolicy: "cache-and-network",
     });
+
+  const isPageLoading =
+    teacherDbLoading ||
+    testsLoading ||
+    subjectsLoading ||
+    (!!schoolId && examsLoading) ||
+    (!!teacherId && !!schoolId && classesLoading);
 
   const [createExam] = useMutation<CreateExamResponse>(CREATE_EXAM);
   type AddExamAllowedClassesData = { addExamAllowedClasses: boolean };
@@ -747,6 +756,7 @@ export function useTeacherExamPage() {
     deleteSavedExam,
     exam,
     examQuestionDetails,
+    isPageLoading,
     examQuestions,
     filteredQuestions,
     gradeOptions: EXAM_GRADE_OPTIONS,

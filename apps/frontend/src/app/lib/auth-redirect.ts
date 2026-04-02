@@ -71,6 +71,36 @@ export function oauthPostAuthRedirectUrl(queryIntent: string): string {
   return resolvePostAuthDashboard(queryIntent, undefined);
 }
 
+/**
+ * Client: одоогийн URL дээрх `redirect_url`-ийг эхлээд авна — verify алхмууд эсвэл
+ * hydration-ийн дараа `useSearchParams` хоцорч `/` болсон тохиолдолд зориулсан.
+ */
+export function mergeAuthIntentFromWindow(searchParamsIntent: string): string {
+  if (typeof window === "undefined") return searchParamsIntent;
+  const live = safeAuthRedirect(
+    new URLSearchParams(window.location.search).get(LOGIN_INTENT_QUERY_KEY),
+  );
+  if (live === "/teacher" || live === "/school") return live;
+  return searchParamsIntent;
+}
+
+/**
+ * И-мэйл баталгаажсаны дараах шилжилт: сургуулийн маягт → `/school`, бусад → query + role.
+ */
+export function signUpCompleteRedirectPath(
+  queryIntent: string,
+  options: {
+    isOrganizationSignup: boolean;
+    hasOrganizationProfileFields: boolean;
+    clerkRole: unknown;
+  },
+): string {
+  if (options.isOrganizationSignup || options.hasOrganizationProfileFields) {
+    return "/school";
+  }
+  return resolvePostAuthDashboard(queryIntent, options.clerkRole);
+}
+
 function intentForAuthHref(redirectTarget: string): string {
   return safeAuthRedirect(redirectTarget);
 }

@@ -15,12 +15,18 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
 
   useEffect(() => {
     let cancelled = false;
-    const start = performance.now();
+    let start = 0;
     const tick = (now: number) => {
       if (cancelled) return;
+      if (start === 0) {
+        start = now;
+        setProgress(0);
+        requestAnimationFrame(tick);
+        return;
+      }
       const t = (now - start) / 1000;
-      const asymptote = 78 * (1 - Math.exp(-t / 22));
-      setProgress(Math.min(81, asymptote + Math.sin(now / 2800) * 1.3));
+      const asymptote = 84 * (1 - Math.exp(-t / 9.5));
+      setProgress(Math.min(88, asymptote + Math.sin(now / 1600) * 1.8));
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -40,17 +46,15 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_40%,rgba(254,243,199,0.55)_0%,transparent_55%),linear-gradient(165deg,rgba(240,249,255,0.9)_0%,var(--background)_42%,rgba(255,251,235,0.85)_100%)]"
         aria-hidden
       />
-      <div className="relative z-[1] w-full max-w-md px-6">
-        <div className="rounded-[2rem] border border-amber-200/50 bg-white/75 px-8 py-10 shadow-[0_20px_50px_-20px_rgba(217,119,6,0.25),0_0_0_1px_rgba(255,255,255,0.8)_inset] backdrop-blur-md sm:px-10 sm:py-12">
+      <div className="relative z-[1] flex w-full justify-center px-6">
+        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-amber-200/50 bg-white/75 px-6 py-12 shadow-[0_20px_50px_-20px_rgba(217,119,6,0.25),0_0_0_1px_rgba(255,255,255,0.8)_inset] backdrop-blur-md">
           <HoneyCircularLoader
             progress={progress}
             backgroundImage="/bee-gin-here.png"
             backgroundImageFit="contain"
-            showJarOutline
             showLabel={false}
-            showCenterPercent
-            percentPlacement="below"
-            className="mx-auto max-w-[min(280px,82vw)]"
+            showCenterPercent={false}
+            className="max-w-[260px]"
           />
         </div>
       </div>

@@ -12,6 +12,7 @@ import {
   formatExamDate,
   sortPastExamStudents,
 } from "./teacher-class-detail-utils";
+import { isManualGradableAttempt } from "@/app/teacher/exam-grading/_lib/manual-grading";
 import { TeacherClassPastExamGradeChart } from "./teacher-class-past-exam-grade-chart";
 import { TeacherClassPastExamMostFailedInsight } from "./teacher-class-past-exam-most-failed-insight";
 
@@ -25,6 +26,7 @@ type TeacherClassHistoryViewProps = {
   filteredPastExams: PastExamRow[];
   historyQuery: string;
   onHistoryQueryChange: (value: string) => void;
+  onOpenOpenAnswerGrading: (examId: string) => void;
   onToggleExam: (examId: string) => void;
   onToggleExamStudentPopover: (examId: string, studentId: string) => void;
 };
@@ -36,6 +38,7 @@ export function TeacherClassHistoryView({
   filteredPastExams,
   historyQuery,
   onHistoryQueryChange,
+  onOpenOpenAnswerGrading,
   onToggleExam,
   onToggleExamStudentPopover,
 }: TeacherClassHistoryViewProps) {
@@ -46,11 +49,6 @@ export function TeacherClassHistoryView({
           <BarChart3 className="h-6 w-6 shrink-0 text-[#122459]" />
           Шалгалтын статистик
         </h2>
-        <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-[#737373] sm:text-base">
-          Хичээл, шалгалт, огноо, дүн эсвэл сурагчийн нэрээр хайна уу. Мөр
-          дарахад ангийн үнэлгээ, хамгийн олон сурагч алдсан асуулт, сурагчдын
-          жагсаалт нэг дор нээгдэнэ.
-        </p>
       </div>
       <hr className="mt-5 h-px w-full border-0 bg-[#d9dee8]" />
 
@@ -79,6 +77,9 @@ export function TeacherClassHistoryView({
             <tbody>
               {filteredPastExams.map((row) => {
                 const open = expandedPastExamId === row.id;
+                const hasOpenAnswerAttempts = row.studentScores.some(
+                  (student) => student.attempts.some(isManualGradableAttempt),
+                );
                 return (
                   <Fragment key={row.id}>
                     <tr
@@ -126,6 +127,18 @@ export function TeacherClassHistoryView({
                           >
                             Файл <Download className="h-3.5 w-3.5" />
                           </button>
+                          {hasOpenAnswerAttempts ? (
+                            <button
+                              className="inline-flex items-center gap-1 rounded-full border border-[#b9dcff] bg-[#eef7ff] px-3 py-1.5 text-[0.75rem] font-semibold text-[#175ea8] shadow-sm transition hover:border-[#8fc7ff] hover:bg-[#e1f0ff]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenOpenAnswerGrading(row.id);
+                              }}
+                              type="button"
+                            >
+                              Задгай хэсэг
+                            </button>
+                          ) : null}
                         </div>
                       </td>
                     </tr>

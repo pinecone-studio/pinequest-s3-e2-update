@@ -56,9 +56,12 @@ function buildAttemptsForStudent(
 		earned = Math.min(b.maxPoints, Math.max(0, earned));
 		const ans = b.sampleAnswers[h % b.sampleAnswers.length];
 		return {
+			questionId: `${examSeed}-q-${i + 1}`,
+			questionType: "essay",
 			order: i + 1,
 			question: b.prompt,
 			studentAnswer: ans,
+			correctAnswer: b.correctAnswer,
 			pointsEarned: earned,
 			pointsMax: b.maxPoints,
 		};

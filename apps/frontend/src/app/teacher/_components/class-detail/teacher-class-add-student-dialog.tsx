@@ -22,7 +22,6 @@ type TeacherClassAddStudentDialogProps = {
   initialName: string;
   onClose: () => void;
   onSuccess?: () => void;
-  open: boolean;
 };
 
 export function TeacherClassAddStudentDialog({
@@ -31,7 +30,6 @@ export function TeacherClassAddStudentDialog({
   initialName,
   onClose,
   onSuccess,
-  open,
 }: TeacherClassAddStudentDialogProps) {
   const [firstName, setFirstName] = useState(initialName);
   const [lastName, setLastName] = useState("");
@@ -41,18 +39,12 @@ export function TeacherClassAddStudentDialog({
   const [addStudent, { loading }] = useMutation<AddStudentMutationData>(
     ADD_STUDENT,
   );
+  const isFormComplete =
+    firstName.trim().length > 0 &&
+    lastName.trim().length > 0 &&
+    email.trim().length > 0;
 
   useEffect(() => {
-    if (!open) return;
-    setFirstName(initialName);
-    setLastName("");
-    setEmail("");
-    setErrorMessage(null);
-  }, [initialName, open]);
-
-  useEffect(() => {
-    if (!open) return;
-
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
@@ -64,14 +56,15 @@ export function TeacherClassAddStudentDialog({
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "";
     };
-  }, [onClose, open]);
+  }, [onClose]);
 
   async function handleContinue() {
     setErrorMessage(null);
     const fn = firstName.trim();
     const ln = lastName.trim();
-    if (!fn || !ln) {
-      setErrorMessage("Нэр, овгийг бөглөнө үү.");
+    const emailValue = email.trim();
+    if (!fn || !ln || !emailValue) {
+      setErrorMessage("Нэр, овог, и-мэйлийг бөглөнө үү.");
       return;
     }
 
@@ -82,7 +75,7 @@ export function TeacherClassAddStudentDialog({
             classId,
             firstName: fn,
             lastName: ln,
-            email: email.trim() ? email.trim() : null,
+            email: emailValue,
           },
         },
       });
@@ -96,8 +89,6 @@ export function TeacherClassAddStudentDialog({
       setErrorMessage(msg);
     }
   }
-
-  if (!open) return null;
 
   return (
     <div
@@ -122,8 +113,8 @@ export function TeacherClassAddStudentDialog({
           <div className="absolute right-[86px] top-1/2 hidden -translate-y-1/2 md:block">
             <Image
               alt="UPDATE bee"
-              className="h-auto w-[72px]"
-              height={72}
+              className="h-auto w-[69px]"
+              height={96}
               src="/bee-idea-bulb.png"
               width={72}
             />
@@ -180,8 +171,12 @@ export function TeacherClassAddStudentDialog({
 
         <div className="mt-8 flex justify-center">
           <button
-            className="min-w-[228px] rounded-[10px] bg-[#B8DCFF] px-6 py-3 text-[16px] font-medium text-white transition hover:bg-[#a8d3ff] disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={loading}
+            className={`min-w-[228px] rounded-[10px] px-6 py-3 text-[16px] font-medium text-white transition ${
+              isFormComplete
+                ? "bg-[#29A4FF] hover:bg-[#1597f8]"
+                : "bg-[#B8DCFF]"
+            } disabled:cursor-not-allowed disabled:opacity-60`}
+            disabled={loading || !isFormComplete}
             onClick={() => void handleContinue()}
             type="button"
           >
