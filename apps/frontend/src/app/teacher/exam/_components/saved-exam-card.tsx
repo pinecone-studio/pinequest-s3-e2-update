@@ -138,34 +138,19 @@ export function SavedExamCard({
 }
 
 function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
+  const plainBadgeClass =
+    "rounded-[12px] border border-[#d4d4d8] bg-transparent px-3 py-[6px] text-[14px] font-medium leading-[20px] text-[#2d2d2d]";
+
   return (
     <>
       <div className="flex flex-wrap items-center gap-2">
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${savedExam.status === "published" ? "bg-[#deeeff] text-[#2f66b9]" : "bg-amber-100 text-amber-700"}`}
-        >
-          {savedExam.status === "published" ? "Нийтэлсэн" : "Ноорог"}
-        </span>
-        {savedExam.approvalStatus === "pending" ? (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-            Сургуулийн зөвшөөрөл хүлээж байна
-          </span>
-        ) : savedExam.approvalStatus === "needs_fix" ? (
-          <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-            Сургуулиас засвар хүссэн
-          </span>
-        ) : savedExam.requiresSchoolApproval ? (
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-            Сургуулийн зөвшөөрөлтэй
-          </span>
-        ) : null}
-        <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#3b5a8f]">
+        <span className={plainBadgeClass}>
           {savedExam.grade}
         </span>
-        <span className="rounded-full bg-[#f8f1ff] px-3 py-1 text-xs font-semibold text-[#7047a9]">
+        <span className={plainBadgeClass}>
           {savedExam.subject}
         </span>
-        <span className="rounded-full bg-[#eef6ff] px-3 py-1 text-xs font-semibold text-[#2f66b9]">
+        <span className={plainBadgeClass}>
           {savedExam.topic}
         </span>
       </div>

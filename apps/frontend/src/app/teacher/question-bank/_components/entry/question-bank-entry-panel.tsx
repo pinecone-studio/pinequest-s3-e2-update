@@ -39,6 +39,11 @@ export function QuestionBankEntryPanel({
             Нэг удаа бэлдээд, дахин ашигла.
           </p>
         </div>
+        <div className="inline-flex h-[44px] w-fit min-w-0 shrink-0 items-center justify-center rounded-[12px] bg-[#D7ECFF] px-5 sm:h-[46px]">
+          <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-none tracking-[0.04em] text-[#122459] sm:text-[18px]">
+            НИЙТ АСУУЛТ {totalQuestions}
+          </p>
+        </div>
       </section>
 
       <section className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] px-4 py-5 sm:px-[26px] sm:py-[22px]">

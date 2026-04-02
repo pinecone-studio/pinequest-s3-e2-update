@@ -82,9 +82,7 @@ export function QuestionBuilderForm({
     const finalValues: QuestionBuilderValues = {
       ...values,
       topic:
-        values.topic.trim() ||
-        values.subtopic.trim() ||
-        values.subject.trim(),
+        values.topic.trim() || values.subtopic.trim() || values.subject.trim(),
       questionType: nextQuestionType,
       status: "published",
     };
@@ -102,7 +100,7 @@ export function QuestionBuilderForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#10233e]/30 p-4 backdrop-blur-[2px] sm:p-6">
-      <div className="my-2 flex max-h-[calc(100dvh-1rem)] w-full max-w-[768px] flex-col overflow-x-hidden overflow-y-hidden rounded-[12px] border border-[#d9e4f1] bg-[#F5F5F5] shadow-2xl sm:my-4">
+      <div className="my-2 flex max-h-[calc(100dvh-36px)] w-full max-w-[768px] flex-col overflow-x-hidden overflow-y-hidden rounded-[12px] border border-[#d9e4f1] bg-[#F5F5F5] shadow-2xl sm:my-4">
         <div className="sticky top-0 z-10 border-b border-[#dce5f2] bg-[#F5F5F5]/95 px-6 py-5 backdrop-blur">
           <div className="flex items-start gap-4">
             <div>
