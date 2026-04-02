@@ -88,6 +88,12 @@ export function mapBackendExamsToMonitorCards(
           ? `${classLabels.length} анги`
           : (classLabels[0] ?? "Анги байхгүй");
 
+    const gradingSummary = buildMonitorGradingSummary({
+      participantCount: classOptions.length > 0 ? 36 : 0,
+      openQuestionCount: openIds.length,
+      seedSource: row.id,
+    });
+
     return {
       id: row.id,
       title: row.title?.trim() || "Шалгалт",

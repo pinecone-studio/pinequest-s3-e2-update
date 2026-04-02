@@ -25,10 +25,8 @@ import {
 	type BackendExamMonitorRow,
 } from "./_lib/backend-exams-to-monitor-cards";
 import {
-	buildMonitorGradingSummary,
 	formatRemainingDuration,
 	type ActiveStudentEntry,
-	type MonitorExamCardItem,
 } from "./_lib/monitoring";
 
 type GetAllSubjectResponse = {
@@ -161,16 +159,9 @@ export default function ExamOptimizationPage() {
 		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;
 	}, [effectiveSelectedExamId, monitorExamCards]);
 
-	useEffect(() => {
-		if (!effectiveSelectedExamId) return;
-		const exam = monitorExamCards.find((e) => e.id === effectiveSelectedExamId);
-		const firstId = exam?.classOptions[0]?.id;
-		if (!firstId) return;
-		setSelectedClassIdByExamId((prev) => {
-			if (prev[effectiveSelectedExamId]) return prev;
-			return { ...prev, [effectiveSelectedExamId]: firstId };
-		});
-	}, [effectiveSelectedExamId, monitorExamCards]);
+	// Conflict-ийн дараах refactor: доорх logic-д `activeMonitorExam` нэрээр ашиглаж байгаа тул
+	// resolved value-гээ alias-лаад явна.
+	const activeMonitorExam = resolvedActiveMonitorExam;
 
 	const activeClassId = activeMonitorExam
 		? selectedClassIdByExamId[activeMonitorExam.id] ??
@@ -211,10 +202,12 @@ export default function ExamOptimizationPage() {
 			email: s.email ?? "",
 			grade: gradeLabel,
 			school: "",
-			startedAt: Date.now(),
+			// Render үед `Date.now()` дуудах нь React-ийн purity rule-ийг зөрчдөг.
+			// Monitoring эхэлсэн цаг байхгүй бол 0-г тавина.
+			startedAt: activeScopeStartedAt ?? 0,
 			status: "active",
 		}));
-	}, [rosterCountData?.getStudentByClassId, activeClassLabel]);
+	}, [rosterCountData?.getStudentByClassId, activeClassLabel, activeScopeStartedAt]);
 
 	const rosterCount = rosterStudents.length;
 

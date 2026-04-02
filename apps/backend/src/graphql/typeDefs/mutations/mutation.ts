@@ -102,7 +102,7 @@ export const mutationTypeDefs = /* GraphQL */ `
     """Bearer session JWT шаардлагатай. И-мэйлээр урьсан teacher мөрийг одоогийн Clerk user-т холбоно."""
     linkTeacherClerk: Teacher!
     studentExamAuth(input: StudentExamAuthInput!): StudentExamAuthPayload!
-    """Bearer Clerk session — зөвхөн энэ шалгалтын `teacherId` багш дуудаж болно."""
+    """Bearer Clerk session — зөвхөн энэ шалгалтын teacherId багш дуудаж болно."""
     addExamAllowedClasses(examId: String!, classIds: [String!]!): Boolean!
   }
 `;
