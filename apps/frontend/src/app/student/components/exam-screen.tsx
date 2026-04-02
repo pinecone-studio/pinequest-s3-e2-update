@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ExamData, OptionId } from "../types";
+import type { FaceKindTelemetry } from "./faceDetection";
 import { ExamActions } from "./exam-actions";
 import { ExamHeader } from "./exam-header";
 import { QuestionCard } from "./question-card";
@@ -24,6 +25,8 @@ type ExamScreenProps = {
   onFinish: () => void;
   isFinishDialogOpen?: boolean;
   showWaitForStart?: boolean;
+  /** Хяналтын WebSocket — таб/нүүрний telemetry */
+  sendExamTelemetry?: (payload: Record<string, unknown>) => void;
 };
 
 export function ExamScreen({
@@ -41,6 +44,7 @@ export function ExamScreen({
   onFinish,
   isFinishDialogOpen = false,
   showWaitForStart = false,
+  sendExamTelemetry,
 }: ExamScreenProps) {
   const totalQuestions = examData.questions.length;
   const currentQuestion = examData.questions[currentQuestionIndex];
@@ -50,25 +54,49 @@ export function ExamScreen({
     string | null
   >(null);
 
+  const sendExamTelemetryRef = useRef(sendExamTelemetry);
+  sendExamTelemetryRef.current = sendExamTelemetry;
+  const lastTabTelemetryAtRef = useRef(0);
+
+  const emitTabTelemetry = useCallback((hidden: boolean) => {
+    const now = Date.now();
+    if (now - lastTabTelemetryAtRef.current < 1000) return;
+    lastTabTelemetryAtRef.current = now;
+    sendExamTelemetryRef.current?.({ type: "tab", hidden, at: now });
+  }, []);
+
+  const handleFaceKindTelemetry = useCallback((kind: FaceKindTelemetry) => {
+    sendExamTelemetryRef.current?.({ type: "face", kind, at: Date.now() });
+  }, []);
+
   useEffect(() => {
     const handleWindowChange = () => {
       setWarning(true);
+      emitTabTelemetry(true);
     };
 
     const handleVisibility = () => {
-      if (document.hidden) {
-        handleWindowChange();
+      const hidden = document.hidden;
+      if (hidden) {
+        setWarning(true);
       }
+      emitTabTelemetry(hidden);
+    };
+
+    const handleFocus = () => {
+      emitTabTelemetry(false);
     };
 
     window.addEventListener("blur", handleWindowChange);
+    window.addEventListener("focus", handleFocus);
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       window.removeEventListener("blur", handleWindowChange);
+      window.removeEventListener("focus", handleFocus);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, []);
+  }, [emitTabTelemetry]);
 
   return (
     <main className="relative min-h-screen bg-[#edf6ff] px-3 pb-8 pt-4 text-[#1f2a44] sm:px-5 sm:pt-6 md:px-8 lg:px-12 lg:pt-7">
@@ -105,6 +133,7 @@ export function ExamScreen({
               <FaceCam
                 setFaceDetectionWarning={setFaceDetectionWarning}
                 faceDetectionWarning={faceDetectionWarning}
+                onFaceKindChange={handleFaceKindTelemetry}
               />
             }
           />

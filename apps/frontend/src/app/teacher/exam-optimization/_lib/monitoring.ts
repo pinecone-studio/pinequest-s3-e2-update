@@ -8,6 +8,13 @@ export type ActiveStudentEntry = {
 	status: "active" | "disconnected" | "submitted";
 };
 
+/** WebSocket-оор сурагчаас ирсэн telemetry (багшийн хяналт) */
+export type ExamStudentTelemetry = {
+	tabHidden?: boolean;
+	faceKind?: "none" | "single" | "multiple";
+	updatedAt: number;
+};
+
 export type MonitorExamCardItem = {
 	id: string;
 	title: string;

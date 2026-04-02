@@ -23,6 +23,7 @@ import {
   buildExamDataFromApi,
   type ApiTestRow,
 } from "../_lib/exam-data-from-api";
+import { useExamMonitorWebSocket } from "../_hooks/use-exam-monitor-ws";
 import { CompletedScreen } from "../components/completed-screen";
 import { EntryStep } from "../components/entry-step";
 import { ExamScreen } from "../components/exam-screen";
@@ -135,6 +136,19 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   useEffect(() => {
     setExamPollIntervalMs(waitingForTeacherStart ? 2000 : 0);
   }, [waitingForTeacherStart]);
+
+  const monitorWsEnabled =
+    phase === "exam" &&
+    !isFinished &&
+    Boolean(examSessionToken?.trim()) &&
+    Boolean(studentClassIdForGate?.trim());
+
+  const { sendTelemetry } = useExamMonitorWebSocket({
+    examId: routeExamId,
+    classId: studentClassIdForGate,
+    token: examSessionToken,
+    enabled: monitorWsEnabled,
+  });
   const testIds = examRow?.testIds ?? [];
   const openExerciseIds = examRow?.openExerciseIds ?? [];
 
@@ -450,6 +464,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         }}
         isFinishDialogOpen={showFinishDialog}
         showWaitForStart={false}
+        sendExamTelemetry={sendTelemetry}
       />
 
       <FinishConfirmationDialog

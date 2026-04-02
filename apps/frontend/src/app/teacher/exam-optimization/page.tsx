@@ -3,9 +3,11 @@
 "use client";
 
 import { useMutation, useQuery } from "@apollo/client/react";
+import { useAuth } from "@clerk/nextjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { buildTeacherExamMonitorWsUrl } from "@/lib/exam-monitor-ws-url";
 import {
 	createExamMonitoringScopeKey,
 	readExamMonitoringStateMap,
@@ -33,6 +35,7 @@ import {
 import {
 	formatRemainingDuration,
 	type ActiveStudentEntry,
+	type ExamStudentTelemetry,
 } from "./_lib/monitoring";
 
 type GetAllSubjectResponse = {
@@ -64,6 +67,7 @@ export default function ExamOptimizationPage() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const { getToken } = useAuth();
 
 	const { teacher: dbTeacher } = useTeacherDb();
 	const teacherId = dbTeacher?.id ?? "";
@@ -150,6 +154,9 @@ export default function ExamOptimizationPage() {
 	});
 	const [currentTime, setCurrentTime] = useState(() => Date.now());
 	const [grantingClassId, setGrantingClassId] = useState<string | null>(null);
+	const [telemetryByStudentId, setTelemetryByStudentId] = useState<
+		Record<string, ExamStudentTelemetry>
+	>({});
 
 	const monitorExamCards = useMemo(() => {
 		if (!teacherExams.length) return [];
@@ -237,6 +244,90 @@ export default function ExamOptimizationPage() {
 	]);
 
 	const rosterCount = rosterStudents.length;
+
+	useEffect(() => {
+		setTelemetryByStudentId({});
+	}, [activeMonitorExam?.id, activeClassId]);
+
+	useEffect(() => {
+		if (!activeMonitorExam || !activeClassId || !isActiveMonitoring) {
+			return;
+		}
+
+		const examId = activeMonitorExam.id;
+		let cancelled = false;
+		const wsRef: { current: WebSocket | null } = { current: null };
+
+		void (async () => {
+			const token = await getToken();
+			if (cancelled || !token?.trim()) return;
+
+			const url = buildTeacherExamMonitorWsUrl({
+				examId,
+				classId: activeClassId,
+				clerkToken: token.trim(),
+			});
+			if (!url) return;
+
+			try {
+				wsRef.current = new WebSocket(url);
+			} catch {
+				return;
+			}
+
+			const socket = wsRef.current;
+			if (!socket || cancelled) return;
+
+			socket.onmessage = (ev) => {
+				try {
+					const data = JSON.parse(String(ev.data)) as {
+						v?: number;
+						studentId?: string;
+						type?: string;
+						hidden?: boolean;
+						kind?: string;
+						at?: number;
+					};
+					if (data.v !== 1 || typeof data.studentId !== "string") return;
+					const sid = data.studentId;
+					const at =
+						typeof data.at === "number" && Number.isFinite(data.at)
+							? data.at
+							: Date.now();
+					setTelemetryByStudentId((prev) => {
+						const cur: ExamStudentTelemetry = {
+							...(prev[sid] ?? { updatedAt: 0 }),
+						};
+						cur.updatedAt = at;
+						if (data.type === "tab") {
+							cur.tabHidden = Boolean(data.hidden);
+						}
+						if (
+							data.type === "face" &&
+							(data.kind === "none" ||
+								data.kind === "single" ||
+								data.kind === "multiple")
+						) {
+							cur.faceKind = data.kind;
+						}
+						return { ...prev, [sid]: cur };
+					});
+				} catch {
+					/* ignore */
+				}
+			};
+
+			socket.onerror = () => {
+				/* noop */
+			};
+		})();
+
+		return () => {
+			cancelled = true;
+			wsRef.current?.close();
+			wsRef.current = null;
+		};
+	}, [activeMonitorExam, activeClassId, isActiveMonitoring, getToken]);
 
 	const monitorTotalStudents = useMemo(() => {
 		if (!activeMonitorExam) return 0;
@@ -338,6 +429,7 @@ export default function ExamOptimizationPage() {
 				...current,
 				[activeMonitoringScope]: true,
 			}));
+			setTelemetryByStudentId({});
 			void refetchSchoolExams();
 			toast.success("Хяналт эхэллээ.");
 		} catch {
@@ -434,6 +526,7 @@ export default function ExamOptimizationPage() {
 						activeClassLabel={activeClassLabel}
 						activeExam={activeMonitorExam}
 						activeStudents={rosterStudents}
+						telemetryByStudentId={telemetryByStudentId}
 						hasAccessForSelectedClass={activeMonitorExam.allowedClassIds.includes(
 							activeClassId,
 						)}
