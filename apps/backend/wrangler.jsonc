@@ -28,6 +28,20 @@
       "migrations_dir": "drizzle",
     },
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "EXAM_MONITOR_ROOM",
+        "class_name": "ExamMonitorRoom",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "exam-monitor-room-v1",
+      "new_classes": ["ExamMonitorRoom"],
+    },
+  ],
   // "ai": {
   //   "binding": "AI"
   // },

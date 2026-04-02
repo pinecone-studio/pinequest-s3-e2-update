@@ -9,14 +9,19 @@ import {
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
 
+export type FaceKindTelemetry = "none" | "single" | "multiple";
+
 type FaceCamProps = {
   setFaceDetectionWarning: (msg: string | null) => void;
   faceDetectionWarning: string | null;
+  /** Нүүрний ангилал өөрчлөгдөх бүрт (frame бүр биш) — хяналтын WebSocket */
+  onFaceKindChange?: (kind: FaceKindTelemetry) => void;
 };
 
 export default function FaceCam({
   setFaceDetectionWarning,
   faceDetectionWarning,
+  onFaceKindChange,
 }: FaceCamProps) {
   const XNNPACK_INFO = "Created TensorFlow Lite XNNPACK delegate for CPU";
   const getErrorText = (value: unknown) => {
@@ -37,6 +42,9 @@ export default function FaceCam({
   const detectorRef = useRef<FaceDetector | null>(null);
   const faceWarningSentRef = useRef(false); // tracks if a warning is active
   const noFaceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastTelemetryKindRef = useRef<FaceKindTelemetry | null>(null);
+  const onFaceKindChangeRef = useRef(onFaceKindChange);
+  onFaceKindChangeRef.current = onFaceKindChange;
 
   async function startDetection() {
     const video = webcamRef.current?.video;
@@ -67,6 +75,14 @@ export default function FaceCam({
         ctx.lineWidth = 2;
         ctx.strokeRect(box.originX, box.originY, box.width, box.height);
       });
+
+      const kind: FaceKindTelemetry =
+        numFaces <= 0 ? "none" : numFaces === 1 ? "single" : "multiple";
+      const cb = onFaceKindChangeRef.current;
+      if (cb && lastTelemetryKindRef.current !== kind) {
+        lastTelemetryKindRef.current = kind;
+        cb(kind);
+      }
 
       // Only trigger warning if none active
       if (!faceWarningSentRef.current) {

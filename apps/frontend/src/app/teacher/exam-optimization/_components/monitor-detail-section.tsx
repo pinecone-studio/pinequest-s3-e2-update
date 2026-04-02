@@ -3,6 +3,7 @@
 import { Check } from "lucide-react";
 import type {
   ActiveStudentEntry,
+  ExamStudentTelemetry,
   MonitorExamCardItem,
 } from "../_lib/monitoring";
 
@@ -11,6 +12,7 @@ export function MonitorDetailSection({
   activeClassLabel,
   activeExam,
   activeStudents,
+  telemetryByStudentId,
   hasAccessForSelectedClass,
   isMonitoring,
   monitorTotalStudents,
@@ -24,6 +26,7 @@ export function MonitorDetailSection({
   activeClassLabel: string | null;
   activeExam: MonitorExamCardItem | null;
   activeStudents: ActiveStudentEntry[];
+  telemetryByStudentId?: Record<string, ExamStudentTelemetry>;
   hasAccessForSelectedClass: boolean;
   isMonitoring: boolean;
   monitorTotalStudents: number;
@@ -40,10 +43,18 @@ export function MonitorDetailSection({
   const canStartSession = hasClassTabs && hasAccessForSelectedClass;
   const startActionLabel = "Эхлүүлэх";
   const visibleStudents = activeStudents;
-  /** Хяналт эхлээгүй үед төлөв харуулахгүй; эхэлсний дараа бүгдийг идэвхтэй гэж үзнэ (telemetry ирэх хүртэл). */
+  /** Хяналт эхлээгүй үед төлөв харуулахгүй; эхэлсний дараа telemetry-ээр төлөв өөрчлөгдөнө. */
   type RowStatus = "active" | "warning" | "disconnected" | "submitted";
   const monitoredStudents = visibleStudents.map((student) => {
-    const displayStatus = (isTimeUp ? "submitted" : "active") as RowStatus;
+    const tel = telemetryByStudentId?.[student.id];
+    const faceWarn =
+      tel?.faceKind === "none" || tel?.faceKind === "multiple";
+    const tabWarn = Boolean(tel?.tabHidden);
+    const telemetryWarning =
+      isRunning && (tabWarn || faceWarn);
+    const displayStatus = (
+      isTimeUp ? "submitted" : telemetryWarning ? "warning" : "active"
+    ) as RowStatus;
     return {
       ...student,
       monitorStatus: displayStatus,

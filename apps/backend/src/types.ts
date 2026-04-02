@@ -1,5 +1,7 @@
 export interface Env {
   exam_grade_db: D1Database;
+  /** Шалгалт + ангийн realtime хяналтын өрөө (WebSocket). */
+  EXAM_MONITOR_ROOM: DurableObjectNamespace;
   /** Clerk secret key (`wrangler secret put CLERK_SECRET_KEY` / `.dev.vars`). */
   CLERK_SECRET_KEY?: string;
   /**
