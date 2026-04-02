@@ -1,4 +1,4 @@
-import { examStatusMeta } from "../_mock/school-exams";
+import { examStatusMeta } from "../_lib/exam-status-meta";
 import type { ExamStatus } from "../_types/exam";
 
 type ExamStatusBadgeProps = {

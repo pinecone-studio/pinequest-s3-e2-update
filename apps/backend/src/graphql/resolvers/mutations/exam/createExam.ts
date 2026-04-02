@@ -18,6 +18,7 @@ type CreateExamArgs = {
   needpermission: number;
   teacherId: string;
   schoolId: string;
+  allowedClassIds?: string[] | null;
 };
 export const createExam = async (
   _parent: unknown,
@@ -85,6 +86,7 @@ export const createExam = async (
       schoolId: args.input.schoolId,
       createdAt: now,
       updatedAt: now,
+      allowedClassIds: classIds,
     };
   } catch (err) {
     console.error("Failed to create exam:", err);

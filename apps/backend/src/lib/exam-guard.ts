@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { examTable } from "../db/schema";
+import { examTable, schoolTable } from "../db/schema";
 import type { GraphQLUserContext } from "../graphql/context";
 
 function parseIds(value: unknown): string[] {
@@ -32,6 +32,35 @@ export function assertExamIdMatchesSession(
   if (s.examId !== examId.trim()) {
     throw new Error("Энэ шалгалтад хандах эрхгүй.");
   }
+}
+
+/** Сурагчийн exam token эсвэл сургуулийн админ (Clerk school row). */
+export async function assertExamReadableBySessionOrSchoolAdmin(
+  ctx: GraphQLUserContext,
+  examId: string,
+) {
+  const id = examId.trim();
+  if (!id) throw new Error("examId хоосон.");
+
+  if (ctx.examSession?.examId === id) return;
+
+  const clerkId = ctx.clerkUserId?.trim();
+  if (!clerkId) {
+    throw new Error("Шалгалтын token эсвэл нэвтрэх шаардлагатай.");
+  }
+
+  const examRows = await ctx.db.select().from(examTable).where(eq(examTable.id, id));
+  const exam = examRows[0];
+  if (!exam) throw new Error("Шалгалт олдсонгүй.");
+
+  const schoolRows = await ctx.db
+    .select()
+    .from(schoolTable)
+    .where(eq(schoolTable.clerkId, clerkId));
+  const school = schoolRows[0];
+  if (school?.id === exam.schoolId) return;
+
+  throw new Error("Энэ шалгалтад хандах эрхгүй.");
 }
 
 export async function loadExamContentIds(

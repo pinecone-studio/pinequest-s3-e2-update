@@ -155,6 +155,7 @@ export const GET_EXAM_BY_SCHOOL_ID = gql`
       needpermission
       schoolId
       teacherId
+      allowedClassIds
       createdAt
       updatedAt
     }
@@ -182,8 +183,22 @@ export const GET_EXAM_BY_ID = gql`
       needpermission
       schoolId
       teacherId
+      allowedClassIds
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const GET_STUDENT_EXAM_RESULTS_BY_EXAM_ID = gql`
+  query GetStudentExamResultsByExamId($examId: String!) {
+    getStudentExamResultsByExamId(examId: $examId) {
+      id
+      examId
+      studentId
+      totalScore
+      actualScore
+      status
     }
   }
 `;

@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { buildPastExamRowsFromApi } from "@/app/lib/class-past-exams-from-api";
 import { getLivePastExamsForClassClient } from "@/app/lib/class-past-exams-live";
-import { getPastExamsForClass } from "@/app/lib/class-past-exams-mock";
 import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import { store } from "@/app/lib/store";
 import { TEACHER_DEMO_CLASS_IDS } from "@/app/lib/teacher-demo-class";
@@ -359,8 +358,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
       subjectNameById,
       questionById,
     );
-    if (apiRows.length > 0) return apiRows;
-    return getPastExamsForClass(classId, students);
+    return apiRows;
   }, [
     apiClassRow,
     classId,

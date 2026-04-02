@@ -18,6 +18,8 @@ export const examTypeDefs = /* GraphQL */ `
     needpermission: Int
     schoolId: String!
     teacherId: String
+    """Шалгалтанд эрх нээгдсэн ангийн ID жагсаалт."""
+    allowedClassIds: [String!]!
     createdAt: String!
     updatedAt: String!
   }

@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@apollo/client/react";
 import {
 	type ApprovalRequest,
 	getApprovalRequestsClient,
@@ -18,10 +20,14 @@ import {
 	updateApprovalRequestStatus,
 } from "@/app/lib/exam-approval-store";
 import {
-  pendingActions,
-  schoolExams,
-  teacherPerformance,
-} from "@/app/school/_mock/school-data";
+  GET_ALL_SUBJECTS,
+  GET_CLASS_BY_SCHOOL_ID,
+  GET_EXAM_BY_SCHOOL_ID,
+  GET_SCHOOL_BY_CLERK_ID,
+  GET_TEACHERS_BY_SCHOOL_ID,
+} from "@/graphql/typeDefs/queries";
+import type { BackendExamRow } from "@/app/school/exams/_lib/school-exam-map";
+import { mapExamsToDashboardRows } from "@/app/school/exams/_lib/school-exam-map";
 
 function extractGradeValue(className: string) {
   const match = className.match(/\d+/);
@@ -38,6 +44,112 @@ function quarterOf(startAt: string) {
 }
 
 export default function SchoolDashboardPage() {
+  const { user, isLoaded: clerkLoaded } = useUser();
+  const clerkId = user?.id ?? "";
+
+  const { data: schoolData } = useQuery<{
+    getSchoolByClerkId: { id: string };
+  }>(GET_SCHOOL_BY_CLERK_ID, {
+    variables: { clerkId },
+    skip: !clerkLoaded || !clerkId,
+    fetchPolicy: "cache-and-network",
+  });
+  const schoolId = schoolData?.getSchoolByClerkId?.id ?? "";
+
+  const { data: examsData } = useQuery<{ getExamBySchoolId: BackendExamRow[] }>(
+    GET_EXAM_BY_SCHOOL_ID,
+    {
+      variables: { schoolId },
+      skip: !schoolId,
+      fetchPolicy: "cache-and-network",
+    },
+  );
+  const { data: classesData } = useQuery<{
+    getClassBySchoolId: { id: string; grade: number; section: string }[];
+  }>(GET_CLASS_BY_SCHOOL_ID, {
+    variables: { schoolId },
+    skip: !schoolId,
+    fetchPolicy: "cache-and-network",
+  });
+  const { data: teachersData } = useQuery<{
+    getTeachersBySchoolId: {
+      id: string;
+      firstName: string;
+      lastName: string;
+    }[];
+  }>(GET_TEACHERS_BY_SCHOOL_ID, {
+    variables: { schoolId },
+    skip: !schoolId,
+    fetchPolicy: "cache-and-network",
+  });
+  const { data: subjectsData } = useQuery<{
+    getAllSubject: { id: string; name: string }[];
+  }>(GET_ALL_SUBJECTS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const schoolExams = useMemo(() => {
+    const exams = examsData?.getExamBySchoolId ?? [];
+    const subjectNameById = new Map(
+      (subjectsData?.getAllSubject ?? []).map((s) => [s.id, s.name]),
+    );
+    const classById = new Map(
+      (classesData?.getClassBySchoolId ?? []).map((c) => [c.id, c]),
+    );
+    const teacherById = new Map(
+      (teachersData?.getTeachersBySchoolId ?? []).map((t) => [
+        t.id,
+        { id: t.id, firstName: t.firstName, lastName: t.lastName },
+      ]),
+    );
+    return mapExamsToDashboardRows(
+      exams,
+      subjectNameById,
+      classById,
+      teacherById,
+    );
+  }, [
+    examsData?.getExamBySchoolId,
+    classesData?.getClassBySchoolId,
+    teachersData?.getTeachersBySchoolId,
+    subjectsData?.getAllSubject,
+  ]);
+
+  const sortedTeacherPerformance = useMemo(() => {
+    const m = new Map<
+      string,
+      { teacherName: string; classNames: Set<string>; scores: number[] }
+    >();
+    for (const ex of schoolExams) {
+      const key = ex.teacherName;
+      if (!m.has(key)) {
+        m.set(key, {
+          teacherName: key,
+          classNames: new Set<string>(),
+          scores: [],
+        });
+      }
+      const row = m.get(key)!;
+      row.classNames.add(ex.className);
+      const pct =
+        ex.studentCount > 0
+          ? Math.round((ex.submittedCount / ex.studentCount) * 100)
+          : 0;
+      row.scores.push(pct);
+    }
+    return [...m.values()]
+      .map((row) => ({
+        teacherName: row.teacherName,
+        avgScore: row.scores.length
+          ? Math.round(
+              row.scores.reduce((a, b) => a + b, 0) / row.scores.length,
+            )
+          : 0,
+        classNames: row.classNames,
+      }))
+      .sort((a, b) => b.avgScore - a.avgScore);
+  }, [schoolExams]);
+
   const [approvalRequests, setApprovalRequests] = useState<
     ReturnType<typeof getApprovalRequestsClient>
   >([]);
@@ -47,14 +159,12 @@ export default function SchoolDashboardPage() {
   const [selectedQuarterFilter, setSelectedQuarterFilter] = useState("all");
   const [selectedClassFilter, setSelectedClassFilter] = useState("all");
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState("all");
-  const sortedTeacherPerformance = useMemo(
-    () => [...teacherPerformance].sort((a, b) => b.avgScore - a.avgScore),
-    [],
-  );
   const quarterFilteredExams = useMemo(() => {
     if (selectedQuarterFilter === "all") return schoolExams;
-    return schoolExams.filter((exam) => quarterOf(exam.startAt) === selectedQuarterFilter);
-  }, [selectedQuarterFilter]);
+    return schoolExams.filter(
+      (exam) => quarterOf(exam.startAt) === selectedQuarterFilter,
+    );
+  }, [selectedQuarterFilter, schoolExams]);
   const classOptions = useMemo(
     () =>
       Array.from(
@@ -136,48 +246,44 @@ export default function SchoolDashboardPage() {
         return a.secondary.localeCompare(b.secondary, "mn");
       });
   }, [quarterFilteredExams, selectedClassFilter, selectedSubjectFilter]);
-  const teacherPerformanceRows = useMemo(
-    () => {
-      const classesByTeacher = new Map<string, string>();
-      const fallbackClassPool = Array.from(
-        new Set(schoolExams.map((exam) => exam.className)),
+  const teacherPerformanceRows = useMemo(() => {
+    const classesByTeacher = new Map<string, string>();
+    const fallbackClassPool = Array.from(
+      new Set(schoolExams.map((exam) => exam.className)),
+    ).sort((a, b) => a.localeCompare(b, "mn"));
+
+    sortedTeacherPerformance.forEach((teacher) => {
+      const classes = Array.from(
+        new Set(
+          schoolExams
+            .filter((exam) => exam.teacherName === teacher.teacherName)
+            .map((exam) => exam.className),
+        ),
       ).sort((a, b) => a.localeCompare(b, "mn"));
 
-      sortedTeacherPerformance.forEach((teacher) => {
-        const classes = Array.from(
-          new Set(
-            schoolExams
-              .filter((exam) => exam.teacherName === teacher.teacherName)
-              .map((exam) => exam.className),
-          ),
-        ).sort((a, b) => a.localeCompare(b, "mn"));
+      if (classes.length > 0) {
+        classesByTeacher.set(teacher.teacherName, classes.join(", "));
+        return;
+      }
 
-        if (classes.length > 0) {
-          classesByTeacher.set(teacher.teacherName, classes.join(", "));
-          return;
-        }
+      const idx = sortedTeacherPerformance.findIndex(
+        (item) => item.teacherName === teacher.teacherName,
+      );
+      const fallbackClass =
+        fallbackClassPool.length > 0
+          ? fallbackClassPool[idx % fallbackClassPool.length]
+          : "—";
+      classesByTeacher.set(teacher.teacherName, fallbackClass);
+    });
 
-        const fallbackClass =
-          fallbackClassPool.length > 0
-            ? fallbackClassPool[
-                sortedTeacherPerformance.findIndex(
-                  (item) => item.teacherName === teacher.teacherName,
-                ) % fallbackClassPool.length
-              ]
-            : "10A";
-        classesByTeacher.set(teacher.teacherName, fallbackClass);
-      });
-
-      return sortedTeacherPerformance.slice(0, 10).map((row) => ({
-        id: row.teacherName,
-        primary: row.teacherName,
-        secondary: classesByTeacher.get(row.teacherName) ?? "10A",
-        averagePercent: row.avgScore,
-        highestScorePercent: Math.min(100, row.avgScore + 5),
-      }));
-    },
-    [sortedTeacherPerformance],
-  );
+    return sortedTeacherPerformance.slice(0, 10).map((row) => ({
+      id: row.teacherName,
+      primary: row.teacherName,
+      secondary: classesByTeacher.get(row.teacherName) ?? "—",
+      averagePercent: row.avgScore,
+      highestScorePercent: Math.min(100, row.avgScore + 5),
+    }));
+  }, [sortedTeacherPerformance, schoolExams]);
   const performanceRows = useMemo(
     () => (performanceView === "class" ? classPerformanceRows : teacherPerformanceRows),
     [classPerformanceRows, teacherPerformanceRows, performanceView],
@@ -264,20 +370,6 @@ export default function SchoolDashboardPage() {
 		};
 	}, []);
 
-	const isTodayLabel = (value: string) => {
-		if (!value) return false;
-		if (value.includes("Өнөөдөр")) return true;
-		const match = value.match(/(\d{4})-(\d{2})-(\d{2})/);
-		if (!match) return false;
-		const [, year, month, day] = match;
-		const now = new Date();
-		return (
-			Number(year) === now.getFullYear() &&
-			Number(month) === now.getMonth() + 1 &&
-			Number(day) === now.getDate()
-		);
-	};
-
 	const parseDueTime = (value: string) => {
 		if (!value) return 0;
 		if (value.includes("Өнөөдөр")) {
@@ -314,25 +406,16 @@ export default function SchoolDashboardPage() {
             isNew: Boolean(item.unread),
             cardClass: "border-zinc-200 bg-white",
           })),
-        ...pendingActions.map((item) => ({
-          id: item.id,
-          title: item.title,
-          owner: item.owner,
-          due: item.due,
-          dueTs: parseDueTime(item.due),
-          isNew: isTodayLabel(item.due),
-          cardClass: "border-zinc-200 bg-white",
-        })),
       ].sort((a, b) => b.dueTs - a.dueTs),
     [approvalRequests],
   );
   const completedCount = useMemo(
     () => schoolExams.filter((exam) => exam.stage === "completed").length,
-    [],
+    [schoolExams],
   );
   const scheduledCount = useMemo(
     () => schoolExams.filter((exam) => exam.stage === "scheduled").length,
-    [],
+    [schoolExams],
   );
   const averagePassRate = useMemo(() => {
     if (schoolExams.length === 0) return 0;
@@ -345,7 +428,7 @@ export default function SchoolDashboardPage() {
         return sum + pass;
       }, 0) / schoolExams.length,
     );
-  }, []);
+  }, [schoolExams]);
   const attentionClassCount = useMemo(() => {
     const rows = schoolExams
       .map((exam) =>
@@ -355,7 +438,7 @@ export default function SchoolDashboardPage() {
       )
       .filter((score) => score < 80);
     return rows.length;
-  }, []);
+  }, [schoolExams]);
   const pendingApprovalRequests = useMemo(
     () =>
       approvalRequests

@@ -7,6 +7,12 @@ import {
   getAppUserFromClerk,
   getAppUserFromUserId,
 } from "@/app/lib/clerk-app-user";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Сургууль",
+  description: "Сургууль",
+};
 
 export default async function SchoolLayout({
   children,

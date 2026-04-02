@@ -150,3 +150,33 @@ export const CREATE_CLASS = gql`
     }
   }
 `;
+
+export const SYNC_CLASS_TEACHER_ASSIGNMENTS = gql`
+  mutation SyncClassTeacherAssignments($input: SyncClassTeachersInput!) {
+    syncClassTeacherAssignments(input: $input)
+  }
+`;
+
+export const DELETE_CLASS_MUTATION = gql`
+  mutation DeleteSchoolClass($id: String!) {
+    deleteClass(id: $id)
+  }
+`;
+
+export const UPDATE_STUDENT_MUTATION = gql`
+  mutation UpdateStudentSchool($input: UpdateStudentInput!) {
+    updateStudent(input: $input) {
+      id
+      classId
+      firstName
+      lastName
+      studentCode
+    }
+  }
+`;
+
+export const DELETE_STUDENT_MUTATION = gql`
+  mutation DeleteStudentSchool($id: String!) {
+    deleteStudent(id: $id)
+  }
+`;

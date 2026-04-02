@@ -1,5 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
+import { getGraphqlUri } from "../../../../apollo-client";
+
 function withCorsHeaders(res: Response, origin: string | null) {
   // Same-origin /api/graphql doesn't need CORS, but adding these
   // makes local tooling and accidental cross-origin calls less painful.
@@ -23,20 +25,51 @@ export async function OPTIONS(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { env } = getCloudflareContext();
   const origin = request.headers.get("origin");
+  const bodyBuffer = await request.arrayBuffer();
+  const headersForUpstream = new Headers(request.headers);
+  headersForUpstream.delete("content-length");
 
-  const upstreamUrl = new URL("https://backend/graphql");
+  async function proxyViaDevHttp(): Promise<Response> {
+    const uri = getGraphqlUri();
+    if (!uri.startsWith("http://") && !uri.startsWith("https://")) {
+      return new Response(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                "GraphQL proxy: service binding unavailable and NEXT_PUBLIC_BACKEND_URL is unset or not an absolute URL.",
+            },
+          ],
+        }),
+        { status: 502, headers: { "content-type": "application/json" } },
+      );
+    }
 
-  // Forward headers/body as-is. Service binding handles routing.
-  const upstreamReq = new Request(upstreamUrl.toString(), {
-    method: "POST",
-    headers: request.headers,
-    body: request.body,
-    redirect: "manual",
-  });
+    return fetch(uri, {
+      method: "POST",
+      headers: headersForUpstream,
+      body: bodyBuffer,
+      redirect: "manual",
+    });
+  }
 
-  const res = await (env as { BACKEND: Fetcher }).BACKEND.fetch(upstreamReq);
-  return withCorsHeaders(res, origin);
+  try {
+    const { env } = getCloudflareContext();
+    const backend = (env as { BACKEND?: Fetcher }).BACKEND;
+    if (backend) {
+      const upstreamReq = new Request("https://backend/graphql", {
+        method: "POST",
+        headers: headersForUpstream,
+        body: bodyBuffer,
+        redirect: "manual",
+      });
+      const res = await backend.fetch(upstreamReq);
+      return withCorsHeaders(res, origin);
+    }
+  } catch {
+    /* plain `next dev` has no Cloudflare context — fall through */
+  }
+
+  return withCorsHeaders(await proxyViaDevHttp(), origin);
 }
-

@@ -49,4 +49,5 @@ export type Student = {
   firstName: string;
   lastName: string;
   classId: string;
+  studentCode?: string | null;
 };

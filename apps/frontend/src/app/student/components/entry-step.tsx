@@ -2,13 +2,19 @@ import { Check } from "lucide-react";
 import Image from "next/image";
 
 type EntryStepProps = {
+  classCode: string;
   hasAcceptedRules: boolean;
+  classCodeHint?: string;
+  classCodeRequired?: boolean;
+  /** false бол ангийн/шалгалтын кодын талбарыг нуух (зөвхөн сурагчийн код). */
+  showClassCodeField?: boolean;
   /** Сурагчийн код (studentExamAuth) — шаардлагатай үед. */
   studentCode?: string;
   studentCodeRequired?: boolean;
   onChangeStudentCode?: (value: string) => void;
   /** Хоосон биш байвал «Үргэлжлүүлэх»-ийн алдааг харуулна */
   proceedError?: string | null;
+  onChangeClassCode?: (value: string) => void;
   onToggleAcceptedRules: (checked: boolean) => void;
   onProceed: () => void;
 };
@@ -36,16 +42,25 @@ function EntryInput({
 }
 
 export function EntryStep({
+  classCode,
   hasAcceptedRules,
+  classCodeHint,
+  classCodeRequired = false,
+  showClassCodeField = true,
   studentCode = "",
   studentCodeRequired = false,
   onChangeStudentCode,
   proceedError = null,
+  onChangeClassCode,
   onToggleAcceptedRules,
   onProceed,
 }: EntryStepProps) {
+  const needsClassField =
+    showClassCodeField &&
+    (classCodeRequired || classCode.trim().length > 0);
   const canProceed =
     hasAcceptedRules &&
+    (!needsClassField || classCode.trim().length > 0) &&
     (!studentCodeRequired ||
       (studentCode.trim().length > 0 && Boolean(onChangeStudentCode)));
 
@@ -113,6 +128,18 @@ export function EntryStep({
           </label>
 
           <div className="mt-5 space-y-4">
+            {showClassCodeField ? (
+              <EntryInput
+                placeholder={
+                  classCodeHint?.trim() ||
+                  (classCodeRequired
+                    ? "Ангийн код оруулах (жишээ нь 10A)"
+                    : "Ангийн код (сонголттой)")
+                }
+                value={classCode}
+                onChange={(value) => onChangeClassCode?.(value)}
+              />
+            ) : null}
             {studentCodeRequired && onChangeStudentCode ? (
               <div>
                 <p className="mb-1.5 text-left text-[14px] font-medium text-[#374151]">

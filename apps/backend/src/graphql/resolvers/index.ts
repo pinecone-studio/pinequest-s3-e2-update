@@ -26,6 +26,10 @@ function studentExamResultIdsFromParent(value: unknown): string[] {
 export const resolvers = {
   Query: queryResolvers,
   Mutation: mutationResolvers,
+  Exam: {
+    allowedClassIds: (parent: { allowedClassIds?: string[] }) =>
+      parent.allowedClassIds ?? [],
+  },
   Student: {
     studentExamResultIds: (parent: { studentExamResultIds?: unknown }) =>
       studentExamResultIdsFromParent(parent.studentExamResultIds),

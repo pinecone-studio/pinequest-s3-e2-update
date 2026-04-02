@@ -73,27 +73,28 @@ export default function StudentExamPage() {
     );
   }, [normalizedClassCode]);
 
-  const deliveredClassByCode = useMemo(() => {
-    if (!normalizedClassCode || !activeSavedExam?.sentClassIds?.length) {
-      return null;
-    }
+  let deliveredClassByCode: { id: string; name: string } | null = null;
+  if (normalizedClassCode && activeSavedExam?.sentClassIds?.length) {
     const labels = activeSavedExam.sentClassLabels ?? {};
     for (const id of activeSavedExam.sentClassIds) {
       const label = labels[id];
       if (label && label.trim().toUpperCase() === normalizedClassCode) {
-        return { id, name: label };
+        deliveredClassByCode = { id, name: label };
+        break;
       }
     }
-    for (const opt of STUDENT_ENTRY_CLASS_OPTIONS) {
-      if (
-        opt.name.trim().toUpperCase() === normalizedClassCode &&
-        activeSavedExam.sentClassIds.includes(opt.id)
-      ) {
-        return { id: opt.id, name: opt.name };
+    if (!deliveredClassByCode) {
+      for (const opt of STUDENT_ENTRY_CLASS_OPTIONS) {
+        if (
+          opt.name.trim().toUpperCase() === normalizedClassCode &&
+          activeSavedExam.sentClassIds.includes(opt.id)
+        ) {
+          deliveredClassByCode = { id: opt.id, name: opt.name };
+          break;
+        }
       }
     }
-    return null;
-  }, [normalizedClassCode, activeSavedExam]);
+  }
 
   const matchedClass = useMemo(() => {
     if (!normalizedClassCode) return null;
@@ -117,24 +118,19 @@ export default function StudentExamPage() {
       (activeSavedExam.sentClassIds ?? []).includes(selectedClassId)),
   );
 
-  const entryClassHintKind = useMemo(() => {
-    if (!activeSavedExam || !normalizedClassCode) return null;
-    if (!requiresDeliveredClass) return null;
-    if (deliveredClassByCode) return "ok" as const;
-    if (
+  let entryClassHintKind: "ok" | "not_delivered" | "unknown" | null = null;
+  if (activeSavedExam && normalizedClassCode && requiresDeliveredClass) {
+    if (deliveredClassByCode) {
+      entryClassHintKind = "ok";
+    } else if (
       globalClassByCode &&
       !(activeSavedExam.sentClassIds ?? []).includes(globalClassByCode.id)
     ) {
-      return "not_delivered" as const;
+      entryClassHintKind = "not_delivered";
+    } else {
+      entryClassHintKind = "unknown";
     }
-    return "unknown" as const;
-  }, [
-    activeSavedExam,
-    normalizedClassCode,
-    requiresDeliveredClass,
-    deliveredClassByCode,
-    globalClassByCode,
-  ]);
+  }
   const monitoringScopeKey =
     activeSavedExam && selectedClassId
       ? createExamMonitoringScopeKey(activeSavedExam.id, selectedClassId)
@@ -285,7 +281,10 @@ export default function StudentExamPage() {
   if (phase === "entry") {
     return (
       <EntryStep
+        classCode=""
         hasAcceptedRules={hasAcceptedRules}
+        classCodeHint={classCodeHint}
+        showClassCodeField={false}
         studentCode={classCode}
         studentCodeRequired
         proceedError={entryProceedError}

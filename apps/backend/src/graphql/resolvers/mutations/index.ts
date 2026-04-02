@@ -3,6 +3,13 @@ import { createExam } from "./exam/createExam";
 import { studentExamAuth } from "./exam/studentExamAuth";
 import { addStudent } from "./student/addStudent";
 import { createClass } from "./student/createClass";
+import { deleteClass } from "./schoolAdmin/deleteClass";
+import { deleteStudent } from "./schoolAdmin/deleteStudent";
+import { deleteTeacher } from "./schoolAdmin/deleteTeacher";
+import { syncClassTeacherAssignments } from "./schoolAdmin/syncClassTeacherAssignments";
+import { updateClass } from "./schoolAdmin/updateClass";
+import { updateStudent } from "./schoolAdmin/updateStudent";
+import { updateTeacher } from "./schoolAdmin/updateTeacher";
 import { addTeacher } from "./subjectSchoolAndTeachers/addTeacher";
 import { linkTeacherClerk } from "./subjectSchoolAndTeachers/linkTeacherClerk";
 import { createSubject } from "./subjectSchoolAndTeachers/createSubject";
@@ -20,4 +27,11 @@ export const mutationResolvers = {
   linkTeacherClerk,
   studentExamAuth,
   addExamAllowedClasses,
+  updateClass,
+  deleteClass,
+  updateStudent,
+  deleteStudent,
+  updateTeacher,
+  deleteTeacher,
+  syncClassTeacherAssignments,
 };
