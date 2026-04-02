@@ -29,6 +29,7 @@ import {
   INITIAL_FORM,
   PENDING_EXAM_TRANSFER_STORAGE_KEY,
   QUESTION_BANK_PREFILL_STORAGE_KEY,
+  SAVED_EXAMS_STORAGE_KEY,
 } from "../_lib/constants";
 import { normalizeSavedExamRecord } from "../_lib/utils";
 import type {
@@ -286,6 +287,34 @@ export function useTeacherExamPage() {
       setHasLoadedSavedExams(true);
     });
   }, [savedExamsFromApi]);
+
+  useEffect(() => {
+    if (!hasLoadedSavedExams) return;
+    window.localStorage.setItem(
+      SAVED_EXAMS_STORAGE_KEY,
+      JSON.stringify(savedExams.map(normalizeSavedExamRecord)),
+    );
+  }, [hasLoadedSavedExams, savedExams]);
+
+  useEffect(() => {
+    if (teacherClasses.length === 0 || savedExams.length === 0) return;
+    const fallbackClassId = teacherClasses[0]?.id;
+    if (!fallbackClassId) return;
+
+    setSelectedClassByExamId((current) => {
+      let changed = false;
+      const next = { ...current };
+
+      for (const savedExam of savedExams) {
+        if (!next[savedExam.id]) {
+          next[savedExam.id] = fallbackClassId;
+          changed = true;
+        }
+      }
+
+      return changed ? next : current;
+    });
+  }, [savedExams, teacherClasses]);
 
   useEffect(() => {
     const syncApprovalStatus = () => {
@@ -666,7 +695,8 @@ export function useTeacherExamPage() {
         "Энэ шалгалтыг засварлаад дахин батлуулах шаардлагатай.",
       );
     }
-    const classId = selectedClassByExamId[savedExam.id];
+    const classId =
+      selectedClassByExamId[savedExam.id] ?? teacherClasses[0]?.id ?? "";
     if (!classId) return showToast("Илгээхийн өмнө ангиа сонгоно уу.");
     const selectedClass = teacherClasses.find((item) => item.id === classId);
     if (!selectedClass) return showToast("Сонгосон анги олдсонгүй.");

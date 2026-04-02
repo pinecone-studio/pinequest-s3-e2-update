@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  Link2,
-  Pencil,
-} from "lucide-react";
+import { Check, Copy, Link2, Pencil } from "lucide-react";
 import { useState } from "react";
 import type { TeacherClassOption } from "../../_lib/teacher-class-options";
 import { formatSavedDate } from "../_lib/utils";
@@ -33,10 +30,12 @@ export function SavedExamCard({
   onSend: () => void;
 }) {
   const [linkCopied, setLinkCopied] = useState(false);
+  const examLink =
+    typeof window === "undefined"
+      ? `/student/${savedExam.id}`
+      : `${window.location.origin}/student/${savedExam.id}`;
 
   const handleCopyLink = async () => {
-    if (typeof window === "undefined") return;
-    const examLink = `${window.location.origin}/student/${savedExam.id}`;
     try {
       await navigator.clipboard.writeText(examLink);
       setLinkCopied(true);
@@ -60,6 +59,22 @@ export function SavedExamCard({
         </div>
 
         <div className="flex w-full flex-row justify-end gap-2 sm:w-auto">
+          <ActionButton
+            disabled={
+              savedExam.approvalStatus === "pending" ||
+              savedExam.approvalStatus === "needs_fix"
+            }
+            kind="primary"
+            label={
+              savedExam.approvalStatus === "pending"
+                ? "Зөвшөөрөл хүлээж байна"
+                : savedExam.approvalStatus === "needs_fix"
+                  ? "Засвар шаардлагатай"
+                  : "Илгээх"
+            }
+            className="w-full sm:w-auto"
+            onClick={onSend}
+          />
           <button
             aria-label="Засварлах"
             className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#a7adb8] bg-white text-[#444] transition hover:bg-[#f8fbff]"
@@ -70,7 +85,7 @@ export function SavedExamCard({
           </button>
           <button
             aria-label="Устгах"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#ffc6c6] bg-white text-[#ff7e7e] transition hover:bg-[#fff5f5]"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#a7adb8] bg-white text-[#262626] transition hover:bg-[#f8fbff]"
             onClick={onDelete}
             type="button"
           >
@@ -82,30 +97,25 @@ export function SavedExamCard({
       <div className="mt-4 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <SavedExamStats savedExam={savedExam} />
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-            <ActionButton
-              className="w-full sm:w-auto"
-              icon={<Link2 className="h-4 w-4" />}
-              kind="secondary"
-              label={linkCopied ? "Линк хуулсан" : "Линк"}
-              onClick={handleCopyLink}
-            />
-            <ActionButton
-              disabled={
-                savedExam.approvalStatus === "pending" ||
-                savedExam.approvalStatus === "needs_fix"
-              }
-              kind="primary"
-              label={
-                savedExam.approvalStatus === "pending"
-                  ? "Зөвшөөрөл хүлээж байна"
-                  : savedExam.approvalStatus === "needs_fix"
-                    ? "Засвар шаардлагатай"
-                    : "Илгээх"
-              }
-              className="w-full sm:w-auto"
-              onClick={onSend}
-            />
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <div className="flex min-w-0 items-center rounded-2xl border border-[#a7adb8] bg-white px-4 py-3 sm:max-w-[360px]">
+              <Link2 className="mr-2 h-4 w-4 shrink-0 text-[#444]" />
+              <span className="truncate text-sm font-medium text-[#444]">
+                {examLink}
+              </span>
+              <button
+                aria-label="Линк хуулах"
+                className="ml-3 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#444] transition hover:bg-[#f8fbff]"
+                onClick={handleCopyLink}
+                type="button"
+              >
+                {linkCopied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
         <SavedExamSendState
@@ -126,15 +136,9 @@ function SavedExamMeta({ savedExam }: { savedExam: SavedExamRecord }) {
   return (
     <>
       <div className="flex flex-wrap items-center gap-2">
-        <span className={plainBadgeClass}>
-          {savedExam.grade}
-        </span>
-        <span className={plainBadgeClass}>
-          {savedExam.subject}
-        </span>
-        <span className={plainBadgeClass}>
-          {savedExam.topic}
-        </span>
+        <span className={plainBadgeClass}>{savedExam.grade}</span>
+        <span className={plainBadgeClass}>{savedExam.subject}</span>
+        <span className={plainBadgeClass}>{savedExam.topic}</span>
       </div>
       <h3 className="mt-3 text-lg font-semibold text-[#183153]">
         {savedExam.title}
@@ -213,7 +217,7 @@ function ActionButton({
     kind === "primary"
       ? "bg-[#2f9cf4] text-white hover:bg-[#2388da] disabled:bg-[#9fbceb] disabled:text-white"
       : kind === "danger"
-        ? "border-[#ffc6c6] bg-white text-[#ff7e7e] hover:bg-[#fff5f5] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]"
+        ? "border-[#a7adb8] bg-white text-[#262626] hover:bg-[#f8fbff] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]"
         : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff] disabled:border-[#e6eaf1] disabled:bg-[#f7f9fc] disabled:text-[#90a0ba]";
   return (
     <button

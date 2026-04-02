@@ -285,12 +285,11 @@ export default function StudentExamPage() {
   if (phase === "entry") {
     return (
       <EntryStep
-        classCode={classCode}
         hasAcceptedRules={hasAcceptedRules}
-        classCodeHint={classCodeHint}
-        classCodeRequired={requiresDeliveredClass}
+        studentCode={classCode}
+        studentCodeRequired
         proceedError={entryProceedError}
-        onChangeClassCode={(value) => {
+        onChangeStudentCode={(value) => {
           setEntryProceedError(null);
           setClassCode(value);
         }}

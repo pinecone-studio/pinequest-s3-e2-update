@@ -85,7 +85,7 @@ export function MonitorDetailSection({
                   </p>
                 </div>
               </div>
-              <div className="rounded-xl border border-[#f2cf66] bg-[#fff8df] px-5 py-3">
+              <div className="rounded-xl border border-[#bcd6f5] bg-[#d7ebff] px-[15px] py-2">
                 <div className="flex items-center justify-start gap-3">
                   <p className="text-[20px] font-semibold text-[#5b3a15]">
                     Анхааруулга
@@ -95,7 +95,7 @@ export function MonitorDetailSection({
                   </p>
                 </div>
               </div>
-              <div className="rounded-xl border border-[#f3b3b3] px-5 py-3">
+              <div className="rounded-xl border border-[#bcd6f5] bg-[#d7ebff] px-5 py-3">
                 <div className="flex items-center justify-start gap-3">
                   <p className="text-[20px] font-semibold text-[#d62828]">
                     Салсан
@@ -121,11 +121,11 @@ export function MonitorDetailSection({
                 <button
                   type="button"
                   onClick={onBackToList}
-                  className="rounded-2xl border border-[#e1ecf6] bg-white px-4 py-1.5 text-3 font-medium text-[#555]"
+                  className="rounded-xl border border-[#e1ecf6] bg-white  px-3 py-2 text-[10px] font-medium text-[#555]"
                 >
                   Буцах
                 </button>
-                <span className="rounded-2xl bg-[#d7ebff] px-4 py-1.5 text-3 font-medium text-[#355389]">
+                <span className="rounded-xl bg-[#d7ebff] px-3 py-2 text-[10px] font-medium text-[#355389]">
                   Сонгосон 1
                 </span>
               </div>
@@ -133,20 +133,22 @@ export function MonitorDetailSection({
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
               {(activeExam.classOptions?.length ?? 0) > 1 ? (
-                <label className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#355389]">
-                  <span>Анги:</span>
-                  <select
-                    className="rounded-md border border-[#bcd6f5] bg-white px-2 py-1 text-[12px] text-[#1f2a44]"
-                    value={activeClassId ?? ""}
-                    onChange={(e) => onSelectClass(e.target.value)}
-                  >
-                    {activeExam.classOptions.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="flex flex-wrap gap-2">
+                  {activeExam.classOptions.map((group) => (
+                    <button
+                      key={group.id}
+                      type="button"
+                      onClick={() => onSelectClass(group.id)}
+                      className={`rounded-xl border px-3 py-2 text-[12px] font-medium transition ${
+                        group.id === activeClassId
+                          ? "border-[#7dc8ff] bg-[#d7ebff] text-[#355389]"
+                          : "border-[#d9dee8] bg-white text-[#5c6786] hover:border-[#aac8f8]"
+                      }`}
+                    >
+                      {group.label}
+                    </button>
+                  ))}
+                </div>
               ) : (
                 <span className="rounded-md bg-[#d7ebff] px-3 py-0.5 text-[12px] font-medium text-[#355389]">
                   Анги: {activeClassLabel ?? activeExam.classLabel}

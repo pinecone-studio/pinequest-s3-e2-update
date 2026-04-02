@@ -21,11 +21,11 @@ export function QuestionBankFigmaHero({
       </div>
 
       <div className="inline-flex h-[52px] w-fit min-w-0 shrink-0 items-center justify-center gap-2 self-start rounded-[12px] bg-[#D7ECFF] px-4 sm:h-[56px] sm:gap-[10px] sm:px-[18px] lg:self-center">
+        <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-none tracking-[-0.02em] text-[#122459] sm:text-[20px]">
+          НИЙТ АСУУЛТ
+        </p>
         <p className="text-[18px] font-medium leading-none tracking-[-0.02em] text-[#122459] sm:text-[20px]">
           {totalQuestions}
-        </p>
-        <p className="whitespace-nowrap text-[16px] font-medium uppercase leading-none tracking-[-0.02em] text-[#122459] sm:text-[20px]">
-          АСУУЛТ
         </p>
       </div>
 

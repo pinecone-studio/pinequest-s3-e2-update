@@ -62,14 +62,14 @@ export function FinishConfirmationDialog({
               <button
                 type="button"
                 onClick={onCancel}
-                className="inline-flex min-h-12 w-full items-center justify-center rounded-[20px] border border-[#29A4FF] bg-white px-5 py-3 text-base font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff] active:scale-[0.99] sm:min-h-[50px] sm:px-6 sm:text-lg md:text-[22px]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[20px] border border-[#29A4FF] bg-white px-4 py-2 text-base font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff] active:scale-[0.99] sm:min-h-[46px] sm:px-5 sm:text-base md:text-[20px]"
               >
                 Буцах
               </button>
               <button
                 type="button"
                 onClick={onConfirm}
-                className="inline-flex min-h-12 w-full items-center justify-center rounded-[20px] bg-[#349AF2] px-5 py-3 text-base font-medium text-white transition hover:bg-[#2488e0] active:scale-[0.99] sm:min-h-[50px] sm:px-6 sm:text-lg md:text-[22px]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[20px] bg-[#349AF2] px-4 py-2 text-base font-medium text-white transition hover:bg-[#2488e0] active:scale-[0.99] sm:min-h-[46px] sm:px-5 sm:text-base md:text-[20px]"
               >
                 Тийм
               </button>

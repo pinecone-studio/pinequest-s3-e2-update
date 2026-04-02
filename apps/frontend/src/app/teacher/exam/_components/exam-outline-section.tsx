@@ -2,12 +2,15 @@
 
 import { Check, Copy, Link2 } from "lucide-react";
 import { useState } from "react";
+import { NATIONAL_SCRIPT_SUBJECT } from "../../question-bank/_lib/constants";
+import { hasTraditionalMongolianText } from "../../question-bank/_lib/utils";
+import type { ExamQuestionDetail } from "../_lib/types";
 import {
   DIFFICULTY_LABELS,
+  GRADING_TYPE_LABELS,
   QUESTION_TYPE_LABELS,
   STATUS_LABELS,
 } from "../../question-bank/_lib/utils";
-import type { ExamQuestionDetail } from "../_lib/types";
 import { UpIcon } from "@/app/_icons/upIcon";
 import { DownIcon } from "@/app/_icons/downIcon";
 import { TrashIcon } from "@/app/_icons/trashIcon";
@@ -32,7 +35,9 @@ export function ExamOutlineSection({
   const hasQuestions = examQuestionDetails.length > 0;
   const [linkCopied, setLinkCopied] = useState(false);
 
-  const latestExamLink = latestSavedExamId ? `/student/${latestSavedExamId}` : "";
+  const latestExamLink = latestSavedExamId
+    ? `/student/${latestSavedExamId}`
+    : "";
 
   const handleCopyLatestLink = async () => {
     if (!latestSavedExamId || typeof window === "undefined") return;
@@ -73,7 +78,7 @@ export function ExamOutlineSection({
         </div>
       </div>
 
-      <div className="mt-5 space-y-4">
+      <div className="mt-5">
         {!hasQuestions ? (
           <div className="h-29.75 rounded-[12px] border border-dashed border-[#404040] px-4 py-6 text-center sm:px-5 sm:py-8">
             <p className="text-base font-medium tracking-[0.04em] text-[#122459] sm:text-[20px]">
@@ -86,64 +91,67 @@ export function ExamOutlineSection({
           </div>
         ) : null}
 
-        {examQuestionDetails.map((item, index) => (
-          <article
-            className="rounded-[12px] border border-[#a7adb8] bg-white p-4 sm:p-5"
-            key={item.examQuestionId}
-          >
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex min-w-8 items-center justify-center rounded-md border border-[#475569] px-2 py-0.5 text-xs font-medium text-[#0f172a]">
-                    {index + 1}
-                  </span>
-                  <Badge>{STATUS_LABELS[item.question.status]}</Badge>
-                  <Badge>{QUESTION_TYPE_LABELS[item.question.questionType]}</Badge>
-                  <Badge>{DIFFICULTY_LABELS[item.question.difficulty]}</Badge>
-                </div>
-                <h3 className="mt-5 text-[19px] font-semibold text-[#2d2d2d]">
-                  {item.question.title}
-                </h3>
-                <p className="mt-3 text-[15px] leading-7 text-[#707070]">
-                  {item.question.content.prompt}
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-7 sm:gap-y-2 lg:gap-7.5">
-                <div className="flex flex-wrap items-center gap-2 sm:justify-start lg:justify-end">
-                  <OutlineButton
-                    icon={<UpIcon />}
-                    label="Дээш"
-                    onClick={() => onMoveQuestion(item.examQuestionId, "up")}
-                  />
-                  <OutlineButton
-                    icon={<DownIcon />}
-                    label="Доош"
-                    onClick={() => onMoveQuestion(item.examQuestionId, "down")}
-                  />
-                </div>
-                <div>
-                  <OutlineButton
-                    danger
-                    icon={<TrashIcon />}
-                    label="Хасах"
-                    onClick={() => onRemoveExamQuestion(item.examQuestionId)}
-                  />
-                </div>
-              </div>
-            </div>
+        {hasQuestions ? (
+          <div className="-mx-1 overflow-x-auto px-1 pb-2">
+            <div className="flex min-w-max gap-4">
+              {examQuestionDetails.map((item, index) => (
+                <article
+                  className="w-[calc((100vw-7rem)/3)] min-w-[320px] max-w-[380px] rounded-[24px] border border-[#cbdcf4] bg-white p-5 shadow-sm sm:w-[calc((100vw-8rem)/3)] sm:p-6"
+                  key={item.examQuestionId}
+                >
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="inline-flex min-w-10 items-center justify-center rounded-[10px] border border-[#52627d] px-3 py-2 text-sm font-semibold text-[#122459]">
+                      {index + 1}
+                    </span>
+                    <ExamBadge>{STATUS_LABELS[item.question.status]}</ExamBadge>
+                    <ExamBadge>
+                      {QUESTION_TYPE_LABELS[item.question.questionType]}
+                    </ExamBadge>
+                    <ExamBadge>
+                      {DIFFICULTY_LABELS[item.question.difficulty]}
+                    </ExamBadge>
+                    <ExamBadge>
+                      {GRADING_TYPE_LABELS[item.question.gradingType]}
+                    </ExamBadge>
+                  </div>
 
-            <div className="mt-5 flex justify-end">
-              <div className="inline-flex h-7.5 min-w-16.25 items-center justify-center gap-2 rounded-[12px] border border-[#adadad] bg-white px-4">
-                <span className="text-[12px] font-medium text-[#262626]">
-                  {item.assignedPoints}
-                </span>
-                <span className="text-[12px] font-medium text-[#a5a5a5]">
-                  оноо
-                </span>
-              </div>
+                  <ExamQuestionPreview detail={item} />
+
+                  <div className="mt-5 flex items-center gap-2 whitespace-nowrap overflow-x-auto pb-1">
+                    <OutlineButton
+                      icon={<UpIcon />}
+                      label="Урд"
+                      onClick={() => onMoveQuestion(item.examQuestionId, "up")}
+                    />
+                    <OutlineButton
+                      icon={<DownIcon />}
+                      label="Хойно"
+                      onClick={() =>
+                        onMoveQuestion(item.examQuestionId, "down")
+                      }
+                    />
+                    <div className="inline-flex h-8 min-w-[86px] shrink-0 items-center justify-center gap-1.5 rounded-[14px] border border-[#bcc8d8] bg-white px-3">
+                      <span className="text-[13px] font-semibold text-[#1f2937]">
+                        {item.assignedPoints}
+                      </span>
+                      <span className="text-[13px] font-medium text-[#94a3b8]">
+                        оноо
+                      </span>
+                    </div>
+                    <button
+                      aria-label="Асуултыг хасах"
+                      className="inline-flex h-7 w-12 shrink-0 items-center justify-center rounded-xl border border-[#a7adb8] bg-white text-[#262626] transition hover:bg-[#f8fbff]"
+                      onClick={() => onRemoveExamQuestion(item.examQuestionId)}
+                      type="button"
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </article>
+              ))}
             </div>
-          </article>
-        ))}
+          </div>
+        ) : null}
       </div>
 
       {hasQuestions ? (
@@ -200,20 +208,77 @@ export function ExamOutlineSection({
   );
 }
 
+function ExamQuestionPreview({ detail }: { detail: ExamQuestionDetail }) {
+  const { question } = detail;
+  const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
+  const title = question.title.trim() || "Асуултын дэлгэрэнгүй";
+
+  return (
+    <div className="mt-6">
+      <h3 className="text-[20px] font-semibold text-[#2d2d2d] sm:text-[22px]">
+        {title}
+      </h3>
+      <p className="mt-4 text-[15px] leading-8 text-[#707070] whitespace-pre-line">
+        {question.content.prompt}
+      </p>
+
+      {question.options.length > 0 ? (
+        <div className="mt-6 space-y-4">
+          {question.options.map((option, index) => {
+            const renderVertical =
+              isNationalScript && hasTraditionalMongolianText(option.text);
+
+            return (
+              <div
+                className={`rounded-[12px] border px-5 py-2.5 text-[15px] ${
+                  option.isCorrect
+                    ? "border-[#80bff2] bg-[#6aaae0] text-[#183b76]"
+                    : "border-[#e5e7eb] bg-white text-[#1f3b7a]"
+                }`}
+                key={option.id}
+              >
+                <div
+                  className={
+                    renderVertical
+                      ? "min-h-24 overflow-x-auto leading-8"
+                      : "flex items-start gap-3"
+                  }
+                  style={
+                    renderVertical
+                      ? {
+                          writingMode: "vertical-lr",
+                          textOrientation: "mixed",
+                          whiteSpace: "pre-wrap",
+                        }
+                      : undefined
+                  }
+                >
+                  {!renderVertical ? (
+                    <span className="shrink-0 font-medium">{index + 1}.</span>
+                  ) : null}
+                  <span className="whitespace-pre-line">{option.text}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function OutlineButton({
-  danger = false,
   icon,
   label,
   onClick,
 }: {
-  danger?: boolean;
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
 }) {
   return (
     <button
-      className={`inline-flex h-8 items-center gap-2 rounded-[12px] border px-3 text-[12px] font-medium transition ${danger ? "border-[#F2ADAC] bg-white text-[#F2ADAC] hover:bg-[#fff5f5]" : "border-[#a7adb8] bg-white text-[#444] hover:bg-[#f8fbff]"}`}
+      className="inline-flex h-8 items-center gap-2 rounded-[12px] border border-[#a7adb8] bg-white px-3 text-[12px] font-medium text-[#444] transition hover:bg-[#f8fbff]"
       onClick={onClick}
       type="button"
     >
@@ -223,9 +288,9 @@ function OutlineButton({
   );
 }
 
-function Badge({ children }: { children: React.ReactNode }) {
+function ExamBadge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-md bg-[#d7ebff] px-3 py-1 text-xs font-medium text-[#355389]">
+    <span className="inline-flex items-center rounded-lg border border-[#d7e0ea] bg-white px-4 py-2 text-[14px] font-medium leading-none text-[#355389]">
       {children}
     </span>
   );
