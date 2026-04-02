@@ -91,13 +91,19 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   const [studentExamAuthMutation, { loading: authLoading }] =
     useMutation<StudentExamAuthData>(STUDENT_EXAM_AUTH);
 
+  const linkedSavedExam = useMemo(
+    () => savedExams.find((item) => item.id === routeExamId) ?? null,
+    [savedExams, routeExamId],
+  );
+  const isLocalSavedExam = Boolean(linkedSavedExam);
+
   const {
     data: examQueryData,
     loading: examLoading,
     error: examError,
   } = useQuery<{ getExamById: GqlExamRow | null }>(GET_EXAM_BY_ID, {
     variables: { examId: routeExamId },
-    skip: !routeExamId || !examSessionToken,
+    skip: !routeExamId || !examSessionToken || isLocalSavedExam,
   });
 
   const examRow = examQueryData?.getExamById ?? null;
@@ -109,7 +115,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     getOpenExerciesByIds: unknown[];
   }>(GET_EXAM_QUESTION_ITEMS, {
     variables: { testIds, openExerciseIds },
-    skip: !routeExamId || !examSessionToken || !examRow,
+    skip: !routeExamId || !examSessionToken || !examRow || isLocalSavedExam,
   });
 
   const testsById = useMemo(() => {
@@ -129,11 +135,6 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
       testsById,
     );
   }, [examRow, itemsData, testsById]);
-
-  const linkedSavedExam = useMemo(
-    () => savedExams.find((item) => item.id === routeExamId) ?? null,
-    [savedExams, routeExamId],
-  );
 
   const teacherMonitoringExam = useMemo(
     () =>
@@ -269,9 +270,14 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
 
   useEffect(() => {
     if (phase !== "entry" || !examSessionToken || authLoading) return;
-    if (examLoading || itemsLoading || !examRow || !apiExamData) return;
+    if (!isLocalSavedExam && (examLoading || itemsLoading || !examRow || !apiExamData)) {
+      return;
+    }
 
-    if (apiExamData.questions.length === 0) {
+    const examDataToUse = isLocalSavedExam ? resolvedExamData : apiExamData;
+    if (!examDataToUse) return;
+
+    if (examDataToUse.questions.length === 0) {
       setEntryProceedError(
         "Энэ шалгалтад олон сонголттой хангалттай асуулт олдсонгүй.",
       );
@@ -293,7 +299,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
         return;
       }
-      const totalDurationSeconds = apiExamData.durationMinutes * 60;
+      const totalDurationSeconds = examDataToUse.durationMinutes * 60;
       if (sharedStartedAt != null) {
         const elapsedSeconds = Math.floor(
           (Date.now() - sharedStartedAt) / 1000,
@@ -305,7 +311,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
         }
       }
     } else {
-      setManualRemainingSeconds(apiExamData.durationMinutes * 60);
+      setManualRemainingSeconds(examDataToUse.durationMinutes * 60);
     }
 
     setEntryProceedError(null);
@@ -314,10 +320,12 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     phase,
     examSessionToken,
     authLoading,
+    isLocalSavedExam,
     examLoading,
     itemsLoading,
     examRow,
     apiExamData,
+    resolvedExamData,
     usesTeacherControlledStart,
     entryClassHintKind,
     matchedClass,
@@ -429,6 +437,13 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     }
 
     setEntryProceedError(null);
+
+    if (isLocalSavedExam) {
+      const localToken = `local-${routeExamId}-${trimmedStudentCode}`;
+      writeStudentExamToken(routeExamId, localToken);
+      setExamSessionToken(localToken);
+      return;
+    }
 
     try {
       const result = await studentExamAuthMutation({
