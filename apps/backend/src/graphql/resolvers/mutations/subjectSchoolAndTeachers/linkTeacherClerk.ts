@@ -28,6 +28,8 @@ export const linkTeacherClerk = async (
     throw new Error("Нэвтэрсэн хэрэглэгч шаардлагатай (Clerk Bearer token).");
   }
 
+  console.log("clerk userId:", ctx.clerkUserId);
+
   const email = await clerkPrimaryEmail(ctx.clerkUserId, ctx.env);
   if (!email) {
     throw new Error("Clerk хэрэглэгчийн и-мэйл авахад алдаа гарлаа.");
