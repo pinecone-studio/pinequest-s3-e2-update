@@ -18,7 +18,7 @@ export function QuestionBankActivePanel({
 }: QuestionBankActivePanelProps) {
   if (!question) {
     return (
-      <section className="min-h-[510px] w-[381px] rounded-[10px] border border-[#9ED0FF] bg-white px-[18px] py-[18px]" />
+      <section className="min-h-[240px] w-full max-w-full rounded-[10px] border border-[#9ED0FF] bg-white px-[18px] py-[18px] lg:min-h-[510px] lg:max-w-[381px]" />
     );
   }
 
@@ -35,7 +35,7 @@ export function QuestionBankActivePanel({
   const promptLines = splitPromptLines(question.content.prompt);
 
   return (
-    <section className="min-h-[510px] w-[381px] rounded-[10px] border border-[#9ED0FF] bg-white px-[18px] py-[18px]">
+    <section className="min-h-[320px] w-full max-w-full rounded-[10px] border border-[#9ED0FF] bg-white px-[18px] py-[18px] lg:min-h-[510px] lg:max-w-[381px]">
       <p className="text-[12px] font-normal uppercase leading-[15px] text-[#7B7B7B]">
         АСУУЛТЫН ДЭЛГЭРЭНГҮЙ
       </p>
