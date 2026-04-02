@@ -80,7 +80,7 @@ export function NationalScriptAssist({
   };
 
   return (
-    <div className="mt-4 rounded-3xl border border-[#d7e3f4] bg-[#f7faff] p-4">
+    <div className="mt-4 rounded-3xl bg-[#FAFAFA] p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7487a6]">
@@ -108,7 +108,7 @@ export function NationalScriptAssist({
       </label>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
-          className="inline-flex h-11 items-center justify-center rounded-2xl bg-[#1f6feb] px-4 text-sm font-semibold text-white transition hover:bg-[#195fcc] disabled:cursor-not-allowed disabled:bg-[#94b6f3]"
+          className="inline-flex h-11 items-center justify-center rounded-2xl bg-[#29A4FF] px-4 text-sm font-semibold text-white transition hover:bg-[#1f97f1] disabled:cursor-not-allowed disabled:bg-[#94b6f3]"
           disabled={loading}
           onClick={handleConvert}
           type="button"

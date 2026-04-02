@@ -25,8 +25,16 @@ export function ExamOutlineSection({
   onPersistExam: () => void;
   onRemoveExamQuestion: (examQuestionId: string) => void;
 }) {
+  const hasQuestions = examQuestionDetails.length > 0;
+
   return (
-    <section className="mx-3 rounded-[12px] border border-[#d7e6fb] bg-[#EDF6FF] p-4 shadow-sm sm:mx-4 sm:p-5 md:mx-5">
+    <section
+      className={`mx-3 rounded-[12px] border p-4 shadow-sm sm:mx-4 sm:p-5 md:mx-5 ${
+        hasQuestions
+          ? "border-[#d7e6fb] bg-[#EDF6FF]"
+          : "border-[#e5e7eb] bg-[#FAFAFA]"
+      }`}
+    >
       <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">
           <div className="text-base font-medium uppercase tracking-[0.1em] text-[#122459] sm:text-[20px] sm:tracking-[0.14em]">
@@ -47,7 +55,7 @@ export function ExamOutlineSection({
       </div>
 
       <div className="mt-5 space-y-4">
-        {examQuestionDetails.length === 0 ? (
+        {!hasQuestions ? (
           <div className="h-29.75 rounded-[12px] border border-dashed border-[#404040] px-4 py-6 text-center sm:px-5 sm:py-8">
             <p className="text-base font-medium tracking-[0.04em] text-[#122459] sm:text-[20px]">
               Шалгалтад асуулт хараахан нэмэгдээгүй байна
@@ -119,7 +127,7 @@ export function ExamOutlineSection({
         ))}
       </div>
 
-      {examQuestionDetails.length > 0 ? (
+      {hasQuestions ? (
         <div className="mt-5 flex justify-stretch pt-4 sm:justify-end">
           <button
             className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#29A4FF] px-6 py-3 text-[12px] font-medium text-[#EDF6FF] transition hover:bg-[#29A4FF] sm:w-auto"

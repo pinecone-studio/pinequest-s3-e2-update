@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, CirclePlus, Search } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,6 @@ type QuestionBankFigmaControlsProps = {
   entrySubject: string;
   topicOptions: string[];
   onClearFilters: () => void;
-  onOpenBulkImport: () => void;
   onResetSelection: () => void;
   onUpdateFilters: (partial: Partial<QuestionFiltersType>) => void;
 };
@@ -27,7 +26,6 @@ export function QuestionBankFigmaControls({
   entrySubject,
   topicOptions,
   onClearFilters,
-  onOpenBulkImport,
   onResetSelection,
   onUpdateFilters,
 }: QuestionBankFigmaControlsProps) {
@@ -47,14 +45,6 @@ export function QuestionBankFigmaControls({
           </button>
           <SelectedChip>{entrySubject || "Математик"}</SelectedChip>
           <SelectedChip>{entryGrade || "10-р анги"}</SelectedChip>
-          <button
-            className="inline-flex h-[36px] items-center gap-[6px] rounded-[10px] border border-[#e5e7eb] bg-white px-[14px] text-[11px] font-medium text-[#4b5563] transition hover:bg-[#f8fafc]"
-            onClick={onOpenBulkImport}
-            type="button"
-          >
-            <CirclePlus className="h-[12px] w-[12px]" />
-            Файл нэмэх
-          </button>
         </div>
       </section>
 
