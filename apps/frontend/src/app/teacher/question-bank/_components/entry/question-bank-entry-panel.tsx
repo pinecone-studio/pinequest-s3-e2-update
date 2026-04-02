@@ -30,34 +30,34 @@ export function QuestionBankEntryPanel({
 
 	return (
 		<div className="space-y-[18px]">
-			<section className="flex w-full items-center justify-between gap-6">
+			<section className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
 				<div className="min-w-0">
-					<h1 className="text-[23px] font-bold uppercase leading-[28px] tracking-[0.1em] text-[#122459]">
+					<h1 className="text-[17px] font-bold uppercase leading-snug tracking-[0.08em] text-[#122459] sm:text-[23px] sm:leading-[28px] sm:tracking-[0.1em]">
 						БАГШИЙН АСУУЛТЫН САН
 					</h1>
-					<p className="mt-[8px] text-[14px] leading-[18px] tracking-[0.1em] text-[#737373]">
+					<p className="mt-2 text-[13px] leading-[18px] tracking-[0.06em] text-[#737373] sm:mt-[8px] sm:text-[14px] sm:tracking-[0.1em]">
 						Нэг удаа бэлдээд, дахин ашигла.
 					</p>
 				</div>
-				<div className="inline-flex h-[88px] min-w-[326px] items-center justify-center rounded-[16px] bg-[#D7ECFF] px-[28px]">
-					<span className="text-[56px] font-medium leading-none text-[#122459]">
+				<div className="inline-flex h-[72px] w-full min-w-0 shrink-0 items-center justify-center rounded-[16px] bg-[#D7ECFF] px-5 sm:h-[88px] sm:w-auto sm:min-w-0 sm:px-[28px] md:min-w-[280px]">
+					<span className="text-[40px] font-medium leading-none text-[#122459] sm:text-[56px]">
 						{totalQuestions}
 					</span>
-					<div className="ml-[12px]">
-						<p className="whitespace-nowrap text-[16px] font-medium uppercase leading-[20px] text-[#122459]">
+					<div className="ml-3 sm:ml-[12px]">
+						<p className="whitespace-nowrap text-[14px] font-medium uppercase leading-tight text-[#122459] sm:text-[16px] sm:leading-[20px]">
 							БҮХ АСУУЛТ
 						</p>
 					</div>
 				</div>
 			</section>
 
-			<section className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] px-[26px] py-[22px]">
-				<h2 className="text-[53px] font-medium leading-[53px] text-[#323232]">
+			<section className="rounded-[12px] border border-[#E5E5E5] bg-[#FAFAFA] px-4 py-5 sm:px-[26px] sm:py-[22px]">
+				<h2 className="text-[28px] font-medium leading-tight text-[#323232] sm:text-[40px] sm:leading-none md:text-[53px] md:leading-[53px]">
 					Сонголтын хэсэг
 				</h2>
 
-				<div className="mt-[16px] flex flex-wrap items-end gap-[16px]">
-					<div className="w-[243px]">
+				<div className="mt-4 flex flex-col items-stretch gap-4 sm:mt-[16px] sm:flex-row sm:flex-wrap sm:items-end sm:gap-[16px]">
+					<div className="w-full sm:w-[243px]">
 						<QuestionBankEntrySelect
 							isOptionsLoading={subjectsLoading}
 							label="Хичээл"
@@ -67,7 +67,7 @@ export function QuestionBankEntryPanel({
 							value={entrySubjectId}
 						/>
 					</div>
-					<div className="w-[243px]">
+					<div className="w-full sm:w-[243px]">
 						<QuestionBankEntrySelect
 							label="Анги"
 							onValueChange={onGradeSelect}
@@ -77,7 +77,7 @@ export function QuestionBankEntryPanel({
 						/>
 					</div>
 					<button
-						className="inline-flex h-[50px] items-center justify-center rounded-[16px] border border-[#7DC8FF] bg-[#EDF6FF] px-[24px] text-[22px] font-medium uppercase leading-none text-[#122459] transition hover:bg-[#e3f0ff] disabled:cursor-not-allowed disabled:border-[#d1d5db] disabled:bg-[#f3f4f6] disabled:text-[#9ca3af]"
+						className="inline-flex h-[48px] w-full items-center justify-center rounded-[16px] border border-[#7DC8FF] bg-[#EDF6FF] px-4 text-[15px] font-medium uppercase leading-none text-[#122459] transition hover:bg-[#e3f0ff] disabled:cursor-not-allowed disabled:border-[#d1d5db] disabled:bg-[#f3f4f6] disabled:text-[#9ca3af] sm:h-[50px] sm:w-auto sm:px-[24px] sm:text-[18px] md:text-[22px]"
 						disabled={
 							subjectsLoading || !entrySubjectId || !entryGrade
 						}

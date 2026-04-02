@@ -28,15 +28,15 @@ export function SavedExamsSection({
   onSendSavedExam: (savedExam: SavedExamRecord, openMonitoring?: boolean) => void;
 }) {
   return (
-    <section className="mx-5 rounded-xl border border-[#d7e6fb] bg-[#EDF6FF] p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-4  pb-4">
-        <div>
-          <div className="text-[15px] font-extrabold uppercase tracking-[0.14em] text-[#233e7c]">
+    <section className="mx-3 rounded-xl border border-[#d7e6fb] bg-[#EDF6FF] p-4 shadow-sm sm:mx-4 sm:p-5 md:mx-5">
+      <div className="flex flex-col gap-2 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="min-w-0">
+          <div className="text-sm font-extrabold uppercase tracking-[0.1em] text-[#233e7c] sm:text-[15px] sm:tracking-[0.14em]">
             Хадгалсан шалгалтууд
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-[20px] font-medium text-[#122459]">
+        <div className="shrink-0 text-left sm:text-right">
+          <p className="text-lg font-medium text-[#122459] sm:text-[20px]">
             {savedExams.length} шалгалт
           </p>
         </div>
@@ -44,8 +44,8 @@ export function SavedExamsSection({
 
       <div className="mt-5 grid gap-4">
         {hasLoadedSavedExams && savedExams.length === 0 ? (
-          <div className="h-29.75 rounded-[20px] border border-dashed border-[#404040] px-5 py-8 text-center">
-            <p className="text-[20px] font-medium tracking-[0.04em] text-[#122459]">
+          <div className="h-29.75 rounded-[20px] border border-dashed border-[#404040] px-4 py-6 text-center sm:px-5 sm:py-8">
+            <p className="text-base font-medium tracking-[0.04em] text-[#122459] sm:text-[20px]">
               Хадгалсан шалгалт алга байна
             </p>
           </div>
