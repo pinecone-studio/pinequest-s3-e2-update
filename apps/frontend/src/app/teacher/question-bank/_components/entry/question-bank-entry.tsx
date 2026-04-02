@@ -76,7 +76,7 @@ export function QuestionBankEntry({
 						</p>
 					</div>
 
-					<div className="inline-flex h-[72px] w-full min-w-0 shrink-0 items-center justify-center gap-3 rounded-[16px] bg-[#D7ECFF] px-5 sm:h-[76px] sm:w-auto sm:min-w-[220px] sm:gap-4 sm:px-4 md:min-w-[280px] md:px-8">
+					<div className="hidden h-[72px] w-full min-w-0 shrink-0 items-center justify-center gap-3 rounded-[16px] bg-[#D7ECFF] px-5 sm:hidden sm:h-[76px] sm:w-auto sm:min-w-[220px] sm:gap-4 sm:px-4 md:min-w-[280px] md:px-8">
 						<p className="text-[40px] font-medium leading-none text-[#122459] sm:text-[44px] md:text-[56px]">
 							{totalQuestions}
 						</p>
