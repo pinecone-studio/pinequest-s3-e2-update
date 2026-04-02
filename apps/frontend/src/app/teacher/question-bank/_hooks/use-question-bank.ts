@@ -582,6 +582,19 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			const questions = questionIds
 				.map((id) => mergedQuestions.find((q) => q.id === id))
 				.filter((q): q is Question => Boolean(q));
+
+			setUpserts((current) => {
+				const next = new Map(current);
+				for (const question of questions) {
+					const latest = next.get(question.id) ?? question;
+					next.set(question.id, {
+						...latest,
+						usageCount: latest.usageCount + 1,
+					});
+				}
+				return next;
+			});
+
 			const payload: PendingExamTransfer = {
 				questionIds,
 				questions,
@@ -607,6 +620,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			entrySelection.grade,
 			entrySelection.subject,
 			router,
+			setUpserts,
 			showToast,
 		],
 	);

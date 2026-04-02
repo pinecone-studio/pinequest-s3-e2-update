@@ -1,7 +1,6 @@
 "use client";
 
 import { Bookmark, Check, Heart } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Question } from "../../_lib/types";
 import { DIFFICULTY_LABELS, resolveQuestionTitle } from "../../_lib/utils";
@@ -32,8 +31,6 @@ export function QuestionCard({
   onToggleLike,
 }: QuestionCardProps) {
   const promptLines = splitPromptLines(question.content.prompt);
-  const [isUsageMarked, setIsUsageMarked] = useState(false);
-  const displayedUsageCount = question.usageCount + (isUsageMarked ? 1 : 0);
 
   return (
     <article
@@ -121,16 +118,12 @@ export function QuestionCard({
           </span>
         </button>
 
-        <button
-          className="inline-flex items-center gap-[8px] px-[12px] text-[16px] leading-[140%]"
-          onClick={() => setIsUsageMarked((value) => !value)}
-          type="button"
-        >
+        <div className="inline-flex items-center gap-[8px] px-[12px] text-[16px] leading-[140%]">
           <Bookmark className="h-[20px] w-[20px] text-[#525252]" />
           <span className="text-[#525252]">
-            {displayedUsageCount} удаа ашигласан
+            {question.usageCount} удаа ашигласан
           </span>
-        </button>
+        </div>
       </div>
     </article>
   );
