@@ -2,7 +2,7 @@
 
 "use client";
 
-import { AlertTriangle, BellRing, X } from "lucide-react";
+import { ArrowUpRight, ChevronRight, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   type ApprovalRequest,
@@ -10,58 +10,200 @@ import {
   getApprovalUpdatedEventName,
   updateApprovalRequestStatus,
 } from "@/app/lib/exam-approval-store";
-import { examAlerts } from "@/app/school/exams/_mock/school-exams";
 import {
   pendingActions,
+  schoolExams,
   teacherPerformance,
 } from "@/app/school/_mock/school-data";
+
+function extractGradeValue(className: string) {
+  const match = className.match(/\d+/);
+  return match ? match[0] : className;
+}
+
+function quarterOf(startAt: string) {
+  const month = Number(startAt.slice(5, 7));
+  if (Number.isNaN(month) || month < 1 || month > 12) return "Q1";
+  if (month <= 3) return "Q1";
+  if (month <= 6) return "Q2";
+  if (month <= 9) return "Q3";
+  return "Q4";
+}
 
 export default function SchoolDashboardPage() {
   const [approvalRequests, setApprovalRequests] = useState<
     ReturnType<typeof getApprovalRequestsClient>
   >([]);
+  const [performanceView, setPerformanceView] = useState<"class" | "teacher">(
+    "class",
+  );
+  const [selectedQuarterFilter, setSelectedQuarterFilter] = useState("all");
+  const [selectedClassFilter, setSelectedClassFilter] = useState("all");
+  const [selectedSubjectFilter, setSelectedSubjectFilter] = useState("all");
   const sortedTeacherPerformance = useMemo(
     () => [...teacherPerformance].sort((a, b) => b.avgScore - a.avgScore),
     [],
   );
-  const topScoreTeachers = useMemo(
+  const quarterFilteredExams = useMemo(() => {
+    if (selectedQuarterFilter === "all") return schoolExams;
+    return schoolExams.filter((exam) => quarterOf(exam.startAt) === selectedQuarterFilter);
+  }, [selectedQuarterFilter]);
+  const classOptions = useMemo(
     () =>
-      sortedTeacherPerformance.filter(
-        (row) => row.avgScore >= 80 && row.avgScore <= 100,
+      Array.from(
+        new Set(quarterFilteredExams.map((exam) => extractGradeValue(exam.className))),
+      ).sort((a, b) => {
+        const aNum = Number(a);
+        const bNum = Number(b);
+        if (Number.isFinite(aNum) && Number.isFinite(bNum)) return bNum - aNum;
+        return a.localeCompare(b, "mn");
+      }),
+    [quarterFilteredExams],
+  );
+  const subjectOptions = useMemo(
+    () =>
+      Array.from(new Set(quarterFilteredExams.map((exam) => exam.subject))).sort(
+        (a, b) => a.localeCompare(b, "mn"),
       ),
+    [quarterFilteredExams],
+  );
+  const classPerformanceRows = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        className: string;
+        subject: string;
+        totalScorePercent: number;
+        highestScorePercent: number;
+        examCount: number;
+      }
+    >();
+
+    quarterFilteredExams.forEach((exam) => {
+      const key = `${exam.className}__${exam.subject}`;
+      const current = map.get(key);
+      const scorePercent =
+        exam.studentCount > 0
+          ? Math.round((exam.submittedCount / exam.studentCount) * 100)
+          : 0;
+      const topScorePercent = Math.min(100, scorePercent + 8);
+
+      if (!current) {
+        map.set(key, {
+          className: exam.className,
+          subject: exam.subject,
+          totalScorePercent: scorePercent,
+          highestScorePercent: topScorePercent,
+          examCount: 1,
+        });
+        return;
+      }
+
+      current.totalScorePercent += scorePercent;
+      current.highestScorePercent = Math.max(
+        current.highestScorePercent,
+        topScorePercent,
+      );
+      current.examCount += 1;
+    });
+
+    return Array.from(map.values())
+      .map((row) => ({
+        id: `${row.className}-${row.subject}`,
+        primary: row.className,
+        secondary: row.subject,
+        averagePercent: Math.round(row.totalScorePercent / row.examCount),
+        highestScorePercent: row.highestScorePercent,
+      }))
+      .filter(
+        (row) =>
+          selectedClassFilter === "all" ||
+          extractGradeValue(row.primary) === selectedClassFilter,
+      )
+      .filter(
+        (row) =>
+          selectedSubjectFilter === "all" || row.secondary === selectedSubjectFilter,
+      )
+      .sort((a, b) => {
+        if (a.primary !== b.primary) return a.primary.localeCompare(b.primary, "mn");
+        return a.secondary.localeCompare(b.secondary, "mn");
+      });
+  }, [quarterFilteredExams, selectedClassFilter, selectedSubjectFilter]);
+  const teacherPerformanceRows = useMemo(
+    () => {
+      const classesByTeacher = new Map<string, string>();
+      const fallbackClassPool = Array.from(
+        new Set(schoolExams.map((exam) => exam.className)),
+      ).sort((a, b) => a.localeCompare(b, "mn"));
+
+      sortedTeacherPerformance.forEach((teacher) => {
+        const classes = Array.from(
+          new Set(
+            schoolExams
+              .filter((exam) => exam.teacherName === teacher.teacherName)
+              .map((exam) => exam.className),
+          ),
+        ).sort((a, b) => a.localeCompare(b, "mn"));
+
+        if (classes.length > 0) {
+          classesByTeacher.set(teacher.teacherName, classes.join(", "));
+          return;
+        }
+
+        const fallbackClass =
+          fallbackClassPool.length > 0
+            ? fallbackClassPool[
+                sortedTeacherPerformance.findIndex(
+                  (item) => item.teacherName === teacher.teacherName,
+                ) % fallbackClassPool.length
+              ]
+            : "10A";
+        classesByTeacher.set(teacher.teacherName, fallbackClass);
+      });
+
+      return sortedTeacherPerformance.slice(0, 10).map((row) => ({
+        id: row.teacherName,
+        primary: row.teacherName,
+        secondary: classesByTeacher.get(row.teacherName) ?? "10A",
+        averagePercent: row.avgScore,
+        highestScorePercent: Math.min(100, row.avgScore + 5),
+      }));
+    },
     [sortedTeacherPerformance],
   );
-  const lineChartModel = useMemo(() => {
-    const items = topScoreTeachers;
+  const performanceRows = useMemo(
+    () => (performanceView === "class" ? classPerformanceRows : teacherPerformanceRows),
+    [classPerformanceRows, teacherPerformanceRows, performanceView],
+  );
+  const teacherLineChartModel = useMemo(() => {
+    const items = teacherPerformanceRows;
     const width = 560;
     const height = 230;
-    const paddingX = 28;
-    const paddingTop = 22;
-    const paddingBottom = 32;
+    const paddingX = 56;
+    const paddingTop = 20;
+    const paddingBottom = 34;
     const plotWidth = width - paddingX * 2;
     const plotHeight = height - paddingTop - paddingBottom;
-    const minScore = 80;
+    const minScore = 60;
     const maxScore = 100;
 
     if (items.length === 0) {
       return {
         width,
         height,
-        items,
+        minScore,
+        maxScore,
+        paddingTop,
+        paddingBottom,
         points: [] as { x: number; y: number; item: (typeof items)[number] }[],
         linePath: "",
         areaPath: "",
-        highlight: null as null | {
-          x: number;
-          y: number;
-          item: (typeof items)[number];
-        },
       };
     }
 
     const stepX = items.length > 1 ? plotWidth / (items.length - 1) : 0;
     const points = items.map((item, index) => {
-      const ratio = (item.avgScore - minScore) / (maxScore - minScore);
+      const ratio = (item.averagePercent - minScore) / (maxScore - minScore || 1);
       const x = paddingX + stepX * index;
       const y = paddingTop + (1 - ratio) * plotHeight;
       return { x, y, item };
@@ -73,20 +215,33 @@ export default function SchoolDashboardPage() {
     const first = points[0];
     const last = points[points.length - 1];
     const areaPath = `${linePath} L ${last.x} ${height - paddingBottom} L ${first.x} ${height - paddingBottom} Z`;
-    const highlight =
-      [...points].sort((a, b) => b.item.avgScore - a.item.avgScore)[0] ?? null;
 
-    return { width, height, items, points, linePath, areaPath, highlight };
-  }, [topScoreTeachers]);
-  const [hoveredChartPoint, setHoveredChartPoint] = useState<{
+    return {
+      width,
+      height,
+      minScore,
+      maxScore,
+      paddingTop,
+      paddingBottom,
+      points,
+      linePath,
+      areaPath,
+    };
+  }, [teacherPerformanceRows]);
+  const topTeacher = teacherPerformanceRows[0] ?? null;
+  const [hoveredTeacherPoint, setHoveredTeacherPoint] = useState<{
     x: number;
     y: number;
     teacherName: string;
     avgScore: number;
   } | null>(null);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
-  const [approvalComments, setApprovalComments] = useState<Record<string, string>>({});
-  const [approvalExpanded, setApprovalExpanded] = useState<Record<string, boolean>>({});
+  const [approvalComments, setApprovalComments] = useState<
+    Record<string, string>
+  >({});
+  const [approvalExpanded, setApprovalExpanded] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     const sync = () => setApprovalRequests(getApprovalRequestsClient());
@@ -164,6 +319,36 @@ export default function SchoolDashboardPage() {
       ].sort((a, b) => b.dueTs - a.dueTs),
     [approvalRequests],
   );
+  const completedCount = useMemo(
+    () => schoolExams.filter((exam) => exam.stage === "completed").length,
+    [],
+  );
+  const scheduledCount = useMemo(
+    () => schoolExams.filter((exam) => exam.stage === "scheduled").length,
+    [],
+  );
+  const averagePassRate = useMemo(() => {
+    if (schoolExams.length === 0) return 0;
+    return Math.round(
+      schoolExams.reduce((sum, exam) => {
+        const pass =
+          exam.studentCount > 0
+            ? Math.round((exam.submittedCount / exam.studentCount) * 100)
+            : 0;
+        return sum + pass;
+      }, 0) / schoolExams.length,
+    );
+  }, []);
+  const attentionClassCount = useMemo(() => {
+    const rows = schoolExams
+      .map((exam) =>
+        exam.studentCount > 0
+          ? Math.round((exam.submittedCount / exam.studentCount) * 100)
+          : 0,
+      )
+      .filter((score) => score < 80);
+    return rows.length;
+  }, []);
   const pendingApprovalRequests = useMemo(
     () =>
       approvalRequests
@@ -208,9 +393,10 @@ export default function SchoolDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsApprovalModalOpen(true)}
-                  className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-2 font-medium text-blue-700 hover:bg-blue-100 sm:w-[250px]"
+                  className="inline-flex w-full items-center justify-center rounded-lg border border-[#B8DCFF] bg-[#EDF6FF] px-1 py-1.5 text-2 font-medium text-[#122459] hover:bg-[#E3F1FF] sm:w-[220px]"
                 >
-                  Батлуулах хүсэлтүүд →
+                  <span>Батлуулах хүсэлтүүд</span>
+                  <ChevronRight className="ml-2 flex justify-center items-center h-3 w-3 text-[#122459]" />
                 </button>
               </div>
             </div>
@@ -236,62 +422,62 @@ export default function SchoolDashboardPage() {
             </ul>
           </article>
           <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="text-2 font-semibold text-[#0f172a]">
-                  Анхааруулах зүйлс
-                </h3>
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#dbe5f0] bg-[#f8fbff] px-3 py-1.5 text-2 font-medium text-[#456080]">
-                <BellRing className="h-4 w-4" />
-                Нээлттэй alert: {examAlerts.length}
-              </div>
-            </div>
-            <div className="mt-4 max-h-[250px] space-y-3 overflow-y-auto pr-1">
-              {examAlerts.map((alert) => {
-                const isWarning = alert.type === "warning";
-                return (
-                  <article
-                    key={alert.id}
-                    className={`rounded-2xl border p-4 ${
-                      isWarning
-                        ? "border-amber-300 bg-white"
-                        : "border-blue-300 bg-white"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                          isWarning
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-blue-100 text-blue-700"
-                        }`}
-                      >
-                        <AlertTriangle className="h-4 w-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
-                              isWarning
-                                ? "bg-amber-100 text-amber-800"
-                                : "bg-blue-100 text-blue-800"
-                            }`}
-                          >
-                            {alert.type}
-                          </span>
-                          <h4 className="text-2 font-semibold text-[#0f172a]">
-                            {alert.title}
-                          </h4>
-                        </div>
-                        <p className="mt-2 text-2 leading-6 text-[#5c6d87]">
-                          {alert.description}
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
+            <h3 className="text-3 font-bold text-[#0f172a]">Үр дүн</h3>
+            <p className="mt-1 mb-[3px] text-2 text-zinc-600">
+              Багшийн оруулсан явц, дүн, үнэлгээний статусыг сургуулийн түвшинд
+              нэгтгэнэ.
+            </p>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <button
+                type="button"
+                className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs uppercase tracking-wide text-zinc-500">
+                    Дууссан шалгалт
+                  </p>
+                  <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+                </div>
+                <p className="mt-2 text-2xl font-bold">{completedCount}</p>
+              </button>
+              <button
+                type="button"
+                className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs uppercase tracking-wide text-zinc-500">
+                    Товлогдсон шалгалт
+                  </p>
+                  <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+                </div>
+                <p className="mt-2 text-2xl font-bold">{scheduledCount}</p>
+              </button>
+              <button
+                type="button"
+                className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs uppercase tracking-wide text-zinc-500">
+                    Дундаж тэнцэлт
+                  </p>
+                  <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+                </div>
+                <p className="mt-2 text-2xl font-bold">{averagePassRate}%</p>
+              </button>
+              <button
+                type="button"
+                className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-left transition hover:bg-zinc-100"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs uppercase tracking-wide text-red-600">
+                    Анхаарах
+                  </p>
+                  <ArrowUpRight className="h-4 w-4 text-zinc-400" />
+                </div>
+                <p className="mt-2 text-2xl font-bold text-red-700">
+                  {attentionClassCount} анги
+                </p>
+              </button>
             </div>
           </article>
         </div>
@@ -299,42 +485,118 @@ export default function SchoolDashboardPage() {
 
       <section>
         <article className="rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-5">
-          <h3 className="text-balance text-2 font-semibold text-[#0f172a]">
-            Багшийн гүйцэтгэлийн үнэлгээ (нийт багш{" "}
-            {sortedTeacherPerformance.length})
-          </h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-balance text-2 font-semibold text-[#0f172a]">
+              Гүйцэтгэлийн нэгдсэн тойм
+            </h3>
+            <div className="inline-flex rounded-lg border border-zinc-200 bg-zinc-50 p-1">
+              <button
+                type="button"
+                onClick={() => setPerformanceView("class")}
+                className={`rounded-md px-3 py-1 text-2 font-medium transition ${
+                  performanceView === "class"
+                    ? "bg-white text-zinc-900 shadow-sm"
+                    : "text-zinc-500 hover:text-zinc-700"
+                }`}
+              >
+                Анги
+              </button>
+              <button
+                type="button"
+                onClick={() => setPerformanceView("teacher")}
+                className={`rounded-md px-3 py-1 text-2 font-medium transition ${
+                  performanceView === "teacher"
+                    ? "bg-white text-zinc-900 shadow-sm"
+                    : "text-zinc-500 hover:text-zinc-700"
+                }`}
+              >
+                Багш
+              </button>
+            </div>
+          </div>
+          {performanceView === "class" ? (
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              <label className="block text-2 font-medium text-zinc-600">
+                Улирал
+                <select
+                  value={selectedQuarterFilter}
+                  onChange={(e) => setSelectedQuarterFilter(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+                >
+                  <option value="all">Бүх улирал</option>
+                  <option value="Q1">I улирал</option>
+                  <option value="Q2">II улирал</option>
+                  <option value="Q3">III улирал</option>
+                  <option value="Q4">IV улирал</option>
+                </select>
+              </label>
+              <label className="block text-2 font-medium text-zinc-600">
+                Анги
+                <select
+                  value={selectedClassFilter}
+                  onChange={(e) => setSelectedClassFilter(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+                >
+                  <option value="all">Бүх анги</option>
+                  {classOptions.map((grade) => (
+                    <option key={grade} value={grade}>
+                      {grade}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-2 font-medium text-zinc-600">
+                Хичээл
+                <select
+                  value={selectedSubjectFilter}
+                  onChange={(e) => setSelectedSubjectFilter(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-2 text-zinc-900"
+                >
+                  <option value="all">Бүх хичээл</option>
+                  {subjectOptions.map((subject) => (
+                    <option key={subject} value={subject}>
+                      {subject}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          ) : null}
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <div className="max-h-[260px] overflow-x-auto overflow-y-auto rounded-xl border border-zinc-200 lg:h-[420px] lg:max-h-none">
               <table className="w-full min-w-115 text-2">
                 <thead>
                   <tr className="border-b border-zinc-200 text-left text-zinc-500">
                     <th className="sticky top-0 z-10 bg-white py-2 pl-3">№</th>
-                    <th className="sticky top-0 z-10 bg-white py-2">Багш</th>
                     <th className="sticky top-0 z-10 bg-white py-2">
-                      Дундаж дүн
+                      {performanceView === "class" ? "Анги" : "Багш"}
                     </th>
+                    <th className="sticky top-0 z-10 bg-white py-2">
+                      {performanceView === "class" ? "Хичээл" : "Даасан анги"}
+                    </th>
+                    <th className="sticky top-0 z-10 bg-white py-2">Дундаж</th>
+                    <th className="sticky top-0 z-10 bg-white py-2">Дээд оноо</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedTeacherPerformance.map((row, index) => (
-                    <tr
-                      key={row.teacherName}
-                      className="border-b border-zinc-100"
-                    >
+                  {performanceRows.map((row, index) => (
+                    <tr key={row.id} className="border-b border-zinc-100">
                       <td className="py-2 pl-3 text-zinc-500">{index + 1}</td>
                       <td className="py-2 font-medium text-zinc-900">
-                        {row.teacherName}
+                        {row.primary}
                       </td>
-                      <td className="py-2">{row.avgScore}%</td>
+                      <td className="py-2 text-zinc-600">{row.secondary}</td>
+                      <td className="py-2">{row.averagePercent}%</td>
+                      <td className="py-2">{row.highestScorePercent}%</td>
                     </tr>
                   ))}
-                  {sortedTeacherPerformance.length === 0 ? (
+                  {performanceRows.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={3}
+                        colSpan={5}
                         className="py-5 text-center text-zinc-500"
                       >
-                        Багшийн үнэлгээний өгөгдөл алга.
+                        Сонгосон шүүлтүүрт тохирох өгөгдөл алга.
                       </td>
                     </tr>
                   ) : null}
@@ -342,135 +604,198 @@ export default function SchoolDashboardPage() {
               </table>
             </div>
 
-            <div className="flex flex-col rounded-xl border border-zinc-200 bg-zinc-50 p-4 lg:h-[420px]">
-              <p className="font-medium text-zinc-800">
-                Багшийн үнэлгээний шугаман график
-              </p>
-              {lineChartModel.points.length === 0 ? (
-                <p className="mt-3 text-2 text-zinc-500">
-                  80-100%-ийн багш алга байна.
-                </p>
-              ) : (
-                <div className="relative mt-3 flex-1 rounded-lg border border-zinc-200 bg-white p-3">
-                  <svg
-                    className="h-auto w-full"
-                    viewBox={`0 0 ${lineChartModel.width} ${lineChartModel.height}`}
-                    onMouseLeave={() => setHoveredChartPoint(null)}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="teacher-score-area"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+              <p className="font-medium text-zinc-800">График</p>
+              {performanceView === "teacher" ? (
+                <div className="mt-3">
+                  <div className="mb-3 flex items-center gap-4 text-xs text-zinc-600">
+                    <span className="inline-flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-blue-500" />
+                      Дундаж
+                    </span>
+                  </div>
+                  {teacherLineChartModel.points.length === 0 ? (
+                    <p className="text-sm text-zinc-500">График харуулах өгөгдөл алга.</p>
+                  ) : (
+                    <div className="relative rounded-lg border border-zinc-200 bg-white p-3">
+                      <svg
+                        className="h-auto w-full"
+                        viewBox={`0 0 ${teacherLineChartModel.width} ${teacherLineChartModel.height}`}
+                        onMouseLeave={() => setHoveredTeacherPoint(null)}
                       >
-                        <stop
-                          offset="0%"
-                          stopColor="#3b82f6"
-                          stopOpacity="0.28"
-                        />
-                        <stop
-                          offset="100%"
-                          stopColor="#3b82f6"
-                          stopOpacity="0.08"
-                        />
-                      </linearGradient>
-                    </defs>
+                        <defs>
+                          <linearGradient id="teacher-avg-area" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.24" />
+                            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.08" />
+                          </linearGradient>
+                        </defs>
 
-                    {[0, 1, 2, 3, 4].map((tick) => {
-                      const y = 22 + ((lineChartModel.height - 54) / 4) * tick;
-                      return (
-                        <line
-                          key={`grid-${tick}`}
-                          x1={20}
-                          x2={lineChartModel.width - 20}
-                          y1={y}
-                          y2={y}
-                          stroke="#e8ecf3"
-                          strokeDasharray="3 6"
-                        />
-                      );
-                    })}
+                        {[100, 90, 80, 70, 60].map((value, index) => {
+                          const y =
+                            teacherLineChartModel.paddingTop +
+                            ((teacherLineChartModel.maxScore - value) /
+                              (teacherLineChartModel.maxScore -
+                                teacherLineChartModel.minScore || 1)) *
+                              (teacherLineChartModel.height -
+                                teacherLineChartModel.paddingTop -
+                                teacherLineChartModel.paddingBottom);
+                          return (
+                            <g key={`teacher-grid-${index}`}>
+                              <line
+                                x1={46}
+                                x2={teacherLineChartModel.width - 20}
+                                y1={y}
+                                y2={y}
+                                stroke="#e8ecf3"
+                                strokeDasharray="3 6"
+                              />
+                              <text
+                                x={40}
+                                y={y + 3}
+                                textAnchor="end"
+                                fontSize="10"
+                                fill="#7b8798"
+                              >
+                                {value}%
+                              </text>
+                            </g>
+                          );
+                        })}
 
-                    <path
-                      d={lineChartModel.areaPath}
-                      fill="url(#teacher-score-area)"
-                    />
-                    <path
-                      d={lineChartModel.linePath}
-                      fill="none"
-                      stroke="#3b82f6"
-                      strokeWidth={2.6}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-
-                    {lineChartModel.points.map((point, index) => (
-                      <g
-                        key={`dot-${point.item.teacherName}`}
-                        onMouseEnter={() =>
-                          setHoveredChartPoint({
-                            x: point.x,
-                            y: point.y,
-                            teacherName: point.item.teacherName,
-                            avgScore: point.item.avgScore,
-                          })
-                        }
-                      >
-                        <circle
-                          cx={point.x}
-                          cy={point.y}
-                          r={11}
-                          fill="transparent"
-                        />
-                        <circle
-                          cx={point.x}
-                          cy={point.y}
-                          r={4.6}
-                          fill="#ffffff"
+                        <path d={teacherLineChartModel.areaPath} fill="url(#teacher-avg-area)" />
+                        <path
+                          d={teacherLineChartModel.linePath}
+                          fill="none"
                           stroke="#3b82f6"
-                          strokeWidth={2.2}
-                        >
-                          <title>{`${point.item.teacherName} · ${point.item.avgScore}%`}</title>
-                        </circle>
-                        <text
-                          x={point.x}
-                          y={lineChartModel.height - 10}
-                          textAnchor="middle"
-                          fontSize="10.5"
-                          fill="#5f6b7f"
-                        >
-                          {index + 1}
-                        </text>
-                      </g>
-                    ))}
-                  </svg>
+                          strokeWidth={2.6}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
 
-                  {hoveredChartPoint ? (
-                    <div
-                      className="pointer-events-none absolute rounded-lg bg-[#1d4ed8] px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
-                      style={{
-                        left: `${(hoveredChartPoint.x / lineChartModel.width) * 100}%`,
-                        top: `${(hoveredChartPoint.y / lineChartModel.height) * 100}%`,
-                        transform: "translate(-50%, -120%)",
-                      }}
-                    >
-                      {hoveredChartPoint.teacherName} ·{" "}
-                      {hoveredChartPoint.avgScore}%
+                        {teacherLineChartModel.points.map((point, index) => (
+                          <g
+                            key={`teacher-dot-${point.item.id}`}
+                            onMouseEnter={() =>
+                              setHoveredTeacherPoint({
+                                x: point.x,
+                                y: point.y,
+                                teacherName: point.item.primary,
+                                avgScore: point.item.averagePercent,
+                              })
+                            }
+                          >
+                            <circle
+                              cx={point.x}
+                              cy={point.y}
+                              r={11}
+                              fill="transparent"
+                            />
+                            <circle
+                              cx={point.x}
+                              cy={point.y}
+                              r={4.8}
+                              fill="#ffffff"
+                              stroke="#3b82f6"
+                              strokeWidth={2.2}
+                            />
+                            <text
+                              x={point.x}
+                              y={point.y - 10}
+                              textAnchor="middle"
+                              fontSize="10.5"
+                              fill="#5f6b7f"
+                            >
+                              {point.item.averagePercent}%
+                            </text>
+                            <text
+                              x={point.x}
+                              y={teacherLineChartModel.height - 10}
+                              textAnchor="middle"
+                              fontSize="10.5"
+                              fill="#5f6b7f"
+                            >
+                              {index + 1}
+                            </text>
+                          </g>
+                        ))}
+                      </svg>
+                      {hoveredTeacherPoint ? (
+                        <div
+                          className="pointer-events-none absolute rounded-lg bg-[#1d4ed8] px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
+                          style={{
+                            left: `${(hoveredTeacherPoint.x / teacherLineChartModel.width) * 100}%`,
+                            top: `${(hoveredTeacherPoint.y / teacherLineChartModel.height) * 100}%`,
+                            transform: "translate(-50%, -120%)",
+                          }}
+                        >
+                          {hoveredTeacherPoint.teacherName}
+                        </div>
+                      ) : null}
+                      {topTeacher ? (
+                        <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#eaf2ff] px-3 py-2 text-2 text-[#2563eb]">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white font-semibold">
+                            1
+                          </span>
+                          <span>
+                            {topTeacher.primary} · Дундаж {topTeacher.averagePercent}%
+                          </span>
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
-
-                  {lineChartModel.highlight ? (
-                    <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#eaf2ff] px-3 py-2 text-2 text-[#2563eb]">
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white font-semibold">
-                        1
-                      </span>
-                      <span>
-                        {lineChartModel.highlight.item.teacherName} · Дундаж{" "}
-                        {lineChartModel.highlight.item.avgScore}%
-                      </span>
+                  )}
+                </div>
+              ) : (
+                <div className="mt-3">
+                  <div className="mb-3 flex items-center gap-4 text-xs text-zinc-600">
+                    <span className="inline-flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-blue-500" />
+                      Дундаж
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-[#69b89a]" />
+                      Дээд оноо
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <div className="flex min-w-[560px] items-end gap-4 pb-2">
+                      {performanceRows.map((row) => (
+                        <div key={`bar-${row.id}`} className="w-24 shrink-0">
+                          <div className="mx-auto flex h-44 items-end justify-center gap-2">
+                            <div className="flex h-full w-7 flex-col justify-end">
+                              <p className="mb-1 text-center text-[10px] font-medium text-zinc-600">
+                                {row.averagePercent}%
+                              </p>
+                              <div className="flex h-full items-end rounded-md bg-zinc-200/70">
+                                <div
+                                  className="w-full rounded-md bg-blue-500"
+                                  style={{ height: `${Math.max(row.averagePercent, 2)}%` }}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex h-full w-7 flex-col justify-end">
+                              <p className="mb-1 text-center text-[10px] font-medium text-zinc-600">
+                                {row.highestScorePercent}%
+                              </p>
+                              <div className="flex h-full items-end rounded-md bg-zinc-200/70">
+                                <div
+                                  className="w-full rounded-md bg-[#69b89a]"
+                                  style={{ height: `${Math.max(row.highestScorePercent, 2)}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <p className="mt-2 truncate text-center text-xs font-medium text-zinc-700">
+                            {row.primary}
+                          </p>
+                          <p className="truncate text-center text-xs text-zinc-500">
+                            {row.secondary}
+                          </p>
+                        </div>
+                      ))}
                     </div>
+                  </div>
+                  {performanceRows.length === 0 ? (
+                    <p className="text-sm text-zinc-500">График харуулах өгөгдөл алга.</p>
                   ) : null}
                 </div>
               )}
@@ -490,7 +815,9 @@ export default function SchoolDashboardPage() {
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-3 font-bold text-[#0f172a]">Батлуулах хүсэлтүүд</h3>
+                <h3 className="text-3 font-bold text-[#0f172a]">
+                  Батлуулах хүсэлтүүд
+                </h3>
                 <p className="mt-1 text-2 text-zinc-600">
                   Хүлээгдэж буй хүсэлт: {pendingApprovalRequests.length}
                 </p>
@@ -573,12 +900,21 @@ function ApprovalRequestCard({
 
       {expanded[request.id] ? (
         <div className="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-          <p className="font-medium text-zinc-800">Асуулт, хариулт ({request.questions.length})</p>
+          <p className="font-medium text-zinc-800">
+            Асуулт, хариулт ({request.questions.length})
+          </p>
           <div className="mt-2 max-h-60 space-y-2 overflow-y-auto pr-1">
             {request.questions.map((qa) => (
-              <div key={`${request.id}-q-${qa.id}`} className="rounded-lg border border-[#c9d5ea] bg-white p-3">
-                <p className="text-2 font-semibold text-[#5f739b]">Асуулт {qa.id}</p>
-                <p className="mt-1 text-2 font-semibold text-[#24314f]">{qa.question}</p>
+              <div
+                key={`${request.id}-q-${qa.id}`}
+                className="rounded-lg border border-[#c9d5ea] bg-white p-3"
+              >
+                <p className="text-2 font-semibold text-[#5f739b]">
+                  Асуулт {qa.id}
+                </p>
+                <p className="mt-1 text-2 font-semibold text-[#24314f]">
+                  {qa.question}
+                </p>
               </div>
             ))}
           </div>

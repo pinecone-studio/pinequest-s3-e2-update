@@ -6,7 +6,6 @@ import {
   Clock3,
   MapPin,
   Pencil,
-  Trash2,
   X,
 } from "lucide-react";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
@@ -63,18 +62,25 @@ function parseDateKey(dateKey: string) {
 }
 
 function monthLabel(year: number, monthIndex: number) {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-  }).format(new Date(year, monthIndex, 1));
+  const MONGOLIAN_MONTHS = [
+    "Нэгдүгээр сар",
+    "Хоёрдугаар сар",
+    "Гуравдугаар сар",
+    "Дөрөвдүгээр сар",
+    "Тавдугаар сар",
+    "Зургаадугаар сар",
+    "Долдугаар сар",
+    "Наймдугаар сар",
+    "Есдүгээр сар",
+    "Аравдугаар сар",
+    "Арваннэгдүгээр сар",
+    "Арванхоёрдугаар сар",
+  ];
+  return `${MONGOLIAN_MONTHS[monthIndex] ?? ""} ${year}`;
 }
 
 function selectedDateLabel(dateKey: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(parseDateKey(dateKey));
+  return dateKey;
 }
 
 function getMonthGrid(year: number, monthIndex: number) {
@@ -151,7 +157,10 @@ function timeToMinutes(time: string) {
   return h * 60 + m;
 }
 
-function deriveExamStatus(item: ExamScheduleItem, now = new Date()): ExamStatus {
+function deriveExamStatus(
+  item: ExamScheduleItem,
+  now = new Date(),
+): ExamStatus {
   const note = item.notes.toLowerCase();
   if (note.includes("ноорог") || note.includes("draft")) return "draft";
   if (note.includes("шалгаж") || note.includes("grading")) return "grading";
@@ -166,7 +175,12 @@ function deriveExamStatus(item: ExamScheduleItem, now = new Date()): ExamStatus 
 
 const STATUS_META: Record<
   ExamStatus,
-  { label: string; cellCardClass: string; chipClass: string; panelClass: string }
+  {
+    label: string;
+    cellCardClass: string;
+    chipClass: string;
+    panelClass: string;
+  }
 > = {
   draft: {
     label: "Ноорог",
@@ -248,15 +262,22 @@ export function ExamScheduleCalendarSection({
   const [selectedDate, setSelectedDate] = useState(toDateKey(today));
   const [internalOpen, setInternalOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null);
+  const [editingScheduleId, setEditingScheduleId] = useState<string | null>(
+    null,
+  );
   const [detailScheduleId, setDetailScheduleId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [form, setForm] = useState<ExamScheduleForm>(emptyForm(selectedDate));
-  const [approvalRequests, setApprovalRequests] = useState<ApprovalRequest[]>([]);
+  const [approvalRequests, setApprovalRequests] = useState<ApprovalRequest[]>(
+    [],
+  );
 
-  const isCalendarOpen = embedded ? true : open ?? internalOpen;
+  const isCalendarOpen = embedded ? true : (open ?? internalOpen);
 
-  const monthGrid = useMemo(() => getMonthGrid(shownYear, shownMonth), [shownYear, shownMonth]);
+  const monthGrid = useMemo(
+    () => getMonthGrid(shownYear, shownMonth),
+    [shownYear, shownMonth],
+  );
 
   useEffect(() => {
     const sync = () => setApprovalRequests(getApprovalRequestsClient());
@@ -276,13 +297,19 @@ export function ExamScheduleCalendarSection({
     }
 
     for (const [key, value] of map.entries()) {
-      map.set(key, [...value].sort((a, b) => a.startTime.localeCompare(b.startTime)));
+      map.set(
+        key,
+        [...value].sort((a, b) => a.startTime.localeCompare(b.startTime)),
+      );
     }
 
     return map;
   }, [schedules]);
 
-  const selectedDaySchedules = useMemo(() => scheduleMap.get(selectedDate) ?? [], [scheduleMap, selectedDate]);
+  const selectedDaySchedules = useMemo(
+    () => scheduleMap.get(selectedDate) ?? [],
+    [scheduleMap, selectedDate],
+  );
   const selectedDayApprovalRequests = useMemo(
     () =>
       approvalRequests.filter(
@@ -332,7 +359,10 @@ export function ExamScheduleCalendarSection({
     const sorted = [...selectedDayExamItems].sort(
       (a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime),
     );
-    const overlaps: Array<{ first: EnrichedExamScheduleItem; second: EnrichedExamScheduleItem }> = [];
+    const overlaps: Array<{
+      first: EnrichedExamScheduleItem;
+      second: EnrichedExamScheduleItem;
+    }> = [];
 
     for (let i = 1; i < sorted.length; i += 1) {
       const prev = sorted[i - 1];
@@ -346,7 +376,10 @@ export function ExamScheduleCalendarSection({
   }, [selectedDayExamItems]);
 
   const unpublishedExams = useMemo(
-    () => selectedDayExamItems.filter((item) => item.status === "draft" || item.location.trim().length === 0),
+    () =>
+      selectedDayExamItems.filter(
+        (item) => item.status === "draft" || item.location.trim().length === 0,
+      ),
     [selectedDayExamItems],
   );
 
@@ -370,7 +403,8 @@ export function ExamScheduleCalendarSection({
 
   const dayCells = viewMode === "month" ? monthGrid : weekGrid;
   const todayKey = toDateKey(today);
-  const isSelectedDatePast = parseDateKey(selectedDate).getTime() < parseDateKey(todayKey).getTime();
+  const isSelectedDatePast =
+    parseDateKey(selectedDate).getTime() < parseDateKey(todayKey).getTime();
   const detailSchedule = useMemo(
     () => schedules.find((item) => item.id === detailScheduleId) ?? null,
     [detailScheduleId, schedules],
@@ -443,11 +477,13 @@ export function ExamScheduleCalendarSection({
     event.preventDefault();
     setFormError(null);
 
-    if (!form.examTitle.trim()) return setFormError("Шалгалтын нэр оруулна уу.");
+    if (!form.examTitle.trim())
+      return setFormError("Шалгалтын нэр оруулна уу.");
     if (!form.classGrade.trim()) return setFormError("Анги оруулна уу.");
     if (!form.classGroup.trim()) return setFormError("Бүлэг оруулна уу.");
     if (!form.examDate) return setFormError("Огноо сонгоно уу.");
-    if (!form.startTime || !form.endTime) return setFormError("Цагийн мэдээлэл дутуу байна.");
+    if (!form.startTime || !form.endTime)
+      return setFormError("Цагийн мэдээлэл дутуу байна.");
     if (form.endTime <= form.startTime) {
       return setFormError("Дуусах цаг нь эхлэх цагаас хойш байх ёстой.");
     }
@@ -468,7 +504,11 @@ export function ExamScheduleCalendarSection({
     };
 
     const next: ExamScheduleItem[] = editingScheduleId
-      ? schedules.map((item) => (item.id === editingScheduleId ? { ...item, ...normalizedSchedule } : item))
+      ? schedules.map((item) =>
+          item.id === editingScheduleId
+            ? { ...item, ...normalizedSchedule }
+            : item,
+        )
       : [...schedules, { id: crypto.randomUUID(), ...normalizedSchedule }];
 
     writeSchedules(next);
@@ -479,18 +519,18 @@ export function ExamScheduleCalendarSection({
     setFormError(null);
   }
 
-  function deleteSchedule(id: string) {
-    const next = schedules.filter((item) => item.id !== id);
-    writeSchedules(next);
-    setSchedules(next);
-    if (detailScheduleId === id) setDetailScheduleId(null);
-  }
-
   function approveRequestToSchedule(request: ApprovalRequest) {
-    if (!request.requestedExamDate || !request.requestedStartTime || !request.requestedEndTime) return;
+    if (
+      !request.requestedExamDate ||
+      !request.requestedStartTime ||
+      !request.requestedEndTime
+    )
+      return;
 
     const requestScheduleId = `approval-${request.id}`;
-    const alreadyExists = schedules.some((item) => item.id === requestScheduleId);
+    const alreadyExists = schedules.some(
+      (item) => item.id === requestScheduleId,
+    );
     if (!alreadyExists) {
       const nextSchedule: ExamScheduleItem = {
         id: requestScheduleId,
@@ -516,14 +556,18 @@ export function ExamScheduleCalendarSection({
 
   const calendarContent = (
     <div
-      className={`w-full rounded-2xl border border-[#e2e8f0] bg-[#fcfdff] p-6 ${
+      className={`w-full rounded-2xl border border-[#B8DCFF] bg-[#EDF6FF] p-6 ${
         embedded ? "shadow-sm" : "max-w-7xl shadow-2xl"
       }`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-[22px] font-semibold text-[#0f172a]">Шалгалтын календарь</h3>
-          <p className="mt-1 text-sm text-[#64748b]">Өдөр дээр дарж тухайн өдөр шалгалтын хуваарь үүсгэнэ</p>
+          <h3 className="text-[22px] font-semibold text-[#0f172a]">
+            Шалгалтын календарь
+          </h3>
+          <p className="mt-1 text-sm text-[#64748b]">
+            Өдөр дээр дарж тухайн өдөр шалгалтын хуваарь үүсгэнэ
+          </p>
         </div>
         {!embedded ? (
           <button
@@ -539,12 +583,12 @@ export function ExamScheduleCalendarSection({
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div>
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e2e8f0] bg-white px-4 py-3 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#B8DCFF] bg-[#FAFAFA] px-4 py-3 shadow-sm">
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => shiftMonth(-1)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#334155] transition hover:bg-[#f8fafc]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#bfd4ea] bg-[#f3f8ff] text-[#334155] transition hover:bg-[#e7f1fb]"
                 aria-label="Өмнөх сар"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -552,21 +596,25 @@ export function ExamScheduleCalendarSection({
               <button
                 type="button"
                 onClick={() => shiftMonth(1)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e2e8f0] bg-white text-[#334155] transition hover:bg-[#f8fafc]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#bfd4ea] bg-[#f3f8ff] text-[#334155] transition hover:bg-[#e7f1fb]"
                 aria-label="Дараагийн сар"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
 
-            <p className="text-lg font-semibold text-[#0f172a]">{monthLabel(shownYear, shownMonth)}</p>
+            <p className="text-lg font-semibold text-[#0f172a]">
+              {monthLabel(shownYear, shownMonth)}
+            </p>
 
-            <div className="inline-flex items-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-1">
+            <div className="inline-flex items-center rounded-lg border border-[#B8DCFF] bg-[#EDF6FF] p-1">
               <button
                 type="button"
                 onClick={() => setViewMode("month")}
                 className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                  viewMode === "month" ? "bg-white text-[#0f172a] shadow-sm" : "text-[#64748b] hover:text-[#0f172a]"
+                  viewMode === "month"
+                    ? "bg-[#FAFAFA] text-[#0f172a] shadow-sm"
+                    : "text-[#64748b] hover:text-[#0f172a]"
                 }`}
               >
                 Сар
@@ -575,7 +623,9 @@ export function ExamScheduleCalendarSection({
                 type="button"
                 onClick={() => setViewMode("week")}
                 className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                  viewMode === "week" ? "bg-white text-[#0f172a] shadow-sm" : "text-[#64748b] hover:text-[#0f172a]"
+                  viewMode === "week"
+                    ? "bg-[#FAFAFA] text-[#0f172a] shadow-sm"
+                    : "text-[#64748b] hover:text-[#0f172a]"
                 }`}
               >
                 7 хоног
@@ -587,7 +637,7 @@ export function ExamScheduleCalendarSection({
             {WEEK_LABELS.map((label) => (
               <div
                 key={label}
-                className="rounded-xl bg-[#f1f5f9] px-2 py-2 text-center text-xs font-semibold text-[#64748b]"
+                className="rounded-xl border border-[#B8DCFF] bg-transparent px-2 py-2 text-center text-xs font-bold text-[#122459]"
               >
                 {label}
               </div>
@@ -597,22 +647,35 @@ export function ExamScheduleCalendarSection({
           <div className="mt-3 grid grid-cols-7 gap-3">
             {dayCells.map((day) => {
               const dateKey = toDateKey(day);
-              const enrichedItems = (scheduleMap.get(dateKey) ?? []).map((item) => ({
-                ...item,
-                status: deriveExamStatus(item),
-                teacherName: parseTeacher(item.notes),
-                progress: parseProgress(item.notes),
-              }));
+              const enrichedItems = (scheduleMap.get(dateKey) ?? []).map(
+                (item) => ({
+                  ...item,
+                  status: deriveExamStatus(item),
+                  teacherName: parseTeacher(item.notes),
+                  progress: parseProgress(item.notes),
+                }),
+              );
               const dayApprovalRequests = approvalRequestMap.get(dateKey) ?? [];
+              const visibleExamItems =
+                enrichedItems.length >= 2
+                  ? enrichedItems.slice(0, 1)
+                  : enrichedItems.slice(0, 2);
+              const hiddenExamCount =
+                enrichedItems.length - visibleExamItems.length;
 
               const isCurrentMonth = day.getMonth() === shownMonth;
               const isSelected = dateKey === selectedDate;
               const isToday = dateKey === toDateKey(today);
-              const isPastDay = parseDateKey(dateKey).getTime() < parseDateKey(todayKey).getTime();
+              const isPastDay =
+                parseDateKey(dateKey).getTime() <
+                parseDateKey(todayKey).getTime();
 
               if (viewMode === "month" && !isCurrentMonth) {
                 return (
-                  <div key={dateKey} className="min-h-[118px] rounded-xl border border-[#e2e8f0] bg-[#f8fafc]" />
+                  <div
+                    key={dateKey}
+                    className="min-h-[118px] rounded-xl border border-[#c8d9ec] bg-[#FAFAFA]"
+                  />
                 );
               }
 
@@ -630,12 +693,14 @@ export function ExamScheduleCalendarSection({
                   }}
                   className={`group relative min-h-[118px] rounded-xl border p-2.5 text-left transition ${
                     isSelected
-                      ? "border-[#3b82f6] bg-[#eff6ff]"
-                      : "border-[#e2e8f0] bg-white hover:bg-[#f8fafc]"
+                      ? "border-[#6ea6de] bg-[#FAFAFA]"
+                      : "border-[#c8d9ec] bg-[#FAFAFA] hover:bg-[#F5F5F5]"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <p className={`text-sm font-semibold ${isToday ? "text-[#2563eb]" : "text-[#0f172a]"}`}>
+                    <p
+                      className={`text-sm font-semibold ${isToday ? "text-[#2563eb]" : "text-[#0f172a]"}`}
+                    >
                       {day.getDate()}
                     </p>
 
@@ -659,34 +724,51 @@ export function ExamScheduleCalendarSection({
                         key={`request-${request.id}`}
                         className="rounded-lg border border-amber-200 bg-amber-50/80 px-1.5 py-1"
                       >
-                        <p className="truncate text-[10px] font-semibold text-amber-800">Хүсэлт</p>
+                        <p className="truncate text-[10px] font-semibold text-amber-800">
+                          Хүсэлт
+                        </p>
                         <p className="truncate text-[10px] text-amber-700">
-                          {request.className} · {request.requestedStartTime}-{request.requestedEndTime}
+                          {request.className} · {request.requestedStartTime}-
+                          {request.requestedEndTime}
                         </p>
                       </div>
                     ))}
 
-                    {enrichedItems.slice(0, 2).map((item) => (
+                    {visibleExamItems.map((item) => (
                       <div
                         key={item.id}
                         className={`rounded-lg border-l-2 p-1.5 transition group-hover:shadow-sm ${STATUS_META[item.status].cellCardClass}`}
                       >
-                        <p className="truncate text-[11px] font-semibold text-[#0f172a]">{item.examTitle}</p>
+                        <p className="truncate text-[11px] font-semibold text-[#0f172a]">
+                          {item.examTitle}
+                        </p>
                         <p className="truncate text-[10px] text-[#475569]">
-                          {item.className} анги · {item.startTime}-{item.endTime}
+                          {item.className} анги · {item.startTime}-
+                          {item.endTime}
                         </p>
                         <p className="inline-flex items-center gap-1 truncate text-[10px] text-[#64748b]">
                           <MapPin className="h-3 w-3 shrink-0" />
                           {formatRoom(item.location)}
                         </p>
-                        {item.progress ? <p className="text-[10px] font-medium text-[#334155]">{item.progress}</p> : null}
+                        {item.progress ? (
+                          <p className="text-[10px] font-medium text-[#334155]">
+                            {item.progress}
+                          </p>
+                        ) : null}
                       </div>
                     ))}
 
-                    {dayApprovalRequests.length + enrichedItems.length > 3 ? (
-                      <p className="text-[10px] font-semibold text-[#64748b]">
-                        +{dayApprovalRequests.length + enrichedItems.length - 3} нэмэлт
-                      </p>
+                    {hiddenExamCount > 0 ? (
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedDate(dateKey);
+                        }}
+                        className="absolute bottom-2 right-2 text-[11px] font-semibold text-[#122459] hover:underline"
+                      >
+                        +{hiddenExamCount}
+                      </button>
                     ) : null}
                   </div>
                 </div>
@@ -695,12 +777,16 @@ export function ExamScheduleCalendarSection({
           </div>
         </div>
 
-        <aside className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm">
-          <h4 className="text-2xl font-semibold text-[#0f172a]">{selectedDateLabel(selectedDate)}</h4>
+        <aside className="rounded-2xl border border-[#B8DCFF] bg-[#FAFAFA] p-4 shadow-sm">
+          <h4 className="text-2xl font-semibold text-[#0f172a]">
+            {selectedDateLabel(selectedDate)}
+          </h4>
 
           <div className="mt-6 space-y-6">
             <section>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">Өнөөдрийн шалгалтууд</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                Өнөөдрийн шалгалтууд
+              </p>
               <div className="mt-2 space-y-2">
                 {todayExamItems.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-sm text-[#64748b]">
@@ -708,8 +794,13 @@ export function ExamScheduleCalendarSection({
                   </p>
                 ) : (
                   todayExamItems.map((item) => (
-                    <div key={`today-${item.id}`} className={`rounded-xl border px-3 py-2 ${STATUS_META[item.status].panelClass}`}>
-                      <p className="text-sm font-semibold text-[#0f172a]">{item.examTitle}</p>
+                    <div
+                      key={`today-${item.id}`}
+                      className={`rounded-xl border px-3 py-2 ${STATUS_META[item.status].panelClass}`}
+                    >
+                      <p className="text-sm font-semibold text-[#0f172a]">
+                        {item.examTitle}
+                      </p>
                       <p className="text-xs text-[#475569]">
                         {item.className} · {item.startTime}-{item.endTime}
                       </p>
@@ -720,9 +811,12 @@ export function ExamScheduleCalendarSection({
             </section>
 
             <section>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">Асуудлууд</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                Асуудлууд
+              </p>
               <div className="mt-2 space-y-2">
-                {overlappingExams.length === 0 && unpublishedExams.length === 0 ? (
+                {overlappingExams.length === 0 &&
+                unpublishedExams.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-sm text-[#64748b]">
                     Давхцал болон хэвлэгдээгүй шалгалт алга.
                   </p>
@@ -733,7 +827,8 @@ export function ExamScheduleCalendarSection({
                         key={`overlap-${index}`}
                         className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
                       >
-                        Давхцал: {item.first.examTitle} / {item.second.examTitle}
+                        Давхцал: {item.first.examTitle} /{" "}
+                        {item.second.examTitle}
                       </p>
                     ))}
                     {unpublishedExams.map((item) => (
@@ -750,7 +845,9 @@ export function ExamScheduleCalendarSection({
             </section>
 
             <section>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">Хүлээгдэж буй</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                Хүлээгдэж буй
+              </p>
               <div className="mt-2 space-y-2">
                 {pendingGradingExams.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-sm text-[#64748b]">
@@ -758,8 +855,13 @@ export function ExamScheduleCalendarSection({
                   </p>
                 ) : (
                   pendingGradingExams.map((item) => (
-                    <div key={`pending-${item.id}`} className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-                      <p className="text-sm font-semibold text-[#0f172a]">{item.examTitle}</p>
+                    <div
+                      key={`pending-${item.id}`}
+                      className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2"
+                    >
+                      <p className="text-sm font-semibold text-[#0f172a]">
+                        {item.examTitle}
+                      </p>
                       <p className="text-xs text-[#475569]">
                         {item.className} · {item.teacherName}
                       </p>
@@ -770,7 +872,9 @@ export function ExamScheduleCalendarSection({
             </section>
 
             <section>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">Батлуулах хүсэлтүүд</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#64748b]">
+                Батлуулах хүсэлтүүд
+              </p>
               <div className="mt-2 space-y-2">
                 {selectedDayApprovalRequests.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-sm text-[#64748b]">
@@ -782,13 +886,18 @@ export function ExamScheduleCalendarSection({
                       key={`approval-${request.id}`}
                       className="rounded-xl border border-amber-200 bg-amber-50/70 px-3 py-2.5"
                     >
-                      <p className="text-sm font-semibold text-[#0f172a]">{request.title}</p>
+                      <p className="text-sm font-semibold text-[#0f172a]">
+                        {request.title}
+                      </p>
                       <p className="mt-0.5 text-xs text-[#475569]">
-                        {request.className} · {request.requestedStartTime}-{request.requestedEndTime}
+                        {request.className} · {request.requestedStartTime}-
+                        {request.requestedEndTime}
                       </p>
                       <p className="mt-0.5 text-xs text-[#64748b]">
                         Багш: {request.teacherName}
-                        {request.requestedLocation ? ` · Өрөө: ${request.requestedLocation}` : ""}
+                        {request.requestedLocation
+                          ? ` · Өрөө: ${request.requestedLocation}`
+                          : ""}
                       </p>
                       <div className="mt-2 flex justify-end">
                         <button
@@ -817,7 +926,7 @@ export function ExamScheduleCalendarSection({
                     <button
                       type="button"
                       onClick={() => openCreateForDate(selectedDate)}
-                      className="w-full rounded-xl bg-[#4d73c9] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#4266b6]"
+                      className="w-full rounded-xl bg-[#29A4FF] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#1E96EE]"
                     >
                       Шалгалт нэмэх
                     </button>
@@ -826,10 +935,15 @@ export function ExamScheduleCalendarSection({
               ) : (
                 <div className="space-y-2">
                   {selectedDayExamItems.map((item) => (
-                    <div key={item.id} className={`rounded-xl border px-3 py-2.5 ${STATUS_META[item.status].panelClass}`}>
+                    <div
+                      key={item.id}
+                      className={`rounded-xl border px-3 py-2.5 ${STATUS_META[item.status].panelClass}`}
+                    >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-sm font-semibold text-[#0f172a]">{item.examTitle}</p>
+                          <p className="text-sm font-semibold text-[#0f172a]">
+                            {item.examTitle}
+                          </p>
                           <p className="mt-0.5 text-xs text-[#475569]">
                             {item.className} · {item.startTime} - {item.endTime}
                           </p>
@@ -837,9 +951,13 @@ export function ExamScheduleCalendarSection({
                             <MapPin className="h-3.5 w-3.5" />
                             {item.location || "Өрөө оноогоогүй"}
                           </p>
-                          <p className="mt-0.5 text-xs text-[#64748b]">{item.teacherName}</p>
+                          <p className="mt-0.5 text-xs text-[#64748b]">
+                            {item.teacherName}
+                          </p>
                         </div>
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_META[item.status].chipClass}`}>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_META[item.status].chipClass}`}
+                        >
                           {STATUS_META[item.status].label}
                         </span>
                       </div>
@@ -864,15 +982,6 @@ export function ExamScheduleCalendarSection({
                             >
                               <Pencil className="h-3.5 w-3.5" />
                             </button>
-                            <button
-                              type="button"
-                              onClick={() => deleteSchedule(item.id)}
-                              className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-                              aria-label="Устгах"
-                              title="Устгах"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
                           </>
                         ) : null}
                       </div>
@@ -883,7 +992,7 @@ export function ExamScheduleCalendarSection({
                     <button
                       type="button"
                       onClick={() => openCreateForDate(selectedDate)}
-                      className="mt-2 w-full rounded-xl bg-[#4d73c9] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#4266b6]"
+                      className="mt-2 w-full rounded-xl bg-[#29A4FF] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#1E96EE]"
                     >
                       Шалгалт нэмэх
                     </button>
@@ -902,7 +1011,9 @@ export function ExamScheduleCalendarSection({
       {embedded ? (
         calendarContent
       ) : (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">{calendarContent}</div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          {calendarContent}
+        </div>
       )}
 
       {isCreateOpen ? (
@@ -913,7 +1024,9 @@ export function ExamScheduleCalendarSection({
                 <h4 className="text-[22px] font-semibold leading-7 text-[#0f172a]">
                   {editingScheduleId ? "Хуваарь засах" : "Хуваарь нэмэх"}
                 </h4>
-                <p className="mt-1 text-sm text-[#64748b]">{selectedDateLabel(form.examDate)} өдрийн шалгалтын мэдээлэл</p>
+                <p className="mt-1 text-sm text-[#64748b]">
+                  {selectedDateLabel(form.examDate)} өдрийн шалгалтын мэдээлэл
+                </p>
               </div>
               <button
                 type="button"
@@ -930,13 +1043,20 @@ export function ExamScheduleCalendarSection({
 
             <form onSubmit={createSchedule} className="mt-8 space-y-8">
               <section className="space-y-4">
-                <p className="text-[13px] font-semibold text-[#475569]">Ерөнхий мэдээлэл</p>
+                <p className="text-[13px] font-semibold text-[#475569]">
+                  Ерөнхий мэдээлэл
+                </p>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <label className="block text-[13px] font-medium text-[#475569]">
                     <span className="mb-2 block">Шалгалтын нэр</span>
                     <input
                       value={form.examTitle}
-                      onChange={(e) => setForm((current) => ({ ...current, examTitle: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((current) => ({
+                          ...current,
+                          examTitle: e.target.value,
+                        }))
+                      }
                       required
                       placeholder="Жишээ: Математик улирлын шалгалт"
                       className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-[15px] text-[#0f172a] outline-none transition placeholder:text-[#94a3b8] focus:border-[#3b82f6] focus:ring-4 focus:ring-[#3b82f6]/10"
@@ -946,7 +1066,12 @@ export function ExamScheduleCalendarSection({
                     <span className="mb-2 block">Багшийн нэр</span>
                     <input
                       value={form.teacherName}
-                      onChange={(e) => setForm((current) => ({ ...current, teacherName: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((current) => ({
+                          ...current,
+                          teacherName: e.target.value,
+                        }))
+                      }
                       placeholder="Жишээ: Н.Содном"
                       className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-[15px] text-[#0f172a] outline-none transition placeholder:text-[#94a3b8] focus:border-[#3b82f6] focus:ring-4 focus:ring-[#3b82f6]/10"
                     />
@@ -985,10 +1110,17 @@ export function ExamScheduleCalendarSection({
               </section>
 
               <section className="space-y-4">
-                <p className="text-[13px] font-semibold text-[#475569]">Байршил</p>
+                <p className="text-[13px] font-semibold text-[#475569]">
+                  Байршил
+                </p>
                 <input
                   value={form.location}
-                  onChange={(e) => setForm((current) => ({ ...current, location: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      location: e.target.value,
+                    }))
+                  }
                   placeholder="Жишээ: 203 тоот"
                   aria-label="Байршил / Өрөө"
                   className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-[15px] text-[#0f172a] outline-none transition placeholder:text-[#94a3b8] focus:border-[#3b82f6] focus:ring-4 focus:ring-[#3b82f6]/10"
@@ -1003,7 +1135,12 @@ export function ExamScheduleCalendarSection({
                     <input
                       type="time"
                       value={form.startTime}
-                      onChange={(e) => setForm((current) => ({ ...current, startTime: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((current) => ({
+                          ...current,
+                          startTime: e.target.value,
+                        }))
+                      }
                       required
                       className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-[15px] text-[#0f172a] outline-none transition focus:border-[#3b82f6] focus:ring-4 focus:ring-[#3b82f6]/10"
                     />
@@ -1013,7 +1150,12 @@ export function ExamScheduleCalendarSection({
                     <input
                       type="time"
                       value={form.endTime}
-                      onChange={(e) => setForm((current) => ({ ...current, endTime: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((current) => ({
+                          ...current,
+                          endTime: e.target.value,
+                        }))
+                      }
                       required
                       className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-[15px] text-[#0f172a] outline-none transition focus:border-[#3b82f6] focus:ring-4 focus:ring-[#3b82f6]/10"
                     />
@@ -1022,10 +1164,17 @@ export function ExamScheduleCalendarSection({
               </section>
 
               <section className="space-y-4">
-                <p className="text-[13px] font-semibold text-[#475569]">Тэмдэглэл</p>
+                <p className="text-[13px] font-semibold text-[#475569]">
+                  Тэмдэглэл
+                </p>
                 <textarea
                   value={form.notes}
-                  onChange={(e) => setForm((current) => ({ ...current, notes: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      notes: e.target.value,
+                    }))
+                  }
                   rows={4}
                   placeholder="Танхим, заавар, нэмэлт мэдээлэл..."
                   aria-label="Тэмдэглэл"
@@ -1033,7 +1182,9 @@ export function ExamScheduleCalendarSection({
                 />
               </section>
 
-              {formError ? <p className="text-sm font-medium text-red-600">{formError}</p> : null}
+              {formError ? (
+                <p className="text-sm font-medium text-red-600">{formError}</p>
+              ) : null}
 
               <div className="flex justify-end gap-3 border-t border-[#e2e8f0] pt-5">
                 <button
@@ -1049,8 +1200,9 @@ export function ExamScheduleCalendarSection({
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1d4ed8]"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#29A4FF] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1E96EE]"
                 >
+                  {editingScheduleId ? <Pencil className="h-4 w-4" /> : null}
                   {editingScheduleId ? "Өөрчлөлт хадгалах" : "Хадгалах"}
                 </button>
               </div>
@@ -1064,8 +1216,12 @@ export function ExamScheduleCalendarSection({
           <div className="w-full max-w-[560px] rounded-2xl border border-[#e2e8f0] bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.18)]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h4 className="text-xl font-semibold text-[#0f172a]">Шалгалтын дэлгэрэнгүй</h4>
-                <p className="mt-1 text-sm text-[#64748b]">{selectedDateLabel(detailExamItem.examDate)}</p>
+                <h4 className="text-xl font-semibold text-[#0f172a]">
+                  Шалгалтын дэлгэрэнгүй
+                </h4>
+                <p className="mt-1 text-sm text-[#64748b]">
+                  {selectedDateLabel(detailExamItem.examDate)}
+                </p>
               </div>
               <button
                 type="button"
@@ -1079,14 +1235,18 @@ export function ExamScheduleCalendarSection({
 
             <div className="mt-5 space-y-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-4">
               <div className="flex items-start justify-between gap-3">
-                <p className="text-base font-semibold text-[#0f172a]">{detailExamItem.examTitle}</p>
+                <p className="text-base font-semibold text-[#0f172a]">
+                  {detailExamItem.examTitle}
+                </p>
                 <span
                   className={`rounded-full px-2 py-0.5 text-[13px] font-semibold ${STATUS_META[detailExamItem.status].chipClass}`}
                 >
                   {STATUS_META[detailExamItem.status].label}
                 </span>
               </div>
-              <p className="text-sm text-[#475569]">Анги: {detailExamItem.className}</p>
+              <p className="text-sm text-[#475569]">
+                Анги: {detailExamItem.className}
+              </p>
               <p className="inline-flex items-center gap-2 text-sm text-[#475569]">
                 <Clock3 className="h-4 w-4" />
                 {detailExamItem.startTime} - {detailExamItem.endTime}
@@ -1095,12 +1255,18 @@ export function ExamScheduleCalendarSection({
                 <MapPin className="h-4 w-4" />
                 {detailExamItem.location || "Өрөө оноогоогүй"}
               </p>
-              <p className="text-sm text-[#475569]">Багш: {detailExamItem.teacherName}</p>
+              <p className="text-sm text-[#475569]">
+                Багш: {detailExamItem.teacherName}
+              </p>
               {detailExamItem.progress ? (
-                <p className="text-sm text-[#475569]">Явц: {detailExamItem.progress}</p>
+                <p className="text-sm text-[#475569]">
+                  Явц: {detailExamItem.progress}
+                </p>
               ) : null}
               {detailExamItem.notes ? (
-                <p className="text-sm text-[#64748b]">Тэмдэглэл: {detailExamItem.notes}</p>
+                <p className="text-sm text-[#64748b]">
+                  Тэмдэглэл: {detailExamItem.notes}
+                </p>
               ) : null}
             </div>
           </div>

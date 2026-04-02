@@ -17,7 +17,6 @@ const links = [
 	{ href: "/school/teachers", label: "Хүний нөөц" },
 	{ href: "/school/classes?grade=10", label: "Ангиуд" },
 	{ href: "/school/exams", label: "Шалгалт" },
-	{ href: "/school/results", label: "Үр дүн" },
 ] as const;
 
 function isActive(pathname: string, href: string) {

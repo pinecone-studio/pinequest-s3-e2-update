@@ -22,6 +22,15 @@ function normalizeStudentCount(actual: number, seed: number) {
   return 20 + (seed % 11);
 }
 
+function toShortTeacherName(fullName: string) {
+  const parts = fullName
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (parts.length < 2) return fullName.trim();
+  return `${parts[0].charAt(0)}.${parts.slice(1).join(" ")}`;
+}
+
 export default async function AdminClassesPage({
   searchParams,
 }: {
@@ -58,6 +67,19 @@ export default async function AdminClassesPage({
     const classes = classList.filter((c) => parseGrade(c.name) === grade);
     return { grade, classes };
   });
+  const gradeStudentCount = (grade: number, classes: typeof classList) => {
+    const target = sectionCountByGrade[grade] ?? classes.length;
+    return Array.from({ length: target }, (_, idx) => {
+      const real = classes[idx];
+      if (real) {
+        return normalizeStudentCount(
+          store.listStudentsInClass(real.id).length,
+          grade + idx,
+        );
+      }
+      return normalizeStudentCount(0, grade + idx + 3);
+    }).reduce((sum, n) => sum + n, 0);
+  };
 
   const visibleGroups = selectedGrade
     ? grouped.filter((g) => g.grade === selectedGrade)
@@ -71,7 +93,9 @@ export default async function AdminClassesPage({
         const real = selectedClasses[idx];
         if (real) {
           const homeroom = real.teacherIds[0]
-            ? teacherLineById(real.teacherIds[0]).replace(/\s*\(.*/, "")
+            ? toShortTeacherName(
+                teacherLineById(real.teacherIds[0]).replace(/\s*\(.*/, ""),
+              )
             : "Багш оноогоогүй";
           return {
             key: real.id,
@@ -89,7 +113,9 @@ export default async function AdminClassesPage({
           key: `mock-${selectedGrade}-${idx}`,
           name: `${selectedGrade}${sectionLetters[idx]}`,
           studentCount: normalizeStudentCount(0, selectedGrade + idx + 3),
-          homeroom: fallbackTeacher?.name ?? "Багш оноогоогүй",
+          homeroom: fallbackTeacher
+            ? toShortTeacherName(fallbackTeacher.name)
+            : "Багш оноогоогүй",
           href: "",
         };
       })
@@ -105,12 +131,12 @@ export default async function AdminClassesPage({
       </div>
 
       <section>
-        <div className="grid gap-2 py-4 sm:grid-cols-2 lg:grid-cols-7">
+        <div className="grid gap-2 py-3 sm:grid-cols-2 lg:grid-cols-7">
           {grouped.map((g) => (
             <Link
               key={g.grade}
               href={`/school/classes?grade=${g.grade}`}
-              className={`rounded-lg border px-3 py-2 transition ${
+              className={`rounded-lg border px-2.5 py-2 transition ${
                 selectedGrade === g.grade
                   ? "border-blue-200 bg-blue-50"
                   : "border-zinc-200 bg-white hover:border-blue-200 hover:bg-blue-50"
@@ -119,14 +145,19 @@ export default async function AdminClassesPage({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Users className="h-3.5 w-3.5 text-[#4f9dff]" />
-                  <p className="text-[15px] font-semibold text-zinc-900">{g.grade}-р анги</p>
+                  <p className="text-[14px] font-semibold text-zinc-900">
+                    {g.grade}-р анги
+                  </p>
                 </div>
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-[#e2e8f0] bg-white">
-                  <ChevronRight className="h-3.5 w-3.5 text-[#a8b3c5]" />
+                <span className="inline-flex h-5.5 w-5.5 items-center justify-center rounded-md border border-[#e2e8f0] bg-white">
+                  <ChevronRight className="h-3 w-3 text-[#a8b3c5]" />
                 </span>
               </div>
-              <p className="mt-0.5 text-sm text-zinc-500">
+              <p className="mt-0.5 text-[13px] text-zinc-500">
                 {sectionCountByGrade[g.grade]} бүлэг
+              </p>
+              <p className="mt-0.5 text-[13px] text-[#4d5d7a]">
+                {gradeStudentCount(g.grade, g.classes)} сурагч
               </p>
             </Link>
           ))}

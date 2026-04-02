@@ -28,7 +28,7 @@ export default async function Home({
           </p>
         ) : null}
 
-        <section className="grid min-h-0 items-start gap-3 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10 mt-24">
+        <section className="grid min-h-0 items-start gap-3 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10 mt-16">
           <div className="max-w-xl lg:max-w-190">
             <header className="inline-flex items-center justify-center gap-2 sm:justify-start">
               <Image
@@ -141,7 +141,7 @@ export default async function Home({
               />
             </div>
 
-            <div className="mt-2 inline-flex flex-col items-center sm:flex-row sm:items-end sm:gap-2 lg:-mt-2 lg:pl-12">
+            <div className="mt-2 mb-3 inline-flex flex-col items-center sm:flex-row sm:items-end sm:gap-1 lg:-mt-2 lg:pl-12">
               <div className="relative h-30 shrink-0 pl-[5.4rem] pt-[0.35rem] sm:h-30 sm:pl-[5.9rem] sm:pt-[0.2rem]">
                 <Image
                   src="/bugsteibee.png"
@@ -149,16 +149,16 @@ export default async function Home({
                   width={120}
                   height={120}
                   priority
-                  className="absolute bottom-0 left-0 h-32 w-32 object-contain sm:h-30 sm:w-30"
+                  className="absolute left-6 h-32 w-32 object-contain sm:h-30 sm:w-30"
                 />
-                <p className="relative z-10 whitespace-nowrap text-[16px] font-black leading-[0.95] tracking-tight text-[#3a2614]">
+                <p className="relative ml-6 mt-6 z-10 whitespace-nowrap text-[16px] font-black leading-[0.95] tracking-tight text-[#3a2614]">
                   BEE-GIN
                   <br />
                   HERE
                 </p>
               </div>
 
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-end">
+              <div className="flex flex-col mb-2 gap-5 sm:flex-row sm:items-end">
                 <HomeSchoolEntry />
                 <Link
                   href="/teacher"

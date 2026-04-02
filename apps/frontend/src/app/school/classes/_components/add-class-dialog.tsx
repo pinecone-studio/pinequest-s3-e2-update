@@ -6,6 +6,11 @@ import { createClass } from "@/app/school/action";
 
 export function AddClassDialog() {
   const [open, setOpen] = useState(false);
+  const [grade, setGrade] = useState("");
+  const [section, setSection] = useState("");
+
+  const normalizedSection = section.trim().toUpperCase();
+  const combinedName = `${grade.trim()}${normalizedSection}`.trim();
 
   return (
     <>
@@ -25,7 +30,7 @@ export function AddClassDialog() {
               <div>
                 <h3 className="text-lg font-semibold text-zinc-900">Анги / Бүлэг нэмэх</h3>
                 <p className="mt-1 text-sm text-zinc-500">
-                  Жишээ: 10А, 10Б, 12c
+                  Жишээ: Анги 10, Бүлэг А
                 </p>
               </div>
               <button
@@ -41,19 +46,44 @@ export function AddClassDialog() {
             <form
               action={async (formData) => {
                 await createClass(formData);
+                setGrade("");
+                setSection("");
                 setOpen(false);
               }}
               className="mt-5 space-y-4"
             >
-              <label className="block">
-                <span className="text-xs font-medium text-zinc-500">Ангийн/бүлгийн нэр</span>
-                <input
-                  name="name"
-                  required
-                  placeholder="жишээ: 10А"
-                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
-                />
-              </label>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="block">
+                  <span className="text-xs font-medium text-zinc-500">Анги</span>
+                  <input
+                    name="grade"
+                    required
+                    inputMode="numeric"
+                    pattern="[0-9]{1,2}"
+                    maxLength={2}
+                    value={grade}
+                    onChange={(e) => {
+                      const next = e.target.value.replace(/\D/g, "").slice(0, 2);
+                      setGrade(next);
+                    }}
+                    placeholder="жишээ: 10"
+                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-medium text-zinc-500">Бүлэг</span>
+                  <input
+                    name="section"
+                    required
+                    maxLength={1}
+                    value={section}
+                    onChange={(e) => setSection(e.target.value.slice(0, 1))}
+                    placeholder="жишээ: А"
+                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm uppercase text-zinc-900"
+                  />
+                </label>
+              </div>
+              <input type="hidden" name="name" value={combinedName} />
 
               <div className="flex items-center justify-end gap-2">
                 <button
