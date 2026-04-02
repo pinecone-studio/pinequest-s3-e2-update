@@ -2,6 +2,8 @@
     "$schema": "./node_modules/wrangler/config-schema.json",
     "main": ".open-next/worker.js",
     "name": "my-app",
+    // Browser WebSocket: build/deploy үед NEXT_PUBLIC_BACKEND_URL заавал (GitHub secret эсвэл vars).
+    // Жишээ нь backend worker-ийн public https суурь. GraphQL /api/graphql-аар прокси хийгддэг тул WS-тэй адилгүй.
     // Set this to today's date
     "compatibility_date": "2026-03-24",
     "compatibility_flags": [

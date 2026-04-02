@@ -260,14 +260,82 @@ export default function ExamOptimizationPage() {
 
 		void (async () => {
 			const token = await getToken();
-			if (cancelled || !token?.trim()) return;
+			if (cancelled || !token?.trim()) {
+				// #region agent log
+				fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Debug-Session-Id": "9f3746",
+					},
+					body: JSON.stringify({
+						sessionId: "9f3746",
+						runId: "pre-fix",
+						hypothesisId: "H2",
+						location: "exam-optimization/page.tsx:getToken",
+						message: "teacher ws no clerk token",
+						data: { cancelled, hasToken: Boolean(token?.trim()) },
+						timestamp: Date.now(),
+					}),
+				}).catch(() => {});
+				// #endregion
+				return;
+			}
 
 			const url = buildTeacherExamMonitorWsUrl({
 				examId,
 				classId: activeClassId,
 				clerkToken: token.trim(),
 			});
-			if (!url) return;
+			if (!url) {
+				// #region agent log
+				fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Debug-Session-Id": "9f3746",
+					},
+					body: JSON.stringify({
+						sessionId: "9f3746",
+						runId: "pre-fix",
+						hypothesisId: "H1",
+						location: "exam-optimization/page.tsx:buildUrl",
+						message: "teacher ws url null",
+						data: {},
+						timestamp: Date.now(),
+					}),
+				}).catch(() => {});
+				// #endregion
+				return;
+			}
+
+			let safeHost = "";
+			let safeProto = "";
+			try {
+				const u = new URL(url);
+				safeHost = u.hostname;
+				safeProto = u.protocol.replace(":", "");
+			} catch {
+				/* ignore */
+			}
+			// #region agent log
+			fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Debug-Session-Id": "9f3746",
+				},
+				body: JSON.stringify({
+					sessionId: "9f3746",
+					runId: "pre-fix",
+					hypothesisId: "H5",
+					location: "exam-optimization/page.tsx:connect",
+					message: "teacher WebSocket connect attempt",
+					data: { wsHost: safeHost, wsProto: safeProto },
+					timestamp: Date.now(),
+				}),
+			}).catch(() => {});
+			// #endregion
 
 			try {
 				wsRef.current = new WebSocket(url);
@@ -277,6 +345,52 @@ export default function ExamOptimizationPage() {
 
 			const socket = wsRef.current;
 			if (!socket || cancelled) return;
+
+			socket.onopen = () => {
+				// #region agent log
+				fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Debug-Session-Id": "9f3746",
+					},
+					body: JSON.stringify({
+						sessionId: "9f3746",
+						runId: "pre-fix",
+						hypothesisId: "H4",
+						location: "exam-optimization/page.tsx:onopen",
+						message: "teacher WebSocket open",
+						data: { wsHost: safeHost },
+						timestamp: Date.now(),
+					}),
+				}).catch(() => {});
+				// #endregion
+			};
+
+			socket.onclose = (ev) => {
+				// #region agent log
+				fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Debug-Session-Id": "9f3746",
+					},
+					body: JSON.stringify({
+						sessionId: "9f3746",
+						runId: "pre-fix",
+						hypothesisId: "H3",
+						location: "exam-optimization/page.tsx:onclose",
+						message: "teacher WebSocket close",
+						data: {
+							code: ev.code,
+							wasClean: ev.wasClean,
+							reasonLen: ev.reason?.length ?? 0,
+						},
+						timestamp: Date.now(),
+					}),
+				}).catch(() => {});
+				// #endregion
+			};
 
 			socket.onmessage = (ev) => {
 				try {
@@ -318,6 +432,24 @@ export default function ExamOptimizationPage() {
 			};
 
 			socket.onerror = () => {
+				// #region agent log
+				fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Debug-Session-Id": "9f3746",
+					},
+					body: JSON.stringify({
+						sessionId: "9f3746",
+						runId: "pre-fix",
+						hypothesisId: "H4",
+						location: "exam-optimization/page.tsx:onerror",
+						message: "teacher WebSocket error event",
+						data: { wsHost: safeHost },
+						timestamp: Date.now(),
+					}),
+				}).catch(() => {});
+				// #endregion
 				/* noop */
 			};
 		})();
