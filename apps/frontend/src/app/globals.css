@@ -97,17 +97,6 @@ body {
 	}
 }
 
-@keyframes exam-complete-title-in {
-	from {
-		opacity: 0;
-		transform: translateY(12px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
 @keyframes exam-complete-glow {
 	0%,
 	100% {
@@ -138,16 +127,75 @@ body {
 }
 
 .exam-complete-card {
+	--exam-bee-orbit-period: 5s;
 	animation:
 		exam-complete-card-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both,
 		exam-complete-glow 2.4s ease-in-out 0.6s 2 both;
 }
 
+/* Orbit radius (period inherited from .exam-complete-card) */
+.exam-complete-orbit-stage {
+	--exam-bee-orbit-r: clamp(3.35rem, 25vw, 6.75rem);
+}
+
+.exam-complete-orbit-ring {
+	width: calc(2 * var(--exam-bee-orbit-r));
+	height: calc(2 * var(--exam-bee-orbit-r));
+}
+
+/* Same box as ring: flex centers label in the circle’s middle */
+.exam-complete-orbit-core {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: calc(2 * var(--exam-bee-orbit-r));
+	height: calc(2 * var(--exam-bee-orbit-r));
+	translate: -50% -50%;
+	pointer-events: none;
+}
+
 .exam-complete-bee-orbit {
-	--exam-bee-orbit-r: clamp(2rem, 15vw, 3.5rem);
-	--exam-bee-orbit-period: 7.5s;
 	animation: exam-complete-bee-orbit-rotate var(--exam-bee-orbit-period) linear
 		infinite;
+}
+
+@keyframes exam-complete-orbit-center-in {
+	from {
+		opacity: 0;
+		visibility: hidden;
+		transform: scale(0.96);
+	}
+	1% {
+		visibility: visible;
+	}
+	to {
+		opacity: 1;
+		visibility: visible;
+		transform: scale(1);
+	}
+}
+
+.exam-complete-orbit-center-msg {
+	margin: 0;
+	max-width: 92%;
+	padding-inline: 0.35rem;
+	text-align: center;
+	font-size: clamp(0.75rem, 2.35vw, 0.9rem);
+	font-weight: 600;
+	line-height: 1.4;
+	letter-spacing: 0.01em;
+	color: #122459;
+	opacity: 0;
+	visibility: hidden;
+	transform: scale(1);
+	transform-origin: center center;
+	/* Hidden until one full bee orbit; `both` keeps from-state during delay */
+	animation: exam-complete-orbit-center-in 0.55s cubic-bezier(0.22, 1, 0.36, 1)
+		var(--exam-bee-orbit-period) both;
 }
 
 .exam-complete-bee-upright {
@@ -156,14 +204,8 @@ body {
 	transform-origin: center center;
 }
 
-.exam-complete-title {
-	animation: exam-complete-title-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.5s
-		both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-	.exam-complete-card,
-	.exam-complete-title {
+	.exam-complete-card {
 		animation: none !important;
 	}
 
@@ -178,5 +220,12 @@ body {
 
 	.exam-complete-bee-carrier {
 		transform: translate(-50%, -50%) !important;
+	}
+
+	.exam-complete-orbit-center-msg {
+		opacity: 1 !important;
+		visibility: visible !important;
+		animation: none !important;
+		transform: scale(1) !important;
 	}
 }

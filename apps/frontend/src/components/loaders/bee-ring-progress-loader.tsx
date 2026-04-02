@@ -84,17 +84,7 @@ export function BeeRingProgressLoader({
               strokeDasharray="5 14"
               strokeLinecap="round"
               opacity={0.92}
-            >
-              <animateTransform
-                attributeName="transform"
-                attributeType="XML"
-                type="rotate"
-                from="0 0 0"
-                to="360 0 0"
-                dur="48s"
-                repeatCount="indefinite"
-              />
-            </circle>
+            />
             <circle
               r={BEE_ORBIT_R - 5}
               fill="none"

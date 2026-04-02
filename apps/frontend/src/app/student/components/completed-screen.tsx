@@ -7,9 +7,18 @@ import Image from "next/image";
 export function CompletedScreen() {
 	return (
 		<main className="flex min-h-screen items-center justify-center bg-[#f3f6fb] px-3 py-8 text-[#1f2a44] sm:px-4 sm:py-10">
-			<div className="exam-complete-card flex min-h-0 w-full max-w-lg flex-col items-center justify-center rounded-[20px] border border-[#cfe3f5] bg-[#edf6ff] px-4 py-10 text-center sm:rounded-[28px] sm:px-8 sm:py-12 md:min-h-[24rem] md:py-16">
-				<div className="relative mx-auto mt-1 flex min-h-[11.5rem] w-full max-w-sm items-center justify-center sm:min-h-[13rem]">
-					<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+			<div className="exam-complete-card flex min-h-0 w-full max-w-xl flex-col items-center justify-center rounded-[20px] border border-[#cfe3f5] bg-[#edf6ff] px-5 py-11 text-center sm:rounded-[28px] sm:px-9 sm:py-[3.25rem] md:min-h-[25rem] md:py-[4.25rem]">
+				<div className="exam-complete-orbit-stage relative mx-auto mt-1 flex min-h-[12.5rem] w-full max-w-md items-center justify-center sm:min-h-[14.5rem] md:min-h-[17rem]">
+					<div
+						className="exam-complete-orbit-ring pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed border-[#9ec5eb]/85"
+						aria-hidden
+					/>
+					<div className="exam-complete-orbit-core">
+						<p className="exam-complete-orbit-center-msg" lang="mn">
+							Шалгалтаа амжилттай дуусгасанд баяр хүргэе.
+						</p>
+					</div>
+					<div className="absolute left-1/2 top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2">
 						<div className="exam-complete-bee-orbit relative h-0 w-0 will-change-transform">
 							<div
 								className="exam-complete-bee-carrier pointer-events-none absolute left-0 top-0"
@@ -22,20 +31,16 @@ export function CompletedScreen() {
 									<Image
 										src="/bugsteibee.png"
 										alt="Success"
-										width={230}
-										height={180}
+										width={140}
+										height={110}
 										priority
-										className="block h-24 w-auto max-h-none max-w-[72vw] object-contain sm:h-[7.25rem] md:h-[142px]"
+										className="block h-12 w-auto max-h-none max-w-[40vw] object-contain sm:h-14 md:h-16"
 									/>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
-				<h1 className="exam-complete-title mt-4 max-w-lg text-pretty text-xl font-medium leading-snug text-[#111111] sm:mt-6 sm:text-2xl md:text-[32px] md:leading-[1.25]">
-					Шалгалтаа амжилттай дууссанд баяр хүргэе.
-				</h1>
 			</div>
 		</main>
 	);
