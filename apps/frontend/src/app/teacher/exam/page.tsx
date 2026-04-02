@@ -3,10 +3,19 @@
 import { ExamOutlineSection } from "./_components/exam-outline-section";
 import { ExamSettingsForm } from "./_components/exam-settings-form";
 import { SavedExamsSection } from "./_components/saved-exams-section";
+import { TeacherExamSkeleton } from "./_components/teacher-exam-skeleton";
 import { useTeacherExamPage } from "./_hooks/use-teacher-exam-page";
 
 export default function TeacherExamPage() {
   const examPage = useTeacherExamPage();
+
+  if (examPage.isPageLoading) {
+    return (
+      <div className="mx-auto max-w-[1200px] px-3 pt-1 sm:px-4 sm:pt-0 md:px-5">
+        <TeacherExamSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-[1200px] space-y-5 px-3 pb-8 pt-1 sm:space-y-6 sm:px-4 sm:pt-0 md:px-5">

@@ -11,7 +11,7 @@ export function TeacherExamSkeleton() {
       <section className="p-5">
         <div className="h-5 w-[min(220px,70vw)] rounded bg-[#cfd8eb]" />
         <div className="mt-4 flex flex-wrap items-end gap-3">
-          <div className="h-10 min-w-[min(100%,200px)] flex-2 rounded-xl bg-[#e3e7ee]" />
+          <div className="h-10 min-w-0 flex-[2] rounded-xl bg-[#e3e7ee]" />
           <div className="h-10 min-w-[100px] flex-1 rounded-xl bg-[#e8edf5]" />
           <div className="h-10 w-[120px] rounded-xl bg-[#eef1f7]" />
           <div className="h-10 min-w-[140px] flex-[1.5] rounded-xl bg-[#e3e7ee]" />

@@ -25,8 +25,10 @@ import {
 	authSignInHref,
 	authSsoCallbackFullUrl,
 	hardNavigateToAppPath,
+	mergeAuthIntentFromWindow,
 	oauthPostAuthRedirectUrl,
 	safeAuthRedirect,
+	signUpCompleteRedirectPath,
 } from "@/app/lib/auth-redirect";
 import { clerkTryReloadSessionResource } from "@/app/lib/clerk-try-reload";
 import {
@@ -42,15 +44,6 @@ type SignUpAfterVerify = {
 	createdSessionId: string | null;
 	reload?: () => Promise<unknown>;
 };
-
-/** Redirect query can be correct while React state is one render behind — read live URL. */
-function schoolSignupIntentFromCurrentUrl(): boolean {
-	if (typeof window === "undefined") return false;
-	const raw = new URLSearchParams(window.location.search).get(
-		LOGIN_INTENT_QUERY_KEY,
-	);
-	return safeAuthRedirect(raw) === "/school";
-}
 
 const primaryBlue =
 	"bg-[#29B6FF] hover:bg-[#20a8f2] active:bg-[#1899e6] text-white focus-visible:outline-[#29B6FF] focus-visible:outline-offset-2 cursor-pointer";
@@ -216,10 +209,11 @@ export function SignUpForm() {
 	const passwordError = err?.password?.message;
 	const codeError = err?.code?.message;
 
-	const dashboardUrl = useMemo(
-		() => oauthPostAuthRedirectUrl(afterAuthUrl),
-		[afterAuthUrl],
-	);
+	const dashboardUrl = useMemo(() => {
+		const intent = mergeAuthIntentFromWindow(afterAuthUrl);
+		if (isOrganizationSignup) return "/school";
+		return oauthPostAuthRedirectUrl(intent);
+	}, [afterAuthUrl, isOrganizationSignup]);
 
 	const skipSignedInEffectRedirect = useRef(false);
 
@@ -312,7 +306,21 @@ export function SignUpForm() {
 
 			/** School row is synced to D1 via Clerk `user.updated` webhook (unsafeMetadata). */
 
-			hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
+			const intent = mergeAuthIntentFromWindow(afterAuthUrl);
+			const role = clerk.user?.publicMetadata?.role;
+			const dest = signUpCompleteRedirectPath(intent, {
+				isOrganizationSignup,
+				hasOrganizationProfileFields: hasAnyOrganizationSignupField(
+					a,
+					h,
+					s,
+					d,
+					r,
+					sn,
+				),
+				clerkRole: role,
+			});
+			hardNavigateToAppPath(dest);
 		},
 		[afterAuthUrl, clerk, isOrganizationSignup],
 	);
@@ -461,9 +469,10 @@ export function SignUpForm() {
 		if (!signUp) return;
 		setFetching(true);
 		try {
+			const intent = mergeAuthIntentFromWindow(afterAuthUrl);
 			const redirectUrl = absoluteAppUrlForPath(
 				window.location.origin,
-				oauthPostAuthRedirectUrl(afterAuthUrl),
+				oauthPostAuthRedirectUrl(intent),
 			);
 			const { error } = await signUp.sso({
 				strategy: "oauth_google",

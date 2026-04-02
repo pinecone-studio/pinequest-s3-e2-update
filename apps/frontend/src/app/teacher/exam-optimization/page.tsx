@@ -39,7 +39,11 @@ type GetExamBySchoolIdResponse = {
 };
 
 type ClassesByTeacherResponse = {
-	getClassByTeacherAndSchoolId: Array<{ id: string; grade: number; section: string }>;
+	getClassByTeacherAndSchoolId: Array<{
+		id: string;
+		grade: number;
+		section: string;
+	}>;
 };
 
 type StudentsByClassResponse = {
@@ -60,7 +64,8 @@ export default function ExamOptimizationPage() {
 	const teacherId = dbTeacher?.id ?? "";
 	const schoolId = dbTeacher?.schoolId ?? "";
 
-	const { data: subjectsData } = useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+	const { data: subjectsData } =
+		useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
 	const { data: classesData } = useQuery<ClassesByTeacherResponse>(
 		GET_CLASS_BY_TEACHER_AND_SCHOOL_ID,
 		{
@@ -119,17 +124,17 @@ export default function ExamOptimizationPage() {
 	const [selectedClassIdByExamId, setSelectedClassIdByExamId] = useState<
 		Record<string, string>
 	>({});
-	const [monitoringByScope, setMonitoringByScope] = useState<Record<string, boolean>>(
-		() => {
-			const initialMonitoringState = readExamMonitoringStateMap();
-			return Object.fromEntries(
-				Object.entries(initialMonitoringState).map(([scope, value]) => [
-					scope,
-					Boolean(value.isStarted),
-				]),
-			);
-		},
-	);
+	const [monitoringByScope, setMonitoringByScope] = useState<
+		Record<string, boolean>
+	>(() => {
+		const initialMonitoringState = readExamMonitoringStateMap();
+		return Object.fromEntries(
+			Object.entries(initialMonitoringState).map(([scope, value]) => [
+				scope,
+				Boolean(value.isStarted),
+			]),
+		);
+	});
 	const [monitorStartedAtByScope, setMonitorStartedAtByScope] = useState<
 		Record<string, number>
 	>(() => {
@@ -161,7 +166,10 @@ export default function ExamOptimizationPage() {
 	const effectiveSelectedExamId = selectedExamId;
 	const resolvedActiveMonitorExam = useMemo(() => {
 		if (!effectiveSelectedExamId) return null;
-		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;
+		return (
+			monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ??
+			null
+		);
 	}, [effectiveSelectedExamId, monitorExamCards]);
 
 	// Conflict-ийн дараах refactor: доорх logic-д `activeMonitorExam` нэрээр ашиглаж байгаа тул
@@ -169,14 +177,15 @@ export default function ExamOptimizationPage() {
 	const activeMonitorExam = resolvedActiveMonitorExam;
 
 	const activeClassId = activeMonitorExam
-		? selectedClassIdByExamId[activeMonitorExam.id] ??
+		? (selectedClassIdByExamId[activeMonitorExam.id] ??
 			activeMonitorExam.classOptions[0]?.id ??
-			null
+			null)
 		: null;
 	const activeClassLabel = activeMonitorExam
-		? activeMonitorExam.classOptions.find((item) => item.id === activeClassId)?.label ??
+		? (activeMonitorExam.classOptions.find((item) => item.id === activeClassId)
+				?.label ??
 			activeMonitorExam.classOptions[0]?.label ??
-			null
+			null)
 		: null;
 	const activeMonitoringScope =
 		activeMonitorExam && activeClassId
@@ -186,7 +195,7 @@ export default function ExamOptimizationPage() {
 		? Boolean(monitoringByScope[activeMonitoringScope])
 		: false;
 	const activeScopeStartedAt = activeMonitoringScope
-		? monitorStartedAtByScope[activeMonitoringScope] ?? null
+		? (monitorStartedAtByScope[activeMonitoringScope] ?? null)
 		: null;
 
 	const { data: rosterCountData } = useQuery<StudentsByClassResponse>(
@@ -212,7 +221,11 @@ export default function ExamOptimizationPage() {
 			startedAt: activeScopeStartedAt ?? 0,
 			status: "active",
 		}));
-	}, [rosterCountData?.getStudentByClassId, activeClassLabel, activeScopeStartedAt]);
+	}, [
+		rosterCountData?.getStudentByClassId,
+		activeClassLabel,
+		activeScopeStartedAt,
+	]);
 
 	const rosterCount = rosterStudents.length;
 
@@ -227,18 +240,26 @@ export default function ExamOptimizationPage() {
 		if (!isActiveMonitoring || !activeScopeStartedAt) return totalDurationMs;
 
 		return Math.max(0, totalDurationMs - (currentTime - activeScopeStartedAt));
-	}, [activeMonitorExam, activeScopeStartedAt, currentTime, isActiveMonitoring]);
+	}, [
+		activeMonitorExam,
+		activeScopeStartedAt,
+		currentTime,
+		isActiveMonitoring,
+	]);
 	const remainingDurationLabel = useMemo(
 		() => formatRemainingDuration(remainingDurationMs),
 		[remainingDurationMs],
 	);
 
-	const onSelectClass = useCallback((classId: string) => {
-		setSelectedClassIdByExamId((prev) => {
-			if (!selectedExamId) return prev;
-			return { ...prev, [selectedExamId]: classId };
-		});
-	}, [selectedExamId]);
+	const onSelectClass = useCallback(
+		(classId: string) => {
+			setSelectedClassIdByExamId((prev) => {
+				if (!selectedExamId) return prev;
+				return { ...prev, [selectedExamId]: classId };
+			});
+		},
+		[selectedExamId],
+	);
 
 	const startMonitoring = useCallback(() => {
 		if (!activeMonitoringScope) return;

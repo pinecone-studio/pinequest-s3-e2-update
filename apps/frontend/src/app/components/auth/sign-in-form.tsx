@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useAuth, useClerk, useSignIn } from "@clerk/nextjs";
+import { useAuth, useClerk, useSignIn, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -16,7 +16,8 @@ import {
   authSignUpHref,
   authSsoCallbackFullUrl,
   hardNavigateToAppPath,
-  oauthPostAuthRedirectUrl,
+  mergeAuthIntentFromWindow,
+  resolvePostAuthDashboard,
   safeAuthRedirect,
 } from "@/app/lib/auth-redirect";
 import { clerkTryReloadSessionResource } from "@/app/lib/clerk-try-reload";
@@ -89,7 +90,9 @@ export function SignInForm() {
   );
 
   const { isLoaded, isSignedIn } = useAuth();
-  const { setActive } = useClerk();
+  const clerk = useClerk();
+  const { user: signedInUser, isLoaded: userLoaded } = useUser();
+  const { setActive } = clerk;
   const { signIn, errors } = useSignIn();
   /** Нууц үг + setActive урсгалд useEffect-ийн зөөлөн шилжилт давхар ажиллуулахгүй */
   const skipSignedInEffectRedirect = useRef(false);
@@ -119,11 +122,31 @@ export function SignInForm() {
   const emailError = err?.emailAddress?.message ?? err?.identifier?.message;
   const passwordError = err?.password?.message;
 
+  const navigateAfterSignIn = useCallback(() => {
+    const intent = mergeAuthIntentFromWindow(afterAuthUrl);
+    const role =
+      clerk.user?.publicMetadata?.role ??
+      signedInUser?.publicMetadata?.role;
+    hardNavigateToAppPath(resolvePostAuthDashboard(intent, role));
+  }, [
+    afterAuthUrl,
+    clerk.user?.publicMetadata?.role,
+    signedInUser?.publicMetadata?.role,
+  ]);
+
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     if (skipSignedInEffectRedirect.current) return;
-    hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
-  }, [afterAuthUrl, isLoaded, isSignedIn]);
+    const intent = mergeAuthIntentFromWindow(afterAuthUrl);
+    if (intent !== "/teacher" && intent !== "/school" && !userLoaded) return;
+    navigateAfterSignIn();
+  }, [
+    afterAuthUrl,
+    isLoaded,
+    isSignedIn,
+    navigateAfterSignIn,
+    userLoaded,
+  ]);
 
   useEffect(() => {
     if (!secondFactorPending || !signIn) return;
@@ -302,8 +325,10 @@ export function SignInForm() {
       throw new Error("Session олдсонгүй. Дахин нэвтэрнэ үү.");
     }
     await setActive({ session: sessionId });
-    hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
-  }, [afterAuthUrl, setActive, signIn]);
+    const intent = mergeAuthIntentFromWindow(afterAuthUrl);
+    const role = clerk.user?.publicMetadata?.role;
+    hardNavigateToAppPath(resolvePostAuthDashboard(intent, role));
+  }, [afterAuthUrl, clerk.user?.publicMetadata?.role, setActive, signIn]);
 
   const completeSignInSession = useCallback(async () => {
     const si = signIn as SignInWithMfa | null | undefined;
@@ -311,13 +336,20 @@ export function SignInForm() {
     if (typeof si.finalize === "function") {
       const { error } = await si.finalize({
         navigate: async () => {
-          hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
+          const intent = mergeAuthIntentFromWindow(afterAuthUrl);
+          const role = clerk.user?.publicMetadata?.role;
+          hardNavigateToAppPath(resolvePostAuthDashboard(intent, role));
         },
       });
       if (!error) return;
     }
     await activateSessionAndRedirect();
-  }, [afterAuthUrl, activateSessionAndRedirect, signIn]);
+  }, [
+    afterAuthUrl,
+    activateSessionAndRedirect,
+    clerk.user?.publicMetadata?.role,
+    signIn,
+  ]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -339,7 +371,7 @@ export function SignInForm() {
       if (error) {
         skipSignedInEffectRedirect.current = false;
         if (/already signed in/i.test(error.message ?? "")) {
-          hardNavigateToAppPath(oauthPostAuthRedirectUrl(afterAuthUrl));
+          navigateAfterSignIn();
           return;
         }
         setFormError(error.message ?? "Sign in failed.");
@@ -385,9 +417,10 @@ export function SignInForm() {
     if (!signIn) return;
     setFetching(true);
     try {
+      const intent = mergeAuthIntentFromWindow(afterAuthUrl);
       const redirectUrl = absoluteAppUrlForPath(
         window.location.origin,
-        oauthPostAuthRedirectUrl(afterAuthUrl),
+        resolvePostAuthDashboard(intent, undefined),
       );
       const { error } = await signIn.sso({
         strategy: "oauth_google",
