@@ -49,7 +49,7 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
             showJarOutline
             showLabel={false}
             showCenterPercent={false}
-            className="mx-auto min-h-0 max-w-[min(280px,82vw)] justify-center gap-5 sm:gap-7"
+            className="mx-auto max-w-[min(280px,82vw)]"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
         className="fixed inset-0 z-[100] flex flex-col bg-[#f7fafc]/85 backdrop-blur-[2px]"
         aria-live="polite"
         aria-busy="true"
-        aria-label="Самбар ачааллаж байна"
+        aria-label="Loading progress"
       >
         {body}
       </div>

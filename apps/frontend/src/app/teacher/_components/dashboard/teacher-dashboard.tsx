@@ -166,7 +166,7 @@ export default function TeacherDashboard() {
                 progress={loaderProgress}
                 backgroundImage="/busy-bee.png"
                 backgroundImageFit="contain"
-                label="Ачааллаж байна…"
+                showLabel={false}
                 showCenterPercent={false}
                 className="max-w-[260px]"
               />
