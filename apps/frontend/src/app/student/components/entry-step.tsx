@@ -5,13 +5,15 @@ type EntryStepProps = {
   hasAcceptedRules: boolean;
   classCodeHint?: string;
   classCodeRequired?: boolean;
+  /** false бол ангийн/шалгалтын кодын талбарыг нуух (зөвхөн сурагчийн код). */
+  showClassCodeField?: boolean;
   /** Сурагчийн код (studentExamAuth) — шаардлагатай үед. */
   studentCode?: string;
   studentCodeRequired?: boolean;
   onChangeStudentCode?: (value: string) => void;
   /** Хоосон биш байвал «Үргэлжлүүлэх»-ийн алдааг харуулна */
   proceedError?: string | null;
-  onChangeClassCode: (value: string) => void;
+  onChangeClassCode?: (value: string) => void;
   onToggleAcceptedRules: (checked: boolean) => void;
   onProceed: () => void;
 };
@@ -43,6 +45,7 @@ export function EntryStep({
   hasAcceptedRules,
   classCodeHint,
   classCodeRequired = false,
+  showClassCodeField = true,
   studentCode = "",
   studentCodeRequired = false,
   onChangeStudentCode,
@@ -51,9 +54,12 @@ export function EntryStep({
   onToggleAcceptedRules,
   onProceed,
 }: EntryStepProps) {
+  const needsClassField =
+    showClassCodeField &&
+    (classCodeRequired || classCode.trim().length > 0);
   const canProceed =
     hasAcceptedRules &&
-    classCode.trim().length > 0 &&
+    (!needsClassField || classCode.trim().length > 0) &&
     (!studentCodeRequired ||
       (studentCode.trim().length > 0 && Boolean(onChangeStudentCode)));
 
@@ -111,15 +117,17 @@ export function EntryStep({
           </label>
 
           <div className="mt-5 space-y-4">
-            <EntryInput
-              placeholder={
-                classCodeRequired
-                  ? "Шалгалтын код оруулах"
-                  : "Шалгалтын код оруулах"
-              }
-              value={classCode}
-              onChange={onChangeClassCode}
-            />
+            {showClassCodeField ? (
+              <EntryInput
+                placeholder={
+                  classCodeRequired
+                    ? "Ангийн код оруулах (жишээ нь 10A)"
+                    : "Ангийн код (сонголттой)"
+                }
+                value={classCode}
+                onChange={(value) => onChangeClassCode?.(value)}
+              />
+            ) : null}
             {studentCodeRequired && onChangeStudentCode ? (
               <div>
                 <p className="mb-1.5 text-left text-[14px] font-medium text-[#374151]">

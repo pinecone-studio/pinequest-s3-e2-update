@@ -69,6 +69,37 @@ export const mutationTypeDefs = /* GraphQL */ `
     classIds: [String!]
   }
 
+  input UpdateClassInput {
+    id: String!
+    grade: Int
+    section: String
+    sectionTeacherId: String
+  }
+
+  input UpdateStudentInput {
+    id: String!
+    classId: String
+    firstName: String
+    lastName: String
+    email: String
+    studentCode: String
+  }
+
+  input UpdateTeacherInput {
+    id: String!
+    firstName: String
+    lastName: String
+    email: String
+    role: String
+    myClassId: String
+    classIds: [String!]
+  }
+
+  input SyncClassTeachersInput {
+    classId: String!
+    teacherIds: [String!]!
+  }
+
   input CreateExamArgs {
     grade: Int!
     subjectId: String!
@@ -104,5 +135,13 @@ export const mutationTypeDefs = /* GraphQL */ `
     studentExamAuth(input: StudentExamAuthInput!): StudentExamAuthPayload!
     """Bearer Clerk session — зөвхөн энэ шалгалтын teacherId багш дуудаж болно."""
     addExamAllowedClasses(examId: String!, classIds: [String!]!): Boolean!
+    """Сургуулийн админ (Clerk JWT)."""
+    updateClass(input: UpdateClassInput!): Class!
+    deleteClass(id: String!): Boolean!
+    updateStudent(input: UpdateStudentInput!): Student!
+    deleteStudent(id: String!): Boolean!
+    updateTeacher(input: UpdateTeacherInput!): Teacher!
+    deleteTeacher(id: String!): Boolean!
+    syncClassTeacherAssignments(input: SyncClassTeachersInput!): Boolean!
   }
 `;

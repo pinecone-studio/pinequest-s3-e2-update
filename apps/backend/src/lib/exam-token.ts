@@ -8,7 +8,8 @@ type ExamTokenPayload = {
 };
 
 function base64UrlDecode(b64url: string): Uint8Array {
-  const pad = b64url.length % 4 === 0 ? "" : "====".slice((4 - (b64url.length % 4)) % 4);
+  const pad =
+    b64url.length % 4 === 0 ? "" : "====".slice((4 - (b64url.length % 4)) % 4);
   const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/") + pad;
   const bin = atob(b64);
   const out = new Uint8Array(bin.length);
@@ -18,7 +19,8 @@ function base64UrlDecode(b64url: string): Uint8Array {
 
 function base64UrlEncode(bytes: Uint8Array): string {
   let binary = "";
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < bytes.length; i++)
+    binary += String.fromCharCode(bytes[i]);
   const b64 = btoa(binary);
   return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
@@ -27,7 +29,10 @@ function base64UrlEncodeText(text: string): string {
   return base64UrlEncode(new TextEncoder().encode(text));
 }
 
-async function hmacSha256(secret: string, message: string): Promise<Uint8Array> {
+async function hmacSha256(
+  secret: string,
+  message: string,
+): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(secret),
@@ -35,7 +40,11 @@ async function hmacSha256(secret: string, message: string): Promise<Uint8Array> 
     false,
     ["sign"],
   );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  const sig = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(message),
+  );
   return new Uint8Array(sig);
 }
 

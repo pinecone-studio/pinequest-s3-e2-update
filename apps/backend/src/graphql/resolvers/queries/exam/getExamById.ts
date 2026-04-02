@@ -1,6 +1,9 @@
 import { eq } from "drizzle-orm";
 import { examTable } from "../../../../db/schema";
-import { assertExamIdMatchesSession } from "../../../../lib/exam-guard";
+import {
+  assertExamReadableBySessionOrSchoolAdmin,
+} from "../../../../lib/exam-guard";
+import { loadAllowedClassIdsByExamIds } from "../../../../lib/exam-allowed-classes";
 import { GraphQLUserContext } from "../../../context";
 
 function parseIds(value: unknown): string[] {
@@ -21,18 +24,20 @@ export const getExamById = async (
   args: { examId: string },
   ctx: GraphQLUserContext,
 ) => {
-  assertExamIdMatchesSession(ctx, args.examId);
+  await assertExamReadableBySessionOrSchoolAdmin(ctx, args.examId);
 
   const rows = await ctx.db
     .select()
     .from(examTable)
-    .where(eq(examTable.id, args.examId));
+    .where(eq(examTable.id, args.examId.trim()));
 
   const row = rows[0];
   if (!row) return null;
+  const allowedMap = await loadAllowedClassIdsByExamIds(ctx.db, [row.id]);
   return {
     ...row,
     testIds: parseIds((row as any).testIds),
     openExerciseIds: parseIds((row as any).openExerciseIds),
+    allowedClassIds: allowedMap.get(row.id) ?? [],
   };
 };

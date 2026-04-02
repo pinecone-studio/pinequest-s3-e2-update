@@ -1,5 +1,6 @@
 import { inArray } from "drizzle-orm";
 import { examTable } from "../../../../db/schema";
+import { loadAllowedClassIdsByExamIds } from "../../../../lib/exam-allowed-classes";
 import { GraphQLUserContext } from "../../../context";
 
 function parseIds(value: unknown): string[] {
@@ -32,16 +33,21 @@ export const getExamsByIds = async (
       .where(inArray(examTable.id, ids));
 
     const byId = new Map(rows.map((r) => [r.id, r]));
-    return ids
+    const ordered = ids
       .map((id) => byId.get(id))
-      .filter((r): r is NonNullable<typeof r> => r != null)
-      .map((row) => ({
-        ...row,
-        testIds: parseIds((row as { testIds?: unknown }).testIds),
-        openExerciseIds: parseIds(
-          (row as { openExerciseIds?: unknown }).openExerciseIds,
-        ),
-      }));
+      .filter((r): r is NonNullable<typeof r> => r != null);
+    const allowed = await loadAllowedClassIdsByExamIds(
+      ctx.db,
+      ordered.map((r) => r.id),
+    );
+    return ordered.map((row) => ({
+      ...row,
+      testIds: parseIds((row as { testIds?: unknown }).testIds),
+      openExerciseIds: parseIds(
+        (row as { openExerciseIds?: unknown }).openExerciseIds,
+      ),
+      allowedClassIds: allowed.get(row.id) ?? [],
+    }));
   } catch (err) {
     console.error("getExamsByIds error:", err);
     throw new Error("Cannot load exams");

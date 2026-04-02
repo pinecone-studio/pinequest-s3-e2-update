@@ -1,5 +1,7 @@
 import { eq } from "drizzle-orm";
 import { examTable } from "../../../../db/schema";
+import { assertClerkCanAccessSchool } from "../../../../lib/school-admin-guard";
+import { loadAllowedClassIdsByExamIds } from "../../../../lib/exam-allowed-classes";
 import { GraphQLUserContext } from "../../../context";
 
 function parseIds(value: unknown): string[] {
@@ -21,14 +23,22 @@ export const getExamBySchoolId = async (
   args: { schoolId: string },
   ctx: GraphQLUserContext,
 ) => {
+  await assertClerkCanAccessSchool(ctx, args.schoolId);
+
   const rows = await ctx.db
     .select()
     .from(examTable)
     .where(eq(examTable.schoolId, args.schoolId));
 
+  const allowed = await loadAllowedClassIdsByExamIds(
+    ctx.db,
+    rows.map((r) => r.id),
+  );
+
   return rows.map((row) => ({
     ...row,
     testIds: parseIds((row as any).testIds),
     openExerciseIds: parseIds((row as any).openExerciseIds),
+    allowedClassIds: allowed.get(row.id) ?? [],
   }));
 };

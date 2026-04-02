@@ -41,6 +41,7 @@ export const queryTypeDefs = /* GraphQL */ `
     getOpenExerciesBySubjectAndGrade(input: OpenExerciesInput): [OpenExercies]
     getExamBySchoolId(schoolId: String!): [Exam!]
     getExamsByIds(ids: [String!]!): [Exam!]!
+    getStudentExamResultsByExamId(examId: String!): [StudentExamResult!]!
     getTestById(testId: String!): [Test]
     getOpenExerciesById(openExerciesId: String!): [OpenExercies]
     getTestsByIds(ids: [String!]!): [Test!]!

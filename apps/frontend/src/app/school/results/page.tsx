@@ -1,11 +1,18 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@apollo/client/react";
 import { ArrowUpRight, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import type { BackendExamRow } from "@/app/school/exams/_lib/school-exam-map";
+import { mapExamsToDashboardRows } from "@/app/school/exams/_lib/school-exam-map";
 import {
-  recentActivities,
-  schoolExams,
-} from "@/app/school/_mock/school-data";
+  GET_ALL_SUBJECTS,
+  GET_CLASS_BY_SCHOOL_ID,
+  GET_EXAM_BY_SCHOOL_ID,
+  GET_SCHOOL_BY_CLERK_ID,
+  GET_TEACHERS_BY_SCHOOL_ID,
+} from "@/graphql/typeDefs/queries";
 
 type CalendarScheduleItem = {
   id: string;
@@ -65,6 +72,78 @@ function formatLocation(location: string) {
 }
 
 export default function SchoolResultsPage() {
+  const { user, isLoaded: clerkLoaded } = useUser();
+  const clerkId = user?.id ?? "";
+
+  const { data: schoolData } = useQuery<{
+    getSchoolByClerkId: { id: string };
+  }>(GET_SCHOOL_BY_CLERK_ID, {
+    variables: { clerkId },
+    skip: !clerkLoaded || !clerkId,
+    fetchPolicy: "cache-and-network",
+  });
+  const schoolId = schoolData?.getSchoolByClerkId?.id ?? "";
+
+  const { data: examsData } = useQuery<{ getExamBySchoolId: BackendExamRow[] }>(
+    GET_EXAM_BY_SCHOOL_ID,
+    {
+      variables: { schoolId },
+      skip: !schoolId,
+      fetchPolicy: "cache-and-network",
+    },
+  );
+  const { data: classesData } = useQuery<{
+    getClassBySchoolId: { id: string; grade: number; section: string }[];
+  }>(GET_CLASS_BY_SCHOOL_ID, {
+    variables: { schoolId },
+    skip: !schoolId,
+    fetchPolicy: "cache-and-network",
+  });
+  const { data: teachersData } = useQuery<{
+    getTeachersBySchoolId: { id: string; firstName: string; lastName: string }[];
+  }>(GET_TEACHERS_BY_SCHOOL_ID, {
+    variables: { schoolId },
+    skip: !schoolId,
+    fetchPolicy: "cache-and-network",
+  });
+  const { data: subjectsData } = useQuery<{
+    getAllSubject: { id: string; name: string }[];
+  }>(GET_ALL_SUBJECTS, { fetchPolicy: "cache-and-network" });
+
+  const schoolExams = useMemo(() => {
+    const exams = examsData?.getExamBySchoolId ?? [];
+    const subjectNameById = new Map(
+      (subjectsData?.getAllSubject ?? []).map((s) => [s.id, s.name]),
+    );
+    const classById = new Map(
+      (classesData?.getClassBySchoolId ?? []).map((c) => [c.id, c]),
+    );
+    const teacherById = new Map(
+      (teachersData?.getTeachersBySchoolId ?? []).map((t) => [
+        t.id,
+        { id: t.id, firstName: t.firstName, lastName: t.lastName },
+      ]),
+    );
+    return mapExamsToDashboardRows(
+      exams,
+      subjectNameById,
+      classById,
+      teacherById,
+    );
+  }, [
+    examsData?.getExamBySchoolId,
+    classesData?.getClassBySchoolId,
+    teachersData?.getTeachersBySchoolId,
+    subjectsData?.getAllSubject,
+  ]);
+
+  const recentActivities = useMemo(() => {
+    return [...schoolExams]
+      .sort((a, b) => b.startAt.localeCompare(a.startAt))
+      .slice(0, 8)
+      .map((e) => `${e.className} · ${e.title} · ${e.startAt || "—"}`);
+  }, [schoolExams]);
+
   const [calendarSchedules, setCalendarSchedules] = useState<CalendarScheduleItem[]>([]);
   const [selectedQuarterOverview, setSelectedQuarterOverview] = useState("all");
   const [selectedClassOverview, setSelectedClassOverview] = useState("all");
@@ -126,7 +205,7 @@ export default function SchoolResultsPage() {
   const quarterFilteredExams = useMemo(() => {
     if (selectedQuarterOverview === "all") return schoolExams;
     return schoolExams.filter((exam) => quarterOf(exam.startAt) === selectedQuarterOverview);
-  }, [selectedQuarterOverview]);
+  }, [selectedQuarterOverview, schoolExams]);
   const classOptionsOverview = useMemo(
     () =>
       Array.from(new Set(quarterFilteredExams.map((exam) => extractGradeValue(exam.className)))).sort((a, b) => {

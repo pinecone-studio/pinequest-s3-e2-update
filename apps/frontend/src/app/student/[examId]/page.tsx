@@ -12,6 +12,7 @@ import {
 } from "@/graphql/typeDefs/queries";
 import {
 	discardStudentExamTokenIfNotForExam,
+	readStudentExamClassId,
 	readStudentExamToken,
 	writeStudentExamToken,
 } from "../_lib/exam-session-storage";
@@ -32,7 +33,6 @@ import {
   buildExamDataFromApi,
   type ApiTestRow,
 } from "../_lib/exam-data-from-api";
-import { STUDENT_ENTRY_CLASS_OPTIONS } from "../_lib/entry-class-options";
 import { examData } from "../mock-data";
 import type { ExamData, ExamPhase, OptionId } from "../types";
 import { formatTimer } from "../utils";
@@ -47,7 +47,10 @@ type GqlExamRow = {
 };
 
 type StudentExamAuthData = {
-  studentExamAuth: { token: string };
+  studentExamAuth: {
+    token: string;
+    student: { classId: string } | null;
+  };
 };
 
 function formatStudentExamAuthError(error: unknown): string {
@@ -65,11 +68,13 @@ function formatStudentExamAuthError(error: unknown): string {
 
 function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   const [phase, setPhase] = useState<ExamPhase>("entry");
-  const [classCode, setClassCode] = useState("");
   const [studentCode, setStudentCode] = useState("");
   const [examSessionToken, setExamSessionToken] = useState<string | null>(() =>
     readStudentExamToken(routeExamId),
   );
+  const [authenticatedClassId, setAuthenticatedClassId] = useState<
+    string | null
+  >(() => readStudentExamClassId(routeExamId));
   const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
   const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
   const [monitoringStateMap, setMonitoringStateMap] =
@@ -152,56 +157,11 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   const totalQuestions = resolvedExamData.questions.length;
   const currentQuestion = resolvedExamData.questions[currentQuestionIndex];
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
-  const normalizedClassCode = classCode.trim().toUpperCase();
   const requiresDeliveredClass = Boolean(
     linkedSavedExam && (linkedSavedExam.sentClassIds ?? []).length > 0,
   );
 
-  const globalClassByCode = useMemo(() => {
-    if (!normalizedClassCode) return null;
-    return (
-      STUDENT_ENTRY_CLASS_OPTIONS.find(
-        (klass) => klass.name.trim().toUpperCase() === normalizedClassCode,
-      ) ?? null
-    );
-  }, [normalizedClassCode]);
-
-  const deliveredClassByCode = useMemo(() => {
-    if (!normalizedClassCode || !linkedSavedExam?.sentClassIds?.length) {
-      return null;
-    }
-    const labels = linkedSavedExam.sentClassLabels ?? {};
-    for (const id of linkedSavedExam.sentClassIds) {
-      const label = labels[id];
-      if (label && label.trim().toUpperCase() === normalizedClassCode) {
-        return { id, name: label };
-      }
-    }
-    for (const opt of STUDENT_ENTRY_CLASS_OPTIONS) {
-      if (
-        opt.name.trim().toUpperCase() === normalizedClassCode &&
-        linkedSavedExam.sentClassIds.includes(opt.id)
-      ) {
-        return { id: opt.id, name: opt.name };
-      }
-    }
-    return null;
-  }, [normalizedClassCode, linkedSavedExam]);
-
-  const matchedClass = useMemo(() => {
-    if (!normalizedClassCode) return null;
-    if (requiresDeliveredClass) {
-      return deliveredClassByCode;
-    }
-    return globalClassByCode;
-  }, [
-    normalizedClassCode,
-    requiresDeliveredClass,
-    deliveredClassByCode,
-    globalClassByCode,
-  ]);
-
-  const selectedClassId = matchedClass?.id ?? null;
+  const selectedClassId = authenticatedClassId;
 
   const isSelectedClassDelivered = Boolean(
     !linkedSavedExam ||
@@ -209,25 +169,6 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     (selectedClassId != null &&
       (linkedSavedExam.sentClassIds ?? []).includes(selectedClassId)),
   );
-
-  const entryClassHintKind = useMemo(() => {
-    if (!linkedSavedExam || !normalizedClassCode) return null;
-    if (!requiresDeliveredClass) return null;
-    if (deliveredClassByCode) return "ok" as const;
-    if (
-      globalClassByCode &&
-      !(linkedSavedExam.sentClassIds ?? []).includes(globalClassByCode.id)
-    ) {
-      return "not_delivered" as const;
-    }
-    return "unknown" as const;
-  }, [
-    linkedSavedExam,
-    normalizedClassCode,
-    requiresDeliveredClass,
-    deliveredClassByCode,
-    globalClassByCode,
-  ]);
 
   const monitoringScopeKey =
     teacherMonitoringExam && selectedClassId
@@ -255,6 +196,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   useEffect(() => {
     discardStudentExamTokenIfNotForExam(routeExamId);
     setExamSessionToken(readStudentExamToken(routeExamId));
+    setAuthenticatedClassId(readStudentExamClassId(routeExamId));
   }, [routeExamId]);
 
   useEffect(() => {
@@ -269,18 +211,16 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     }
 
     if (usesTeacherControlledStart) {
-      if (entryClassHintKind === "not_delivered") {
+      if (!selectedClassId) {
         setEntryProceedError(
-          "Энэ ангид тухайн шалгалт илгээгдээгүй байна.",
+          "Сурагчийн анги тодорхойлогдсонгүй. Дахин сурагчийн кодоор нэвтэрнэ үү.",
         );
         return;
       }
-      if (!matchedClass) {
-        setEntryProceedError("Ийм анги олдсонгүй. Жишээ: 10A");
-        return;
-      }
       if (!isSelectedClassDelivered) {
-        setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
+        setEntryProceedError(
+          "Энэ төхөөрөмж дээр илгээсэн ангийн жагсаалт таарахгүй байна.",
+        );
         return;
       }
       const totalDurationSeconds = apiExamData.durationMinutes * 60;
@@ -309,21 +249,11 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     examRow,
     apiExamData,
     usesTeacherControlledStart,
-    entryClassHintKind,
-    matchedClass,
+    selectedClassId,
     isSelectedClassDelivered,
     sharedStartedAt,
   ]);
 
-  const classCodeHint = linkedSavedExam
-    ? normalizedClassCode.length === 0
-      ? "Шалгалт илгээгдсэн ангийг оруулна уу. Жишээ: 10A"
-      : entryClassHintKind === "not_delivered"
-        ? "Энэ ангид тухайн шалгалт илгээгдээгүй байна."
-        : !matchedClass
-          ? "Ийм анги олдсонгүй."
-          : `Илгээсэн анги баталгаажлаа: ${matchedClass.name}`
-    : undefined;
   const hasTimedOut = phase === "exam" && remainingSeconds <= 0;
 
   useEffect(() => {
@@ -402,33 +332,10 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
       setEntryProceedError("Шалгалтын журмыг уншиж танилцсанаа чеклэнэ үү.");
       return;
     }
-    if (!normalizedClassCode) {
-      setEntryProceedError("Шалгалтын кодоо оруулна уу.");
-      return;
-    }
     const trimmedStudentCode = studentCode.trim();
     if (!trimmedStudentCode) {
       setEntryProceedError("Сурагчийн кодоо оруулна уу.");
       return;
-    }
-
-    if (usesTeacherControlledStart) {
-      if (entryClassHintKind === "not_delivered") {
-        setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
-        return;
-      }
-      if (!matchedClass) {
-        setEntryProceedError("Ийм анги олдсонгүй. Жишээ: 10A");
-        return;
-      }
-      if (!isSelectedClassDelivered) {
-        setEntryProceedError("Энэ ангид тухайн шалгалт илгээгдээгүй байна.");
-        return;
-      }
-      if (remainingSeconds <= 0) {
-        setEntryProceedError("Шалгалтын хугацаа дууссан байна.");
-        return;
-      }
     }
 
     setEntryProceedError(null);
@@ -439,14 +346,17 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
           input: { examId: routeExamId, studentCode: trimmedStudentCode },
         },
       });
-      const token = result.data?.studentExamAuth?.token;
+      const auth = result.data?.studentExamAuth;
+      const token = auth?.token;
+      const classId = auth?.student?.classId ?? null;
       if (!token) {
         setEntryProceedError(
           result.error?.message ?? "Сурагчийн баталгаажуулалт амжилтгүй.",
         );
         return;
       }
-      writeStudentExamToken(routeExamId, token);
+      writeStudentExamToken(routeExamId, token, classId);
+      setAuthenticatedClassId(classId);
       setExamSessionToken(token);
     } catch (error: unknown) {
       setEntryProceedError(formatStudentExamAuthError(error));
@@ -477,17 +387,13 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
           </div>
         ) : null}
         <EntryStep
-          classCode={classCode}
+          classCode=""
           hasAcceptedRules={hasAcceptedRules}
-          classCodeHint={classCodeHint}
-          classCodeRequired={requiresDeliveredClass}
+          classCodeRequired={false}
+          showClassCodeField={false}
           studentCode={studentCode}
           studentCodeRequired
           proceedError={entryProceedError}
-          onChangeClassCode={(value) => {
-            setEntryProceedError(null);
-            setClassCode(value);
-          }}
           onChangeStudentCode={(value) => {
             setEntryProceedError(null);
             setStudentCode(value);
@@ -499,7 +405,7 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
           onProceed={() => {
             void handleStartExam();
           }}
-      />
+        />
       </div>
     );
   }

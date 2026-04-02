@@ -7,6 +7,12 @@ import {
   getAppUserFromUserId,
 } from "@/app/lib/clerk-app-user";
 import TeacherShell from "./teacher-shell";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Багш",
+  description: "Багш",
+};
 
 export default async function TeacherLayout({
   children,

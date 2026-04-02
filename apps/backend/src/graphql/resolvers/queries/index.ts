@@ -6,6 +6,7 @@ import { getAllExams } from "./exam/getAllExams";
 import { getExamById } from "./exam/getExamById";
 import { getExamsByIds } from "./exam/getExamsByIds";
 import { getExamBySchoolId } from "./exam/getExamBySchoolId";
+import { getStudentExamResultsByExamId } from "./exam/getStudentExamResultsByExamId";
 import { hello } from "./hello";
 import { viewerClerkId } from "./viewer-clerk-id";
 import { getAllSubject } from "./subjectSchoolAndTeachers/getAllSubjects";
@@ -37,6 +38,7 @@ export const queryResolvers = {
   getClassByTeacherAndSchoolId,
   getOpenExerciesBySubjectAndGrade,
   getExamBySchoolId,
+  getStudentExamResultsByExamId,
   getExamsByIds,
   getTestById,
   getOpenExerciesById,
