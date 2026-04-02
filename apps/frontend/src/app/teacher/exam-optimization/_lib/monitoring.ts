@@ -22,7 +22,60 @@ export type MonitorExamCardItem = {
 	classLabels: string[];
 	classOptions: Array<{ id: string; label: string }>;
 	savedAtLabel: string;
+	participantCount: number;
+	autoScoredCount: number;
+	finalizedCount: number;
+	pendingManualCount: number;
+	manualQuestionCount: number;
+	gradingStatus: "manual_pending" | "finalized";
 };
+
+function hashSeed(value: string) {
+	let hash = 0;
+	for (let i = 0; i < value.length; i += 1) {
+		hash = (hash * 31 + value.charCodeAt(i)) % 10007;
+	}
+	return hash;
+}
+
+export function buildMonitorGradingSummary({
+	participantCount,
+	openQuestionCount,
+	seedSource,
+}: {
+	participantCount: number;
+	openQuestionCount: number;
+	seedSource: string;
+}) {
+	const safeParticipantCount = Math.max(0, participantCount);
+	const safeOpenQuestionCount = Math.max(0, openQuestionCount);
+
+	if (safeOpenQuestionCount === 0) {
+		return {
+			participantCount: safeParticipantCount,
+			autoScoredCount: safeParticipantCount,
+			finalizedCount: safeParticipantCount,
+			pendingManualCount: 0,
+			manualQuestionCount: 0,
+			gradingStatus: "finalized" as const,
+		};
+	}
+
+	const pendingManualCount = Math.min(
+		safeParticipantCount,
+		Math.max(1, hashSeed(seedSource) % Math.max(2, safeParticipantCount)),
+	);
+	const finalizedCount = Math.max(0, safeParticipantCount - pendingManualCount);
+
+	return {
+		participantCount: safeParticipantCount,
+		autoScoredCount: safeParticipantCount,
+		finalizedCount,
+		pendingManualCount,
+		manualQuestionCount: safeOpenQuestionCount,
+		gradingStatus: pendingManualCount > 0 ? ("manual_pending" as const) : ("finalized" as const),
+	};
+}
 
 export const MOCK_ACTIVE_STUDENTS: ActiveStudentEntry[] = [
 	{ id: "s-10a-01", fullName: "А. Тэмүүлэн", email: "temuulen10a@example.com", grade: "10A", school: "UPDATE", startedAt: Date.now() - 1000 * 60 * 2, status: "active" },

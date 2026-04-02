@@ -45,6 +45,7 @@ type ClassesByTeacherResponse = {
   getClassByTeacherAndSchoolId: Array<{
     id: string;
     grade: number;
+    sectionTeacherId: string;
     section: string;
   }>;
 };
@@ -106,6 +107,8 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
   const clsLabel = apiClassRow
     ? `${apiClassRow.grade}${apiClassRow.section}`
     : "";
+  const isResponsibleClass =
+    apiClassRow?.sectionTeacherId === HARDCODED_TEACHER_ID;
 
   const pageLoading =
     classesLoading || (!!apiClassRow && studentsLoading);
@@ -230,6 +233,7 @@ export default function TeacherClassDetail({ classId }: { classId: string }) {
           <TeacherClassStudentsView
             classId={classId}
             className={clsLabel}
+            isResponsibleClass={isResponsibleClass}
             onStudentsChanged={() => void refetchStudents()}
             selectedId={selectedId}
             selectedStudentExams={selectedStudentExams}

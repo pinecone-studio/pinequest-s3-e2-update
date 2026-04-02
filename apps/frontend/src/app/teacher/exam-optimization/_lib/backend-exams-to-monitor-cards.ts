@@ -1,4 +1,7 @@
-import type { MonitorExamCardItem } from "./monitoring";
+import {
+  buildMonitorGradingSummary,
+  type MonitorExamCardItem,
+} from "./monitoring";
 
 /** GraphQL `Exam` row shape from `getExamBySchoolId` (subset). */
 export type BackendExamMonitorRow = {
@@ -85,6 +88,11 @@ export function mapBackendExamsToMonitorCards(
         : classLabels.length > 1
           ? "олон"
           : (classLabels[0] ?? "Анги оноогоогүй");
+    const gradingSummary = buildMonitorGradingSummary({
+      participantCount: classOptions.length > 0 ? 36 : 0,
+      openQuestionCount: openIds.length,
+      seedSource: row.id,
+    });
 
     return {
       id: row.id,
@@ -100,6 +108,7 @@ export function mapBackendExamsToMonitorCards(
       classLabels,
       classOptions,
       savedAtLabel: formatMonitorSavedAt(row.createdAt),
+      ...gradingSummary,
     };
   });
 }

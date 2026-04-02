@@ -8,10 +8,7 @@ import type {
   QuestionValidationErrors,
 } from "../../_lib/types";
 import { hasTraditionalMongolianText } from "../../_lib/utils";
-import {
-  BuilderField,
-  builderInputClassName,
-} from "./question-builder-form-fields";
+import { builderInputClassName } from "./question-builder-form-fields";
 import { NationalScriptAssist } from "../shared/national-script-assist";
 
 type QuestionBuilderAnswerSectionProps = {
@@ -33,7 +30,6 @@ export function QuestionBuilderAnswerSection(
     onAddOption,
     onOptionChange,
     onRemoveOption,
-    onRubricChange,
     validationErrors,
     values,
   } = props;
@@ -145,43 +141,7 @@ export function QuestionBuilderAnswerSection(
             </div>
           ) : null}
         </div>
-      ) : (
-        <div className="space-y-4">
-          <BuilderField
-            error={validationErrors?.rubric}
-            label="Рубрик эсвэл үнэлгээний тэмдэглэл"
-          >
-            <textarea
-              className={`${builderInputClassName} py-3 ${
-                isNationalScript && hasTraditionalMongolianText(values.rubric)
-                  ? "min-h-40 overflow-x-auto leading-8"
-                  : "min-h-32"
-              }`}
-              onChange={(event) => onRubricChange(event.target.value)}
-              placeholder="Сайн, дунд, сул хариултад ямар агуулга байхыг тайлбарлана уу."
-              style={
-                isNationalScript && hasTraditionalMongolianText(values.rubric)
-                  ? {
-                      writingMode: "vertical-lr",
-                      textOrientation: "mixed",
-                      whiteSpace: "pre-wrap",
-                    }
-                  : undefined
-              }
-              value={values.rubric}
-            />
-          </BuilderField>
-
-          {isNationalScript ? (
-            <NationalScriptAssist
-              applyLabel="Монгол бичгийг хариултын тохиргоонд оруулах"
-              heading="Галиг эхээс хариултын тайлбар бэлдэх"
-              placeholder="Жишээ нь: абу"
-              onApplyText={onRubricChange}
-            />
-          ) : null}
-        </div>
-      )}
+      ) : null}
     </section>
   );
 }
