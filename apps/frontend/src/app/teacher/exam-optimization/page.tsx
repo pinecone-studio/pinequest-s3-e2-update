@@ -21,6 +21,7 @@ import { useTeacherDb } from "../_components/teacher-db-context";
 import { mapGqlTeacherClasses } from "../_lib/teacher-class-options";
 import { MonitorDetailSection } from "./_components/monitor-detail-section";
 import { MonitorExamsSection } from "./_components/monitor-exams-section";
+import { MonitorGroupSelectionSection } from "./_components/monitor-group-selection-section";
 import {
 	mapBackendExamsToMonitorCards,
 	type BackendExamMonitorRow,
@@ -108,15 +109,6 @@ export default function ExamOptimizationPage() {
 		return rows.filter((row) => row.teacherId === teacherId);
 	}, [examsData?.getExamBySchoolId, teacherId]);
 
-	const monitorExamCards = useMemo(() => {
-		if (!teacherExams.length) return [];
-		return mapBackendExamsToMonitorCards(
-			teacherExams,
-			subjectNameById,
-			teacherClassOptions,
-		);
-	}, [teacherExams, subjectNameById, teacherClassOptions]);
-
 	const initialSelectedExamId = searchParams.get("examId");
 	const [selectedExamId, setSelectedExamId] = useState<string | null>(
 		initialSelectedExamId,
@@ -146,6 +138,22 @@ export default function ExamOptimizationPage() {
 		);
 	});
 	const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+	const monitorExamCards = useMemo(() => {
+		if (!teacherExams.length) return [];
+		const cards = mapBackendExamsToMonitorCards(
+			teacherExams,
+			subjectNameById,
+			teacherClassOptions,
+		);
+		const uniqueByGrade = new Map<string, (typeof cards)[number]>();
+		for (const card of cards) {
+			if (!uniqueByGrade.has(card.grade)) {
+				uniqueByGrade.set(card.grade, card);
+			}
+		}
+		return Array.from(uniqueByGrade.values());
+	}, [teacherExams, subjectNameById, teacherClassOptions]);
 
 	const showToast = useCallback(() => {
 		toast.success("Мэдэгдэл харагдлаа.");
@@ -350,7 +358,15 @@ export default function ExamOptimizationPage() {
 					/>
 				) : null}
 
-				{activeMonitorExam ? (
+				{activeMonitorExam && !activeClassId ? (
+					<MonitorGroupSelectionSection
+						exam={activeMonitorExam}
+						onBack={() => setSelectedExamId(null)}
+						onOpenGroup={(classId) => onSelectClass(classId)}
+					/>
+				) : null}
+
+				{activeMonitorExam && activeClassId ? (
 					<MonitorDetailSection
 						activeClassId={activeClassId}
 						activeClassLabel={activeClassLabel}
@@ -359,7 +375,14 @@ export default function ExamOptimizationPage() {
 						isMonitoring={isActiveMonitoring}
 						monitorTotalStudents={monitorTotalStudents}
 						remainingDurationLabel={remainingDurationLabel}
-						onBackToList={() => setSelectedExamId(null)}
+						onBackToList={() =>
+							setSelectedClassIdByExamId((prev) => {
+								if (!activeMonitorExam) return prev;
+								const next = { ...prev };
+								delete next[activeMonitorExam.id];
+								return next;
+							})
+						}
 						onSelectClass={onSelectClass}
 						onStartMonitoring={startMonitoring}
 					/>

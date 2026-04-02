@@ -1,17 +1,14 @@
+import { Check } from "lucide-react";
 import Image from "next/image";
 
 type EntryStepProps = {
-  classCode: string;
   hasAcceptedRules: boolean;
-  classCodeHint?: string;
-  classCodeRequired?: boolean;
   /** Сурагчийн код (studentExamAuth) — шаардлагатай үед. */
   studentCode?: string;
   studentCodeRequired?: boolean;
   onChangeStudentCode?: (value: string) => void;
   /** Хоосон биш байвал «Үргэлжлүүлэх»-ийн алдааг харуулна */
   proceedError?: string | null;
-  onChangeClassCode: (value: string) => void;
   onToggleAcceptedRules: (checked: boolean) => void;
   onProceed: () => void;
 };
@@ -39,21 +36,16 @@ function EntryInput({
 }
 
 export function EntryStep({
-  classCode,
   hasAcceptedRules,
-  classCodeHint,
-  classCodeRequired = false,
   studentCode = "",
   studentCodeRequired = false,
   onChangeStudentCode,
   proceedError = null,
-  onChangeClassCode,
   onToggleAcceptedRules,
   onProceed,
 }: EntryStepProps) {
   const canProceed =
     hasAcceptedRules &&
-    classCode.trim().length > 0 &&
     (!studentCodeRequired ||
       (studentCode.trim().length > 0 && Boolean(onChangeStudentCode)));
 
@@ -101,25 +93,26 @@ export function EntryStep({
           </div>
 
           <label className="mt-5 inline-flex w-full max-w-full cursor-pointer items-start gap-3 text-sm font-medium text-[#111827] sm:w-fit sm:items-center sm:text-[15px]">
-            <input
-              checked={hasAcceptedRules}
-              className="mt-0.5 h-4.5 w-4.5 shrink-0 rounded border border-[#9ca3af] sm:mt-0"
-              type="checkbox"
-              onChange={(event) => onToggleAcceptedRules(event.target.checked)}
-            />
+            <span className="relative mt-0.5 inline-flex h-[25px] w-[25px] shrink-0 items-center justify-center sm:mt-0">
+              <input
+                checked={hasAcceptedRules}
+                className="peer absolute inset-0 z-10 cursor-pointer opacity-0"
+                type="checkbox"
+                onChange={(event) =>
+                  onToggleAcceptedRules(event.target.checked)
+                }
+              />
+              <span className="pointer-events-none inline-flex h-[25px] w-[25px] items-center justify-center rounded-[8px] border border-[#4A4A4A] bg-white text-[#4A4A4A] transition peer-checked:[&_svg]:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-[#9fbef5]/40">
+                <Check
+                  className="h-4 w-4 opacity-0 transition-opacity"
+                  strokeWidth={3}
+                />
+              </span>
+            </span>
             <span className="min-w-0 leading-snug">Уншиж танилцсан</span>
           </label>
 
           <div className="mt-5 space-y-4">
-            <EntryInput
-              placeholder={
-                classCodeRequired
-                  ? "Шалгалтын код оруулах"
-                  : "Шалгалтын код оруулах"
-              }
-              value={classCode}
-              onChange={onChangeClassCode}
-            />
             {studentCodeRequired && onChangeStudentCode ? (
               <div>
                 <p className="mb-1.5 text-left text-[14px] font-medium text-[#374151]">

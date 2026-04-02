@@ -258,6 +258,16 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
   }, [routeExamId]);
 
   useEffect(() => {
+    if (classCode.trim().length > 0) return;
+    const firstDeliveredLabel = Object.values(
+      linkedSavedExam?.sentClassLabels ?? {},
+    )[0];
+    if (firstDeliveredLabel) {
+      setClassCode(firstDeliveredLabel);
+    }
+  }, [classCode, linkedSavedExam]);
+
+  useEffect(() => {
     if (phase !== "entry" || !examSessionToken || authLoading) return;
     if (examLoading || itemsLoading || !examRow || !apiExamData) return;
 
@@ -315,15 +325,6 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
     sharedStartedAt,
   ]);
 
-  const classCodeHint = linkedSavedExam
-    ? normalizedClassCode.length === 0
-      ? "Шалгалт илгээгдсэн ангийг оруулна уу. Жишээ: 10A"
-      : entryClassHintKind === "not_delivered"
-        ? "Энэ ангид тухайн шалгалт илгээгдээгүй байна."
-        : !matchedClass
-          ? "Ийм анги олдсонгүй."
-          : `Илгээсэн анги баталгаажлаа: ${matchedClass.name}`
-    : undefined;
   const hasTimedOut = phase === "exam" && remainingSeconds <= 0;
 
   useEffect(() => {
@@ -402,10 +403,6 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
       setEntryProceedError("Шалгалтын журмыг уншиж танилцсанаа чеклэнэ үү.");
       return;
     }
-    if (!normalizedClassCode) {
-      setEntryProceedError("Шалгалтын кодоо оруулна уу.");
-      return;
-    }
     const trimmedStudentCode = studentCode.trim();
     if (!trimmedStudentCode) {
       setEntryProceedError("Сурагчийн кодоо оруулна уу.");
@@ -477,17 +474,10 @@ function StudentExamByIdInner({ routeExamId }: { routeExamId: string }) {
           </div>
         ) : null}
         <EntryStep
-          classCode={classCode}
           hasAcceptedRules={hasAcceptedRules}
-          classCodeHint={classCodeHint}
-          classCodeRequired={requiresDeliveredClass}
           studentCode={studentCode}
           studentCodeRequired
           proceedError={entryProceedError}
-          onChangeClassCode={(value) => {
-            setEntryProceedError(null);
-            setClassCode(value);
-          }}
           onChangeStudentCode={(value) => {
             setEntryProceedError(null);
             setStudentCode(value);

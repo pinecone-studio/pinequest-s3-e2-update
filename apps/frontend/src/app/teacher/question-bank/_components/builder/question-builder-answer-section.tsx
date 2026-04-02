@@ -64,20 +64,24 @@ export function QuestionBuilderAnswerSection(
                     <input
                       id={`question-option-correct-${option.id}`}
                       checked={option.isCorrect}
-                      className="peer absolute left-4 top-1/2 z-10 h-8 w-8 -translate-y-1/2 cursor-pointer opacity-0"
+                      className="peer absolute left-4 top-1/2 z-10 h-[52px] w-[52px] -translate-y-1/2 cursor-pointer opacity-0"
                       onChange={(event) => {
-                        if (event.target.checked) onMarkCorrectOption(option.id);
+                        if (event.target.checked)
+                          onMarkCorrectOption(option.id);
                       }}
                       title="Зөв хариулт болгох"
                       type="checkbox"
                     />
-                    <span className="pointer-events-none absolute left-4 top-1/2 z-20 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[10px] border-2 border-[#4A4A4A] bg-white text-[#4A4A4A]">
-                      <Check className="h-5 w-5 opacity-0 peer-checked:opacity-100" />
+                    <span className="pointer-events-none absolute left-4 top-1/2 z-20 inline-flex h-[25px] w-[25px] -translate-y-1/2 items-center justify-center rounded-[8px] border-[1px] border-[#4A4A4A] bg-white text-[#4A4A4A] transition peer-checked:[&_svg]:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-[#9fbef5]/40">
+                      <Check
+                        className="h-3 w-3 opacity-0 transition-opacity"
+                        strokeWidth={3}
+                      />
                     </span>
                     {isNationalScript &&
                     hasTraditionalMongolianText(option.text) ? (
                       <textarea
-                        className={`${builderInputClassName} min-h-24 overflow-x-auto py-3 pl-14 leading-8`}
+                        className={`${builderInputClassName} min-h-24 overflow-x-auto py-3 pl-[84px] leading-8`}
                         onChange={(event) =>
                           onOptionChange(option.id, event.target.value)
                         }
@@ -91,7 +95,7 @@ export function QuestionBuilderAnswerSection(
                       />
                     ) : (
                       <input
-                        className={`${builderInputClassName} pl-14`}
+                        className={`${builderInputClassName} pl-[84px]`}
                         onChange={(event) =>
                           onOptionChange(option.id, event.target.value)
                         }
