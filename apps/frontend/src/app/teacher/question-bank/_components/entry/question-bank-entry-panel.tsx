@@ -29,7 +29,7 @@ export function QuestionBankEntryPanel({
   onSubjectSelect,
 }: QuestionBankEntryPanelProps) {
   return (
-    <div className="space-y-[18px]">
+    <div className="hidden space-y-[18px]">
       <section className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div className="min-w-0">
           <h1 className="text-[17px] font-bold uppercase leading-snug tracking-[0.08em] text-[#122459] sm:text-[23px] sm:leading-[28px] sm:tracking-[0.1em]">
