@@ -37,7 +37,7 @@ export function QuestionBankFigmaControls({
         <h2 className="text-[20px] font-medium leading-[20px] text-[#262626]">
           Сонголтын хэсэг
         </h2>
-        <div className="mt-[10px] flex items-center gap-[10px]">
+        <div className="mt-[10px] flex flex-wrap items-center gap-[10px]">
           <button
             className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[10px] border border-[#dfe6f2] bg-white text-[#7c8aa5] transition hover:bg-[#f7faff]"
             onClick={onResetSelection}
@@ -59,12 +59,12 @@ export function QuestionBankFigmaControls({
       </section>
 
       <section className="rounded-[12px] border border-[#ececec] bg-[#f9f9f8] px-[16px] py-[12px]">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[20px] font-medium leading-[20px] text-[#434343]">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-[18px] font-medium leading-tight text-[#434343] sm:text-[20px] sm:leading-[20px]">
             Хайлтын хэсэг
           </h2>
           <button
-            className="text-[16px] font-medium leading-120% text-[#122459] transition hover:text-[#264a90]"
+            className="shrink-0 self-start text-left text-[14px] font-medium leading-snug text-[#122459] transition hover:text-[#264a90] sm:text-[16px]"
             onClick={onClearFilters}
             type="button"
           >
@@ -72,7 +72,7 @@ export function QuestionBankFigmaControls({
           </button>
         </div>
 
-        <div className="mt-[12px] flex items-center gap-[12px]">
+        <div className="mt-[12px] flex flex-wrap items-stretch gap-3 sm:items-center sm:gap-[12px]">
           <CompactFilterSelect
             onValueChange={(value) => onUpdateFilters({ topic: value })}
             options={topicOptions}
@@ -154,7 +154,7 @@ function CompactFilterSelect({
 }) {
   return (
     <Select onValueChange={onValueChange} value={value}>
-      <SelectTrigger className="h-[36px] w-[142px] rounded-[10px] border-[#ececec] bg-white px-[12px] text-[11px] text-[#96a0b0] shadow-none focus:ring-0 focus-visible:ring-0 [&>span]:overflow-visible [&>span]:text-clip [&>span]:whitespace-nowrap">
+      <SelectTrigger className="h-[36px] w-full min-w-[8rem] grow rounded-[10px] border-[#ececec] bg-white px-[12px] text-[11px] text-[#96a0b0] shadow-none focus:ring-0 focus-visible:ring-0 sm:w-[142px] sm:flex-none sm:grow-0 [&>span]:overflow-visible [&>span]:text-clip [&>span]:whitespace-nowrap">
         <SelectValue placeholder={placeholder}>
           {value !== "all" && value
             ? renderLabel

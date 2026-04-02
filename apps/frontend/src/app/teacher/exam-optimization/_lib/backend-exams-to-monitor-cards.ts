@@ -1,4 +1,7 @@
-import type { MonitorExamCardItem } from "./monitoring";
+import {
+  buildMonitorGradingSummary,
+  type MonitorExamCardItem,
+} from "./monitoring";
 
 /** GraphQL `Exam` row shape from `getExamBySchoolId` (subset). */
 export type BackendExamMonitorRow = {
@@ -99,6 +102,7 @@ export function mapBackendExamsToMonitorCards(
       classLabels,
       classOptions,
       savedAtLabel: formatMonitorSavedAt(row.createdAt),
+      ...gradingSummary,
     };
   });
 }

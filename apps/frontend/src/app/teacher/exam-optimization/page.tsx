@@ -155,7 +155,7 @@ export default function ExamOptimizationPage() {
 	}, [initialSelectedExamId, pathname, router, searchParams]);
 
 	const effectiveSelectedExamId = selectedExamId;
-	const activeMonitorExam = useMemo(() => {
+	const resolvedActiveMonitorExam = useMemo(() => {
 		if (!effectiveSelectedExamId) return null;
 		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;
 	}, [effectiveSelectedExamId, monitorExamCards]);

@@ -39,7 +39,7 @@ export function ProfileMenu({
 
   const triggerClass =
     variant === "appBar"
-      ? "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-[#7DC8FF] text-black shadow-sm transition active:scale-[0.98] hover:opacity-95"
+      ? "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-[#7DC8FF] text-black shadow-sm transition active:scale-[0.98] hover:opacity-95 sm:h-11 sm:w-11"
       : variant === "onDark"
         ? "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white transition hover:bg-white/20 hover:border-white/50"
         : "inline-flex h-[42px] w-[40px] items-center justify-center rounded-[12px] border border-blue-300 p-[8px] text-[#0f172a] transition hover:bg-[#68b8f8]";

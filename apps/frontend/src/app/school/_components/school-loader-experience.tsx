@@ -44,6 +44,7 @@ export function SchoolLoaderExperience({ overlay = false }: SchoolLoaderExperien
         <div className="rounded-[2rem] border border-amber-200/50 bg-white/75 px-8 py-10 shadow-[0_20px_50px_-20px_rgba(217,119,6,0.25),0_0_0_1px_rgba(255,255,255,0.8)_inset] backdrop-blur-md sm:px-10 sm:py-12">
           <HoneyCircularLoader
             progress={progress}
+            percentPlacement="below"
             backgroundImage="/bee-gin-here.png"
             backgroundImageFit="contain"
             showJarOutline

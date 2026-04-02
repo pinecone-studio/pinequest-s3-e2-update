@@ -22,6 +22,12 @@ export type MonitorExamCardItem = {
 	classLabels: string[];
 	classOptions: Array<{ id: string; label: string }>;
 	savedAtLabel: string;
+	participantCount: number;
+	autoScoredCount: number;
+	finalizedCount: number;
+	pendingManualCount: number;
+	manualQuestionCount: number;
+	gradingStatus: "manual_pending" | "finalized";
 };
 
 export function monitorStatusText(

@@ -29,7 +29,7 @@ function EntryInput({
 }) {
   return (
     <input
-      className="h-9.5 w-full rounded-xl border border-[#E5E5E5] bg-white px-6 text-[18px] font-normal text-[#262626] outline-none transition placeholder:text-[#A1A1A1] focus:border-[#4ca2ff] focus:ring-4 focus:ring-[#4ca2ff]/10"
+      className="h-10 w-full rounded-xl border border-[#E5E5E5] bg-white px-4 text-base font-normal text-[#262626] outline-none transition placeholder:text-[#A1A1A1] focus:border-[#4ca2ff] focus:ring-4 focus:ring-[#4ca2ff]/10 sm:h-9.5 sm:px-6 sm:text-[18px]"
       placeholder={placeholder}
       type={type}
       value={value}
@@ -58,17 +58,17 @@ export function EntryStep({
       (studentCode.trim().length > 0 && Boolean(onChangeStudentCode)));
 
   return (
-    <main className="min-h-screen bg-[#f3f6fb] px-4 py-8 text-[#1f2a44] sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-191.5 flex-col rounded-[18px] bg-[#eaf4ff] px-7 py-8 shadow-[0_22px_50px_rgba(15,23,42,0.12)] lg:min-h-127.5 lg:px-10 lg:py-10">
-        <div className="grid items-center gap-2 lg:grid-cols-[1fr_220px] lg:gap-2">
-          <div className="text-center lg:pl-6">
-            <h1 className="text-[21px] font-medium leading-tight text-[#262626] lg:text-[21px]">
+    <main className="min-h-screen bg-[#f3f6fb] px-3 py-6 text-[#1f2a44] sm:px-5 sm:py-8 md:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[49rem] flex-col rounded-[18px] bg-[#eaf4ff] px-4 py-6 shadow-[0_22px_50px_rgba(15,23,42,0.12)] sm:px-6 sm:py-8 lg:min-h-127.5 lg:px-10 lg:py-10">
+        <div className="grid items-center gap-4 sm:gap-2 lg:grid-cols-[1fr_220px] lg:gap-2">
+          <div className="text-center lg:pl-6 lg:text-left">
+            <h1 className="text-lg font-medium leading-snug text-[#262626] sm:text-[21px]">
               Шалгалтын журамтай танилцан нэвтэрнэ үү!
             </h1>
           </div>
 
-          <div className="flex">
-            <div className="relative h-24.25 w-30.5">
+          <div className="flex justify-center lg:justify-end">
+            <div className="relative h-24.25 w-30.5 shrink-0">
               <div className="absolute left-0 top-6.5 z-10 px-2 py-1">
                 <p className="text-[18px] font-black uppercase leading-[0.9] tracking-[-0.04em] text-[#151515]">
                   Busy
@@ -88,9 +88,9 @@ export function EntryStep({
           </div>
         </div>
 
-        <section className="mt-2 rounded-[14px] border border-[#b8d9ff] bg-[#d7ecff] px-6 py-5">
+        <section className="mt-2 rounded-[14px] border border-[#b8d9ff] bg-[#d7ecff] px-4 py-4 sm:px-6 sm:py-5">
           <div>
-            <ul className="list-disc space-y-2 pl-6 font-normal text-[18px] text-[#111827]">
+            <ul className="list-disc space-y-2 pl-5 font-normal text-sm text-[#111827] sm:pl-6 sm:text-base md:text-[18px]">
               <li>Асуултаа алгасаж, дараа нь буцаж хариулах боломжтой.</li>
               <li>Гарсан бол буцаж орох боломжгүй.</li>
               <li>Tab солихыг хориглоно!</li>
@@ -99,14 +99,14 @@ export function EntryStep({
             </ul>
           </div>
 
-          <label className="mt-5 inline-flex w-fit cursor-pointer items-center gap-3 text-[15px] font-medium text-[#111827]">
+          <label className="mt-5 inline-flex w-full max-w-full cursor-pointer items-start gap-3 text-sm font-medium text-[#111827] sm:w-fit sm:items-center sm:text-[15px]">
             <input
               checked={hasAcceptedRules}
-              className="h-4.5 w-4.5 rounded border border-[#9ca3af]"
+              className="mt-0.5 h-4.5 w-4.5 shrink-0 rounded border border-[#9ca3af] sm:mt-0"
               type="checkbox"
               onChange={(event) => onToggleAcceptedRules(event.target.checked)}
             />
-            <span>Уншиж танилцсан</span>
+            <span className="min-w-0 leading-snug">Уншиж танилцсан</span>
           </label>
 
           <div className="mt-5 space-y-4">
@@ -136,19 +136,19 @@ export function EntryStep({
 
         {proceedError ? (
           <p
-            className="mt-6 text-center text-[15px] font-medium text-red-600"
+            className="mt-6 break-words px-1 text-center text-sm font-medium text-red-600 sm:text-[15px]"
             role="alert"
           >
             {proceedError}
           </p>
         ) : null}
 
-        <div className="mt-10 flex items-center justify-center gap-4">
+        <div className="mt-8 flex items-stretch justify-center sm:mt-10 sm:items-center">
           <button
             type="button"
             onClick={onProceed}
             disabled={!canProceed}
-            className="inline-flex h-9.5 min-w-43.75 items-center justify-center rounded-md bg-[#349af2] px-4 py-2 text-[20px] font-medium text-white transition hover:bg-[#2689df] disabled:cursor-not-allowed disabled:bg-[#9ca3af] disabled:hover:bg-[#9ca3af]"
+            className="inline-flex h-11 w-full max-w-md items-center justify-center rounded-md bg-[#349af2] px-4 py-2 text-base font-medium text-white transition hover:bg-[#2689df] disabled:cursor-not-allowed disabled:bg-[#9ca3af] disabled:hover:bg-[#9ca3af] sm:h-9.5 sm:w-auto sm:min-w-43.75 sm:text-[20px]"
           >
             Шалгалтанд орох
           </button>

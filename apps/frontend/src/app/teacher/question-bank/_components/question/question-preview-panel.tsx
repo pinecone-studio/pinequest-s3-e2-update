@@ -35,8 +35,6 @@ export function QuestionPreviewPanel({
   const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
   const shouldRenderPromptVertical =
     isNationalScript && hasTraditionalMongolianText(question.content.prompt);
-  const shouldRenderRubricVertical =
-    isNationalScript && hasTraditionalMongolianText(question.rubric);
 
   return (
     <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
@@ -142,32 +140,6 @@ export function QuestionPreviewPanel({
           <p className="mt-2 text-xs text-[#70809b]">
             Зөвшөөрөх төрөл:{" "}
             {question.fileUploadConfig.acceptedFileTypes.join(", ")}
-          </p>
-        </div>
-      ) : null}
-
-      {question.rubric ? (
-        <div className="mt-4 rounded-2xl border border-[#f1e3b5] bg-[#fff9e8] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#92743a]">
-            Рубрикийн тэмдэглэл
-          </p>
-          <p
-            className={`mt-2 text-sm text-[#6d5622] ${
-              shouldRenderRubricVertical
-                ? "min-h-32 overflow-x-auto leading-8"
-                : "leading-6"
-            }`}
-            style={
-              shouldRenderRubricVertical
-                ? {
-                    writingMode: "vertical-lr",
-                    textOrientation: "mixed",
-                    whiteSpace: "pre-wrap",
-                  }
-                : undefined
-            }
-          >
-            {question.rubric}
           </p>
         </div>
       ) : null}

@@ -77,8 +77,8 @@ export function QuestionBankPage({
 	const myQuestionCount = myQuestions.length;
 
 	return (
-		<div className="pb-[32px]">
-			<div className="mx-auto max-w-[1184px] px-[18px] pt-[14px]">
+		<div className="pb-8 sm:pb-[32px]">
+			<div className="mx-auto max-w-[1184px] px-4 pt-3 sm:px-[18px] sm:pt-[14px]">
 				{!hasEnteredBank ? (
 					<QuestionBankEntryPanel
 						entryGrade={entrySelection.grade}
