@@ -234,10 +234,6 @@ export function validateQuestion(
     errors.correctAnswer = "Хүлээгдэж буй хариултыг оруулна уу.";
   }
 
-  if (values.questionType === "long_answer" && !values.rubric.trim()) {
-    errors.rubric = "Гараар үнэлэх рубрик эсвэл тайлбар нэмнэ үү.";
-  }
-
   if (values.questionType === "formula_input" && !values.formulaRaw.trim()) {
     errors.formulaRaw = "Хүлээгдэж буй томьёог оруулна уу.";
   }

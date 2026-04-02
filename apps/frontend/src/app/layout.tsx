@@ -2,8 +2,9 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { AppApolloProvider } from "@/components/providers/apollo-provider";
+import { AUTH_ROUTES } from "@/app/lib/auth-redirect";
 import "./globals.css";
 import "@fontsource/google-sans";
 export const metadata: Metadata = {
@@ -22,7 +23,11 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInUrl={AUTH_ROUTES.signIn}
+      signUpUrl={AUTH_ROUTES.signUp}
+      afterSignOutUrl="/"
+    >
       <html lang="en" className="h-full antialiased">
         <body
           className="flex min-h-screen flex-col"

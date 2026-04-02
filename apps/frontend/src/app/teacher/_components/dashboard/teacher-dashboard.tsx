@@ -30,9 +30,11 @@ type StudentResponse = {
 };
 
 function DashboardClassCard({
+	isResponsible,
 	item,
 	onOpen,
 }: {
+	isResponsible: boolean;
 	item: ClassType;
 	onOpen: () => void;
 }) {
@@ -53,9 +55,13 @@ function DashboardClassCard({
 					e.preventDefault();
 					onOpen();
 				}}
-				className="group flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl border border-white p-5 text-left shadow-sm transition hover:border-[#7DC8FF] hover:bg-[#EDF6FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2"
+				className={`group flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl border p-5 text-left shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DC8FF] focus-visible:ring-offset-2 ${
+					isResponsible
+						? "border-[#3b99fc] bg-[#d9ecff] hover:bg-[#d9ecff]"
+						: "border-white bg-white hover:border-[#7DC8FF] hover:bg-[#EDF6FF]"
+				}`}
 			>
-				<div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[#1f2a44] transition group-hover:bg-[#EDF6FF] group-hover:text-[#1f2a44]">
+				<div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[#1f2a44] transition group-hover:text-[#1f2a44]">
 					<Users className="h-7 w-7" aria-hidden />
 				</div>
 				<div className="min-w-0 flex-1">
@@ -67,6 +73,11 @@ function DashboardClassCard({
 						<span className="font-medium text-[#4a5875]">{count} сурагч</span>
 					</p>
 				</div>
+				{isResponsible ? (
+					<p className="hidden shrink-0 text-4 font-semibold text-[#1f2a44] sm:block">
+						Хариуцсан Анги
+					</p>
+				) : null}
 				<ChevronRight
 					className="h-6 w-6 shrink-0 text-[#b8c4d6] transition group-hover:translate-x-0.5 group-hover:text-[#1f2a44]"
 					aria-hidden
@@ -171,6 +182,7 @@ export default function TeacherDashboard() {
 							{classes.map((item: ClassType) => (
 								<DashboardClassCard
 									key={item.id}
+									isResponsible={item.sectionTeacherId === HARDCODED_TEACHER_ID}
 									item={item}
 									onOpen={() =>
 										router.push(`/teacher/class/${encodeURIComponent(item.id)}`)

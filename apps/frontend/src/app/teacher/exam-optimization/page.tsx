@@ -112,6 +112,8 @@ export default function ExamOptimizationPage() {
 	const [selectedExamId, setSelectedExamId] = useState<string | null>(
 		initialSelectedExamId,
 	);
+	const [selectedExamSnapshot, setSelectedExamSnapshot] =
+		useState<MonitorExamCardItem | null>(null);
 	const [selectedClassIdByExamId] = useState<Record<string, string>>({});
 	const [monitoringByScope, setMonitoringByScope] = useState<Record<string, boolean>>(
 		() => {
@@ -185,8 +187,15 @@ export default function ExamOptimizationPage() {
 							id: classId,
 							label: resolveClassLabel(classId),
 						}))
-					: [];
+						: [];
 			const classLabels = classOptions.map((item) => item.label);
+			const participantCount =
+				classOptions.length > 0
+					? classOptions.reduce((sum, item) => {
+							const klass = teacherClasses.find((klassItem) => klassItem.id === item.id);
+							return sum + (klass?.studentCount ?? 0);
+					  }, 0)
+					: activeStudents.length;
 
 			return {
 				id: exam.id,
@@ -210,6 +219,11 @@ export default function ExamOptimizationPage() {
 				classLabels,
 				classOptions,
 				savedAtLabel: formatMonitorSavedAt(exam.savedAt),
+				...buildMonitorGradingSummary({
+					participantCount,
+					openQuestionCount: 0,
+					seedSource: exam.id,
+				}),
 			};
 		});
 	}, [savedExams, apiClassOptions]);
@@ -238,10 +252,15 @@ export default function ExamOptimizationPage() {
 	}, [initialSelectedExamId, pathname, router, searchParams]);
 
 	const effectiveSelectedExamId = selectedExamId;
-	const activeMonitorExam = useMemo(() => {
+	const resolvedActiveMonitorExam = useMemo(() => {
 		if (!effectiveSelectedExamId) return null;
 		return monitorExamCards.find((item) => item.id === effectiveSelectedExamId) ?? null;
 	}, [effectiveSelectedExamId, monitorExamCards]);
+	const activeMonitorExam =
+		resolvedActiveMonitorExam ??
+		(selectedExamSnapshot?.id === effectiveSelectedExamId
+			? selectedExamSnapshot
+			: null);
 	const activeClassId = activeMonitorExam
 		? selectedClassIdByExamId[activeMonitorExam.id] ??
 			activeMonitorExam.classOptions[0]?.id ??
@@ -432,8 +451,12 @@ export default function ExamOptimizationPage() {
           <MonitorExamsSection
             activeExamId={null}
             exams={monitorExamCards}
-            onClearSelection={() => setSelectedExamId(null)}
+            onClearSelection={() => {
+							setSelectedExamId(null);
+							setSelectedExamSnapshot(null);
+						}}
             onOpenExam={(exam) => {
+              setSelectedExamSnapshot(exam);
               setSelectedExamId(exam.id);
             }}
             totalExamCount={monitorExamCards.length}
@@ -450,7 +473,10 @@ export default function ExamOptimizationPage() {
 						monitoringElapsedSeconds={monitoringElapsedSeconds}
 						monitorTotalStudents={monitorTotalStudents}
 						remainingDurationLabel={remainingDurationLabel}
-            onBackToList={() => setSelectedExamId(null)}
+            onBackToList={() => {
+							setSelectedExamId(null);
+							setSelectedExamSnapshot(null);
+						}}
 						onStartMonitoring={startMonitoring}
 					/>
 				) : null}
