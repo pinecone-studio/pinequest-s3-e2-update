@@ -25,5 +25,14 @@ export default function SchoolLoading() {
     };
   }, []);
 
-  return <SchoolLoaderExperience />;
+  return (
+    <div className="flex min-h-0 flex-1 flex-col space-y-6">
+      <section className="shrink-0 rounded-2xl border border-[#dbe5f0] bg-white p-4 shadow-sm sm:p-6">
+        <h2 className="text-3 font-bold text-[#0f172a]">Сургуулийн самбар</h2>
+      </section>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <SchoolLoaderExperience />
+      </div>
+    </div>
+  );
 }
