@@ -39,7 +39,7 @@
   "migrations": [
     {
       "tag": "exam-monitor-room-v1",
-      "new_classes": ["ExamMonitorRoom"],
+      "new_sqlite_classes": ["ExamMonitorRoom"],
     },
   ],
   // "ai": {
