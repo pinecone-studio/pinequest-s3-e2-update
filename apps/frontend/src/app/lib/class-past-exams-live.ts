@@ -139,9 +139,12 @@ function buildAttempts(
     }
 
     return {
+      questionId: question.id,
+      questionType: question.type,
       order: index + 1,
       question: question.text,
       studentAnswer,
+      correctAnswer: getCorrectAnswerLabel(question),
       pointsEarned,
       pointsMax: question.score,
     };
@@ -274,4 +277,3 @@ export function getLivePastExamsForClassClient(
   if (!state) return [];
   return getLivePastExamsForClassFromState(state, classId, roster);
 }
-

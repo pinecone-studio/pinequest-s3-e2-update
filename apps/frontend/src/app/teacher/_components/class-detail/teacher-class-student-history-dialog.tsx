@@ -1,12 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { PastExamRow, PastExamStudentScore } from "@/app/lib/class-past-exams-types";
 import type { Student } from "@/app/lib/types";
 import { formatExamDate } from "./teacher-class-detail-utils";
+import {
+  readStudentStatusMap,
+  STUDENT_STATUS_OPTIONS,
+  STUDENT_STATUS_UPDATED_EVENT,
+  type StudentStatus,
+  writeStudentStatusMap,
+} from "./student-status-ui";
 
 type TeacherClassStudentHistoryDialogProps = {
   examRows: Array<{ exam: PastExamRow; score: PastExamStudentScore }>;
+  isResponsibleClass: boolean;
   onClose: () => void;
   open: boolean;
   student: Student | null;
@@ -14,13 +22,32 @@ type TeacherClassStudentHistoryDialogProps = {
 
 export function TeacherClassStudentHistoryDialog({
   examRows,
+  isResponsibleClass,
   onClose,
   open,
   student,
 }: TeacherClassStudentHistoryDialogProps) {
+  const [statusByStudentId, setStatusByStudentId] = useState<
+    Record<string, StudentStatus>
+  >(() => readStudentStatusMap());
+  const [statusError, setStatusError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const sync = () => {
+      setStatusByStudentId(readStudentStatusMap());
+    };
+
+    window.addEventListener("storage", sync);
+    window.addEventListener(STUDENT_STATUS_UPDATED_EVENT, sync);
+
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener(STUDENT_STATUS_UPDATED_EVENT, sync);
+    };
+  }, []);
+
   useEffect(() => {
     if (!open) return;
-
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
@@ -36,6 +63,28 @@ export function TeacherClassStudentHistoryDialog({
 
   if (!open || !student) return null;
 
+  const studentStatus: StudentStatus =
+    statusByStudentId[student.id] ?? "active";
+  const activeStatusOption =
+    STUDENT_STATUS_OPTIONS.find((item) => item.value === studentStatus) ??
+    STUDENT_STATUS_OPTIONS[0];
+
+  const handleStatusChange = (nextStatus: StudentStatus) => {
+    if (!isResponsibleClass || nextStatus === studentStatus) return;
+
+    try {
+      setStatusError(null);
+      const next = {
+        ...statusByStudentId,
+        [student.id]: nextStatus,
+      };
+      setStatusByStudentId(next);
+      writeStudentStatusMap(next);
+    } catch {
+      setStatusError("Сурагчийн төлөвийг түр хадгалахад алдаа гарлаа.");
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a]/55 px-4 py-6"
@@ -49,12 +98,48 @@ export function TeacherClassStudentHistoryDialog({
       >
         <div className="px-6 pb-6 pt-7 sm:px-10 md:px-11 md:pb-5 md:pt-8">
           <div className="min-w-0">
+            <div
+              className={`mb-4 flex flex-wrap items-center gap-3 ${
+                isResponsibleClass ? "justify-end" : "justify-between"
+              }`}
+            >
+              {!isResponsibleClass ? (
+                <span
+                  className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[15px] font-semibold ${activeStatusOption.badgeClass}`}
+                >
+                  {activeStatusOption.label}
+                </span>
+              ) : null}
+              {isResponsibleClass ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  {STUDENT_STATUS_OPTIONS.map((statusOption) => (
+                    <button
+                      key={statusOption.value}
+                      className={`inline-flex rounded-full border px-4 py-2 text-[14px] font-semibold transition ${
+                        studentStatus === statusOption.value
+                          ? statusOption.buttonClass
+                          : "border-[#d9dee8] bg-white text-[#122459] hover:border-[#7DC8FF] hover:bg-[#EDF6FF]"
+                      }`}
+                      onClick={() => handleStatusChange(statusOption.value)}
+                      type="button"
+                    >
+                      {statusOption.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
             <h3 className="text-[48px] font-semibold leading-[120%] tracking-[10%] text-[#122459]">
               {student.firstName} {student.lastName}
             </h3>
             <p className="mt-3 text-[26px] font-medium leading-none text-[#737373]">
               {`${student.studentNumber.toLowerCase()}@gmail.com`}
             </p>
+            {statusError ? (
+              <p className="mt-3 text-[14px] font-medium text-red-600">
+                {statusError}
+              </p>
+            ) : null}
           </div>
         </div>
 

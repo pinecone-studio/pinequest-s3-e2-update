@@ -19,6 +19,15 @@ export type ApiExamSummary = {
   date: string | null;
   score: number | null;
   grade: number;
+  testIds?: string[] | null;
+  openExerciseIds?: string[] | null;
+};
+
+export type ApiExamQuestionSummary = {
+  id: string;
+  question: string;
+  score: number;
+  correctAnswer?: string;
 };
 
 function pickScore(r: ApiStudentExamResult): number {
@@ -38,6 +47,7 @@ export function buildPastExamRowsFromApi(
   results: ApiStudentExamResult[],
   exams: ApiExamSummary[],
   subjectNameById: Map<string, string>,
+  questionById: Map<string, ApiExamQuestionSummary>,
 ): PastExamRow[] {
   const studentById = new Map(roster.map((s) => [s.id, s]));
   const examById = new Map(exams.map((e) => [e.id, e]));
@@ -59,6 +69,16 @@ export function buildPastExamRowsFromApi(
     const passLine = maxScore * 0.5;
     const subject =
       subjectNameById.get(exam.subjectId) ?? exam.subjectId ?? "Хичээл";
+    const questionIds = [
+      ...(Array.isArray(exam.testIds) ? exam.testIds : []),
+      ...(Array.isArray(exam.openExerciseIds) ? exam.openExerciseIds : []),
+    ].filter(Boolean);
+    const singleQuestion =
+      questionIds.length === 1 ? questionById.get(questionIds[0]) : null;
+    const singleQuestionMaxScore = Math.max(
+      1,
+      singleQuestion?.score ?? maxScore,
+    );
 
     const studentScores: PastExamStudentScore[] = examResults.map((r) => {
       const st = studentById.get(r.studentId);
@@ -70,11 +90,31 @@ export function buildPastExamRowsFromApi(
         lastName: st?.lastName ?? "—",
         score,
         passed: score >= passLine,
-        attempts: [],
+        attempts: singleQuestion
+          ? [
+              {
+                questionId: singleQuestion.id,
+                order: 1,
+                question: singleQuestion.question,
+                correctAnswer: singleQuestion.correctAnswer,
+                studentAnswer: "—",
+                pointsEarned: Math.max(
+                  0,
+                  Math.min(singleQuestionMaxScore, score),
+                ),
+                pointsMax: singleQuestionMaxScore,
+              },
+            ]
+          : [],
       };
     });
 
     const passed = studentScores.filter((s) => s.passed).length;
+    const failedOnSingleQuestion = singleQuestion
+      ? studentScores.filter(
+          (student) => student.attempts[0]?.pointsEarned < singleQuestionMaxScore,
+        ).length
+      : 0;
 
     rows.push({
       id: `${examId}-${classId}`,
@@ -86,7 +126,16 @@ export function buildPastExamRowsFromApi(
       passed,
       total: studentScores.length,
       studentScores,
-      mostFailedQuestion: null,
+      mostFailedQuestion:
+        singleQuestion && failedOnSingleQuestion > 0
+          ? {
+              order: 1,
+              question: singleQuestion.question,
+              correctAnswer: singleQuestion.correctAnswer ?? "-",
+              failCount: failedOnSingleQuestion,
+              totalStudents: studentScores.length,
+            }
+          : null,
     });
   }
 

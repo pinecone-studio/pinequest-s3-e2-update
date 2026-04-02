@@ -2,11 +2,19 @@
 
 /** Нэг асуулт дээрх сурагчийн хариулт, оноо */
 export type PastExamQuestionAttempt = {
+  questionId?: string;
+  questionType?:
+    | "multiple_choice"
+    | "short_answer"
+    | "essay"
+    | "true_false";
   order: number;
   question: string;
   studentAnswer: string;
+  correctAnswer?: string;
   pointsEarned: number;
   pointsMax: number;
+  teacherFeedback?: string;
 };
 
 /** Нэг сурагчийн нэг шалгалтын оноо болон асуулт бүрийн дэлгэрэнгүй */
