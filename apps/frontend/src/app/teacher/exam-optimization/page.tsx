@@ -5,6 +5,7 @@
 import { useQuery } from "@apollo/client/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import {
 	createExamMonitoringScopeKey,
 	readExamMonitoringStateMap,
@@ -140,6 +141,10 @@ export default function ExamOptimizationPage() {
 		);
 	});
 	const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+	const showToast = useCallback(() => {
+		toast.success("Мэдэгдэл харагдлаа.");
+	}, []);
 
 	useEffect(() => {
 		if (!initialSelectedExamId) return;
@@ -302,6 +307,16 @@ export default function ExamOptimizationPage() {
 	return (
 		<section className="w-full overflow-x-hidden px-6 py-8 sm:px-10 sm:py-10">
 			<div className="mx-auto max-w-6xl space-y-10">
+				<div className="flex justify-end">
+					<button
+						type="button"
+						onClick={showToast}
+						className="rounded-full border border-[#d7e2f1] bg-white px-4 py-2 text-3 font-semibold text-[#365077] transition hover:border-[#aac8f8] hover:text-[#1f6feb]"
+					>
+						Мэдэгдэл харуулах
+					</button>
+				</div>
+
 				{!activeMonitorExam ? (
 					<MonitorExamsSection
 						activeExamId={null}

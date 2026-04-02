@@ -258,7 +258,7 @@ export function HoneyCircularLoader({
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <span
               className={[
-                "select-none text-[clamp(1.35rem,9vw,2.35rem)] font-semibold tabular-nums tracking-tight",
+                "inline-flex select-none items-baseline gap-1 text-[clamp(1.35rem,9vw,2.35rem)] font-semibold tabular-nums tracking-tight sm:gap-1.5",
                 backgroundImage
                   ? "text-amber-950 [text-shadow:0_0_12px_rgba(255,251,235,0.95),0_2px_4px_rgba(251,191,36,0.5)]"
                   : "text-amber-950/90 drop-shadow-[0_1px_0_rgba(255,251,235,0.85)]",
@@ -274,7 +274,7 @@ export function HoneyCircularLoader({
       </div>
 
       {showCenterPercent && percentPlacement === "below" ? (
-        <p className="m-0 select-none text-center text-[clamp(1.15rem,5.5vw,1.85rem)] font-semibold tabular-nums tracking-tight text-amber-950">
+        <p className="m-0 flex select-none items-baseline justify-center gap-1 text-center text-[clamp(1.15rem,5.5vw,1.85rem)] font-semibold tabular-nums tracking-tight text-amber-950 sm:gap-1.5">
           {Math.round(progress)}
           <span className="text-[0.65em] font-semibold text-amber-800/80">%</span>
         </p>

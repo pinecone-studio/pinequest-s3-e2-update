@@ -126,7 +126,7 @@ export function BeeRingProgressLoader({
 
         {showCenterPercent ? (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <span className="text-[clamp(1.75rem,6vw,2.35rem)] font-semibold tabular-nums tracking-tight text-[#122459]">
+            <span className="inline-flex items-baseline gap-1 text-[clamp(1.75rem,6vw,2.35rem)] font-semibold tabular-nums tracking-tight text-[#122459] sm:gap-1.5">
               {Math.round(progress)}
               <span className="text-[0.55em] font-semibold text-[#2f66b9]">
                 %
