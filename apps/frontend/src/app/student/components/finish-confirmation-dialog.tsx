@@ -30,7 +30,7 @@ export function FinishConfirmationDialog({
       />
 
       <div
-        className="relative z-10 flex max-h-[min(88dvh,34rem)] w-full max-w-lg flex-col overflow-hidden rounded-t-[22px] border border-b-0 border-[#cfe3f5] bg-[#edf6ff] pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_40px_rgba(15,23,42,0.12)] sm:max-h-[min(90dvh,36rem)] sm:rounded-[28px] sm:border sm:shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+        className="relative z-10 flex max-h-[min(80dvh,30rem)] w-[min(calc(100vw-2rem),22rem)] flex-col overflow-hidden rounded-[18px] border border-[#cfe3f5] bg-[#edf6ff] pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_40px_rgba(15,23,42,0.12)] sm:max-h-[min(90dvh,36rem)] sm:w-full sm:max-w-lg sm:rounded-[28px] sm:border sm:shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
