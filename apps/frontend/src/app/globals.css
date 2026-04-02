@@ -107,22 +107,13 @@ body {
 	}
 }
 
-@keyframes exam-complete-bee-orbit-rotate {
+/* Bee follows the dashed ring: true circular path, radius aligned to stroke midline (border-2). */
+@keyframes exam-complete-bee-orbit-distance {
 	from {
-		transform: rotate(0deg);
+		offset-distance: 0%;
 	}
 	to {
-		transform: rotate(360deg);
-	}
-}
-
-/* Cancels orbit rotation so the bee stays facing “forward” (2D art upright). */
-@keyframes exam-complete-bee-upright-counter {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(-360deg);
+		offset-distance: 100%;
 	}
 }
 
@@ -159,7 +150,11 @@ body {
 }
 
 .exam-complete-bee-orbit {
-	animation: exam-complete-bee-orbit-rotate var(--exam-bee-orbit-period) linear
+	/* Path center matches this node (stage center); radius matches inside edge of dashed stroke midline */
+	offset-path: circle(calc(var(--exam-bee-orbit-r) - 1px) at 0px 0px);
+	offset-anchor: center center;
+	offset-rotate: 0deg;
+	animation: exam-complete-bee-orbit-distance var(--exam-bee-orbit-period) linear
 		infinite;
 }
 
@@ -176,6 +171,19 @@ body {
 		opacity: 1;
 		visibility: visible;
 		transform: scale(1);
+	}
+}
+
+/* Gentle loop after entrance; on inner span so it doesn’t fight the paragraph keyframes */
+@keyframes exam-complete-orbit-msg-accent {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.045);
+		opacity: 0.92;
 	}
 }
 
@@ -198,10 +206,12 @@ body {
 		var(--exam-bee-orbit-period) both;
 }
 
-.exam-complete-bee-upright {
-	animation: exam-complete-bee-upright-counter var(--exam-bee-orbit-period) linear
-		infinite;
+.exam-complete-orbit-center-msg-accent {
+	display: inline-block;
 	transform-origin: center center;
+	will-change: transform;
+	animation: exam-complete-orbit-msg-accent 2.75s ease-in-out
+		calc(var(--exam-bee-orbit-period) + 0.55s) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -211,11 +221,7 @@ body {
 
 	.exam-complete-bee-orbit {
 		animation: none !important;
-		transform: none;
-	}
-
-	.exam-complete-bee-upright {
-		animation: none !important;
+		offset-path: none !important;
 	}
 
 	.exam-complete-bee-carrier {
@@ -227,5 +233,11 @@ body {
 		visibility: visible !important;
 		animation: none !important;
 		transform: scale(1) !important;
+	}
+
+	.exam-complete-orbit-center-msg-accent {
+		animation: none !important;
+		transform: none !important;
+		opacity: 1 !important;
 	}
 }

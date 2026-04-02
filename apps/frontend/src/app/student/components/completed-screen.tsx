@@ -15,28 +15,22 @@ export function CompletedScreen() {
 					/>
 					<div className="exam-complete-orbit-core">
 						<p className="exam-complete-orbit-center-msg" lang="mn">
-							Шалгалтаа амжилттай дуусгасанд баяр хүргэе.
+							<span className="exam-complete-orbit-center-msg-accent">
+								Шалгалтаа амжилттай дуусгасанд баяр хүргэе.
+							</span>
 						</p>
 					</div>
-					<div className="absolute left-1/2 top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2">
-						<div className="exam-complete-bee-orbit relative h-0 w-0 will-change-transform">
-							<div
-								className="exam-complete-bee-carrier pointer-events-none absolute left-0 top-0"
-								style={{
-									transform:
-										"translateX(var(--exam-bee-orbit-r, 0px)) translate(-50%, -50%)",
-								}}
-							>
-								<div className="exam-complete-bee-upright">
-									<Image
-										src="/bugsteibee.png"
-										alt="Success"
-										width={140}
-										height={110}
-										priority
-										className="block h-12 w-auto max-h-none max-w-[40vw] object-contain sm:h-14 md:h-16"
-									/>
-								</div>
+					<div className="absolute left-1/2 top-1/2 z-[5] -translate-x-1/2 -translate-y-1/2">
+						<div className="exam-complete-bee-orbit relative h-0 w-0">
+							<div className="exam-complete-bee-carrier pointer-events-none absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2">
+								<Image
+									src="/hive-five.png"
+									alt="Hive five — шалгалт амжилттай"
+									width={240}
+									height={240}
+									priority
+									className="block h-16 w-16 max-h-none max-w-[min(42vw,10rem)] object-contain sm:h-20 sm:w-20 md:h-24 md:w-24"
+								/>
 							</div>
 						</div>
 					</div>

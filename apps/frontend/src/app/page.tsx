@@ -30,18 +30,18 @@ export default async function Home({
 					</p>
 				) : null}
 
-        <section className="grid min-h-0 items-start gap-3 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10 mt-16">
-          <div className="max-w-xl lg:max-w-190">
-            <header className="inline-flex items-center justify-center gap-2 sm:justify-start">
+        <section className="mt-8 grid min-h-0 items-start gap-6 sm:mt-12 sm:gap-8 lg:mt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10">
+          <div className="max-w-xl min-w-0 lg:max-w-[47.5rem]">
+            <header className="inline-flex w-full items-center justify-center gap-2 sm:justify-start">
               <Image
                 src="/Bee.png"
                 alt="Bee logo"
                 width={50}
                 height={50}
                 priority
-                className="h-10 w-10 object-contain"
+                className="hidden h-10 w-10 object-contain lg:block"
               />
-              <p className=" text-[22px] font-black tracking-tight text-[#11161d]">
+              <p className="text-[22px] font-black tracking-tight text-[#11161d]">
                 UPDATE
               </p>
             </header>
@@ -77,7 +77,7 @@ export default async function Home({
 							хурдан, найдвартай болгоно.
 						</p>
 
-						<article className="mt-10 w-full max-w-lg rounded-[14px] border border-[#D7ECFF] bg-[#D7ECFF] p-4 transition hover:border-[#D7ECFF] sm:mt-12 sm:p-6 lg:mt-14 lg:max-w-125 lg:min-h-60">
+						<article className="mt-10 w-full max-w-lg rounded-[14px] border border-[#D7ECFF] bg-[#D7ECFF] p-4 transition hover:border-[#D7ECFF] sm:mt-12 sm:p-6 lg:mt-14 lg:max-w-[31.25rem] lg:min-h-[15rem]">
 							<div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-5">
 								<Image
 									src="/gana.jpg"
@@ -93,7 +93,7 @@ export default async function Home({
 									<p className="mt-1 text-base font-medium text-[#122459] sm:text-lg">
 										16-р сургууль
 									</p>
-									<div className="mx-auto mt-3 h-px max-w-xs bg-[#c8c4a8] sm:mx-0 sm:w-78" />
+									<div className="mx-auto mt-3 h-px max-w-xs bg-[#c8c4a8] sm:mx-0 sm:max-w-[19.5rem]" />
 								</div>
 							</div>
 							<p className="mt-4 text-balance text-base leading-snug font-medium text-[#122459] sm:text-lg">
@@ -105,62 +105,62 @@ export default async function Home({
 						</article>
 					</div>
 
-					<div className="mt-2 w-full min-w-0 lg:-ml-45 lg:flex lg:min-h-full lg:flex-col lg:justify-between">
-						<div className="relative mx-auto hidden h-90 w-140 max-w-full lg:mx-0 lg:mt-2 lg:block">
+					<div className="mt-6 flex w-full min-w-0 flex-col lg:mt-2 lg:min-h-full lg:justify-between lg:pl-4 xl:pl-10">
+						<div className="relative mx-auto mt-2 hidden aspect-[780/420] w-full max-w-[35rem] overflow-visible lg:mx-0 lg:mt-2 lg:block">
 							<Image
 								src="/path.png"
-								alt="Path"
+								alt=""
 								width={780}
 								height={420}
 								priority
-								className="absolute left-0 top-28 h-auto w-155 object-contain object-left"
+								className="absolute left-0 top-[7rem] h-auto w-[38.75rem] max-w-[112%] origin-top-left object-contain object-left lg:scale-[0.88] xl:scale-100"
 							/>
 							<Image
 								src="/ThisWay.png"
-								alt="This way text"
+								alt=""
 								width={460}
 								height={260}
 								priority
-								className="absolute left-105 top-47 h-auto w-57 object-contain"
+								className="absolute left-[26.25rem] top-[11.75rem] h-auto w-[14.25rem] max-w-[40%] object-contain lg:scale-[0.88] xl:scale-100"
 							/>
 							<Image
 								src="/Herobee.png"
-								alt="Bee"
+								alt=""
 								width={120}
 								height={120}
 								priority
-								className="absolute left-149 top-25 h-23 w-23 object-contain"
+								className="absolute left-[37.25rem] top-[6.25rem] h-[5.75rem] w-[5.75rem] max-w-[18%] object-contain lg:scale-[0.88] xl:scale-100"
 							/>
 						</div>
 
-            <div className="mt-2 mb-3 inline-flex flex-col items-center sm:flex-row sm:items-end sm:gap-1 lg:-mt-2 lg:pl-12">
-              <div className="relative h-30 shrink-0 pl-[5.4rem] pt-[0.35rem] sm:h-30 sm:pl-[5.9rem] sm:pt-[0.2rem]">
-                <Image
-                  src="/bugsteibee.png"
-                  alt="Bee begin here"
-                  width={120}
-                  height={120}
-                  priority
-                  className="absolute left-6 h-32 w-32 object-contain sm:h-30 sm:w-30"
-                />
-                <p className="relative ml-6 mt-6 z-10 whitespace-nowrap text-[16px] font-black leading-[0.95] tracking-tight text-[#3a2614]">
-                  BEE-GIN
-                  <br />
-                  HERE
-                </p>
-              </div>
+						<div className="mt-4 flex w-full max-w-full flex-col items-center gap-4 sm:mt-6 sm:flex-row sm:items-end sm:justify-center sm:gap-2 md:gap-3 lg:mt-2 lg:justify-start lg:gap-1">
+							<div className="relative hidden h-28 shrink-0 items-start justify-center pl-[4.75rem] pt-1 sm:h-30 sm:pl-[5.9rem] sm:pt-0.5 lg:flex">
+								<Image
+									src="/bugsteibee.png"
+									alt="Bee — begin here"
+									width={120}
+									height={120}
+									priority
+									className="absolute left-4 top-0 h-28 w-28 object-contain sm:left-6 sm:h-30 sm:w-30"
+								/>
+								<p className="relative z-10 mt-5 text-center text-[15px] font-black leading-[0.95] tracking-tight text-[#3a2614] sm:mt-6 sm:text-[16px] sm:whitespace-nowrap">
+									BEE-GIN
+									<br />
+									HERE
+								</p>
+							</div>
 
-              <div className="flex flex-col mb-2 gap-5 sm:flex-row sm:items-end">
-                <HomeSchoolEntry />
-                <Link
-                  href="/teacher"
-                  className="inline-flex h-17.5 min-w-40 items-center justify-center rounded-xl border border-[#7DC8FF] bg-white px-6 text-[30px] font-medium text-[#122459] transition hover:bg-[#f7fbff]"
-                >
-                  Багш
-                </Link>
-              </div>
-            </div>
-          </div>
+							<div className="mb-2 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-stretch sm:justify-center sm:gap-4 lg:w-auto lg:max-w-none lg:flex-nowrap lg:justify-start">
+								<HomeSchoolEntry />
+								<Link
+									href="/teacher"
+									className="inline-flex h-14 w-full min-w-0 shrink-0 items-center justify-center rounded-xl border border-[#7DC8FF] bg-white px-5 text-xl font-medium text-[#122459] transition hover:bg-[#f7fbff] sm:h-17.5 sm:w-auto sm:min-w-40 sm:px-6 sm:text-2xl lg:text-[30px]"
+								>
+									Багш
+								</Link>
+							</div>
+						</div>
+					</div>
         </section>
       </div>
     </main>
