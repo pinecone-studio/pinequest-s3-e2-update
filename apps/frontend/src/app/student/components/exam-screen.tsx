@@ -72,7 +72,7 @@ export function ExamScreen({
 
   return (
     <main className="relative min-h-screen bg-[#edf6ff] px-12 pt-7 text-[#1f2a44]">
-      <div className="mx-auto w-full max-w-[1512px]">
+      <div className="mx-auto w-full max-w-378">
         <div className="flex items-center">
           <Image
             src="/bugsteibee.png"
@@ -94,7 +94,7 @@ export function ExamScreen({
           />
         </div>
 
-        <div className="mx-auto mt-8 flex w-full max-w-[1184px] flex-col gap-4">
+        <div className="mx-auto mt-8 flex w-full max-w-296 flex-col gap-4">
           <ExamHeader
             title={examData.title}
             subtitle={`${examData.schoolYear} · ${examData.term}`}
@@ -134,7 +134,7 @@ export function ExamScreen({
             <button
               type="button"
               onClick={onFinish}
-              className="inline-flex h-[58px] min-w-[271px] items-center justify-center rounded-[20px] border border-[#29A4FF] px-8 py-4 text-[22px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
+              className="inline-flex h-14.5 min-w-67.75 items-center justify-center rounded-[20px] border border-[#29A4FF] px-8 py-4 text-[22px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
             >
               Шалгалт дуусгах
             </button>
@@ -145,7 +145,7 @@ export function ExamScreen({
       {warning && !isFinishDialogOpen && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute left-1/2 top-1/2 flex h-[460px] w-[min(calc(100vw-2rem),898px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-[28px] bg-[#edf6ff] px-10 py-12 shadow-lg">
+          <div className="absolute left-1/2 top-1/2 flex h-115 w-[min(calc(100vw-2rem),898px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-[28px] bg-[#edf6ff] px-10 py-12 shadow-lg">
             <div className="flex h-28 items-center justify-center">
               <WarningIcon />
             </div>
@@ -157,7 +157,7 @@ export function ExamScreen({
               <p className="mt-5 text-[18px] font-medium leading-[1.45] text-[#A1A1A1]">
                 Шалгалтын үед дараах үйлдлүүд бүртгэгдэнэ:
               </p>
-              <ul className="mt-5 list-disc text-left text-[18px] font-normal leading-[1.5] text-[#262626]">
+              <ul className="mt-5 list-disc text-left text-[18px] font-normal leading-normal text-[#262626]">
                 <li>Дэлгэц солих</li>
                 <li>Шинэ цонх нээх</li>
               </ul>
@@ -169,17 +169,10 @@ export function ExamScreen({
             <div className="mt-7.5 flex items-center gap-2">
               <button
                 type="button"
-                className="inline-flex h-[36px] min-w-[86px] items-center justify-center rounded-[20px] border border-[#29A4FF] px-3.5 py-1.5 text-[18px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
+                className="inline-flex h-9 w-50 items-center justify-center rounded-[20px] border border-[#29A4FF] px-3.5 py-1.5 text-[18px] font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff]"
                 onClick={() => setWarning(false)}
               >
                 Буцах
-              </button>
-              <button
-                type="button"
-                className="inline-flex h-[36px] min-w-[169px] items-center justify-center rounded-[20px] bg-[#349AF2] px-3.5 py-1.5 text-[18px] font-medium text-white transition hover:bg-[#2488e0]"
-                onClick={() => setWarning(false)}
-              >
-                Үргэлжлүүлэх
               </button>
             </div>
           </div>
