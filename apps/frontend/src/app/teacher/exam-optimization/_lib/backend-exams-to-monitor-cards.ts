@@ -17,6 +17,7 @@ export type BackendExamMonitorRow = {
   needpermission: number | null;
   isActive: number | null;
   teacherId: string | null;
+  allowedClassIds: string[] | null;
   createdAt: string;
 };
 
@@ -44,8 +45,8 @@ export function formatMonitorSavedAt(dateString: string): string {
 }
 
 /**
- * Backend-д exam→class холбоос байхгүй тул `teacherClassOptions` нь
- * зөвхөн хяналт хийхэд сонгох багшийн бодит ангийн жагсаалт (GraphQL).
+ * `allowedClassIds` (D1 `exam_allowed_class`) — зөвхөн эдгээр ангид илгээсэн
+ * шалгалтыг хяналтад сонгоно. Хоосон бол хяналтын анги байхгүй.
  */
 export function mapBackendExamsToMonitorCards(
   rows: BackendExamMonitorRow[],
@@ -79,15 +80,18 @@ export function mapBackendExamsToMonitorCards(
       status = "completed";
     }
 
-    const gradePrefix = String(row.grade);
-    const classOptions = teacherClassOptions.filter((option) =>
-      option.label.startsWith(gradePrefix),
-    );
+    const allowed = Array.isArray(row.allowedClassIds)
+      ? row.allowedClassIds
+      : [];
+    const classOptions =
+      teacherClassOptions.length > 0
+        ? teacherClassOptions.map((o) => ({ id: o.id, label: o.label }))
+        : [];
     const classLabels = classOptions.map((c) => c.label);
     const classLabel = gradeLabel(row.grade) || "Анги байхгүй";
 
     const gradingSummary = buildMonitorGradingSummary({
-      participantCount: classOptions.length > 0 ? 36 : 0,
+      participantCount: allowed.length > 0 ? 36 : 0,
       openQuestionCount: openIds.length,
       seedSource: row.id,
     });
@@ -105,6 +109,7 @@ export function mapBackendExamsToMonitorCards(
       classLabel,
       classLabels,
       classOptions,
+      allowedClassIds: [...allowed],
       savedAtLabel: formatMonitorSavedAt(row.createdAt),
       ...gradingSummary,
     };

@@ -6,6 +6,8 @@ type FinishConfirmationDialogProps = {
   total: number;
   onCancel: () => void;
   onConfirm: () => void;
+  isSubmitting?: boolean;
+  submitError?: string | null;
 };
 
 export function FinishConfirmationDialog({
@@ -14,6 +16,8 @@ export function FinishConfirmationDialog({
   total,
   onCancel,
   onConfirm,
+  isSubmitting = false,
+  submitError = null,
 }: FinishConfirmationDialogProps) {
   if (!isOpen) return null;
 
@@ -26,6 +30,7 @@ export function FinishConfirmationDialog({
         type="button"
         aria-label="Диалог хаах"
         className="absolute inset-0 bg-[#0f172a]/25 backdrop-blur-[6px] sm:bg-[#0f172a]/10 sm:backdrop-blur-[8px]"
+        disabled={isSubmitting}
         onClick={onCancel}
       />
 
@@ -58,20 +63,28 @@ export function FinishConfirmationDialog({
               {answeredCount}/{total} асуултад хариулсан
             </p>
 
+            {submitError ? (
+              <p className="mt-3 w-full text-left text-sm text-red-700">
+                {submitError}
+              </p>
+            ) : null}
+
             <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 md:mt-10">
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={onCancel}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[20px] border border-[#29A4FF] bg-white px-4 py-2 text-base font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff] active:scale-[0.99] sm:min-h-[46px] sm:px-5 sm:text-base md:text-[20px]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[20px] border border-[#29A4FF] bg-white px-4 py-2 text-base font-medium text-[#29A4FF] transition hover:bg-[#f3f9ff] active:scale-[0.99] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[46px] sm:px-5 sm:text-base md:text-[20px]"
               >
                 Буцах
               </button>
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={onConfirm}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[20px] bg-[#349AF2] px-4 py-2 text-base font-medium text-white transition hover:bg-[#2488e0] active:scale-[0.99] sm:min-h-[46px] sm:px-5 sm:text-base md:text-[20px]"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[20px] bg-[#349AF2] px-4 py-2 text-base font-medium text-white transition hover:bg-[#2488e0] active:scale-[0.99] enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-[46px] sm:px-5 sm:text-base md:text-[20px]"
               >
-                Тийм
+                {isSubmitting ? "Илгээж байна…" : "Тийм"}
               </button>
             </div>
           </div>

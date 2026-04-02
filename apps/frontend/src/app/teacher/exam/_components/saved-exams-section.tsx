@@ -9,23 +9,17 @@ export function SavedExamsSection({
   hasLoadedSavedExams,
   savedExams,
   teacherClasses,
-  selectedClassByExamId,
   onDeleteSavedExam,
   onOpenMonitoring,
   onOpenSavedExam,
-  onSelectClass,
-  onSendSavedExam,
 }: {
   activeSavedExamId: string | null;
   hasLoadedSavedExams: boolean;
   savedExams: SavedExamRecord[];
   teacherClasses: TeacherClassOption[];
-  selectedClassByExamId: Record<string, string>;
   onDeleteSavedExam: (savedExamId: string) => void;
   onOpenMonitoring: (savedExam: SavedExamRecord) => void;
   onOpenSavedExam: (savedExam: SavedExamRecord) => void;
-  onSelectClass: (savedExamId: string, classId: string) => void;
-  onSendSavedExam: (savedExam: SavedExamRecord, openMonitoring?: boolean) => void;
 }) {
   const hasSavedExams = savedExams.length > 0;
 
@@ -65,12 +59,9 @@ export function SavedExamsSection({
             key={savedExam.id}
             savedExam={savedExam}
             teacherClasses={teacherClasses}
-            selectedClassId={selectedClassByExamId[savedExam.id]}
             onDelete={() => onDeleteSavedExam(savedExam.id)}
             onOpenMonitoring={() => onOpenMonitoring(savedExam)}
             onOpen={() => onOpenSavedExam(savedExam)}
-            onSelectClass={(classId) => onSelectClass(savedExam.id, classId)}
-            onSend={() => onSendSavedExam(savedExam, true)}
           />
         ))}
       </div>

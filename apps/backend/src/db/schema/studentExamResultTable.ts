@@ -11,6 +11,7 @@ export const studentExamResultTable = sqliteTable("studentExamResult", {
     openExerciseScore: integer("openExerciseScore"),
     totalScore: integer("totalScore"),
     actualScore: integer("actualScore"),
+    answersJson: text("answersJson"),
     examCheatLogIds: text("examCheatLogIds"),
     createdAt: text("createdAt").notNull(),
     updatedAt: text("updatedAt").notNull(),

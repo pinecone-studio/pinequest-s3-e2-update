@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -17,6 +17,10 @@ import {
 	GET_EXAM_BY_SCHOOL_ID,
 	GET_STUDENT_BY_CLASS_ID,
 } from "@/graphql/typeDefs/queries";
+import {
+	ADD_EXAM_ALLOWED_CLASSES,
+	START_EXAM_MONITORING_FOR_CLASS,
+} from "@/graphql/typeDefs/mutations";
 import { useTeacherDb } from "../_components/teacher-db-context";
 import { mapGqlTeacherClasses } from "../_lib/teacher-class-options";
 import { MonitorDetailSection } from "./_components/monitor-detail-section";
@@ -81,14 +85,21 @@ export default function ExamOptimizationPage() {
 		[classesData?.getClassByTeacherAndSchoolId],
 	);
 
-	const { data: examsData } = useQuery<GetExamBySchoolIdResponse>(
-		GET_EXAM_BY_SCHOOL_ID,
-		{
+	const { data: examsData, refetch: refetchSchoolExams } =
+		useQuery<GetExamBySchoolIdResponse>(GET_EXAM_BY_SCHOOL_ID, {
 			variables: { schoolId },
 			skip: !schoolId,
 			fetchPolicy: "cache-and-network",
-		},
-	);
+		});
+
+	const [startExamMonitoringMutation, { loading: startMonitoringLoading }] =
+		useMutation<{
+			startExamMonitoringForClass: { ok: boolean; startedAt: string };
+		}>(START_EXAM_MONITORING_FOR_CLASS);
+
+	const [addExamAllowedClassesMutation] = useMutation<{
+		addExamAllowedClasses: boolean;
+	}>(ADD_EXAM_ALLOWED_CLASSES);
 
 	const subjectNameById = useMemo(() => {
 		const map = new Map<string, string>();
@@ -105,9 +116,9 @@ export default function ExamOptimizationPage() {
 
 	const teacherExams = useMemo(() => {
 		const rows = examsData?.getExamBySchoolId ?? [];
-		if (!teacherId) return [];
-		return rows.filter((row) => row.teacherId === teacherId);
-	}, [examsData?.getExamBySchoolId, teacherId]);
+		if (!schoolId) return [];
+		return rows;
+	}, [examsData?.getExamBySchoolId, schoolId]);
 
 	const initialSelectedExamId = searchParams.get("examId");
 	const [selectedExamId, setSelectedExamId] = useState<string | null>(
@@ -138,21 +149,15 @@ export default function ExamOptimizationPage() {
 		);
 	});
 	const [currentTime, setCurrentTime] = useState(() => Date.now());
+	const [grantingClassId, setGrantingClassId] = useState<string | null>(null);
 
 	const monitorExamCards = useMemo(() => {
 		if (!teacherExams.length) return [];
-		const cards = mapBackendExamsToMonitorCards(
+		return mapBackendExamsToMonitorCards(
 			teacherExams,
 			subjectNameById,
 			teacherClassOptions,
 		);
-		const uniqueByGrade = new Map<string, (typeof cards)[number]>();
-		for (const card of cards) {
-			if (!uniqueByGrade.has(card.grade)) {
-				uniqueByGrade.set(card.grade, card);
-			}
-		}
-		return Array.from(uniqueByGrade.values());
 	}, [teacherExams, subjectNameById, teacherClassOptions]);
 
 	const showToast = useCallback(() => {
@@ -266,27 +271,85 @@ export default function ExamOptimizationPage() {
 		[activeMonitorExam],
 	);
 
-	const startMonitoring = useCallback(() => {
-		if (!activeMonitoringScope) return;
-		const startedAt = Date.now();
-		setCurrentTime(startedAt);
-		const currentStore = readExamMonitoringStateMap();
-		writeExamMonitoringStateMap({
-			...currentStore,
-			[activeMonitoringScope]: {
-				isStarted: true,
-				startedAt,
-			},
-		});
-		setMonitorStartedAtByScope((current) => ({
-			...current,
-			[activeMonitoringScope]: startedAt,
-		}));
-		setMonitoringByScope((current) => ({
-			...current,
-			[activeMonitoringScope]: true,
-		}));
-	}, [activeMonitoringScope]);
+	const grantAccessForClass = useCallback(
+		async (classId: string) => {
+			if (!activeMonitorExam) return;
+			setGrantingClassId(classId);
+			try {
+				const result = await addExamAllowedClassesMutation({
+					variables: {
+						examId: activeMonitorExam.id,
+						classIds: [classId],
+					},
+				});
+				if (result.data?.addExamAllowedClasses !== true) {
+					toast.error("Эрх нээж чадсангүй.");
+					return;
+				}
+				await refetchSchoolExams();
+				toast.success("Ангийн эрх нээгдлээ.");
+				onSelectClass(classId);
+			} catch {
+				toast.error("Эрх нээхэд алдаа гарлаа.");
+			} finally {
+				setGrantingClassId(null);
+			}
+		},
+		[
+			activeMonitorExam,
+			addExamAllowedClassesMutation,
+			onSelectClass,
+			refetchSchoolExams,
+		],
+	);
+
+	const startMonitoring = useCallback(async () => {
+		if (!activeMonitoringScope || !activeMonitorExam || !activeClassId) return;
+		try {
+			const result = await startExamMonitoringMutation({
+				variables: {
+					examId: activeMonitorExam.id,
+					classId: activeClassId,
+				},
+			});
+			const payload = result.data?.startExamMonitoringForClass;
+			if (!payload?.ok) {
+				toast.error("Серверт хяналт эхлүүлж чадсангүй.");
+				return;
+			}
+			const startedAtMs = Date.parse(payload.startedAt);
+			const startedAt = Number.isFinite(startedAtMs)
+				? startedAtMs
+				: Date.now();
+			setCurrentTime(startedAt);
+			const currentStore = readExamMonitoringStateMap();
+			writeExamMonitoringStateMap({
+				...currentStore,
+				[activeMonitoringScope]: {
+					isStarted: true,
+					startedAt,
+				},
+			});
+			setMonitorStartedAtByScope((current) => ({
+				...current,
+				[activeMonitoringScope]: startedAt,
+			}));
+			setMonitoringByScope((current) => ({
+				...current,
+				[activeMonitoringScope]: true,
+			}));
+			void refetchSchoolExams();
+			toast.success("Хяналт эхэллээ.");
+		} catch {
+			toast.error("Хяналт эхлүүлэхэд алдаа гарлаа.");
+		}
+	}, [
+		activeClassId,
+		activeMonitorExam,
+		activeMonitoringScope,
+		refetchSchoolExams,
+		startExamMonitoringMutation,
+	]);
 
 	useEffect(() => {
 		if (
@@ -358,7 +421,9 @@ export default function ExamOptimizationPage() {
 				{activeMonitorExam && !activeClassId ? (
 					<MonitorGroupSelectionSection
 						exam={activeMonitorExam}
+						grantingClassId={grantingClassId}
 						onBack={() => setSelectedExamId(null)}
+						onGrantAccess={grantAccessForClass}
 						onOpenGroup={onSelectClass}
 					/>
 				) : null}
@@ -369,6 +434,9 @@ export default function ExamOptimizationPage() {
 						activeClassLabel={activeClassLabel}
 						activeExam={activeMonitorExam}
 						activeStudents={rosterStudents}
+						hasAccessForSelectedClass={activeMonitorExam.allowedClassIds.includes(
+							activeClassId,
+						)}
 						isMonitoring={isActiveMonitoring}
 						monitorTotalStudents={monitorTotalStudents}
 						remainingDurationLabel={remainingDurationLabel}
@@ -382,6 +450,7 @@ export default function ExamOptimizationPage() {
 						}
 						onSelectClass={onSelectClass}
 						onStartMonitoring={startMonitoring}
+						startMonitoringLoading={startMonitoringLoading}
 					/>
 				) : null}
 			</div>

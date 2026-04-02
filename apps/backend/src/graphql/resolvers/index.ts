@@ -29,6 +29,8 @@ export const resolvers = {
   Exam: {
     allowedClassIds: (parent: { allowedClassIds?: string[] }) =>
       parent.allowedClassIds ?? [],
+    monitoringStartedAt: (parent: { monitoringStartedAt?: string | null }) =>
+      parent.monitoringStartedAt ?? null,
   },
   Student: {
     studentExamResultIds: (parent: { studentExamResultIds?: unknown }) =>

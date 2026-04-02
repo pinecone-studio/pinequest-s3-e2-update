@@ -7,6 +7,8 @@ export const examAllowedClassTable = sqliteTable(
     examId: text("examId").notNull(),
     classId: text("classId").notNull(),
     createdAt: text("createdAt").notNull(),
+    /** Багш хяналтыг серверээс эхлүүлсэн цаг (ISO); шинэ илгээлтэд null хүртэл хүлээнэ. */
+    sessionStartedAt: text("sessionStartedAt"),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.examId, t.classId] }),

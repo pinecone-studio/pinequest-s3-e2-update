@@ -49,7 +49,7 @@ export function ProfileMenu({
     }`;
   const isSchool = pathname === "/school" || pathname.startsWith("/school/");
   const isTeacher = pathname === "/teacher" || pathname.startsWith("/teacher/");
-  const isStudent = pathname === "/student" || pathname.startsWith("/student/");
+  const isStudent = pathname.startsWith("/student/");
 
   return (
     <div className="relative shrink-0" ref={menuRef}>
@@ -98,7 +98,8 @@ export function ProfileMenu({
                 Багш
               </Link>
               <Link
-                href="/student"
+                href="/"
+                title="Шалгалтын холбоосоор /student/шалгалтын-ID хуудас руу ороорой"
                 onClick={() => setOpen(false)}
                 className={`${roleButtonClass(isStudent)} text-[15px]`}
               >

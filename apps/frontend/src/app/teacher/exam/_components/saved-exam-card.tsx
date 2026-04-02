@@ -12,22 +12,16 @@ export function SavedExamCard({
   savedExam,
   isActive,
   teacherClasses,
-  selectedClassId,
   onDelete,
   onOpenMonitoring,
   onOpen,
-  onSelectClass,
-  onSend,
 }: {
   savedExam: SavedExamRecord;
   isActive: boolean;
   teacherClasses: TeacherClassOption[];
-  selectedClassId?: string;
   onDelete: () => void;
   onOpenMonitoring: () => void;
   onOpen: () => void;
-  onSelectClass: (classId: string) => void;
-  onSend: () => void;
 }) {
   const [linkCopied, setLinkCopied] = useState(false);
   const examLink =
@@ -70,10 +64,10 @@ export function SavedExamCard({
                 ? "Зөвшөөрөл хүлээж байна"
                 : savedExam.approvalStatus === "needs_fix"
                   ? "Засвар шаардлагатай"
-                  : "Илгээх"
+                  : "Хяналт / ангийн эрх"
             }
             className="w-full sm:w-auto"
-            onClick={onSend}
+            onClick={onOpenMonitoring}
           />
           <button
             aria-label="Засварлах"

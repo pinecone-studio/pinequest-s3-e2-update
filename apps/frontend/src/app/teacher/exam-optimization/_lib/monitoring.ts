@@ -21,6 +21,8 @@ export type MonitorExamCardItem = {
 	classLabel: string;
 	classLabels: string[];
 	classOptions: Array<{ id: string; label: string }>;
+	/** D1 exam_allowed_class — эрх нээгдсэн ангийн id */
+	allowedClassIds: string[];
 	savedAtLabel: string;
 	participantCount: number;
 	autoScoredCount: number;

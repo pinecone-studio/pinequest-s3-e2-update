@@ -49,12 +49,9 @@ export default function TeacherExamPage() {
           hasLoadedSavedExams={examPage.hasLoadedSavedExams}
           savedExams={examPage.savedExams}
           teacherClasses={examPage.teacherClasses}
-          selectedClassByExamId={examPage.selectedClassByExamId}
           onDeleteSavedExam={examPage.deleteSavedExam}
           onOpenMonitoring={examPage.openMonitoringForSavedExam}
           onOpenSavedExam={examPage.openSavedExam}
-          onSelectClass={examPage.selectClassForSavedExam}
-          onSendSavedExam={examPage.sendSavedExamToClass}
         />
       </div>
     </div>
