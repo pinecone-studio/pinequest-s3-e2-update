@@ -52,11 +52,11 @@ export function QuestionBankActivePanel({
         <TinyChip>{difficultyLabelMap[question.difficulty]}</TinyChip>
       </div>
 
-      <h3 className="mt-[22px] text-[18px] font-medium leading-[22px] text-[#323232]">
+      <h3 className="mt-[22px] text-[18px] font-semibold leading-[22px] text-[#323232]">
         {resolveQuestionTitle(question.title, question.content.prompt) ||
           "Квадрат функцийн оройг олох"}
       </h3>
-      <div className="mt-[16px] space-y-[2px] text-[14px] leading-[20px] text-[#323232]">
+      <div className="mt-[16px] space-y-[2px] text-[14px] leading-[20px] text-[#0A0A0A]">
         {promptLines.map((line) => (
           <p key={line}>{line}</p>
         ))}
@@ -83,10 +83,10 @@ export function QuestionBankActivePanel({
       <div className="mt-[14px] grid grid-cols-[1fr_auto] gap-x-[18px] gap-y-[10px] bg-white px-[12px] py-[12px]">
         {metaItems.map(([label, value]) => (
           <div key={label} className="contents">
-            <span className="text-[12px] leading-[15px] text-[#23407D]">
+            <span className="text-[12px] leading-[15px] text-[#262626]">
               {label}
             </span>
-            <span className="text-[12px] leading-[15px] text-[#23407D]">
+            <span className="text-[12px] leading-[15px] text-[#262626]">
               {value}
             </span>
           </div>
