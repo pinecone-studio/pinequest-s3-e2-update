@@ -84,3 +84,99 @@ body {
 		animation-iteration-count: 1 !important;
 	}
 }
+
+/* Student exam — completion / congrats screen */
+@keyframes exam-complete-card-in {
+	from {
+		opacity: 0;
+		transform: translateY(16px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes exam-complete-title-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes exam-complete-glow {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(52, 154, 242, 0.12);
+	}
+	50% {
+		box-shadow: 0 0 40px 6px rgba(52, 154, 242, 0.18);
+	}
+}
+
+@keyframes exam-complete-bee-orbit-rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Cancels orbit rotation so the bee stays facing “forward” (2D art upright). */
+@keyframes exam-complete-bee-upright-counter {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(-360deg);
+	}
+}
+
+.exam-complete-card {
+	animation:
+		exam-complete-card-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both,
+		exam-complete-glow 2.4s ease-in-out 0.6s 2 both;
+}
+
+.exam-complete-bee-orbit {
+	--exam-bee-orbit-r: clamp(2rem, 15vw, 3.5rem);
+	--exam-bee-orbit-period: 7.5s;
+	animation: exam-complete-bee-orbit-rotate var(--exam-bee-orbit-period) linear
+		infinite;
+}
+
+.exam-complete-bee-upright {
+	animation: exam-complete-bee-upright-counter var(--exam-bee-orbit-period) linear
+		infinite;
+	transform-origin: center center;
+}
+
+.exam-complete-title {
+	animation: exam-complete-title-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.5s
+		both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.exam-complete-card,
+	.exam-complete-title {
+		animation: none !important;
+	}
+
+	.exam-complete-bee-orbit {
+		animation: none !important;
+		transform: none;
+	}
+
+	.exam-complete-bee-upright {
+		animation: none !important;
+	}
+
+	.exam-complete-bee-carrier {
+		transform: translate(-50%, -50%) !important;
+	}
+}
