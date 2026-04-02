@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type {
   QuestionBuilderValues,
@@ -59,47 +59,47 @@ export function QuestionBuilderAnswerSection(
           <div className="space-y-3">
             {values.options.map((option, index) => (
               <div className="flex items-center gap-3" key={option.id}>
-                <label
-                  className="inline-flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-[12px] border border-[#d3deef] bg-white"
-                  htmlFor={`question-option-correct-${option.id}`}
-                  title="Зөв хариулт болгох"
-                >
-                  <input
-                    id={`question-option-correct-${option.id}`}
-                    checked={option.isCorrect}
-                    className="h-4 w-4 cursor-pointer rounded border-[#9ca3af] accent-[#29A4FF]"
-                    onChange={(event) => {
-                      if (event.target.checked) onMarkCorrectOption(option.id);
-                    }}
-                    type="checkbox"
-                  />
-                </label>
                 <div className="flex-1">
-                  {isNationalScript &&
-                  hasTraditionalMongolianText(option.text) ? (
-                    <textarea
-                      className={`${builderInputClassName} min-h-24 overflow-x-auto py-3 leading-8`}
-                      onChange={(event) =>
-                        onOptionChange(option.id, event.target.value)
-                      }
-                      placeholder={`Хариултын сонголт ${index + 1}`}
-                      style={{
-                        writingMode: "vertical-lr",
-                        textOrientation: "mixed",
-                        whiteSpace: "pre-wrap",
-                      }}
-                      value={option.text}
-                    />
-                  ) : (
+                  <div className="relative">
                     <input
-                      className={builderInputClassName}
-                      onChange={(event) =>
-                        onOptionChange(option.id, event.target.value)
-                      }
-                      placeholder={`Хариултын сонголт ${index + 1}`}
-                      value={option.text}
+                      id={`question-option-correct-${option.id}`}
+                      checked={option.isCorrect}
+                      className="peer absolute left-4 top-1/2 z-10 h-8 w-8 -translate-y-1/2 cursor-pointer opacity-0"
+                      onChange={(event) => {
+                        if (event.target.checked) onMarkCorrectOption(option.id);
+                      }}
+                      title="Зөв хариулт болгох"
+                      type="checkbox"
                     />
-                  )}
+                    <span className="pointer-events-none absolute left-4 top-1/2 z-20 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[10px] border-2 border-[#4A4A4A] bg-white text-[#4A4A4A]">
+                      <Check className="h-5 w-5 opacity-0 peer-checked:opacity-100" />
+                    </span>
+                    {isNationalScript &&
+                    hasTraditionalMongolianText(option.text) ? (
+                      <textarea
+                        className={`${builderInputClassName} min-h-24 overflow-x-auto py-3 pl-14 leading-8`}
+                        onChange={(event) =>
+                          onOptionChange(option.id, event.target.value)
+                        }
+                        placeholder={`Хариултын сонголт ${index + 1}`}
+                        style={{
+                          writingMode: "vertical-lr",
+                          textOrientation: "mixed",
+                          whiteSpace: "pre-wrap",
+                        }}
+                        value={option.text}
+                      />
+                    ) : (
+                      <input
+                        className={`${builderInputClassName} pl-14`}
+                        onChange={(event) =>
+                          onOptionChange(option.id, event.target.value)
+                        }
+                        placeholder={`Хариултын сонголт ${index + 1}`}
+                        value={option.text}
+                      />
+                    )}
+                  </div>
                 </div>
                 {values.options.length > 2 ? (
                   <button

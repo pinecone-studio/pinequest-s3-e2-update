@@ -179,61 +179,60 @@ export function ExamSettingsForm({
             </p>
           </div>
         </label>
-      </div>
+        {exam.requiresSchoolApproval ? (
+          <div className="mt-3 border-t border-[#dbe5f0] pt-3">
+            <p className="text-sm font-semibold text-[#122459] sm:text-[16px]">
+              Батлуулах хуваарийн мэдээлэл
+            </p>
 
-      {exam.requiresSchoolApproval ? (
-        <div className="mt-4 rounded-xl border border-[#dbe5f0] bg-white p-3 sm:p-4">
-          <p className="text-sm font-semibold text-[#122459] sm:text-[16px]">
-            Батлуулах хуваарийн мэдээлэл
-          </p>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Field label="">
+                <input
+                  type="date"
+                  className={`${inputClassName} h-10! w-full`}
+                  onChange={(event) =>
+                    onUpdateExam("approvalExamDate", event.target.value)
+                  }
+                  value={exam.approvalExamDate}
+                />
+              </Field>
 
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <Field label="">
-              <input
-                type="date"
-                className={`${inputClassName} h-10! w-full`}
-                onChange={(event) =>
-                  onUpdateExam("approvalExamDate", event.target.value)
-                }
-                value={exam.approvalExamDate}
-              />
-            </Field>
+              <Field label="">
+                <input
+                  className={`${inputClassName} h-10! w-full`}
+                  onChange={(event) =>
+                    onUpdateExam("approvalLocation", event.target.value)
+                  }
+                  placeholder="Өрөө / Байршил (ж: 203)"
+                  value={exam.approvalLocation}
+                />
+              </Field>
 
-            <Field label="">
-              <input
-                className={`${inputClassName} h-10! w-full`}
-                onChange={(event) =>
-                  onUpdateExam("approvalLocation", event.target.value)
-                }
-                placeholder="Өрөө / Байршил (ж: 203)"
-                value={exam.approvalLocation}
-              />
-            </Field>
+              <Field label="">
+                <input
+                  type="time"
+                  className={`${inputClassName} h-10! w-full !border-0 !bg-[#29A4FF] !text-white focus:!border-0 focus:!ring-0`}
+                  onChange={(event) =>
+                    onUpdateExam("approvalStartTime", event.target.value)
+                  }
+                  value={exam.approvalStartTime}
+                />
+              </Field>
 
-            <Field label="">
-              <input
-                type="time"
-                className={`${inputClassName} h-10! w-full`}
-                onChange={(event) =>
-                  onUpdateExam("approvalStartTime", event.target.value)
-                }
-                value={exam.approvalStartTime}
-              />
-            </Field>
-
-            <Field label="">
-              <input
-                type="time"
-                className={`${inputClassName} h-10! w-full`}
-                onChange={(event) =>
-                  onUpdateExam("approvalEndTime", event.target.value)
-                }
-                value={exam.approvalEndTime}
-              />
-            </Field>
+              <Field label="">
+                <input
+                  type="time"
+                  className={`${inputClassName} h-10! w-full !border-0 !bg-[#29A4FF] !text-white focus:!border-0 focus:!ring-0`}
+                  onChange={(event) =>
+                    onUpdateExam("approvalEndTime", event.target.value)
+                  }
+                  value={exam.approvalEndTime}
+                />
+              </Field>
+            </div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </section>
   );
 }
