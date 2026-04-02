@@ -13,8 +13,8 @@ export default function SsoCallbackPage() {
       <AuthenticateWithRedirectCallback
         signInUrl={AUTH_ROUTES.signIn}
         signUpUrl={AUTH_ROUTES.signUp}
-        signInFallbackRedirectUrl="/"
-        signUpFallbackRedirectUrl="/"
+        signInFallbackRedirectUrl="/teacher"
+        signUpFallbackRedirectUrl="/teacher"
       />
       <div id="clerk-captcha" />
     </div>
