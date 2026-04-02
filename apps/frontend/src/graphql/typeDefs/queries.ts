@@ -316,5 +316,3 @@ export const GET_TEACHERS_BY_SCHOOL_ID = gql`
     }
   }
 `;
-
-

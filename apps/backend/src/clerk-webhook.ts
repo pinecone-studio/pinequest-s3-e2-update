@@ -46,7 +46,6 @@ export async function handleClerkWebhook(
       });
       return new Response("ok", { status: 200 });
     }
-
     const db = getDb(env);
     await upsertSchoolFromSignupInput(db, userId, input);
     console.log("[clerk-webhook] school upserted", {

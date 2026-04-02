@@ -200,7 +200,7 @@ export function ClassesPageClient() {
 				<div>
 					<h2 className="text-2xl font-semibold text-zinc-900">Ангиуд</h2>
 				</div>
-				<AddClassDialog />
+				<AddClassDialog schoolId={schoolId} />
 			</div>
 
 			<section>

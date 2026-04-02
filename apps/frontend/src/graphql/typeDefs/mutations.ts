@@ -136,3 +136,17 @@ export const LINK_TEACHER_CLERK = gql`
     }
   }
 `;
+
+export const CREATE_CLASS = gql`
+  mutation CreateClass($input: CreateClassInput!) {
+    createClass(input: $input) {
+      id
+      schoolId
+      grade
+      section
+      sectionTeacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
