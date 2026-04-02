@@ -18,6 +18,20 @@ export default function FaceCam({
   setFaceDetectionWarning,
   faceDetectionWarning,
 }: FaceCamProps) {
+  const XNNPACK_INFO = "Created TensorFlow Lite XNNPACK delegate for CPU";
+  const getErrorText = (value: unknown) => {
+    if (typeof value === "string") return value;
+    if (value instanceof Error) return value.message;
+    if (
+      value &&
+      typeof value === "object" &&
+      "message" in value &&
+      typeof (value as { message?: unknown }).message === "string"
+    ) {
+      return (value as { message: string }).message;
+    }
+    return String(value ?? "");
+  };
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const detectorRef = useRef<FaceDetector | null>(null);
@@ -81,26 +95,69 @@ export default function FaceCam({
   }
 
   useEffect(() => {
+    // MediaPipe/TFLite-ийн info log dev overlay дээр error мэт харагдахаас сэргийлнэ.
+    if (process.env.NODE_ENV !== "development") return;
+
+    const onWindowError = (event: ErrorEvent) => {
+      const message = event.message || getErrorText(event.error);
+      if (message.includes(XNNPACK_INFO)) {
+        event.preventDefault();
+      }
+    };
+
+    const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const message = getErrorText(event.reason);
+      if (message.includes(XNNPACK_INFO)) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("error", onWindowError);
+    window.addEventListener("unhandledrejection", onUnhandledRejection);
+
+    return () => {
+      window.removeEventListener("error", onWindowError);
+      window.removeEventListener("unhandledrejection", onUnhandledRejection);
+    };
+  }, []);
+
+  useEffect(() => {
     async function loadDetector() {
-      const wasmFileset = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
-      );
+      try {
+        const wasmFileset = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
+        );
 
-      const detector = await FaceDetector.createFromOptions(wasmFileset, {
-        baseOptions: { modelAssetPath: "/models/face_detector.tflite" },
-        runningMode: "IMAGE",
-        minDetectionConfidence: 0.5,
-      });
+        const detector = await FaceDetector.createFromOptions(wasmFileset, {
+          baseOptions: { modelAssetPath: "/models/face_detector.tflite" },
+          runningMode: "IMAGE",
+          minDetectionConfidence: 0.5,
+        });
 
-      detectorRef.current = detector;
-      console.log("FaceDetector loaded!");
-      startDetection();
+        detectorRef.current = detector;
+        console.log("FaceDetector loaded!");
+        startDetection();
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : String(error ?? "");
+        if (!message.includes(XNNPACK_INFO)) {
+          console.error("Face detector инициализац амжилтгүй:", error);
+        }
+      }
     }
 
     loadDetector();
 
     return () => {
-      detectorRef.current?.close();
+      if (detectorRef.current) {
+        try {
+          detectorRef.current.close();
+        } catch (error) {
+          if (!getErrorText(error).includes(XNNPACK_INFO)) {
+            console.error("Face detector хаах үед алдаа гарлаа:", error);
+          }
+        }
+      }
       detectorRef.current = null;
       if (noFaceTimeoutRef.current) clearTimeout(noFaceTimeoutRef.current);
     };

@@ -21,9 +21,6 @@ import { formatTimer } from "./utils";
 
 export default function StudentExamPage() {
   const [phase, setPhase] = useState<ExamPhase>("entry");
-  const [studentLastName, setStudentLastName] = useState("");
-  const [studentFirstName, setStudentFirstName] = useState("");
-  const [studentEmail, setStudentEmail] = useState("");
   const [classCode, setClassCode] = useState("");
   const [hasAcceptedRules, setHasAcceptedRules] = useState(false);
   const [savedExams, setSavedExams] = useState<SavedExamRecord[]>([]);
@@ -238,6 +235,15 @@ export default function StudentExamPage() {
   };
 
   const handleStartExam = () => {
+    if (!hasAcceptedRules) {
+      setEntryProceedError("Шалгалтын журмыг уншиж танилцсанаа чеклэнэ үү.");
+      return;
+    }
+    if (!normalizedClassCode) {
+      setEntryProceedError("Шалгалтын кодоо оруулна уу.");
+      return;
+    }
+
     if (!usesTeacherControlledStart) {
       setEntryProceedError(null);
       setManualRemainingSeconds(resolvedExamData.durationMinutes * 60);
@@ -275,26 +281,11 @@ export default function StudentExamPage() {
   if (phase === "entry") {
     return (
       <EntryStep
-        studentLastName={studentLastName}
-        studentFirstName={studentFirstName}
-        studentEmail={studentEmail}
         classCode={classCode}
         hasAcceptedRules={hasAcceptedRules}
         classCodeHint={classCodeHint}
         classCodeRequired={requiresDeliveredClass}
         proceedError={entryProceedError}
-        onChangeLastName={(value) => {
-          setEntryProceedError(null);
-          setStudentLastName(value);
-        }}
-        onChangeFirstName={(value) => {
-          setEntryProceedError(null);
-          setStudentFirstName(value);
-        }}
-        onChangeEmail={(value) => {
-          setEntryProceedError(null);
-          setStudentEmail(value);
-        }}
         onChangeClassCode={(value) => {
           setEntryProceedError(null);
           setClassCode(value);
@@ -302,27 +293,6 @@ export default function StudentExamPage() {
         onToggleAcceptedRules={(checked) => {
           setEntryProceedError(null);
           setHasAcceptedRules(checked);
-        }}
-        onApplyDemo={() => {
-          setEntryProceedError(null);
-          const demoClassName =
-            activeSavedExam && (activeSavedExam.sentClassIds ?? []).length > 0
-              ? (() => {
-                  const id0 = activeSavedExam.sentClassIds![0]!;
-                  return (
-                    activeSavedExam.sentClassLabels?.[id0] ??
-                    STUDENT_ENTRY_CLASS_OPTIONS.find((k) => k.id === id0)
-                      ?.name ??
-                    "10A"
-                  );
-                })()
-              : "10A";
-
-          setStudentLastName("Түвшин");
-          setStudentFirstName("Элзий-Орших");
-          setStudentEmail("student@school.mn");
-          setClassCode(demoClassName);
-          setHasAcceptedRules(true);
         }}
         onProceed={handleStartExam}
       />

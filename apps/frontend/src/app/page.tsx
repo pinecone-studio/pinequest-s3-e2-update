@@ -15,7 +15,7 @@ export default async function Home({
     typeof raw === "string" ? raw : Array.isArray(raw) ? raw[0] : undefined;
 
   return (
-    <main className="min-h-screen bg-[#f4f4ee] text-[#1f242b]">
+    <main className="min-h-screen bg-[#F5F5F5] text-[#1f242b]">
       <div className="mx-auto min-h-screen w-full max-w-[94.5rem] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-8">
         {loginError === "login" ? (
           <p className="mb-4 inline-flex rounded-xl border border-[#f3c2c2] bg-[#fff1f1] px-4 py-2 text-2 font-medium text-[#8a1f1f]">
@@ -28,18 +28,18 @@ export default async function Home({
           </p>
         ) : null}
 
-        <section className="grid min-h-0 items-start gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10">
+        <section className="grid min-h-0 items-start gap-3 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch lg:gap-10 mt-24">
           <div className="max-w-xl lg:max-w-190">
             <header className="inline-flex items-center justify-center gap-2 sm:justify-start">
               <Image
-                src="/Herobee.png"
+                src="/Bee.png"
                 alt="Bee logo"
                 width={50}
                 height={50}
                 priority
                 className="h-10 w-10 object-contain"
               />
-              <p className=" mt-2 text-[22px] font-black tracking-tight text-[#11161d]">
+              <p className=" text-[22px] font-black tracking-tight text-[#11161d]">
                 UPDATE
               </p>
             </header>
@@ -50,7 +50,7 @@ export default async function Home({
                   (src, idx) => (
                     <span
                       key={src}
-                      className="h-12 w-12 rounded-full border-2 border-[#f4f4ee] bg-cover bg-center shadow-sm"
+                      className="h-12 w-12 rounded-full border-2 border-[#F5F5F5] bg-cover bg-center shadow-sm"
                       style={{
                         backgroundImage: `url('${src}')`,
                         backgroundPosition: "center",
@@ -75,7 +75,7 @@ export default async function Home({
               хурдан, найдвартай болгоно.
             </p>
 
-            <article className="mt-8 w-full max-w-lg rounded-[14px] border border-[#D7ECFF] bg-[#D7ECFF] p-4  transition hover:border-[#D7ECFF]  sm:mt-10 sm:p-6 lg:max-w-125 lg:min-h-60">
+            <article className="mt-12 w-full max-w-lg rounded-[14px] border border-[#D7ECFF] bg-[#D7ECFF] p-4  transition hover:border-[#D7ECFF]  sm:mt-14 sm:p-6 lg:max-w-125 lg:min-h-60">
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
                 <Image
                   src="/gana.jpg"
@@ -103,7 +103,7 @@ export default async function Home({
             </article>
           </div>
 
-          <div className="mt-6 w-full lg:-ml-45 lg:flex lg:min-h-full lg:flex-col lg:justify-between">
+          <div className="mt-2 w-full lg:-ml-45 lg:flex lg:min-h-full lg:flex-col lg:justify-between">
             <div className="flex justify-center px-2 lg:hidden">
               <Image
                 src="/path.png"
@@ -114,7 +114,7 @@ export default async function Home({
                 className="h-auto max-h-52 w-full max-w-lg object-contain sm:max-h-64"
               />
             </div>
-            <div className="relative mx-auto hidden h-90 w-140 max-w-full lg:mx-0 lg:mt-20 lg:block">
+            <div className="relative mx-auto hidden h-90 w-140 max-w-full lg:mx-0 lg:mt-2 lg:block">
               <Image
                 src="/path.png"
                 alt="Path"
@@ -141,8 +141,8 @@ export default async function Home({
               />
             </div>
 
-            <div className="mt-12 inline-flex flex-col items-center  sm:flex-row sm:items-end sm:gap-2 lg:mt-0 lg:pl-12">
-              <div className="relative h-32 shrink-0 pl-[5.4rem] pt-[0.35rem] sm:h-30 sm:pl-[5.9rem] sm:pt-[0.2rem]">
+            <div className="mt-2 inline-flex flex-col items-center sm:flex-row sm:items-end sm:gap-2 lg:-mt-2 lg:pl-12">
+              <div className="relative h-30 shrink-0 pl-[5.4rem] pt-[0.35rem] sm:h-30 sm:pl-[5.9rem] sm:pt-[0.2rem]">
                 <Image
                   src="/bugsteibee.png"
                   alt="Bee begin here"

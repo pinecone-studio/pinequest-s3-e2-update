@@ -99,7 +99,7 @@ export function SchoolShell({
 										className="object-contain rotate-[12deg]"
 										fill
 										priority
-										src="/Herobee.png"
+										src="/Bee.png"
 									/>
 								</span>
 								<div className="min-w-0 text-left">
@@ -166,7 +166,7 @@ export function SchoolShell({
 								aria-label="Сургуулийн нүүр рүү очих"
 							>
 								<Image
-									src="/Herobee.png"
+									src="/Bee.png"
 									alt="UPDATE logo"
 									width={44}
 									height={44}
