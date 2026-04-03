@@ -70,6 +70,10 @@ export function useQuestionBuilderForm(
     [],
   );
 
+  const replaceValues = useCallback((next: QuestionBuilderValues) => {
+    setValues(next);
+  }, []);
+
   const handleSubjectChange = useCallback((subject: string) => {
     setValues((current) => ({ ...current, subject }));
     if (!subjectSupportsFormula(subject)) {
@@ -161,6 +165,7 @@ export function useQuestionBuilderForm(
     selectedMode,
     setFeatureErrors,
     supportsFormulaInput,
+    replaceValues,
     updateOption,
     updateValue,
     values,

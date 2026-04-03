@@ -45,6 +45,18 @@ export const SUBJECT_OPTIONS = [
 
 export const NATIONAL_SCRIPT_SUBJECT = "Үндэсний бичиг";
 
+export const NATIONAL_SCRIPT_FORM_DEMO = {
+  subtopic: "Унших",
+  title: "Монгол бичгийн уншлагын дасгал",
+  promptLead: "Дараах үгийг уншаад кирилл бичигт зөв буулгаарай.",
+  promptWord: "Монгол",
+  options: ["Монгол", "Мангол", "Монгул", "Мөнгөл"],
+  correctOptionIndex: 0,
+  rubric: "Монгол бичгийн үгийг зөв уншиж, кирилл бичигт зөв буулгасан эсэхийг үнэлнэ.",
+  guidance: "Үгийг анхааралтай ажиглаад хамгийн зөв хувилбарыг сонгоно уу.",
+  openAnswer: "Монгол",
+} as const;
+
 export const SUBTOPIC_OPTIONS = {
   Математик: [
     "Алгебр",

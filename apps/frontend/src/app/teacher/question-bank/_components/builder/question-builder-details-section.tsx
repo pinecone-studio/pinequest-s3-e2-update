@@ -31,6 +31,7 @@ type QuestionBuilderDetailsSectionProps = {
   imageUrl: string;
   onGradeChange: (value: string) => void;
   onNotesChange: (value: string) => void;
+  onApplyNationalScriptDemo: () => void;
   onPromptChange: (value: string) => void;
   onSubjectChange: (value: string) => void;
   onSubtopicChange: (value: string) => void;
@@ -48,6 +49,7 @@ export function QuestionBuilderDetailsSection({
   imageUrl,
   onGradeChange,
   onNotesChange,
+  onApplyNationalScriptDemo,
   onPromptChange,
   onSubjectChange,
   onSubtopicChange,
@@ -215,6 +217,15 @@ export function QuestionBuilderDetailsSection({
               value={values.prompt}
             />
             <div className="mt-3 flex flex-wrap gap-2">
+              {values.subject === NATIONAL_SCRIPT_SUBJECT ? (
+                <button
+                  className="inline-flex h-10 items-center rounded-[12px] border border-[#d6e5f8] bg-[#eef6ff] px-4 text-[13px] font-semibold text-[#244067] transition hover:border-[#aac8f8] hover:bg-[#e3f0ff] hover:text-[#1f6feb]"
+                  onClick={onApplyNationalScriptDemo}
+                  type="button"
+                >
+                  Demo-оор бөглөх
+                </button>
+              ) : null}
               <button
                 className={`inline-flex h-10 items-center rounded-[12px] border px-4 text-[13px] font-semibold transition ${
                   includesImage && imageUrl.trim()
