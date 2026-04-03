@@ -97,9 +97,57 @@ export function ExamScreen({
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [emitTabTelemetry]);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // F12
+      if (e.key === "F12") {
+        e.preventDefault();
+      }
+
+      // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+      if (
+        e.ctrlKey &&
+        e.shiftKey &&
+        ["I", "J", "C"].includes(e.key.toUpperCase())
+      ) {
+        e.preventDefault();
+      }
+
+      // Ctrl+U (view source)
+      if (e.ctrlKey && e.key.toUpperCase() === "U") {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  useEffect(() => {
+    const disableRightClick = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    // Disable right-click
+    document.addEventListener("contextmenu", disableRightClick, {
+      capture: true,
+    });
+
+    return () => {
+      document.removeEventListener("contextmenu", disableRightClick, {
+        capture: true,
+      });
+    };
+  }, []);
 
   return (
-    <main className="relative min-h-screen bg-[#edf6ff] px-3 pb-8 pt-4 text-[#1f2a44] sm:px-5 sm:pt-6 md:px-8 lg:px-12 lg:pt-7">
+    <main
+      className="relative min-h-screen bg-[#edf6ff] px-3 pb-8 pt-4 text-[#1f2a44] sm:px-5 sm:pt-6 md:px-8 lg:px-12 lg:pt-7"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <div
         className={`mx-auto w-full max-w-[min(100%,56rem)] transition-[filter,opacity] duration-200 xl:max-w-[72rem] ${
           showWaitForStart
