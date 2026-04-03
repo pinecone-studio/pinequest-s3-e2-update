@@ -149,7 +149,7 @@ export function ExamScreen({
       onContextMenu={(e) => e.preventDefault()}
     >
       <div
-        className={`mx-auto w-full max-w-[min(100%,56rem)] transition-[filter,opacity] duration-200 xl:max-w-[72rem] ${
+        className={`mx-auto w-full max-w-[min(100%,56rem)] transition-[filter,opacity] duration-200 xl:max-w-6xl ${
           showWaitForStart
             ? "pointer-events-none select-none blur-lg opacity-40"
             : ""
@@ -172,7 +172,7 @@ export function ExamScreen({
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-4" />
         </div>
 
-        <div className="mx-auto mt-6 flex w-full max-w-[46rem] flex-col gap-4 sm:mt-8 xl:max-w-none">
+        <div className="mx-auto mt-6 flex w-full max-w-184 flex-col gap-4 sm:mt-8 xl:max-w-none">
           <ExamHeader
             title={examData.title}
             subtitle={`${examData.schoolYear} · ${examData.term}`}
@@ -217,7 +217,7 @@ export function ExamScreen({
                 <button
                   type="button"
                   onClick={onFinish}
-                  className="inline-flex h-10 min-w-[7.5rem] items-center justify-center rounded-[12px] border border-[#7bb8ff] bg-[#8ec4ff] px-6 text-base font-semibold text-[#1b2b57] transition hover:bg-[#7bb8ff] sm:h-10.5 sm:text-[18px]"
+                  className="inline-flex h-10 min-w-30 items-center justify-center rounded-xl border border-[#7bb8ff] bg-[#8ec4ff] px-6 text-base font-semibold text-[#1b2b57] transition hover:bg-[#7bb8ff] sm:h-10.5 sm:text-[18px]"
                 >
                   Дуусгах
                 </button>
@@ -237,7 +237,7 @@ export function ExamScreen({
                 alt="Анхааруулга"
                 width={74}
                 height={74}
-                className="h-[60px] w-[60px] object-contain sm:h-[74px] sm:w-[74px]"
+                className="h-15 w-15 object-contain sm:h-18.5 sm:w-18.5"
               />
             </div>
 
@@ -289,7 +289,7 @@ export function ExamScreen({
       {faceDetectionWarning && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute left-1/2 top-1/2 flex min-h-[20rem] max-h-[min(88dvh,30rem)] w-[min(calc(100vw-2rem),32rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-[#7dc8ff] bg-white shadow-[0_18px_40px_rgba(15,23,42,0.25)] sm:min-h-[22rem] sm:max-h-[min(92dvh,34rem)] sm:w-[min(calc(100vw-1.5rem),42rem)] sm:border-2">
+          <div className="absolute left-1/2 top-1/2 flex min-h-80 max-h-[min(88dvh,30rem)] w-[min(calc(100vw-2rem),32rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-[#7dc8ff] bg-white shadow-[0_18px_40px_rgba(15,23,42,0.25)] sm:min-h-88 sm:max-h-[min(92dvh,34rem)] sm:w-[min(calc(100vw-1.5rem),42rem)] sm:border-2">
             <div className="flex h-full mt-3 flex-col items-center justify-center gap-3 px-4 pb-6 pt-4 text-center sm:gap-3 sm:px-6 sm:pt-6">
               <div className="flex w-full justify-center">
                 <span className="relative h-14 w-14 shrink-0 sm:h-20 sm:w-20">
@@ -313,7 +313,7 @@ export function ExamScreen({
             <div className="mt-auto flex w-full justify-end px-4 pb-4 sm:px-6 sm:pb-6">
               <button
                 type="button"
-                className="inline-flex h-10 items-center justify-center rounded-[12px] border border-[#7dc8ff] bg-white px-4 text-sm font-medium text-[#1f2a44] transition hover:bg-[#edf6ff] sm:h-10.5 sm:px-5 sm:text-base"
+                className="inline-flex h-10 items-center justify-center rounded-xl border border-[#7dc8ff] bg-white px-4 text-sm font-medium text-[#1f2a44] transition hover:bg-[#edf6ff] sm:h-10.5 sm:px-5 sm:text-base"
                 onClick={() => setFaceDetectionWarning(null)}
               >
                 Буцах
