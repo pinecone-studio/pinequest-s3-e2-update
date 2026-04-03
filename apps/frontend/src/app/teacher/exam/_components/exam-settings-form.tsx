@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { NATIONAL_SCRIPT_SUBJECT } from "../../question-bank/_lib/constants";
 import {
   Select,
   SelectContent,
@@ -28,10 +29,40 @@ export function ExamSettingsForm({
     value: ExamComposerState[Key],
   ) => void;
 }) {
+  const handleApplyDemo = () => {
+    const preferredSubject = subjectOptions.includes(NATIONAL_SCRIPT_SUBJECT)
+      ? NATIONAL_SCRIPT_SUBJECT
+      : (subjectOptions[0] ?? "");
+    const nextGrade = exam.grade || gradeOptions[0] || "";
+    const nextTopic =
+      exam.subject === preferredSubject ? (topicSuggestions[0] ?? "") : "";
+
+    onUpdateExam(
+      "title",
+      preferredSubject
+        ? `${preferredSubject} demo шалгалт`
+        : "Demo шалгалт",
+    );
+    onUpdateExam("grade", nextGrade);
+    onUpdateExam("subject", preferredSubject);
+    onUpdateExam("topic", nextTopic);
+    onUpdateExam("durationInMinutes", 1);
+    onUpdateExam("requiresSchoolApproval", false);
+  };
+
   return (
     <section className="p-4 sm:p-5">
-      <div className="text-base font-medium uppercase tracking-[0.12em] text-[#122459] sm:text-[20px] sm:tracking-[0.18em]">
-        Шалгалтын тохиргоо
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="text-base font-medium uppercase tracking-[0.12em] text-[#122459] sm:text-[20px] sm:tracking-[0.18em]">
+          Шалгалтын тохиргоо
+        </div>
+        <button
+          className="inline-flex h-10 items-center rounded-[12px] border border-[#d6e5f8] bg-[#eef6ff] px-4 text-[13px] font-semibold text-[#244067] transition hover:border-[#aac8f8] hover:bg-[#e3f0ff] hover:text-[#1f6feb]"
+          onClick={handleApplyDemo}
+          type="button"
+        >
+          Demo-оор бөглөх
+        </button>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:items-end lg:gap-x-4 lg:gap-y-4">

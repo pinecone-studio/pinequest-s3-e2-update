@@ -6,12 +6,18 @@ import {
   type QuestionType,
   type QuestionValidationErrors,
 } from "../../_lib/types";
+import { createEmptyOption } from "../../_lib/utils";
 import { QuestionBuilderAdditionalSection } from "./question-builder-additional-section";
 import { QuestionBuilderAnswerSection } from "./question-builder-answer-section";
 import { QuestionBuilderDetailsSection } from "./question-builder-details-section";
 import { QuestionBuilderScoringSection } from "./question-builder-scoring-section";
 import { QuestionBuilderTypeSection } from "./question-builder-type-section";
 import { useQuestionBuilderForm } from "../../_hooks/use-question-builder-form";
+import {
+  NATIONAL_SCRIPT_FORM_DEMO,
+  NATIONAL_SCRIPT_SUBJECT,
+} from "../../_lib/constants";
+import { convertTextToTraditionalMongolian } from "@/app/lib/mongolian-script";
 
 type QuestionBuilderFormProps = {
   initialValues?: QuestionBuilderValues | null;
@@ -45,6 +51,7 @@ export function QuestionBuilderForm({
     includesImage,
     markCorrectOption,
     removeOption,
+    replaceValues,
     selectedMode,
     setFeatureErrors,
     supportsFormulaInput,
@@ -52,6 +59,54 @@ export function QuestionBuilderForm({
     updateValue,
     values,
   } = useQuestionBuilderForm(initialValues);
+
+  const handleApplyNationalScriptDemo = () => {
+    if (values.subject !== NATIONAL_SCRIPT_SUBJECT) return;
+
+    handleFeatureToggle("image", false);
+    if (supportsFormulaInput) {
+      handleFeatureToggle("formula", false);
+    }
+
+    const nextQuestionType: QuestionType =
+      selectedMode === "multiple_choice" ? "multiple_choice" : "long_answer";
+    const convertedLead = convertTextToTraditionalMongolian(
+      NATIONAL_SCRIPT_FORM_DEMO.promptLead,
+    );
+    const convertedWord = convertTextToTraditionalMongolian(
+      NATIONAL_SCRIPT_FORM_DEMO.promptWord,
+    );
+
+    const demoOptions = NATIONAL_SCRIPT_FORM_DEMO.options.map((option, index) => ({
+      ...createEmptyOption(index),
+      text: option,
+      isCorrect: index === NATIONAL_SCRIPT_FORM_DEMO.correctOptionIndex,
+    }));
+
+    replaceValues({
+      ...values,
+      questionType: nextQuestionType,
+      title: NATIONAL_SCRIPT_FORM_DEMO.title,
+      subtopic: values.subtopic || NATIONAL_SCRIPT_FORM_DEMO.subtopic,
+      topic: values.topic || values.subtopic || NATIONAL_SCRIPT_FORM_DEMO.subtopic,
+      prompt: `${convertedLead}\n\n${convertedWord}`,
+      guidance: NATIONAL_SCRIPT_FORM_DEMO.guidance,
+      explanation: NATIONAL_SCRIPT_FORM_DEMO.guidance,
+      rubric:
+        nextQuestionType === "long_answer"
+          ? NATIONAL_SCRIPT_FORM_DEMO.rubric
+          : values.rubric,
+      correctAnswer:
+        nextQuestionType === "long_answer"
+          ? NATIONAL_SCRIPT_FORM_DEMO.openAnswer
+          : values.correctAnswer,
+      options:
+        nextQuestionType === "multiple_choice" ? demoOptions : values.options,
+      imageUrl: "",
+      formulaRaw: "",
+    });
+    setFeatureErrors({});
+  };
 
   const handleSubmit = async () => {
     const nextFeatureErrors: Pick<
@@ -138,6 +193,7 @@ export function QuestionBuilderForm({
                 updateValue("guidance", value);
                 updateValue("explanation", value);
               }}
+              onApplyNationalScriptDemo={handleApplyNationalScriptDemo}
               onPromptChange={(value) => updateValue("prompt", value)}
               onSubjectChange={handleSubjectChange}
               onSubtopicChange={(value) => updateValue("subtopic", value)}
