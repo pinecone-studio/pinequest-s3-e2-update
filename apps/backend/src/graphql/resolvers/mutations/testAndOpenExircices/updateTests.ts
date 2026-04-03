@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { testTable } from "../../../../db/schema";
+import { requireDbTeacherIdFromClerk } from "../../../../lib/teacher-row-from-clerk";
 import { GraphQLUserContext } from "../../../context";
 
 type UpdateTestsArgs = {
@@ -39,6 +40,15 @@ export const updateTests = async (
   const existing = rows[0];
   if (!existing) throw new Error("Test not found.");
 
+  const dbTeacherId = await requireDbTeacherIdFromClerk(ctx);
+  const legacyClerkId = ctx.clerkUserId?.trim() ?? "";
+  const owns =
+    existing.teacherId === dbTeacherId ||
+    (legacyClerkId.length > 0 && existing.teacherId === legacyClerkId);
+  if (!owns) {
+    throw new Error("Энэ асуултыг засах эрхгүй.");
+  }
+
   const now = new Date().toISOString();
   const answers = args.input.answers ?? parseAnswers(existing.answers);
 
@@ -61,7 +71,7 @@ export const updateTests = async (
             ? 1
             : 0,
       notes: args.input.notes ?? existing.notes,
-      teacherId: args.input.teacherId ?? existing.teacherId,
+      teacherId: dbTeacherId,
       updatedAt: now,
     })
     .where(eq(testTable.id, id));

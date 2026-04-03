@@ -1,5 +1,6 @@
-import { GraphQLUserContext } from "../../../context";
 import { testTable } from "../../../../db/schema/testTable";
+import { requireDbTeacherIdFromClerk } from "../../../../lib/teacher-row-from-clerk";
+import { GraphQLUserContext } from "../../../context";
 
 type CreateTestsArgs = {
   grade: number;
@@ -23,6 +24,7 @@ export const createTests = async (
 ) => {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
+  const teacherRowId = await requireDbTeacherIdFromClerk(ctx);
   try {
     await ctx.db.insert(testTable).values({
       id: id,
@@ -37,7 +39,7 @@ export const createTests = async (
       usageCount: args.input.usageCount,
       favourite: args.input.favourite ? 1 : 0,
       notes: args.input.notes,
-      teacherId: args.input.teacherId,
+      teacherId: teacherRowId,
       createdAt: now,
       updatedAt: now,
     });
@@ -57,7 +59,7 @@ export const createTests = async (
       usageCount: args.input.usageCount,
       favourite: Boolean(args.input.favourite),
       notes: args.input.notes,
-      teacherId: args.input.teacherId,
+      teacherId: teacherRowId,
       createdAt: now,
       updatedAt: now,
     };

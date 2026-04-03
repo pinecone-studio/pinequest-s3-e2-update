@@ -5,6 +5,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTeacherDb } from "../../_components/teacher-db-context";
 import { useTeacher } from "../../teacher-shell";
 import {
 	PENDING_EXAM_TRANSFER_STORAGE_KEY,
@@ -95,16 +96,20 @@ function parseGradeToInt(gradeLabel: string) {
 
 function isOwnedByTeacher(
 	question: Question,
-	teacherId: string,
+	dbTeacherId: string | null | undefined,
 	teacherName: string,
 ) {
-	if (question.teacherId) return question.teacherId === teacherId;
+	if (dbTeacherId && question.teacherId) {
+		return question.teacherId === dbTeacherId;
+	}
 	return question.teacherName === teacherName;
 }
 
 export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const router = useRouter();
 	const teacher = useTeacher();
+	const { teacher: dbTeacherRow } = useTeacherDb();
+	const dbTeacherId = dbTeacherRow?.id ?? null;
 	const { data: subjectsData, loading: subjectsLoading } =
 		useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
 	const [createTests] = useMutation<CreateTestsResponse>(CREATE_TESTS);
@@ -242,7 +247,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			const owner = testsData?.getTestsBySybjectAndGrade?.find(
 				(row) => row.id === q.id,
 			)?.teacherId;
-			const isMine = Boolean(owner && owner === teacher.id);
+			const isMine = Boolean(owner && dbTeacherId && owner === dbTeacherId);
 			return {
 				...q,
 				source: owner ? "school" : "global",
@@ -257,7 +262,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			const owner = openExerciesData?.getOpenExerciesBySubjectAndGrade?.find(
 				(row) => row.id === q.id,
 			)?.teacherId;
-			const isMine = Boolean(owner && owner === teacher.id);
+			const isMine = Boolean(owner && dbTeacherId && owner === dbTeacherId);
 			return {
 				...q,
 				teacherId: owner ?? null,
@@ -271,7 +276,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		testsData?.getTestsBySybjectAndGrade,
 		openExerciesData?.getOpenExerciesBySubjectAndGrade,
 		subjectNameById,
-		teacher.id,
+		dbTeacherId,
 		teacher.name,
 	]);
 
@@ -303,9 +308,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const myQuestions = useMemo(
 		() =>
 			scopedQuestions.filter((q) =>
-				isOwnedByTeacher(q, teacher.id, teacher.name),
+				isOwnedByTeacher(q, dbTeacherId, teacher.name),
 			),
-		[scopedQuestions, teacher.id, teacher.name],
+		[scopedQuestions, dbTeacherId, teacher.name],
 	);
 
 	const likedQuestionIds = useMemo(
@@ -444,7 +449,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const deleteQuestion = useCallback(
 		(questionId: string) => {
 			const target = mergedQuestions.find((q) => q.id === questionId);
-			if (target && !isOwnedByTeacher(target, teacher.id, teacher.name)) {
+			if (target && !isOwnedByTeacher(target, dbTeacherId, teacher.name)) {
 				showToast("Зөвхөн өөрийн үүсгэсэн асуултыг устгана.");
 				return;
 			}
@@ -461,7 +466,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				current === questionId ? null : current,
 			);
 		},
-		[mergedQuestions, showToast, teacher.id, teacher.name],
+		[mergedQuestions, showToast, dbTeacherId, teacher.name],
 	);
 
 	const submitQuestion = useCallback(
@@ -472,6 +477,12 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				return false;
 			}
 			setLastValidationErrors(undefined);
+			if (!dbTeacherId) {
+				showToast(
+					"Багшийн бүртгэл олдсонгүй. Сургуулийн админтай холбогдон профайлаа холбоно уу.",
+				);
+				return false;
+			}
 			const existing = values.id
 				? mergedQuestions.find((q) => q.id === values.id)
 				: undefined;
@@ -480,7 +491,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				...built,
 				source: "school",
 				teacherName: teacher.name,
-				teacherId: teacher.id,
+				teacherId: dbTeacherId,
 				grade: entrySelection.grade || built.grade,
 				subject: entrySelection.subject || built.subject,
 			};
@@ -520,7 +531,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									payload.content.explanation ||
 									payload.content.guidance ||
 									null,
-								teacherId: teacher.id,
+								teacherId: dbTeacherId,
 							},
 						},
 					});
@@ -541,7 +552,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
 									teacherName: teacher.name,
-									teacherId: teacher.id,
+									teacherId: dbTeacherId,
 								});
 								return next;
 							});
@@ -591,7 +602,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									payload.content.explanation ||
 									payload.content.guidance ||
 									"",
-								teacherId: teacher.id,
+								teacherId: dbTeacherId,
 							},
 						},
 					});
@@ -612,7 +623,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
 									teacherName: teacher.name,
-									teacherId: teacher.id,
+									teacherId: dbTeacherId,
 								});
 								return next;
 							});
@@ -654,7 +665,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									payload.content.explanation ||
 									payload.content.guidance ||
 									null,
-								teacherId: teacher.id,
+								teacherId: dbTeacherId,
 							},
 						},
 					});
@@ -675,7 +686,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
 									teacherName: teacher.name,
-									teacherId: teacher.id,
+									teacherId: dbTeacherId,
 								});
 								return next;
 							});
@@ -709,7 +720,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								favourite: payload.isFavourite ?? false,
 								notes:
 									payload.content.explanation || payload.content.guidance || "",
-								teacherId: teacher.id,
+								teacherId: dbTeacherId,
 							},
 						},
 					});
@@ -731,7 +742,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
 									teacherName: teacher.name,
-									teacherId: teacher.id,
+									teacherId: dbTeacherId,
 								});
 								return next;
 							});
@@ -763,7 +774,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			entrySelection.subject,
 			entrySelection.subjectId,
 			teacher.name,
-			teacher.id,
+			dbTeacherId,
 			refetchTests,
 			refetchOpenExercies,
 			shouldFetchTests,
