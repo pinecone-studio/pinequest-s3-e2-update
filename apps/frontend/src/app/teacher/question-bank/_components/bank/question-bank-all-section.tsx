@@ -8,7 +8,6 @@ type QuestionBankAllSectionProps = {
   activeQuestionId: string | null;
   activeQuestion: Question | null;
   filteredQuestions: Question[];
-  getQuestionHeartCount: (question: Question) => number;
   likedQuestionIds: string[];
   onAddToExam: (questionId: string) => void;
   onCreateQuestion: () => void;
@@ -24,7 +23,6 @@ export function QuestionBankAllSection({
   activeQuestion,
   activeQuestionId,
   filteredQuestions,
-  getQuestionHeartCount,
   likedQuestionIds,
   onAddToExam,
   onCreateQuestion,
@@ -54,7 +52,6 @@ export function QuestionBankAllSection({
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_380px]">
         <QuestionList
           activeQuestionId={activeQuestionId}
-          getQuestionHeartCount={getQuestionHeartCount}
           likedQuestionIds={likedQuestionIds}
           onAddToExam={onAddToExam}
           onCreateQuestion={onCreateQuestion}

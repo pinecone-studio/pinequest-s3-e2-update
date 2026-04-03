@@ -9,7 +9,6 @@ type QuestionListProps = {
   questions: Question[];
   likedQuestionIds: string[];
   selectedQuestionIds: string[];
-  getQuestionHeartCount: (question: Question) => number;
   onAddToExam: (questionId: string) => void;
   onCreateQuestion: () => void;
   onDeleteQuestion: (questionId: string) => void;
@@ -24,7 +23,6 @@ export function QuestionList({
   questions,
   likedQuestionIds,
   selectedQuestionIds,
-  getQuestionHeartCount,
   onAddToExam,
   onCreateQuestion,
   onDeleteQuestion,
@@ -44,7 +42,6 @@ export function QuestionList({
           key={question.id}
           compactAction={index === questions.length - 1}
           question={question}
-          heartCount={getQuestionHeartCount(question)}
           isActive={question.id === activeQuestionId}
           isLiked={likedQuestionIds.includes(question.id)}
           isSelected={selectedQuestionIds.includes(question.id)}

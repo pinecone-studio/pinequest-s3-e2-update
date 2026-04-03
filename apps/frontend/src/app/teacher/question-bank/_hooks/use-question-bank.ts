@@ -376,11 +376,6 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		setCurrentFilters(QUESTION_BANK_FILTER_DEFAULTS);
 	}, []);
 
-	const getQuestionHeartCount = useCallback(
-		(question: Question) => question.usageCount + (question.isFavourite ? 1 : 0),
-		[],
-	);
-
 	const toggleQuestionLike = useCallback((questionId: string) => {
 		const target =
 			upserts.get(questionId) ??
@@ -849,7 +844,6 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		editingValues,
 		filteredQuestions,
 		gradeOptions,
-		getQuestionHeartCount,
 		hasEnteredBank,
 		isBuilderOpen,
 		lastValidationErrors,

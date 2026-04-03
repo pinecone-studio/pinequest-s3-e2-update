@@ -5,7 +5,6 @@ import { QuestionList } from "../question/question-list";
 
 type QuestionBankMySectionProps = {
   activeQuestionId: string | null;
-  getQuestionHeartCount: (question: Question) => number;
   likedQuestionIds: string[];
   myQuestionCount: number;
   myQuestions: Question[];
@@ -21,7 +20,6 @@ type QuestionBankMySectionProps = {
 
 export function QuestionBankMySection({
   activeQuestionId,
-  getQuestionHeartCount,
   likedQuestionIds,
   myQuestionCount,
   myQuestions,
@@ -54,7 +52,6 @@ export function QuestionBankMySection({
         {myQuestions.length > 0 ? (
           <QuestionList
             activeQuestionId={activeQuestionId}
-            getQuestionHeartCount={getQuestionHeartCount}
             likedQuestionIds={likedQuestionIds}
             onAddToExam={onAddToExam}
             onCreateQuestion={onCreateQuestion}
