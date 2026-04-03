@@ -142,6 +142,12 @@ export function QuestionBuilderForm({
       status: "published",
     };
 
+    if (isEditing) {
+      void Promise.resolve(onSubmit(finalValues));
+      onClose();
+      return;
+    }
+
     await onSubmit(finalValues);
   };
 
