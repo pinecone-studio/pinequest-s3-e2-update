@@ -13,6 +13,7 @@ export const CREATE_TESTS = gql`
       difficulty
       score
       usageCount
+      favourite
       notes
       teacherId
       createdAt
@@ -34,6 +35,51 @@ export const CREATE_OPEN_EXERCIES = gql`
       imageUrl
       difficulty
       score
+      favourite
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_TESTS = gql`
+  mutation UpdateTests($input: UpdateTestsInput!) {
+    updateTests(input: $input) {
+      id
+      grade
+      subjectId
+      question
+      answers
+      rightAnswer
+      imageUrl
+      difficulty
+      score
+      usageCount
+      favourite
+      notes
+      teacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_OPEN_EXERCIES = gql`
+  mutation UpdateOpenExercies($input: UpdateOpenExerciesArgs!) {
+    updateOpenExercies(input: $input) {
+      id
+      subjectId
+      grade
+      topic
+      title
+      question
+      answer
+      imageUrl
+      difficulty
+      score
+      favourite
       notes
       teacherId
       createdAt

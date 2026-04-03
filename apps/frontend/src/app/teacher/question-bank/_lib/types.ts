@@ -42,6 +42,7 @@ export type Question = {
   id: string;
   title: string;
   questionType: QuestionType;
+  isFavourite?: boolean;
   source?: QuestionSource;
   teacherName?: string;
   teacherId?: string | null;

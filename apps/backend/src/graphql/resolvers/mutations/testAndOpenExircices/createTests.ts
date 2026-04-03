@@ -12,6 +12,7 @@ type CreateTestsArgs = {
   score: number;
   teacherId: string;
   usageCount: number;
+  favourite?: boolean | null;
   notes: string;
 };
 
@@ -34,6 +35,7 @@ export const createTests = async (
       difficulty: args.input.difficulty,
       score: args.input.score,
       usageCount: args.input.usageCount,
+      favourite: args.input.favourite ? 1 : 0,
       notes: args.input.notes,
       teacherId: args.input.teacherId,
       createdAt: now,
@@ -53,6 +55,7 @@ export const createTests = async (
       difficulty: args.input.difficulty,
       score: args.input.score,
       usageCount: args.input.usageCount,
+      favourite: Boolean(args.input.favourite),
       notes: args.input.notes,
       teacherId: args.input.teacherId,
       createdAt: now,

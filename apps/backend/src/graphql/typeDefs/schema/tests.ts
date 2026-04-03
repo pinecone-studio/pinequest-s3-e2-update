@@ -10,6 +10,7 @@ export const testTypeDefs = /* GraphQL */ `
     difficulty: String
     score: Int!
     usageCount: Int
+    favourite: Boolean
     notes: String
     teacherId: String!
     createdAt: String!

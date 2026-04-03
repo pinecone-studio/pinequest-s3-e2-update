@@ -75,6 +75,7 @@ export function mapBackendTestsToQuestions(
       id: test.id,
       title,
       questionType,
+      isFavourite: test.favourite ?? false,
       source: "global",
       teacherId: test.teacherId ?? null,
       content: {
@@ -121,6 +122,7 @@ export type BackendOpenExercies = {
   imageUrl: string | null;
   difficulty: string | null;
   score: number;
+  favourite?: boolean | null;
   notes: string | null;
   teacherId: string | null;
   createdAt: string;
@@ -145,6 +147,7 @@ export function mapBackendOpenExerciesToQuestions(
       id: row.id,
       title,
       questionType: "long_answer",
+      isFavourite: row.favourite ?? false,
       source: "school",
       teacherId: row.teacherId ?? null,
       content: {

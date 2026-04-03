@@ -13,6 +13,7 @@ export const GET_ALL_TESTS_QUERY = gql`
       difficulty
       score
       usageCount
+      favourite
       notes
       createdAt
       updatedAt
@@ -31,6 +32,7 @@ export type BackendTest = {
   difficulty: string | null;
   score: number;
   usageCount: number | null;
+  favourite?: boolean | null;
   notes: string | null;
   teacherId?: string | null;
   createdAt: string;

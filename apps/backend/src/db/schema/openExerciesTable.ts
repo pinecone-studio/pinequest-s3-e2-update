@@ -11,6 +11,7 @@ export const openExerciesTable = sqliteTable("openExercies", {
   imageUrl: text("imageUrl"),
   difficulty: text("difficulty"),
   score: integer("score").notNull(),
+  favourite: integer("favourite").notNull().default(0),
   notes: text("notes"),
   teacherId: text("teacherId"),
   createdAt: text("createdAt").notNull(),

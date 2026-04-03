@@ -10,6 +10,7 @@ type CreateOpenExerciesArgs = {
   imageUrl?: string | null;
   difficulty: string;
   score: number;
+  favourite?: boolean | null;
   notes?: string | null;
   teacherId: string;
 };
@@ -32,6 +33,7 @@ export const createOpenExercies = async (
       imageUrl: _args.input.imageUrl ?? null,
       difficulty: _args.input.difficulty,
       score: _args.input.score,
+      favourite: _args.input.favourite ? 1 : 0,
       notes: _args.input.notes ?? null,
       teacherId: _args.input.teacherId,
       createdAt: now,
@@ -48,6 +50,7 @@ export const createOpenExercies = async (
       imageUrl: _args.input.imageUrl ?? null,
       difficulty: _args.input.difficulty,
       score: _args.input.score,
+      favourite: Boolean(_args.input.favourite),
       notes: _args.input.notes ?? null,
       teacherId: _args.input.teacherId,
       createdAt: now,

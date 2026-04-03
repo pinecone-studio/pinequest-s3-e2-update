@@ -10,6 +10,7 @@ export const openExerciesTypeDefs = /* GraphQL */ `
     imageUrl: String
     difficulty: String
     score: Int!
+    favourite: Boolean
     notes: String
     teacherId: String
     createdAt: String!

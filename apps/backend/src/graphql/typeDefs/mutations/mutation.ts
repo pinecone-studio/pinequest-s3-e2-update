@@ -9,6 +9,7 @@ export const mutationTypeDefs = /* GraphQL */ `
     difficulty: String!
     score: Int!
     usageCount: Int!
+    favourite: Boolean
     notes: String!
     teacherId: String!
   }
@@ -23,8 +24,41 @@ export const mutationTypeDefs = /* GraphQL */ `
     imageUrl: String
     difficulty: String!
     score: Int!
+    favourite: Boolean
     notes: String
     teacherId: String!
+  }
+
+  input UpdateTestsInput {
+    id: String!
+    grade: Int
+    subjectId: String
+    question: String
+    answers: [JSON!]
+    imageUrl: String
+    rightAnswer: String
+    difficulty: String
+    score: Int
+    usageCount: Int
+    favourite: Boolean
+    notes: String
+    teacherId: String
+  }
+
+  input UpdateOpenExerciesArgs {
+    id: String!
+    subjectId: String
+    grade: Int
+    topic: String
+    title: String
+    question: String
+    answer: String
+    imageUrl: String
+    difficulty: String
+    score: Int
+    favourite: Boolean
+    notes: String
+    teacherId: String
   }
 
   input CreateSubjectInput {
@@ -139,8 +173,10 @@ export const mutationTypeDefs = /* GraphQL */ `
 
   type Mutation {
     createTests(input: CreateTestsInput!): Test!
+    updateTests(input: UpdateTestsInput!): Test!
     createSubject(input: CreateSubjectInput!): Subject!
     createOpenExercies(input: CreateOpenExerciesArgs!): OpenExercies!
+    updateOpenExercies(input: UpdateOpenExerciesArgs!): OpenExercies!
     createExam(input: CreateExamArgs!): Exam!
     addStudent(input: AddStudentInput!): Student!
     createClass(input: CreateClassInput!): Class!

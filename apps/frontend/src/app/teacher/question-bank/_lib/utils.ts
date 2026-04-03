@@ -309,6 +309,7 @@ export function buildQuestionPayload(
       `question-${Math.random().toString(36).slice(2, 10)}`,
     title: resolveQuestionTitle(values.title, values.prompt),
     questionType: values.questionType,
+    isFavourite: existingQuestion?.isFavourite ?? false,
     source: existingQuestion?.source ?? "school",
     teacherName: existingQuestion?.teacherName,
     isLocalOnly: existingQuestion?.isLocalOnly ?? false,

@@ -17,11 +17,15 @@ import { linkTeacherClerk } from "./subjectSchoolAndTeachers/linkTeacherClerk";
 import { createSubject } from "./subjectSchoolAndTeachers/createSubject";
 import { createOpenExercies } from "./testAndOpenExircices/createOpenExercies";
 import { createTests } from "./testAndOpenExircices/createTests";
+import { updateOpenExercies } from "./testAndOpenExircices/updateOpenExercies";
+import { updateTests } from "./testAndOpenExircices/updateTests";
 
 export const mutationResolvers = {
   createSubject,
   createTests,
+  updateTests,
   createOpenExercies,
+  updateOpenExercies,
   createExam,
   addStudent,
   createClass,

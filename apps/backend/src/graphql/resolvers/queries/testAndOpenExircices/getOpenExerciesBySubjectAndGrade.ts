@@ -16,7 +16,7 @@ export const getOpenExerciesBySubjectAndGrade = async (
     throw new Error("Subject ID and grade are required");
   }
   try {
-    return await ctx.db
+    const rows = await ctx.db
       .select()
       .from(openExerciesTable)
       .where(
@@ -25,6 +25,11 @@ export const getOpenExerciesBySubjectAndGrade = async (
           eq(openExerciesTable.grade, args.input.grade),
         ),
       );
+
+    return rows.map((row) => ({
+      ...row,
+      favourite: Boolean(row.favourite),
+    }));
   } catch (err) {
     console.error("Failed to get open exercies by subject and grade:", err);
     throw new Error(`Failed to get open exercies by subject and grade`);
