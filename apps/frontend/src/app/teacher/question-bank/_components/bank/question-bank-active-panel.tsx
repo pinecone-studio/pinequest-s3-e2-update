@@ -28,9 +28,9 @@ export function QuestionBankActivePanel({
     );
   }
 
+  const teacherLabel = question.teacherName?.trim();
   const metaItems = [
-    ["Сургууль", "21"],
-    ["Багш", question.teacherName ?? "Ц.Цэвээнжав"],
+    ...(teacherLabel ? ([["Багш", teacherLabel]] as const) : []),
     ["Анги", question.grade],
     ["Хичээл", question.subject],
     ["Сэдэв", question.subtopic?.trim() || question.topic],
@@ -110,7 +110,7 @@ export function QuestionBankActivePanel({
             key={option.id}
             className={`flex rounded-[3px] border px-[12px] py-[8px] text-[12px] leading-[15px] ${
               option.isCorrect
-                ? "border-[#7DC8FF] bg-[#75B8ED] text-[#122459]"
+                ? "border-[#7DC8FF] bg-[#7DC8FF] text-[#122459]"
                 : "border-[#ECECEC] bg-white text-[#122459]"
             }`}
           >

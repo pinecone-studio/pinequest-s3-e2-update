@@ -53,6 +53,7 @@ export function QuestionCard({
 		"Зурагтай асуулт";
 	const noteText =
 		question.content.explanation?.trim() || question.content.guidance?.trim();
+	const teacherLabel = question.teacherName?.trim();
 	const shouldRenderPromptVertical =
 		question.subject === NATIONAL_SCRIPT_SUBJECT &&
 		hasTraditionalMongolianText(question.content.prompt);
@@ -151,9 +152,11 @@ export function QuestionCard({
 				</p>
 			) : null}
 
-			<p className="mt-[8px] text-[13px] font-normal leading-[140%] tracking-[0.04em] text-[#5f5f5f]">
-				16-р сургууль · Багш: {question.teacherName ?? "О.Наранзул"}
-			</p>
+			{teacherLabel ? (
+				<p className="mt-[8px] text-[13px] font-normal leading-[140%] tracking-[0.04em] text-[#5f5f5f]">
+					Багш: {teacherLabel}
+				</p>
+			) : null}
 
 			<div className="mt-auto pt-[14px]">
 				<div className="h-px w-full bg-[#E5E5E5]" />
