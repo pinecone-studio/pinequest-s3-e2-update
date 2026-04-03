@@ -1,4 +1,5 @@
 import { openExerciesTable } from "../../../../db/schema";
+import { requireDbTeacherIdFromClerk } from "../../../../lib/teacher-row-from-clerk";
 import { GraphQLUserContext } from "../../../context";
 type CreateOpenExerciesArgs = {
   subjectId: string;
@@ -19,6 +20,7 @@ export const createOpenExercies = async (
   _args: { input: CreateOpenExerciesArgs },
   ctx: GraphQLUserContext,
 ) => {
+  const teacherRowId = await requireDbTeacherIdFromClerk(ctx);
   try {
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
@@ -35,7 +37,7 @@ export const createOpenExercies = async (
       score: _args.input.score,
       favourite: _args.input.favourite ? 1 : 0,
       notes: _args.input.notes ?? null,
-      teacherId: _args.input.teacherId,
+      teacherId: teacherRowId,
       createdAt: now,
       updatedAt: now,
     });
@@ -52,7 +54,7 @@ export const createOpenExercies = async (
       score: _args.input.score,
       favourite: Boolean(_args.input.favourite),
       notes: _args.input.notes ?? null,
-      teacherId: _args.input.teacherId,
+      teacherId: teacherRowId,
       createdAt: now,
       updatedAt: now,
     };

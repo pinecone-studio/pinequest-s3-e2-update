@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { openExerciesTable } from "../../../../db/schema";
+import { requireDbTeacherIdFromClerk } from "../../../../lib/teacher-row-from-clerk";
 import { GraphQLUserContext } from "../../../context";
 
 type UpdateOpenExerciesArgs = {
@@ -31,6 +32,17 @@ export const updateOpenExercies = async (
   const existing = rows[0];
   if (!existing) throw new Error("Open exercise not found.");
 
+  const dbTeacherId = await requireDbTeacherIdFromClerk(ctx);
+  const legacyClerkId = ctx.clerkUserId?.trim() ?? "";
+  const ownerId = existing.teacherId ?? null;
+  const owns =
+    ownerId == null ||
+    ownerId === dbTeacherId ||
+    (legacyClerkId.length > 0 && ownerId === legacyClerkId);
+  if (!owns) {
+    throw new Error("Энэ даалгаврыг засах эрхгүй.");
+  }
+
   const now = new Date().toISOString();
 
   await ctx.db
@@ -52,7 +64,7 @@ export const updateOpenExercies = async (
             ? 1
             : 0,
       notes: args.input.notes ?? existing.notes,
-      teacherId: args.input.teacherId ?? existing.teacherId,
+      teacherId: dbTeacherId,
       updatedAt: now,
     })
     .where(eq(openExerciesTable.id, id));
