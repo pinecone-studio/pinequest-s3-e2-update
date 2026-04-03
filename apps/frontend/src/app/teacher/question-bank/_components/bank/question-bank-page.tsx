@@ -29,7 +29,6 @@ export function QuestionBankPage({
 		editingValues,
 		filteredQuestions,
 		gradeOptions,
-		getQuestionHeartCount,
 		hasEnteredBank,
 		isBuilderOpen,
 		lastValidationErrors,
@@ -126,7 +125,6 @@ export function QuestionBankPage({
 
 						<QuestionBankFigmaResults
 							activeQuestionId={activeQuestion?.id ?? null}
-							getQuestionHeartCount={getQuestionHeartCount}
 							likedQuestionIds={likedQuestionIds}
 							myQuestionCount={myQuestionCount}
 							myQuestions={myQuestionsByNewest}

@@ -17,7 +17,6 @@ import { QuestionList } from "./question/question-list";
 
 type QuestionBankFigmaResultsProps = {
   activeQuestionId: string | null;
-  getQuestionHeartCount: (question: Question) => number;
   likedQuestionIds: string[];
   myQuestionCount: number;
   myQuestions: Question[];
@@ -37,7 +36,6 @@ type QuestionBankFigmaResultsProps = {
 
 export function QuestionBankFigmaResults({
   activeQuestionId,
-  getQuestionHeartCount,
   likedQuestionIds,
   myQuestionCount,
   myQuestions,
@@ -90,7 +88,6 @@ export function QuestionBankFigmaResults({
           <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.78fr)_minmax(280px,381px)] lg:gap-[22px]">
             <QuestionList
               activeQuestionId={activeQuestionId}
-              getQuestionHeartCount={getQuestionHeartCount}
               likedQuestionIds={likedQuestionIds}
               onAddToExam={onAddToExam}
               onCreateQuestion={onCreateQuestion}
