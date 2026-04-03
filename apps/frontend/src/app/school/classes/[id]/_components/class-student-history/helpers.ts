@@ -22,13 +22,59 @@ function sanitizeFilename(s: string) {
   return t.slice(0, 80) || "export";
 }
 
+function escapeCsvCell(value: string) {
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+function buildCsvFromTablesHtml(tablesHtml: string) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(
+    `<html><body>${tablesHtml}</body></html>`,
+    "text/html",
+  );
+  const tableNodes = Array.from(doc.querySelectorAll("table"));
+  const csvLines: string[] = [];
+
+  for (const [tableIndex, table] of tableNodes.entries()) {
+    const trNodes = Array.from(table.querySelectorAll("tr"));
+
+    for (const tr of trNodes) {
+      const cellNodes = Array.from(tr.children).filter(
+        (node): node is HTMLTableCellElement =>
+          node instanceof HTMLTableCellElement,
+      );
+      if (cellNodes.length === 0) continue;
+
+      const cells: string[] = [];
+      for (const cell of cellNodes) {
+        const value = (cell.textContent ?? "").replace(/\u00a0/g, " ").trim();
+        cells.push(escapeCsvCell(value));
+
+        const extraColumns = Math.max((cell.colSpan || 1) - 1, 0);
+        for (let i = 0; i < extraColumns; i += 1) {
+          cells.push(escapeCsvCell(""));
+        }
+      }
+
+      csvLines.push(cells.join(","));
+    }
+
+    if (tableIndex < tableNodes.length - 1) {
+      csvLines.push("");
+    }
+  }
+
+  return csvLines.join("\r\n");
+}
+
 function triggerExcelDownload(filename: string, tableHtml: string) {
-  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charSet="UTF-8" /></head><body>${tableHtml}</body></html>`;
-  const blob = new Blob([`\ufeff${html}`], { type: "application/vnd.ms-excel;charset=utf-8;" });
+  const csv = buildCsvFromTablesHtml(tableHtml);
+  const finalFilename = filename.replace(/\.xls$/i, ".csv");
+  const blob = new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = filename;
+  link.download = finalFilename;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -64,5 +110,5 @@ export function downloadSingleStudentPastExamXls(
   const base = sanitizeFilename(
     `${classNameLabel}_${student.lastName}_${student.firstName}_${exam.date}`,
   );
-  triggerExcelDownload(`${base}.xls`, html);
+  triggerExcelDownload(`${base}.csv`, html);
 }
