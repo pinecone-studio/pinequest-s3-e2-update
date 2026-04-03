@@ -14,28 +14,6 @@ export function useExamMonitorWebSocket(params: {
 
   useEffect(() => {
     if (!params.enabled || !params.classId?.trim() || !params.token?.trim()) {
-      // #region agent log
-      fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9f3746",
-        },
-        body: JSON.stringify({
-          sessionId: "9f3746",
-          runId: "pre-fix",
-          hypothesisId: "H2",
-          location: "use-exam-monitor-ws.ts:guard",
-          message: "ws skipped preconditions",
-          data: {
-            enabled: params.enabled,
-            hasClassId: Boolean(params.classId?.trim()),
-            hasToken: Boolean(params.token?.trim()),
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       return;
     }
 
@@ -44,27 +22,7 @@ export function useExamMonitorWebSocket(params: {
       classId: params.classId.trim(),
       xExamToken: params.token.trim(),
     });
-    if (!url) {
-      // #region agent log
-      fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9f3746",
-        },
-        body: JSON.stringify({
-          sessionId: "9f3746",
-          runId: "pre-fix",
-          hypothesisId: "H1",
-          location: "use-exam-monitor-ws.ts:buildUrl",
-          message: "student ws url null after build",
-          data: {},
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
-      return;
-    }
+    if (!url) return;
 
     let cancelled = false;
     let attempt = 0;
@@ -79,81 +37,14 @@ export function useExamMonitorWebSocket(params: {
     const connect = () => {
       if (cancelled) return;
       clearReconnect();
-      let safeHost = "";
-      let safeProto = "";
-      try {
-        const u = new URL(url);
-        safeHost = u.hostname;
-        safeProto = u.protocol.replace(":", "");
-      } catch {
-        /* ignore */
-      }
-      // #region agent log
-      fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9f3746",
-        },
-        body: JSON.stringify({
-          sessionId: "9f3746",
-          runId: "pre-fix",
-          hypothesisId: "H5",
-          location: "use-exam-monitor-ws.ts:connect",
-          message: "student WebSocket connect attempt",
-          data: { wsHost: safeHost, wsProto: safeProto, attempt },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
       ws.onopen = () => {
         attempt = 0;
-        // #region agent log
-        fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "9f3746",
-          },
-          body: JSON.stringify({
-            sessionId: "9f3746",
-            runId: "pre-fix",
-            hypothesisId: "H4",
-            location: "use-exam-monitor-ws.ts:onopen",
-            message: "student WebSocket open",
-            data: { wsHost: safeHost },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
       };
 
-      ws.onclose = (ev) => {
-        // #region agent log
-        fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "9f3746",
-          },
-          body: JSON.stringify({
-            sessionId: "9f3746",
-            runId: "pre-fix",
-            hypothesisId: "H3",
-            location: "use-exam-monitor-ws.ts:onclose",
-            message: "student WebSocket close",
-            data: {
-              code: ev.code,
-              wasClean: ev.wasClean,
-              reasonLen: ev.reason?.length ?? 0,
-            },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
+      ws.onclose = () => {
         wsRef.current = null;
         if (cancelled) return;
         attempt += 1;
@@ -162,24 +53,6 @@ export function useExamMonitorWebSocket(params: {
       };
 
       ws.onerror = () => {
-        // #region agent log
-        fetch("http://127.0.0.1:7515/ingest/f9ddb3fc-5255-46a4-b9ef-406f0ac5ea3d", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "9f3746",
-          },
-          body: JSON.stringify({
-            sessionId: "9f3746",
-            runId: "pre-fix",
-            hypothesisId: "H4",
-            location: "use-exam-monitor-ws.ts:onerror",
-            message: "student WebSocket error event",
-            data: { wsHost: safeHost },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
         /* onclose дахин холбоно */
       };
     };
