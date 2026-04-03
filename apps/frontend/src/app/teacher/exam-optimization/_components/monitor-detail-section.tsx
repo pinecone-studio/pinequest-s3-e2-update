@@ -217,18 +217,18 @@ export function MonitorDetailSection({
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#d9dee8] bg-white p-4">
-            <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-xl border border-[#d9dee8] bg-white p-4 sm:p-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {monitoredStudents.map((student, index) => (
                 <div
                   key={student.id}
-                  className="flex items-center justify-between rounded-md bg-[#EDF6FF] px-4 py-3"
+                  className="flex min-w-0 flex-col gap-2 rounded-md bg-[#EDF6FF] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
                 >
-                  <p className="text-[17px] font-semibold text-[#2d2d2d]">
+                  <p className="min-w-0 flex-1 break-words text-[15px] font-semibold leading-snug text-[#2d2d2d] sm:text-[17px]">
                     {index + 1}. {student.fullName}
                   </p>
                   <span
-                    className={`inline-flex items-center justify-center rounded-sm border px-3 py-1 text-[15px] font-semibold ${
+                    className={`inline-flex shrink-0 items-center justify-center self-start rounded-sm border px-3 py-1.5 text-center text-[13px] font-semibold sm:self-center sm:text-[15px] ${
                       !isStarted
                         ? "border-[#cbd5e1] text-[#64748b]"
                         : student.displayStatus === "active"
