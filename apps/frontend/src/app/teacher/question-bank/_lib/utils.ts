@@ -252,13 +252,15 @@ export function validateQuestion(
   values: QuestionBuilderValues,
 ): QuestionValidationErrors {
   const errors: QuestionValidationErrors = {};
+  const resolvedTopic =
+    values.topic.trim() || values.subtopic.trim() || values.subject.trim();
 
   if (!values.prompt.trim())
     errors.prompt = "Сурагчид харагдах асуулгын текстийг оруулна уу.";
   if (!values.grade.trim()) errors.grade = "Анги сонгох эсвэл бичнэ үү.";
   if (!values.subject.trim())
     errors.subject = "Хичээлийн төрлийг сонгох эсвэл бичнэ үү.";
-  if (!values.topic.trim()) errors.topic = "Сэдэв оруулна уу.";
+  if (!resolvedTopic) errors.topic = "Сэдэв оруулна уу.";
   if (!Number.isFinite(values.points) || values.points <= 0)
     errors.points = "Оноо 0-ээс их байх ёстой.";
 

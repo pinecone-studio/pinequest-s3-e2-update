@@ -114,6 +114,10 @@ function formatTeacherName(firstName: string, lastName: string) {
 	return `${l.charAt(0).toUpperCase()}.${f}`;
 }
 
+function hasResolvedTeacher(question: Question) {
+	return Boolean(question.teacherId && question.teacherName?.trim());
+}
+
 function isOwnedByTeacher(
 	question: Question,
 	dbTeacherId: string | null | undefined,
@@ -324,7 +328,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		});
 
 		const combined = [...backendTests, ...backendOpenExercies];
-		return combined;
+		return combined.filter(hasResolvedTeacher);
 	}, [
 		testsData?.getTestsBySybjectAndGrade,
 		openExerciesData?.getOpenExerciesBySubjectAndGrade,
@@ -337,12 +341,14 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const mergedQuestions = useMemo(() => {
 		const byId = new Map<string, Question>();
 		for (const q of remoteQuestions) {
-			if (!removedIds.has(q.id)) {
+			if (!removedIds.has(q.id) && hasResolvedTeacher(q)) {
 				byId.set(q.id, upserts.get(q.id) ?? q);
 			}
 		}
 		for (const [id, q] of upserts) {
-			if (!removedIds.has(id) && !byId.has(id)) byId.set(id, q);
+			if (!removedIds.has(id) && !byId.has(id) && hasResolvedTeacher(q)) {
+				byId.set(id, q);
+			}
 		}
 		return Array.from(byId.values());
 	}, [remoteQuestions, removedIds, upserts]);
@@ -548,6 +554,20 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				subject: entrySelection.subject || built.subject,
 			};
 
+			if (existing) {
+				setUpserts((current) => {
+					const next = new Map(current);
+					next.set(payload.id, payload);
+					return next;
+				});
+				setRemovedIds((current) => {
+					const next = new Set(current);
+					next.delete(payload.id);
+					return next;
+				});
+				setActiveQuestionId(payload.id);
+			}
+
 			try {
 				const subjectId = entrySelection.subjectId;
 				if (!subjectId) {
@@ -562,6 +582,21 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				if (isTypeChangedAcrossStorage) {
 					showToast("Одоогоор хадгалсан асуултын төрлийг ингэж солих боломжгүй.");
 					return false;
+				}
+
+				const optimisticId = existing ? null : payload.id;
+				if (optimisticId) {
+					setUpserts((current) => {
+						const next = new Map(current);
+						next.set(optimisticId, payload);
+						return next;
+					});
+					setRemovedIds((current) => {
+						const next = new Set(current);
+						next.delete(optimisticId);
+						return next;
+					});
+					setActiveQuestionId(optimisticId);
 				}
 
 				if (existing?.questionType === "long_answer") {
@@ -732,6 +767,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 						if (mapped) {
 							setUpserts((current) => {
 								const next = new Map(current);
+								if (optimisticId) next.delete(optimisticId);
 								next.set(mapped.id, {
 									...mapped,
 									title: payload.title || mapped.title,
@@ -745,6 +781,16 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 							});
 						}
 					}
+
+					if (optimisticId) {
+						setRemovedIds((current) => {
+							const next = new Set(current);
+							next.delete(optimisticId);
+							return next;
+						});
+					}
+
+					setActiveQuestionId(created?.id ?? optimisticId);
 
 					if (shouldFetchTests) {
 						// Keep list in sync with selected subject/grade.
@@ -789,6 +835,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 						if (mapped) {
 							setUpserts((current) => {
 								const next = new Map(current);
+								if (optimisticId) next.delete(optimisticId);
 								next.set(mapped.id, {
 									...mapped,
 									title: payload.title || mapped.title,
@@ -803,6 +850,16 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 						}
 					}
 
+					if (optimisticId) {
+						setRemovedIds((current) => {
+							const next = new Set(current);
+							next.delete(optimisticId);
+							return next;
+						});
+					}
+
+					setActiveQuestionId(created?.id ?? optimisticId);
+
 					if (shouldFetchTests) {
 						// Keep list in sync with selected subject/grade.
 						refetchTests();
@@ -814,6 +871,19 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				setEditingValues(null);
 				return true;
 			} catch {
+				if (existing) {
+					setUpserts((current) => {
+						const next = new Map(current);
+						next.set(existing.id, existing);
+						return next;
+					});
+				} else {
+					setUpserts((current) => {
+						const next = new Map(current);
+						next.delete(payload.id);
+						return next;
+					});
+				}
 				showToast("Асуулт хадгалахад алдаа гарлаа. Дахин оролдоно уу.");
 				return false;
 			}
