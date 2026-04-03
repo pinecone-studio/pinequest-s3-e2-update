@@ -236,6 +236,20 @@ export const DELETE_CLASS_MUTATION = gql`
   }
 `;
 
+export const UPDATE_CLASS_MUTATION = gql`
+  mutation UpdateSchoolClass($input: UpdateClassInput!) {
+    updateClass(input: $input) {
+      id
+      schoolId
+      grade
+      section
+      sectionTeacherId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const UPDATE_STUDENT_MUTATION = gql`
   mutation UpdateStudentSchool($input: UpdateStudentInput!) {
     updateStudent(input: $input) {

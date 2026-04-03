@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { classTable } from "../../../../db/schema";
+import { classTable, teacherTable } from "../../../../db/schema";
 import { assertSchoolAdminOwnsSchoolId } from "../../../../lib/school-admin-guard";
 import { GraphQLUserContext } from "../../../context";
 
@@ -25,12 +25,25 @@ export const updateClass = async (
   const grade =
     args.input.grade != null ? Number(args.input.grade) : existing.grade;
   const section = (args.input.section?.trim() ?? existing.section) || existing.section;
-  let sectionTeacherId =
-    args.input.sectionTeacherId != null
-      ? args.input.sectionTeacherId.trim()
-      : existing.sectionTeacherId;
-  if (!sectionTeacherId) {
-    throw new Error("sectionTeacherId заавал бөглөнө.");
+
+  let sectionTeacherId = existing.sectionTeacherId;
+  if (
+    args.input.sectionTeacherId !== undefined &&
+    args.input.sectionTeacherId !== null
+  ) {
+    const tid = String(args.input.sectionTeacherId).trim();
+    if (!tid) {
+      throw new Error("Анги даасан багш сонгоно уу.");
+    }
+    const teacherRows = await ctx.db
+      .select()
+      .from(teacherTable)
+      .where(eq(teacherTable.id, tid));
+    const teacher = teacherRows[0];
+    if (!teacher || teacher.schoolId !== existing.schoolId) {
+      throw new Error("Багш олдсонгүй эсвэл энэ сургуулийн багш биш.");
+    }
+    sectionTeacherId = tid;
   }
 
   const now = new Date().toISOString();

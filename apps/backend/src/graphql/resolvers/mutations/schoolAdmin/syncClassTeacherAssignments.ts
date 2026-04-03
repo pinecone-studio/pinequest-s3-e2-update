@@ -57,12 +57,5 @@ export const syncClassTeacherAssignments = async (
       .where(eq(teacherTable.id, t.id));
   }
 
-  if (desired.length > 0) {
-    await ctx.db
-      .update(classTable)
-      .set({ sectionTeacherId: desired[0], updatedAt: now })
-      .where(eq(classTable.id, classId));
-  }
-
   return true;
 };
