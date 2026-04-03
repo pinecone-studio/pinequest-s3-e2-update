@@ -48,6 +48,7 @@ export const getTestsByIds = async (
         id: row.id,
         grade: row.grade ?? 0,
         subjectId: row.subjectId ?? "",
+        title: row.title ?? null,
         question: row.question,
         answers: parseTestAnswersCell(row.answers),
         imageUrl: row.imageUrl ?? null,

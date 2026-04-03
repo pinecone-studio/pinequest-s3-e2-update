@@ -3,6 +3,7 @@ export const testTypeDefs = /* GraphQL */ `
     id: ID!
     grade: Int!
     subjectId: String!
+    title: String
     question: String!
     answers: [JSON!]!
     rightAnswer: String

@@ -99,6 +99,7 @@ export const GET_TESTS_BY_SUBJECT_AND_GRADE = gql`
       id
       grade
       subjectId
+      title
       question
       answers
       rightAnswer
@@ -215,6 +216,7 @@ export const GET_EXAM_QUESTION_ITEMS = gql`
       id
       grade
       subjectId
+      title
       question
       answers
       rightAnswer
@@ -254,6 +256,7 @@ export const GET_TEST_BY_ID = gql`
       id
       grade
       subjectId
+      title
       question
       answers
       rightAnswer

@@ -3,6 +3,7 @@ export type OptionId = "A" | "B" | "C" | "D";
 export type ExamQuestion = {
   id: number;
   questionNumber: number;
+  title: string;
   text: string;
   type: "multiple_choice";
   options: Array<{ id: OptionId; text: string }>;

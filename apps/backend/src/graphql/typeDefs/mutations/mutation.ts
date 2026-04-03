@@ -2,6 +2,7 @@ export const mutationTypeDefs = /* GraphQL */ `
   input CreateTestsInput {
     grade: Int!
     subjectId: String!
+    title: String
     question: String!
     answers: [JSON!]!
     imageUrl: String
@@ -33,6 +34,7 @@ export const mutationTypeDefs = /* GraphQL */ `
     id: String!
     grade: Int
     subjectId: String
+    title: String
     question: String
     answers: [JSON!]
     imageUrl: String

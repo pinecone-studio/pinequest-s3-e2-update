@@ -37,6 +37,7 @@ export const getTestsBySybjectAndGrade = async (
     ...row,
     // GraphQL expects `[JSON!]!` iterable, but DB stores a JSON string.
     answers: parseAnswers((row as any).answers),
+    title: row.title ?? null,
     favourite: Boolean(row.favourite),
   }));
 

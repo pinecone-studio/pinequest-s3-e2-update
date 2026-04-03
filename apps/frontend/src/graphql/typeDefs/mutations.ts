@@ -6,6 +6,7 @@ export const CREATE_TESTS = gql`
       id
       grade
       subjectId
+      title
       question
       answers
       rightAnswer
@@ -50,6 +51,7 @@ export const UPDATE_TESTS = gql`
       id
       grade
       subjectId
+      title
       question
       answers
       rightAnswer

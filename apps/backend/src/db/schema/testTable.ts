@@ -4,6 +4,7 @@ export const testTable = sqliteTable("test", {
   id: text("id").primaryKey(),
   grade: integer("grade"),
   subjectId: text("subjectId"),
+  title: text("title"),
   question: text("question").notNull(),
   answers: text("answers").notNull(),
   imageUrl: text("imageUrl"),

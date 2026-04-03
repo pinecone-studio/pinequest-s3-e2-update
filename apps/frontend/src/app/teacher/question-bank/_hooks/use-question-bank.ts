@@ -585,6 +585,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								id: payload.id,
 								grade,
 								subjectId,
+								title: payload.title,
 								question: payload.content.prompt,
 								answers,
 								imageUrl: payload.imageUrl || "",
@@ -705,6 +706,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 							input: {
 								grade,
 								subjectId,
+								title: payload.title,
 								question: payload.content.prompt,
 								answers,
 								imageUrl: payload.imageUrl || "",

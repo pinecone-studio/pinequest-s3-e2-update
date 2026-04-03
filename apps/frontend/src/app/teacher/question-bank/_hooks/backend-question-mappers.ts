@@ -68,7 +68,8 @@ export function mapBackendTestsToQuestions(
     const subject = subjectNameFromId(test.subjectId, subjectNameById);
     const prompt = test.question?.trim() || "(Агуулга байхгүй)";
     const promptText = normalizePromptText(prompt);
-    const title = promptText.slice(0, 80) || "Асуулт";
+    const title =
+      test.title?.trim()?.slice(0, 120) || promptText.slice(0, 80) || "Асуулт";
     const topic = promptText.slice(0, 120) || subject;
 
     return {

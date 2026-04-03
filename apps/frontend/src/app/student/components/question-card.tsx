@@ -16,6 +16,9 @@ export function QuestionCard({
   onSelectOption,
 }: QuestionCardProps) {
   const shouldRenderQuestionVertical = hasTraditionalMongolianText(question.text);
+  const shouldRenderTitleVertical =
+    hasTraditionalMongolianText(question.title) &&
+    !/[A-Za-z\u0400-\u04FF0-9]/.test(question.title);
 
   return (
     <section>
@@ -24,6 +27,24 @@ export function QuestionCard({
       </p>
       <h2
         className={`mt-2 break-words text-base font-semibold text-[#162a68] select-none sm:text-lg md:text-[24px] ${
+          shouldRenderTitleVertical
+            ? "min-h-20 overflow-x-auto leading-8"
+            : "leading-snug"
+        }`}
+        style={
+          shouldRenderTitleVertical
+            ? {
+                writingMode: "vertical-lr",
+                textOrientation: "mixed",
+                whiteSpace: "pre-wrap",
+              }
+            : undefined
+        }
+      >
+        {question.title}
+      </h2>
+      <h2
+        className={`mt-3 break-words text-base font-semibold text-[#162a68] select-none sm:text-lg md:text-[24px] ${
           shouldRenderQuestionVertical
             ? "min-h-20 overflow-x-auto leading-8"
             : "leading-snug"

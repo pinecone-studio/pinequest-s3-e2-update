@@ -6,6 +6,7 @@ export const GET_ALL_TESTS_QUERY = gql`
       id
       grade
       subjectId
+      title
       question
       answers
       rightAnswer
@@ -25,6 +26,7 @@ export type BackendTest = {
   id: string;
   grade: number;
   subjectId: string;
+  title?: string | null;
   question: string;
   answers: unknown[];
   rightAnswer: string | null;
