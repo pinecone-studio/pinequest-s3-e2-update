@@ -54,6 +54,7 @@ export const getOpenExerciesByIds = async (
         imageUrl: row.imageUrl ?? null,
         difficulty: row.difficulty ?? null,
         score: row.score,
+        favourite: Boolean(row.favourite),
         notes: row.notes ?? null,
         teacherId: row.teacherId ?? null,
         createdAt: row.createdAt,

@@ -55,6 +55,7 @@ export const getTestsByIds = async (
         difficulty: row.difficulty,
         score: row.score,
         usageCount: row.usageCount ?? 0,
+        favourite: Boolean(row.favourite),
         notes: row.notes ?? null,
         teacherId: row.teacherId,
         createdAt: row.createdAt,

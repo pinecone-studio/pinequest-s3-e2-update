@@ -106,6 +106,7 @@ export const GET_TESTS_BY_SUBJECT_AND_GRADE = gql`
       difficulty
       score
       usageCount
+      favourite
       notes
       teacherId
       createdAt
@@ -127,6 +128,7 @@ export const GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE = gql`
       imageUrl
       difficulty
       score
+      favourite
       notes
       teacherId
       createdAt
@@ -220,6 +222,7 @@ export const GET_EXAM_QUESTION_ITEMS = gql`
       difficulty
       score
       usageCount
+      favourite
       notes
       teacherId
       createdAt
@@ -236,6 +239,7 @@ export const GET_EXAM_QUESTION_ITEMS = gql`
       imageUrl
       difficulty
       score
+      favourite
       notes
       teacherId
       createdAt
@@ -257,6 +261,7 @@ export const GET_TEST_BY_ID = gql`
       difficulty
       score
       usageCount
+      favourite
       notes
       teacherId
       createdAt
@@ -278,6 +283,7 @@ export const GET_OPEN_EXERCIES_BY_ID = gql`
       imageUrl
       difficulty
       score
+      favourite
       notes
       teacherId
       createdAt

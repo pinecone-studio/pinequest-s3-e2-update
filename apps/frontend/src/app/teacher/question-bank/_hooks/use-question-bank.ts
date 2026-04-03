@@ -20,6 +20,8 @@ import type { BackendTest } from "./get-tests";
 import {
 	CREATE_OPEN_EXERCIES,
 	CREATE_TESTS,
+	UPDATE_OPEN_EXERCIES,
+	UPDATE_TESTS,
 } from "@/graphql/typeDefs/mutations";
 import {
 	GET_ALL_SUBJECTS,
@@ -56,6 +58,14 @@ type CreateTestsResponse = {
 
 type CreateOpenExerciesResponse = {
 	createOpenExercies: BackendOpenExercies;
+};
+
+type UpdateTestsResponse = {
+	updateTests: BackendTest & { teacherId: string };
+};
+
+type UpdateOpenExerciesResponse = {
+	updateOpenExercies: BackendOpenExercies;
 };
 
 type GetAllSubjectResponse = {
@@ -100,6 +110,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const [createTests] = useMutation<CreateTestsResponse>(CREATE_TESTS);
 	const [createOpenExercies] =
 		useMutation<CreateOpenExerciesResponse>(CREATE_OPEN_EXERCIES);
+	const [updateTests] = useMutation<UpdateTestsResponse>(UPDATE_TESTS);
+	const [updateOpenExercies] =
+		useMutation<UpdateOpenExerciesResponse>(UPDATE_OPEN_EXERCIES);
 
 	const subjectItems = useMemo(
 		() => subjectsData?.getAllSubject ?? [],
@@ -203,7 +216,6 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	);
 	const [removedIds, setRemovedIds] = useState(() => new Set<string>());
 	const [upserts, setUpserts] = useState(() => new Map<string, Question>());
-	const [likedQuestionIds, setLikedQuestionIds] = useState<string[]>([]);
 	const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
 	const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
 	const [isBuilderOpen, setIsBuilderOpen] = useState(false);
@@ -296,6 +308,14 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		[scopedQuestions, teacher.id, teacher.name],
 	);
 
+	const likedQuestionIds = useMemo(
+		() =>
+			scopedQuestions
+				.filter((question) => question.isFavourite)
+				.map((question) => question.id),
+		[scopedQuestions],
+	);
+
 	const filteredQuestions = useMemo(
 		() => filterAndSortQuestions(scopedQuestions, currentFilters),
 		[scopedQuestions, currentFilters],
@@ -352,18 +372,26 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	}, []);
 
 	const getQuestionHeartCount = useCallback(
-		(question: Question) =>
-			question.usageCount + (likedQuestionIds.includes(question.id) ? 1 : 0),
-		[likedQuestionIds],
+		(question: Question) => question.usageCount + (question.isFavourite ? 1 : 0),
+		[],
 	);
 
 	const toggleQuestionLike = useCallback((questionId: string) => {
-		setLikedQuestionIds((current) =>
-			current.includes(questionId)
-				? current.filter((id) => id !== questionId)
-				: [...current, questionId],
-		);
-	}, []);
+		const target =
+			upserts.get(questionId) ??
+			mergedQuestions.find((question) => question.id === questionId);
+		if (!target) return;
+
+		setUpserts((current) => {
+			const next = new Map(current);
+			next.set(questionId, {
+				...target,
+				isFavourite: !target.isFavourite,
+				updatedAt: new Date().toISOString(),
+			});
+			return next;
+		});
+	}, [mergedQuestions, upserts]);
 
 	const toggleQuestionSelection = useCallback((questionId: string) => {
 		setSelectedQuestionIds((current) =>
@@ -457,26 +485,6 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				subject: entrySelection.subject || built.subject,
 			};
 
-			// Editing flow: update the existing local row immediately so option/count
-			// changes (e.g. 2 -> 4 choices) render on the same question card.
-			if (existing) {
-				setUpserts((current) => {
-					const next = new Map(current);
-					next.set(payload.id, payload);
-					return next;
-				});
-				setRemovedIds((current) => {
-					const next = new Set(current);
-					next.delete(payload.id);
-					return next;
-				});
-				setActiveQuestionId(payload.id);
-				setPublishSuccessDialogOpen(true);
-				setIsBuilderOpen(false);
-				setEditingValues(null);
-				return true;
-			}
-
 			try {
 				const subjectId = entrySelection.subjectId;
 				if (!subjectId) {
@@ -484,6 +492,150 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 					return false;
 				}
 				const grade = parseGradeToInt(payload.grade);
+				const isTypeChangedAcrossStorage =
+					existing &&
+					(existing.questionType === "long_answer") !==
+						(payload.questionType === "long_answer");
+				if (isTypeChangedAcrossStorage) {
+					showToast("Одоогоор хадгалсан асуултын төрлийг ингэж солих боломжгүй.");
+					return false;
+				}
+
+				if (existing?.questionType === "long_answer") {
+					const result = await updateOpenExercies({
+						variables: {
+							input: {
+								id: payload.id,
+								subjectId,
+								grade,
+								topic: payload.topic || payload.subject,
+								title: payload.title,
+								question: payload.content.prompt,
+								answer: payload.correctAnswer || null,
+								imageUrl: payload.imageUrl || null,
+								difficulty: payload.difficulty,
+								score: payload.points,
+								favourite: payload.isFavourite ?? false,
+								notes:
+									payload.content.explanation ||
+									payload.content.guidance ||
+									null,
+								teacherId: teacher.id,
+							},
+						},
+					});
+
+					const updated = result.data?.updateOpenExercies;
+					if (updated) {
+						const [mapped] = mapBackendOpenExerciesToQuestions(
+							[updated],
+							subjectNameById,
+						);
+						if (mapped) {
+							setUpserts((current) => {
+								const next = new Map(current);
+								next.set(mapped.id, {
+									...mapped,
+									title: payload.title || mapped.title,
+									topic: payload.topic || mapped.topic,
+									subtopic: payload.subtopic || mapped.subtopic,
+									source: "school",
+									teacherName: teacher.name,
+									teacherId: teacher.id,
+								});
+								return next;
+							});
+						}
+					}
+
+					setRemovedIds((current) => {
+						const next = new Set(current);
+						next.delete(payload.id);
+						return next;
+					});
+					setActiveQuestionId(payload.id);
+
+					if (shouldFetchTests) {
+						refetchOpenExercies();
+					}
+
+					setPublishSuccessDialogOpen(true);
+					setIsBuilderOpen(false);
+					setEditingValues(null);
+					return true;
+				}
+
+				if (existing) {
+					const answers =
+						payload.questionType === "multiple_choice"
+							? payload.options.map((o) => o.text)
+							: payload.correctAnswer
+								? [payload.correctAnswer]
+								: [];
+
+					const result = await updateTests({
+						variables: {
+							input: {
+								id: payload.id,
+								grade,
+								subjectId,
+								question: payload.content.prompt,
+								answers,
+								imageUrl: payload.imageUrl || "",
+								rightAnswer: payload.correctAnswer || "",
+								difficulty: payload.difficulty,
+								score: payload.points,
+								usageCount: payload.usageCount,
+								favourite: payload.isFavourite ?? false,
+								notes:
+									payload.content.explanation ||
+									payload.content.guidance ||
+									"",
+								teacherId: teacher.id,
+							},
+						},
+					});
+
+					const updated = result.data?.updateTests;
+					if (updated) {
+						const [mapped] = mapBackendTestsToQuestions(
+							[updated as BackendTest],
+							subjectNameById,
+						);
+						if (mapped) {
+							setUpserts((current) => {
+								const next = new Map(current);
+								next.set(mapped.id, {
+									...mapped,
+									title: payload.title || mapped.title,
+									topic: payload.topic || mapped.topic,
+									subtopic: payload.subtopic || mapped.subtopic,
+									source: "school",
+									teacherName: teacher.name,
+									teacherId: teacher.id,
+								});
+								return next;
+							});
+						}
+					}
+
+					setRemovedIds((current) => {
+						const next = new Set(current);
+						next.delete(payload.id);
+						return next;
+					});
+					setActiveQuestionId(payload.id);
+
+					if (shouldFetchTests) {
+						refetchTests();
+					}
+
+					setPublishSuccessDialogOpen(true);
+					setIsBuilderOpen(false);
+					setEditingValues(null);
+					return true;
+				}
+
 				if (payload.questionType === "long_answer") {
 					const result = await createOpenExercies({
 						variables: {
@@ -497,6 +649,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								imageUrl: payload.imageUrl || null,
 								difficulty: payload.difficulty,
 								score: payload.points,
+								favourite: payload.isFavourite ?? false,
 								notes:
 									payload.content.explanation ||
 									payload.content.guidance ||
@@ -553,6 +706,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								difficulty: payload.difficulty,
 								score: payload.points,
 								usageCount: 0,
+								favourite: payload.isFavourite ?? false,
 								notes:
 									payload.content.explanation || payload.content.guidance || "",
 								teacherId: teacher.id,
@@ -602,6 +756,8 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		[
 			createTests,
 			createOpenExercies,
+			updateTests,
+			updateOpenExercies,
 			mergedQuestions,
 			entrySelection.grade,
 			entrySelection.subject,

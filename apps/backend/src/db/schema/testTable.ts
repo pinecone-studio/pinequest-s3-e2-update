@@ -11,6 +11,7 @@ export const testTable = sqliteTable("test", {
   difficulty: text("difficulty").notNull(),
   score: integer("score").notNull(),
   usageCount: integer("usageCount").notNull().default(0),
+  favourite: integer("favourite").notNull().default(0),
   notes: text("notes"),
   teacherId: text("teacherId").notNull(),
   createdAt: text("createdAt").notNull(),

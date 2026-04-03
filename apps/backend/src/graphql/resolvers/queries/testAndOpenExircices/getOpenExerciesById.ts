@@ -10,10 +10,15 @@ export const getOpenExerciesById = async (
   if (!args.openExerciesId) throw new Error("Open exercies id is requiered.");
 
   try {
-    return await ctx.db
+    const rows = await ctx.db
       .select()
       .from(openExerciesTable)
       .where(eq(openExerciesTable.id, args.openExerciesId));
+
+    return rows.map((row) => ({
+      ...row,
+      favourite: Boolean(row.favourite),
+    }));
   } catch (err) {
     console.error("Failed to get open exercies by id. Error:", err);
     throw new Error("Failed to get open exercies.");

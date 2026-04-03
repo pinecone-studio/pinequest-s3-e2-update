@@ -30,6 +30,7 @@ export async function getAllTests(
     difficulty: row.difficulty,
     score: row.score,
     usageCount: row.usageCount ?? 0,
+    favourite: Boolean(row.favourite),
     notes: row.notes ?? null,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
