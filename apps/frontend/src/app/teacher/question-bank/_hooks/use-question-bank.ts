@@ -27,6 +27,7 @@ import {
 import {
 	GET_ALL_SUBJECTS,
 	GET_OPEN_EXERCIES_BY_SUBJECT_AND_GRADE,
+	GET_TEACHERS_BY_SCHOOL_ID,
 	GET_TESTS_BY_SUBJECT_AND_GRADE,
 } from "@/graphql/typeDefs/queries";
 import {
@@ -81,6 +82,16 @@ type GetOpenExerciesBySubjectAndGradeResponse = {
 	getOpenExerciesBySubjectAndGrade: BackendOpenExercies[];
 };
 
+type SchoolTeacherRow = {
+	id: string;
+	firstName: string;
+	lastName: string;
+};
+
+type GetTeachersBySchoolIdResponse = {
+	getTeachersBySchoolId: SchoolTeacherRow[];
+};
+
 function entryMatchesQuestion(
 	question: Question,
 	entrySubject: string,
@@ -92,6 +103,15 @@ function entryMatchesQuestion(
 function parseGradeToInt(gradeLabel: string) {
 	const n = Number.parseInt(gradeLabel, 10);
 	return Number.isFinite(n) ? n : 0;
+}
+
+function formatTeacherName(firstName: string, lastName: string) {
+	const l = lastName.trim();
+	const f = firstName.trim();
+	if (!l && !f) return "";
+	if (!l) return f;
+	if (!f) return l;
+	return `${l.charAt(0).toUpperCase()}.${f}`;
 }
 
 function isOwnedByTeacher(
@@ -110,8 +130,16 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const teacher = useTeacher();
 	const { teacher: dbTeacherRow } = useTeacherDb();
 	const dbTeacherId = dbTeacherRow?.id ?? null;
+	const schoolId = dbTeacherRow?.schoolId ?? "";
 	const { data: subjectsData, loading: subjectsLoading } =
 		useQuery<GetAllSubjectResponse>(GET_ALL_SUBJECTS);
+	const { data: teachersData } = useQuery<GetTeachersBySchoolIdResponse>(
+		GET_TEACHERS_BY_SCHOOL_ID,
+		{
+			variables: { schoolId },
+			skip: !schoolId,
+		},
+	);
 	const [createTests] = useMutation<CreateTestsResponse>(CREATE_TESTS);
 	const [createOpenExercies] =
 		useMutation<CreateOpenExerciesResponse>(CREATE_OPEN_EXERCIES);
@@ -129,6 +157,25 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		for (const s of subjectItems) map.set(s.id, s.name);
 		return map;
 	}, [subjectItems]);
+
+	const currentTeacherName = useMemo(() => {
+		const fromDb = formatTeacherName(
+			dbTeacherRow?.firstName ?? "",
+			dbTeacherRow?.lastName ?? "",
+		);
+		return fromDb || teacher.name;
+	}, [dbTeacherRow?.firstName, dbTeacherRow?.lastName, teacher.name]);
+
+	const teacherNameById = useMemo(() => {
+		const map = new Map<string, string>();
+		for (const teacherRow of teachersData?.getTeachersBySchoolId ?? []) {
+			map.set(
+				teacherRow.id,
+				formatTeacherName(teacherRow.firstName, teacherRow.lastName),
+			);
+		}
+		return map;
+	}, [teachersData?.getTeachersBySchoolId]);
 
 	const entryFromRoute = useMemo(() => {
 		const subjectId = options?.initialSubjectId ?? "";
@@ -252,7 +299,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				...q,
 				source: owner ? "school" : "global",
 				teacherId: owner ?? null,
-				teacherName: isMine ? teacher.name : q.teacherName,
+				teacherName:
+					(isMine ? currentTeacherName : undefined) ??
+					(owner ? teacherNameById.get(owner) : undefined) ??
+					q.teacherName,
 			} satisfies Question;
 		});
 		const backendOpenExercies = mapBackendOpenExerciesToQuestions(
@@ -266,7 +316,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			return {
 				...q,
 				teacherId: owner ?? null,
-				teacherName: isMine ? teacher.name : q.teacherName,
+				teacherName:
+					(isMine ? currentTeacherName : undefined) ??
+					(owner ? teacherNameById.get(owner) : undefined) ??
+					q.teacherName,
 			} satisfies Question;
 		});
 
@@ -277,7 +330,8 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		openExerciesData?.getOpenExerciesBySubjectAndGrade,
 		subjectNameById,
 		dbTeacherId,
-		teacher.name,
+		currentTeacherName,
+		teacherNameById,
 	]);
 
 	const mergedQuestions = useMemo(() => {
@@ -308,9 +362,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const myQuestions = useMemo(
 		() =>
 			scopedQuestions.filter((q) =>
-				isOwnedByTeacher(q, dbTeacherId, teacher.name),
+				isOwnedByTeacher(q, dbTeacherId, currentTeacherName),
 			),
-		[scopedQuestions, dbTeacherId, teacher.name],
+		[scopedQuestions, dbTeacherId, currentTeacherName],
 	);
 
 	const likedQuestionIds = useMemo(
@@ -444,7 +498,10 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const deleteQuestion = useCallback(
 		(questionId: string) => {
 			const target = mergedQuestions.find((q) => q.id === questionId);
-			if (target && !isOwnedByTeacher(target, dbTeacherId, teacher.name)) {
+			if (
+				target &&
+				!isOwnedByTeacher(target, dbTeacherId, currentTeacherName)
+			) {
 				showToast("Зөвхөн өөрийн үүсгэсэн асуултыг устгана.");
 				return;
 			}
@@ -461,7 +518,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 				current === questionId ? null : current,
 			);
 		},
-		[mergedQuestions, showToast, dbTeacherId, teacher.name],
+		[mergedQuestions, showToast, dbTeacherId, currentTeacherName],
 	);
 
 	const submitQuestion = useCallback(
@@ -485,7 +542,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			const payload: Question = {
 				...built,
 				source: "school",
-				teacherName: teacher.name,
+				teacherName: currentTeacherName,
 				teacherId: dbTeacherId,
 				grade: entrySelection.grade || built.grade,
 				subject: entrySelection.subject || built.subject,
@@ -546,7 +603,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									topic: payload.topic || mapped.topic,
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
-									teacherName: teacher.name,
+									teacherName: currentTeacherName,
 									teacherId: dbTeacherId,
 								});
 								return next;
@@ -618,7 +675,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									topic: payload.topic || mapped.topic,
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
-									teacherName: teacher.name,
+									teacherName: currentTeacherName,
 									teacherId: dbTeacherId,
 								});
 								return next;
@@ -681,7 +738,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									topic: payload.topic || mapped.topic,
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
-									teacherName: teacher.name,
+									teacherName: currentTeacherName,
 									teacherId: dbTeacherId,
 								});
 								return next;
@@ -738,7 +795,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 									topic: payload.topic || mapped.topic,
 									subtopic: payload.subtopic || mapped.subtopic,
 									source: "school",
-									teacherName: teacher.name,
+									teacherName: currentTeacherName,
 									teacherId: dbTeacherId,
 								});
 								return next;
@@ -770,7 +827,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 			entrySelection.grade,
 			entrySelection.subject,
 			entrySelection.subjectId,
-			teacher.name,
+			currentTeacherName,
 			dbTeacherId,
 			refetchTests,
 			refetchOpenExercies,

@@ -242,7 +242,7 @@ function ManagementCard({
               key={option.id}
               className={`flex rounded-[4px] border px-[10px] py-[8px] text-[11px] leading-[13px] ${
                 option.isCorrect
-                  ? "border-[#7DC8FF] bg-[#75B8ED] text-[#122459]"
+                  ? "border-[#7DC8FF] bg-[#7DC8FF] text-[#122459]"
                   : "border-[#ECECEC] bg-white text-[#122459]"
               }`}
             >
@@ -271,8 +271,9 @@ function ManagementCard({
       ) : null}
 
       <div className="mt-[18px] grid grid-cols-[1fr_auto] gap-x-[12px] gap-y-[8px]">
-        <MetaRow label="Сургууль" value="16" />
-        <MetaRow label="Багш" value={question.teacherName ?? "О.Наранзул"} />
+        {question.teacherName?.trim() ? (
+          <MetaRow label="Багш" value={question.teacherName.trim()} />
+        ) : null}
         <MetaRow label="Анги" value={question.grade} />
         <MetaRow label="Хичээл" value={question.subject} />
         <MetaRow label="Сэдэв" value={question.subtopic?.trim() || question.topic} />

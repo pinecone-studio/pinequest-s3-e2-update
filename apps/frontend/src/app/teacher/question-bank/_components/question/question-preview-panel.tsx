@@ -173,7 +173,7 @@ export function QuestionPreviewPanel({
         <div className="flex items-center justify-between gap-3">
           <dt>Нийтэлсэн багш</dt>
           <dd className="font-semibold text-[#183153]">
-            {question.teacherName ?? "Систем"}
+            {question.teacherName?.trim() || "Тодорхойгүй"}
           </dd>
         </div>
         <div className="flex items-center justify-between gap-3">
