@@ -44,7 +44,10 @@ export default function FaceCam({
   const noFaceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTelemetryKindRef = useRef<FaceKindTelemetry | null>(null);
   const onFaceKindChangeRef = useRef(onFaceKindChange);
-  onFaceKindChangeRef.current = onFaceKindChange;
+
+  useEffect(() => {
+    onFaceKindChangeRef.current = onFaceKindChange;
+  }, [onFaceKindChange]);
 
   async function startDetection() {
     const video = webcamRef.current?.video;
@@ -187,7 +190,7 @@ export default function FaceCam({
   }, [faceDetectionWarning]);
 
   return (
-    <div className="relative aspect-[4/3] w-[220px] overflow-hidden rounded-[14px] border-[3px] border-[#2563eb] bg-white sm:w-[240px] sm:rounded-[18px] md:w-[260px] md:rounded-[20px]">
+    <div className="relative aspect-4/3 w-55 overflow-hidden rounded-[14px] border-[3px] border-[#2563eb] bg-white sm:w-60 sm:rounded-[18px] md:w-65 md:rounded-[20px]">
       <Webcam
         audio={false}
         ref={webcamRef}
