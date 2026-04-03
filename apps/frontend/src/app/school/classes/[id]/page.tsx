@@ -4,19 +4,14 @@ import { auth } from "@clerk/nextjs/server";
 import { print } from "graphql";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Pencil } from "lucide-react";
 import { authSignInHref } from "@/app/lib/auth-redirect";
 import {
   buildPastExamRowsFromApi,
   type ApiExamQuestionSummary,
 } from "@/app/lib/class-past-exams-from-api";
 import type { Student } from "@/app/lib/types";
-import {
-  assignTeachersToClass,
-  deleteClass,
-  removeStudent,
-  updateStudent,
-} from "@/app/school/action";
+import { deleteClass, removeStudent, updateStudent } from "@/app/school/action";
+import { EditClassInfoDialog } from "./_components/edit-class-info-dialog";
 import { schoolGraphql } from "@/app/school/_lib/school-graphql-server";
 import {
   GET_ALL_SUBJECTS,
@@ -195,14 +190,18 @@ export default async function AdminClassDetailPage({
         <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-zinc-900">Ангийн мэдээлэл</h3>
-            <button
-              type="button"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 text-zinc-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-              title="Засах"
-              aria-label="Ангийн мэдээлэл засах"
-            >
-              <Pencil className="h-4 w-4" />
-            </button>
+            <EditClassInfoDialog
+              classId={klass.id}
+              initialGrade={klass.grade}
+              initialSection={klass.section}
+              initialSectionTeacherId={klass.sectionTeacherId}
+              teachers={teachers.map((t) => ({
+                id: t.id,
+                firstName: t.firstName,
+                lastName: t.lastName,
+                email: t.email,
+              }))}
+            />
           </div>
           <div className="mt-3 space-y-2 text-sm text-zinc-600">
             <p>
@@ -229,9 +228,9 @@ export default async function AdminClassDetailPage({
               Эхлээд «Хүний нөөц» хуудаснаас багш нэмнэ үү.
             </p>
           ) : (
-            <form action={assignTeachersToClass} className="mt-4 space-y-4">
-              <input type="hidden" name="classId" value={klass.id} />
+            <div className="mt-4 space-y-4">
               <TeacherAssignmentPicker
+                classId={klass.id}
                 teachers={teachers.map((t) => ({
                   id: t.id,
                   name: teacherDisplayName(t),
@@ -240,7 +239,7 @@ export default async function AdminClassDetailPage({
                 }))}
                 initialSelectedIds={assignedTeacherIds}
               />
-            </form>
+            </div>
           )}
         </section>
       </div>
@@ -248,7 +247,7 @@ export default async function AdminClassDetailPage({
         classId={klass.id}
         classNameLabel={classDisplay}
         students={roster}
-        fallbackPastExams={pastExams}
+        pastExams={pastExams}
         updateStudentAction={updateStudent}
         removeStudentAction={removeStudent}
       />

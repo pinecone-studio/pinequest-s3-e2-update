@@ -1,16 +1,37 @@
 "use client";
 
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { CREATE_CLASS } from "@/graphql/typeDefs/mutations";
-import { GET_CLASS_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
+import { GET_CLASS_BY_SCHOOL_ID, GET_TEACHERS_BY_SCHOOL_ID } from "@/graphql/typeDefs/queries";
+
+type TeacherOption = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
+type TeachersQuery = {
+  getTeachersBySchoolId: TeacherOption[];
+};
 
 export function AddClassDialog({ schoolId }: { schoolId: string }) {
   const [open, setOpen] = useState(false);
   const [grade, setGrade] = useState("");
   const [section, setSection] = useState("");
+  const [sectionTeacherId, setSectionTeacherId] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
+
+  const { data: teachersData, loading: teachersLoading } = useQuery<TeachersQuery>(
+    GET_TEACHERS_BY_SCHOOL_ID,
+    {
+      variables: { schoolId },
+      skip: !schoolId || !open,
+      fetchPolicy: "cache-and-network",
+    },
+  );
 
   const [createClass, { loading }] = useMutation(CREATE_CLASS, {
     refetchQueries: [{ query: GET_CLASS_BY_SCHOOL_ID, variables: { schoolId } }],
@@ -65,6 +86,11 @@ export function AddClassDialog({ schoolId }: { schoolId: string }) {
                   setFormError("Бүлэг (үсэг) оруулна уу.");
                   return;
                 }
+                const homeroomId = sectionTeacherId.trim();
+                if (!homeroomId) {
+                  setFormError("Анги даасан багш сонгоно уу.");
+                  return;
+                }
                 if (!schoolId) {
                   setFormError("Сургуулийн мэдээлэл олдсонгүй. Дахин ачаална уу.");
                   return;
@@ -76,12 +102,13 @@ export function AddClassDialog({ schoolId }: { schoolId: string }) {
                         schoolId,
                         grade: g,
                         section: sec,
-                        sectionTeacherId: "",
+                        sectionTeacherId: homeroomId,
                       },
                     },
                   });
                   setGrade("");
                   setSection("");
+                  setSectionTeacherId("");
                   setOpen(false);
                 } catch (err) {
                   const msg =
@@ -126,6 +153,44 @@ export function AddClassDialog({ schoolId }: { schoolId: string }) {
                   />
                 </label>
               </div>
+
+              <label className="block">
+                <span className="text-xs font-medium text-zinc-500">
+                  Анги даасан багш
+                </span>
+                <select
+                  name="sectionTeacherId"
+                  value={sectionTeacherId}
+                  onChange={(e) => setSectionTeacherId(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
+                  disabled={loading || teachersLoading}
+                  required
+                >
+                  <option value="">
+                    {teachersLoading ? "Ачаалж байна…" : "Сонгох…"}
+                  </option>
+                  {(teachersData?.getTeachersBySchoolId ?? []).map((t) => {
+                    const l = t.lastName.trim();
+                    const f = t.firstName.trim();
+                    const label =
+                      l && f
+                        ? `${l.charAt(0).toUpperCase()}.${f} (${t.email})`
+                        : `${l || f || t.email}`;
+                    return (
+                      <option key={t.id} value={t.id}>
+                        {label}
+                      </option>
+                    );
+                  })}
+                </select>
+                {!teachersLoading &&
+                (teachersData?.getTeachersBySchoolId?.length ?? 0) === 0 ? (
+                  <p className="mt-1 text-xs text-amber-700">
+                    Эхлээд «Хүний нөөц» хуудаснаас багш нэмнэ үү.
+                  </p>
+                ) : null}
+              </label>
+
               <input type="hidden" name="name" value={combinedName} />
 
               {formError ? (

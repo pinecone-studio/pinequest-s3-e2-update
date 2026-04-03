@@ -243,7 +243,7 @@ export function ClassesPageClient() {
 
 				{selectedClasses.length === 0 ? (
 					<div className="rounded-xl border border-dashed border-zinc-300 bg-white px-6 py-8 text-center text-zinc-500">
-						Энэ ангид ({selectedGrade}) D1-д бүртгэгдсэн бүлэг алга байна.
+						Энэ ангид ({selectedGrade}) бүртгэгдсэн бүлэг алга байна.
 					</div>
 				) : (
 					<div className="grid gap-3 lg:grid-cols-6">

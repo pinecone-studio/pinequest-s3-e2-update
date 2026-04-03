@@ -9,7 +9,7 @@ import { schoolGraphql } from "@/app/school/_lib/school-graphql-server";
 import {
   DELETE_CLASS_MUTATION,
   DELETE_STUDENT_MUTATION,
-  SYNC_CLASS_TEACHER_ASSIGNMENTS,
+  UPDATE_CLASS_MUTATION,
   UPDATE_STUDENT_MUTATION,
 } from "@/graphql/typeDefs/mutations";
 
@@ -17,26 +17,6 @@ async function requireClerkId(): Promise<string> {
   const { userId } = await auth();
   if (!userId) redirect(authSignInHref("/school"));
   return userId;
-}
-
-export async function assignTeachersToClass(formData: FormData): Promise<void> {
-  await requireClerkId();
-  const classId = String(formData.get("classId") ?? "");
-  const teacherIds = formData
-    .getAll("teacherIds")
-    .map((v) => String(v).trim())
-    .filter(Boolean);
-  if (!classId) return;
-
-  await schoolGraphql<{ syncClassTeacherAssignments: boolean }>(
-    print(SYNC_CLASS_TEACHER_ASSIGNMENTS),
-    { input: { classId, teacherIds } },
-  );
-
-  revalidatePath("/school");
-  revalidatePath("/school/classes");
-  revalidatePath(`/school/classes/${classId}`);
-  revalidatePath("/teacher");
 }
 
 export async function deleteClass(formData: FormData): Promise<void> {
@@ -51,6 +31,43 @@ export async function deleteClass(formData: FormData): Promise<void> {
   revalidatePath("/school");
   revalidatePath("/school/classes");
   redirect("/school/classes");
+}
+
+export async function updateClassInfo(formData: FormData): Promise<void> {
+  await requireClerkId();
+  const id = String(formData.get("id") ?? "");
+  const gradeRaw = String(formData.get("grade") ?? "").trim();
+  const section = String(formData.get("section") ?? "").trim().toUpperCase();
+  const sectionTeacherId = String(formData.get("sectionTeacherId") ?? "").trim();
+  if (!id) return;
+
+  const grade = Number.parseInt(gradeRaw, 10);
+  if (!Number.isFinite(grade) || grade <= 0) {
+    throw new Error("Анги (тоо) зөв оруулна уу.");
+  }
+  if (!section) {
+    throw new Error("Бүлэг оруулна уу.");
+  }
+  if (!sectionTeacherId) {
+    throw new Error("Анги даасан багш сонгоно уу.");
+  }
+
+  await schoolGraphql<{ updateClass: { id: string } }>(
+    print(UPDATE_CLASS_MUTATION),
+    {
+      input: {
+        id,
+        grade,
+        section,
+        sectionTeacherId,
+      },
+    },
+  );
+
+  revalidatePath("/school");
+  revalidatePath("/school/classes");
+  revalidatePath(`/school/classes/${id}`);
+  revalidatePath("/teacher");
 }
 
 export async function updateStudent(formData: FormData): Promise<void> {
