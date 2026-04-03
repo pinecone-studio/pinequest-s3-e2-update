@@ -5,6 +5,7 @@ import { GraphQLUserContext } from "../../../context";
 type CreateTestsArgs = {
   grade: number;
   subjectId: string;
+  title?: string | null;
   question: string;
   answers: string[];
   imageUrl: string;
@@ -30,6 +31,7 @@ export const createTests = async (
       id: id,
       grade: args.input.grade,
       subjectId: args.input.subjectId,
+      title: args.input.title?.trim() || null,
       question: args.input.question,
       answers: JSON.stringify(args.input.answers),
       imageUrl: args.input.imageUrl,
@@ -50,6 +52,7 @@ export const createTests = async (
       id,
       grade: args.input.grade,
       subjectId: args.input.subjectId,
+      title: args.input.title?.trim() || null,
       question: args.input.question,
       answers: args.input.answers,
       imageUrl: args.input.imageUrl ?? null,

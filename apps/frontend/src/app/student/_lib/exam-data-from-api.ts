@@ -11,6 +11,7 @@ export type ApiExamRow = {
 
 export type ApiTestRow = {
   id: string;
+  title?: string | null;
   question: string | null;
   answers: string[] | null;
   rightAnswer: string | null;
@@ -65,6 +66,7 @@ export function buildExamDataFromApi(
     questions.push({
       id: qNum,
       questionNumber: qNum,
+      title: (t.title ?? "").trim() || `Асуулт ${qNum}`,
       text: (t.question ?? "").trim() || `Асуулт ${qNum}`,
       type: "multiple_choice",
       options,

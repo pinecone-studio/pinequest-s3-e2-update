@@ -7,6 +7,7 @@ type UpdateTestsArgs = {
   id: string;
   grade?: number | null;
   subjectId?: string | null;
+  title?: string | null;
   question?: string | null;
   answers?: string[] | null;
   imageUrl?: string | null;
@@ -57,6 +58,7 @@ export const updateTests = async (
     .set({
       grade: args.input.grade ?? existing.grade,
       subjectId: args.input.subjectId ?? existing.subjectId,
+      title: args.input.title?.trim() ?? existing.title,
       question: args.input.question ?? existing.question,
       answers: JSON.stringify(answers),
       imageUrl: args.input.imageUrl ?? existing.imageUrl,
@@ -84,6 +86,7 @@ export const updateTests = async (
     id: updated.id,
     grade: updated.grade ?? 0,
     subjectId: updated.subjectId ?? "",
+    title: updated.title ?? null,
     question: updated.question,
     answers: parseAnswers(updated.answers),
     imageUrl: updated.imageUrl ?? null,
