@@ -1,10 +1,12 @@
+/** @format */
+
 export const QUESTION_TYPES = [
-  "multiple_choice",
-  "short_answer",
-  "long_answer",
-  "formula_input",
-  "image_based",
-  "file_upload",
+	"multiple_choice",
+	"short_answer",
+	"long_answer",
+	"formula_input",
+	"image_based",
+	"file_upload",
 ] as const;
 
 export const QUESTION_DIFFICULTIES = ["easy", "medium", "hard"] as const;
@@ -21,104 +23,104 @@ export type QuestionSource = "global" | "school";
 export type QuestionBankTab = QuestionSource;
 
 export type QuestionOption = {
-  id: string;
-  text: string;
-  isCorrect: boolean;
+	id: string;
+	text: string;
+	isCorrect: boolean;
 };
 
 export type QuestionFileUploadConfig = {
-  acceptedFileTypes: string[];
-  instructions: string;
-  maxFiles: number;
+	acceptedFileTypes: string[];
+	instructions: string;
+	maxFiles: number;
 };
 
 export type QuestionContent = {
-  prompt: string;
-  guidance?: string;
-  explanation?: string;
+	prompt: string;
+	guidance?: string;
+	explanation?: string;
 };
 
 export type Question = {
-  id: string;
-  title: string;
-  questionType: QuestionType;
-  isFavourite?: boolean;
-  source?: QuestionSource;
-  teacherName?: string;
-  teacherId?: string | null;
-  isLocalOnly?: boolean;
-  content: QuestionContent;
-  options: QuestionOption[];
-  correctAnswer: string;
-  rubric: string;
-  formulaRaw: string;
-  formulaPreview: string;
-  imageUrl: string;
-  fileUploadConfig: QuestionFileUploadConfig;
-  grade: string;
-  subject: string;
-  /** Дэд сэдэв — optional on legacy mock rows */
-  subtopic?: string;
-  topic: string;
-  difficulty: QuestionDifficulty;
-  points: number;
-  status: QuestionStatus;
-  gradingType: QuestionGradingType;
-  usageCount: number;
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	title: string;
+	questionType: QuestionType;
+	isFavourite?: boolean;
+	source?: QuestionSource;
+	teacherName?: string;
+	teacherId?: string | null;
+	isLocalOnly?: boolean;
+	content: QuestionContent;
+	options: QuestionOption[];
+	correctAnswer: string;
+	rubric: string;
+	formulaRaw: string;
+	formulaPreview: string;
+	imageUrl: string;
+	fileUploadConfig: QuestionFileUploadConfig;
+	grade: string;
+	subject: string;
+	/** Дэд сэдэв — optional on legacy mock rows */
+	subtopic?: string;
+	topic: string;
+	difficulty: QuestionDifficulty;
+	points: number;
+	status: QuestionStatus;
+	gradingType: QuestionGradingType;
+	usageCount: number;
+	createdAt: string;
+	updatedAt: string;
 };
 
 export type QuestionFilters = {
-  search: string;
-  questionType: "all" | QuestionType;
-  difficulty: "all" | QuestionDifficulty;
-  subject: "all" | string;
-  grade: "all" | string;
-  topic: "all" | string;
-  subtopic: "all" | string;
-  status: "all" | QuestionStatus;
-  sortBy: QuestionSortOption;
+	search: string;
+	questionType: "all" | QuestionType;
+	difficulty: "all" | QuestionDifficulty;
+	subject: "all" | string;
+	grade: "all" | string;
+	topic: "all" | string;
+	subtopic: "all" | string;
+	status: "all" | QuestionStatus;
+	sortBy: QuestionSortOption;
 };
 
 export type QuestionBuilderValues = {
-  id?: string;
-  title: string;
-  questionType: QuestionType;
-  prompt: string;
-  guidance: string;
-  explanation: string;
-  options: QuestionOption[];
-  correctAnswer: string;
-  rubric: string;
-  formulaRaw: string;
-  imageUrl: string;
-  fileUploadConfig: QuestionFileUploadConfig;
-  grade: string;
-  subject: string;
-  subtopic: string;
-  topic: string;
-  difficulty: QuestionDifficulty;
-  points: number;
-  status: QuestionStatus;
+	id?: string;
+	title: string;
+	questionType: QuestionType;
+	prompt: string;
+	guidance: string;
+	explanation: string;
+	options: QuestionOption[];
+	correctAnswer: string;
+	rubric: string;
+	formulaRaw: string;
+	imageUrl: string;
+	fileUploadConfig: QuestionFileUploadConfig;
+	grade: string;
+	subject: string;
+	subtopic: string;
+	topic: string;
+	difficulty: QuestionDifficulty;
+	points: number;
+	status: QuestionStatus;
 };
 
 export type QuestionValidationErrors = Partial<
-  Record<
-    | "title"
-    | "prompt"
-    | "grade"
-    | "subject"
-    | "subtopic"
-    | "topic"
-    | "grade"
-    | "points"
-    | "options"
-    | "correctAnswer"
-    | "rubric"
-    | "formulaRaw"
-    | "imageUrl"
-    | "fileUploadConfig",
-    string
-  >
+	Record<
+		| "title"
+		| "prompt"
+		| "grade"
+		| "subject"
+		| "subtopic"
+		| "topic"
+		| "grade"
+		| "points"
+		| "options"
+		| "correctAnswer"
+		| "rubric"
+		| "formulaRaw"
+		| "imageUrl"
+		| "fileUploadConfig",
+		string
+	>
 >;

@@ -105,6 +105,22 @@ function isOwnedByTeacher(
 	return question.teacherName === teacherName;
 }
 
+/** FNV-1a style mix — stable, different per `id` for mock-style heart counts. */
+function mixFromString(value: string, modulus: number): number {
+	if (modulus <= 0) return 0;
+	let h = 2166136261;
+	for (let i = 0; i < value.length; i++) {
+		h ^= value.charCodeAt(i);
+		h = Math.imul(h, 16777619);
+	}
+	return (h >>> 0) % modulus;
+}
+
+function heartCountForQuestion(question: Question): number {
+	const fromId = 1 + mixFromString(question.id, 100);
+	return fromId + question.usageCount + (question.isFavourite ? 5 : 0);
+}
+
 export function useQuestionBank(options?: UseQuestionBankOptions) {
 	const router = useRouter();
 	const teacher = useTeacher();
@@ -165,7 +181,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 		if (enteredFromRoute) return;
 		if (localEntry.subjectId || !localEntry.subject) return;
 
-		const matched = subjectItems.find((item) => item.name === localEntry.subject);
+		const matched = subjectItems.find(
+			(item) => item.name === localEntry.subject,
+		);
 		if (!matched) return;
 
 		setLocalEntry((current) => ({
@@ -377,26 +395,29 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 	}, []);
 
 	const getQuestionHeartCount = useCallback(
-		(question: Question) => question.usageCount + (question.isFavourite ? 1 : 0),
+		(question: Question) => heartCountForQuestion(question),
 		[],
 	);
 
-	const toggleQuestionLike = useCallback((questionId: string) => {
-		const target =
-			upserts.get(questionId) ??
-			mergedQuestions.find((question) => question.id === questionId);
-		if (!target) return;
+	const toggleQuestionLike = useCallback(
+		(questionId: string) => {
+			const target =
+				upserts.get(questionId) ??
+				mergedQuestions.find((question) => question.id === questionId);
+			if (!target) return;
 
-		setUpserts((current) => {
-			const next = new Map(current);
-			next.set(questionId, {
-				...target,
-				isFavourite: !target.isFavourite,
-				updatedAt: new Date().toISOString(),
+			setUpserts((current) => {
+				const next = new Map(current);
+				next.set(questionId, {
+					...target,
+					isFavourite: !target.isFavourite,
+					updatedAt: new Date().toISOString(),
+				});
+				return next;
 			});
-			return next;
-		});
-	}, [mergedQuestions, upserts]);
+		},
+		[mergedQuestions, upserts],
+	);
 
 	const toggleQuestionSelection = useCallback((questionId: string) => {
 		setSelectedQuestionIds((current) =>
@@ -508,7 +529,9 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 					(existing.questionType === "long_answer") !==
 						(payload.questionType === "long_answer");
 				if (isTypeChangedAcrossStorage) {
-					showToast("Одоогоор хадгалсан асуултын төрлийг ингэж солих боломжгүй.");
+					showToast(
+						"Одоогоор хадгалсан асуултын төрлийг ингэж солих боломжгүй.",
+					);
 					return false;
 				}
 
@@ -599,9 +622,7 @@ export function useQuestionBank(options?: UseQuestionBankOptions) {
 								usageCount: payload.usageCount,
 								favourite: payload.isFavourite ?? false,
 								notes:
-									payload.content.explanation ||
-									payload.content.guidance ||
-									"",
+									payload.content.explanation || payload.content.guidance || "",
 								teacherId: dbTeacherId,
 							},
 						},

@@ -1,65 +1,67 @@
+/** @format */
+
 import { openExerciesTable } from "../../../../db/schema";
 import { requireDbTeacherIdFromClerk } from "../../../../lib/teacher-row-from-clerk";
 import { GraphQLUserContext } from "../../../context";
 type CreateOpenExerciesArgs = {
-  subjectId: string;
-  grade: number;
-  topic: string;
-  title: string;
-  question: string;
-  answer?: string | null;
-  imageUrl?: string | null;
-  difficulty: string;
-  score: number;
-  favourite?: boolean | null;
-  notes?: string | null;
-  teacherId: string;
+	subjectId: string;
+	grade: number;
+	topic: string;
+	title: string;
+	question: string;
+	answer?: string | null;
+	imageUrl?: string | null;
+	difficulty: string;
+	score: number;
+	favourite?: boolean | null;
+	notes?: string | null;
+	teacherId: string;
 };
 export const createOpenExercies = async (
-  _parent: unknown,
-  _args: { input: CreateOpenExerciesArgs },
-  ctx: GraphQLUserContext,
+	_parent: unknown,
+	_args: { input: CreateOpenExerciesArgs },
+	ctx: GraphQLUserContext,
 ) => {
-  const teacherRowId = await requireDbTeacherIdFromClerk(ctx);
-  try {
-    const id = crypto.randomUUID();
-    const now = new Date().toISOString();
-    await ctx.db.insert(openExerciesTable).values({
-      id: id,
-      subjectId: _args.input.subjectId,
-      grade: _args.input.grade,
-      topic: _args.input.topic,
-      title: _args.input.title,
-      question: _args.input.question,
-      answer: _args.input.answer ?? null,
-      imageUrl: _args.input.imageUrl ?? null,
-      difficulty: _args.input.difficulty,
-      score: _args.input.score,
-      favourite: _args.input.favourite ? 1 : 0,
-      notes: _args.input.notes ?? null,
-      teacherId: teacherRowId,
-      createdAt: now,
-      updatedAt: now,
-    });
-    return {
-      id: id,
-      subjectId: _args.input.subjectId,
-      grade: _args.input.grade,
-      topic: _args.input.topic,
-      title: _args.input.title,
-      question: _args.input.question,
-      answer: _args.input.answer ?? null,
-      imageUrl: _args.input.imageUrl ?? null,
-      difficulty: _args.input.difficulty,
-      score: _args.input.score,
-      favourite: Boolean(_args.input.favourite),
-      notes: _args.input.notes ?? null,
-      teacherId: teacherRowId,
-      createdAt: now,
-      updatedAt: now,
-    };
-  } catch (err) {
-    console.error("Failed to create open exercies:", err);
-    throw new Error(`Failed to create open exercies`);
-  }
+	const teacherRowId = await requireDbTeacherIdFromClerk(ctx);
+	try {
+		const id = crypto.randomUUID();
+		const now = new Date().toISOString();
+		await ctx.db.insert(openExerciesTable).values({
+			id: id,
+			subjectId: _args.input.subjectId,
+			grade: _args.input.grade,
+			topic: _args.input.topic,
+			title: _args.input.title,
+			question: _args.input.question,
+			answer: _args.input.answer ?? null,
+			imageUrl: _args.input.imageUrl ?? null,
+			difficulty: _args.input.difficulty,
+			score: _args.input.score,
+			favourite: _args.input.favourite ? 1 : 0,
+			notes: _args.input.notes ?? null,
+			teacherId: teacherRowId,
+			createdAt: now,
+			updatedAt: now,
+		});
+		return {
+			id: id,
+			subjectId: _args.input.subjectId,
+			grade: _args.input.grade,
+			topic: _args.input.topic,
+			title: _args.input.title,
+			question: _args.input.question,
+			answer: _args.input.answer ?? null,
+			imageUrl: _args.input.imageUrl ?? null,
+			difficulty: _args.input.difficulty,
+			score: _args.input.score,
+			favourite: Boolean(_args.input.favourite),
+			notes: _args.input.notes ?? null,
+			teacherId: teacherRowId,
+			createdAt: now,
+			updatedAt: now,
+		};
+	} catch (err) {
+		console.error("Failed to create open exercies:", err);
+		throw new Error(`Failed to create open exercies`);
+	}
 };

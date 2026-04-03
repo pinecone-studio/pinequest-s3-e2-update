@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
@@ -5,208 +7,210 @@ import { Eye } from "lucide-react";
 import { NATIONAL_SCRIPT_SUBJECT } from "../../_lib/constants";
 import type { Question } from "../../_lib/types";
 import {
-  formatDate,
-  getPromptDisplayParts,
-  hasTraditionalMongolianText,
-  promptHasImagePlaceholder,
-  resolveQuestionTitle,
+	formatDate,
+	getPromptDisplayParts,
+	hasTraditionalMongolianText,
+	promptHasImagePlaceholder,
+	resolveQuestionTitle,
 } from "../../_lib/utils";
 import {
-  DifficultyBadge,
-  GradingTypeBadge,
-  QuestionStatusBadge,
-  QuestionTypeBadge,
+	DifficultyBadge,
+	GradingTypeBadge,
+	QuestionStatusBadge,
+	QuestionTypeBadge,
 } from "./question-badges";
 
 export function QuestionPreviewPanel({
-  question,
+	question,
 }: {
-  question: Question | null;
+	question: Question | null;
 }) {
-  if (!question) {
-    return (
-      <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
-        <p className="text-sm text-[#6d7f9c]">
-          Сонгосон асуултын дэлгэрэнгүйг харахын тулд жагсаалтаас асуулт сонгоно
-          уу.
-        </p>
-      </aside>
-    );
-  }
+	if (!question) {
+		return (
+			<aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+				<p className="text-sm text-[#6d7f9c]">
+					Сонгосон асуултын дэлгэрэнгүйг харахын тулд жагсаалтаас асуулт сонгоно
+					уу.
+				</p>
+			</aside>
+		);
+	}
 
-  const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
-  const shouldRenderPromptVertical =
-    isNationalScript && hasTraditionalMongolianText(question.content.prompt);
-  const promptParts = getPromptDisplayParts(question.content.prompt);
-  const shouldShowInlineImage = promptHasImagePlaceholder(question.content.prompt);
-  const resolvedTitle =
-    resolveQuestionTitle(question.title, question.content.prompt) ||
-    "Зурагтай асуулт";
+	const isNationalScript = question.subject === NATIONAL_SCRIPT_SUBJECT;
+	const shouldRenderPromptVertical =
+		isNationalScript && hasTraditionalMongolianText(question.content.prompt);
+	const promptParts = getPromptDisplayParts(question.content.prompt);
+	const shouldShowInlineImage = promptHasImagePlaceholder(
+		question.content.prompt,
+	);
+	const resolvedTitle =
+		resolveQuestionTitle(question.title, question.content.prompt) ||
+		"Зурагтай асуулт";
 
-  return (
-    <aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7c8ba4]">
-        <Eye className="h-4 w-4" />
-        Асуултын дэлгэрэнгүй
-      </div>
+	return (
+		<aside className="rounded-3xl border border-[#d8e2f0] bg-white p-5 shadow-sm">
+			<div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7c8ba4]">
+				<Eye className="h-4 w-4" />
+				Асуултын дэлгэрэнгүй
+			</div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <QuestionStatusBadge status={question.status} />
-        <QuestionTypeBadge type={question.questionType} />
-        <DifficultyBadge difficulty={question.difficulty} />
-        <GradingTypeBadge gradingType={question.gradingType} />
-      </div>
+			<div className="mt-4 flex flex-wrap gap-2">
+				<QuestionStatusBadge status={question.status} />
+				<QuestionTypeBadge type={question.questionType} />
+				<DifficultyBadge difficulty={question.difficulty} />
+				<GradingTypeBadge gradingType={question.gradingType} />
+			</div>
 
-      <div className="mt-4">
-        <h3 className="text-xl font-semibold text-[#183153]">
-          {resolvedTitle}
-        </h3>
-        <div className="mt-2 space-y-3">
-          {promptParts.map((part, index) =>
-            part.type === "text" ? (
-              <p
-                key={`${part.type}-${index}`}
-                className={`text-sm text-[#3b4d69] ${
-                  shouldRenderPromptVertical
-                    ? "min-h-20 overflow-x-auto leading-8"
-                    : "leading-7 whitespace-pre-line"
-                }`}
-                style={
-                  shouldRenderPromptVertical
-                    ? {
-                        writingMode: "vertical-lr",
-                        textOrientation: "mixed",
-                        whiteSpace: "pre-wrap",
-                      }
-                    : undefined
-                }
-              >
-                {part.value}
-              </p>
-            ) : question.imageUrl ? (
-              <div
-                key={`${part.type}-${index}`}
-                className="mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#e2ebf7]"
-              >
-                <img
-                  alt={resolvedTitle}
-                  className="h-40 w-full object-cover"
-                  src={question.imageUrl}
-                />
-              </div>
-            ) : null,
-          )}
-        </div>
-      </div>
+			<div className="mt-4">
+				<h3 className="text-xl font-semibold text-[#183153]">
+					{resolvedTitle}
+				</h3>
+				<div className="mt-2 space-y-3">
+					{promptParts.map((part, index) =>
+						part.type === "text" ? (
+							<p
+								key={`${part.type}-${index}`}
+								className={`text-sm text-[#3b4d69] ${
+									shouldRenderPromptVertical
+										? "min-h-20 overflow-x-auto leading-8"
+										: "leading-7 whitespace-pre-line"
+								}`}
+								style={
+									shouldRenderPromptVertical
+										? {
+												writingMode: "vertical-lr",
+												textOrientation: "mixed",
+												whiteSpace: "pre-wrap",
+											}
+										: undefined
+								}
+							>
+								{part.value}
+							</p>
+						) : question.imageUrl ? (
+							<div
+								key={`${part.type}-${index}`}
+								className="mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#e2ebf7]"
+							>
+								<img
+									alt={resolvedTitle}
+									className="h-40 w-full object-cover"
+									src={question.imageUrl}
+								/>
+							</div>
+						) : null,
+					)}
+				</div>
+			</div>
 
-      {question.imageUrl && !shouldShowInlineImage ? (
-        <div className="mt-4 mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#e2ebf7]">
-          <img
-            alt={resolvedTitle}
-            className="h-40 w-full object-cover"
-            src={question.imageUrl}
-          />
-        </div>
-      ) : null}
+			{question.imageUrl && !shouldShowInlineImage ? (
+				<div className="mt-4 mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#e2ebf7]">
+					<img
+						alt={resolvedTitle}
+						className="h-40 w-full object-cover"
+						src={question.imageUrl}
+					/>
+				</div>
+			) : null}
 
-      {question.options.length > 0 ? (
-        <div className="mt-4 space-y-2">
-          {question.options.map((option) => (
-            <div
-              className={`rounded-2xl border px-4 py-3 text-sm ${
-                option.isCorrect
-                  ? "border-[#cfe0fb] bg-[#eef6ff] text-[#2f66b9]"
-                  : "border-[#dce5f2] bg-[#f8fbff] text-[#435770]"
-              }`}
-              key={option.id}
-            >
-              <div
-                className={
-                  isNationalScript && hasTraditionalMongolianText(option.text)
-                    ? "min-h-24 overflow-x-auto leading-8"
-                    : ""
-                }
-                style={
-                  isNationalScript && hasTraditionalMongolianText(option.text)
-                    ? {
-                        writingMode: "vertical-lr",
-                        textOrientation: "mixed",
-                        whiteSpace: "pre-wrap",
-                      }
-                    : undefined
-                }
-              >
-                {option.text}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
+			{question.options.length > 0 ? (
+				<div className="mt-4 space-y-2">
+					{question.options.map((option) => (
+						<div
+							className={`rounded-2xl border px-4 py-3 text-sm ${
+								option.isCorrect
+									? "border-[#cfe0fb] bg-[#eef6ff] text-[#2f66b9]"
+									: "border-[#dce5f2] bg-[#f8fbff] text-[#435770]"
+							}`}
+							key={option.id}
+						>
+							<div
+								className={
+									isNationalScript && hasTraditionalMongolianText(option.text)
+										? "min-h-24 overflow-x-auto leading-8"
+										: ""
+								}
+								style={
+									isNationalScript && hasTraditionalMongolianText(option.text)
+										? {
+												writingMode: "vertical-lr",
+												textOrientation: "mixed",
+												whiteSpace: "pre-wrap",
+											}
+										: undefined
+								}
+							>
+								{option.text}
+							</div>
+						</div>
+					))}
+				</div>
+			) : null}
 
-      {question.formulaRaw ? (
-        <div className="mt-4 rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
-            Томьёоны харагдац
-          </p>
-          <p className="mt-2 font-mono text-sm text-[#183153]">
-            {question.formulaPreview}
-          </p>
-        </div>
-      ) : null}
+			{question.formulaRaw ? (
+				<div className="mt-4 rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
+					<p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
+						Томьёоны харагдац
+					</p>
+					<p className="mt-2 font-mono text-sm text-[#183153]">
+						{question.formulaPreview}
+					</p>
+				</div>
+			) : null}
 
-      {question.fileUploadConfig.instructions ? (
-        <div className="mt-4 rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
-            Хавсаргах заавар
-          </p>
-          <p className="mt-2 text-sm text-[#435770]">
-            {question.fileUploadConfig.instructions}
-          </p>
-          <p className="mt-2 text-xs text-[#70809b]">
-            Зөвшөөрөх төрөл:{" "}
-            {question.fileUploadConfig.acceptedFileTypes.join(", ")}
-          </p>
-        </div>
-      ) : null}
+			{question.fileUploadConfig.instructions ? (
+				<div className="mt-4 rounded-2xl border border-[#dce5f2] bg-[#f8fbff] p-4">
+					<p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#70809b]">
+						Хавсаргах заавар
+					</p>
+					<p className="mt-2 text-sm text-[#435770]">
+						{question.fileUploadConfig.instructions}
+					</p>
+					<p className="mt-2 text-xs text-[#70809b]">
+						Зөвшөөрөх төрөл:{" "}
+						{question.fileUploadConfig.acceptedFileTypes.join(", ")}
+					</p>
+				</div>
+			) : null}
 
-      <dl className="mt-5 grid gap-3 rounded-2xl bg-[#f8fbff] p-4 text-sm text-[#5f7394]">
-        <div className="flex items-center justify-between gap-3">
-          <dt>Нийтэлсэн багш</dt>
-          <dd className="font-semibold text-[#183153]">
-            {question.teacherName ?? "Систем"}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Нийтэлсэн</dt>
-          <dd className="font-semibold text-[#183153]">
-            {formatDate(question.updatedAt)}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Анги</dt>
-          <dd className="font-semibold text-[#183153]">{question.grade}</dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Хичээл</dt>
-          <dd className="font-semibold text-[#183153]">{question.subject}</dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Сэдэв</dt>
-          <dd className="font-semibold text-[#183153]">
-            {question.subtopic?.trim() || question.topic}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Оноо</dt>
-          <dd className="font-semibold text-[#183153]">{question.points}</dd>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <dt>Ашигласан тоо</dt>
-          <dd className="font-semibold text-[#183153]">
-            {question.usageCount}
-          </dd>
-        </div>
-      </dl>
-    </aside>
-  );
+			<dl className="mt-5 grid gap-3 rounded-2xl bg-[#f8fbff] p-4 text-sm text-[#5f7394]">
+				<div className="flex items-center justify-between gap-3">
+					<dt>Нийтэлсэн багш</dt>
+					<dd className="font-semibold text-[#183153]">
+						{question.teacherName ?? "Систем"}
+					</dd>
+				</div>
+				<div className="flex items-center justify-between gap-3">
+					<dt>Нийтэлсэн</dt>
+					<dd className="font-semibold text-[#183153]">
+						{formatDate(question.updatedAt)}
+					</dd>
+				</div>
+				<div className="flex items-center justify-between gap-3">
+					<dt>Анги</dt>
+					<dd className="font-semibold text-[#183153]">{question.grade}</dd>
+				</div>
+				<div className="flex items-center justify-between gap-3">
+					<dt>Хичээл</dt>
+					<dd className="font-semibold text-[#183153]">{question.subject}</dd>
+				</div>
+				<div className="flex items-center justify-between gap-3">
+					<dt>Сэдэв</dt>
+					<dd className="font-semibold text-[#183153]">
+						{question.subtopic?.trim() || question.topic}
+					</dd>
+				</div>
+				<div className="flex items-center justify-between gap-3">
+					<dt>Оноо</dt>
+					<dd className="font-semibold text-[#183153]">{question.points}</dd>
+				</div>
+				<div className="flex items-center justify-between gap-3">
+					<dt>Ашигласан тоо</dt>
+					<dd className="font-semibold text-[#183153]">
+						{question.usageCount}
+					</dd>
+				</div>
+			</dl>
+		</aside>
+	);
 }
